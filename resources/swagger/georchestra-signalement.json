@@ -1,0 +1,639 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "1.0.0",
+		"title": "Georchestra - Plugin Signalement API",
+		"contact": {
+			"email": "guillaume.morin@open-groupe.com"
+		},
+		"license": {
+			"name": "Apache 2.0",
+			"url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+		}
+	},
+	"host": "",
+	"basePath": "/signalement",
+	"tags": [
+		{
+			"name": "administration",
+			"description": "Administration de la plateforme de signalement"
+		},
+		{
+			"name": "tasks",
+			"description": "Service de gestion des signalements"
+		}
+	],
+	"schemes": [
+		"https",
+		"http"
+	],
+	"paths": {
+		"/administration/configuration": {
+			"get": {
+				"tags": [
+					"administration"
+				],
+				"summary": "Récupération des propriétés de configuration",
+				"description": "Ensemble des propriétés de configuration",
+				"operationId": "getConfiguration",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/ConfigurationData"
+						}
+					}
+				}
+			}
+		},
+		"/task/draft": {
+			"post": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Création d'un signalement brouillon'",
+				"description": "",
+				"operationId": "createDraft",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "reportingDescription",
+						"description": "Description du signalement",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ReportingDescription"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/upload/{taskUuid}": {
+			"post": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Création d'un signalement brouillon'",
+				"description": "",
+				"operationId": "uploadDocument",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskUuid",
+						"description": "Identifiant de la tâche associée",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					},
+					{
+						"in": "formData",
+						"name": "file",
+						"description": "Pièce jointe sous la forme d'un blob",
+						"required": true,
+						"type": "file"
+					}
+				],
+				"consumes": [
+					"multipart/form-data",
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/download/{taskUuid}/{uuid}": {
+			"get": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Création d'un signalement brouillon'",
+				"description": "",
+				"operationId": "downloadDocument",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskUuid",
+						"description": "Identifiant de la tâche associée",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					},
+					{
+						"in": "path",
+						"name": "uuid",
+						"description": "Identifiant de l'attachement",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					}
+				],
+				"consumes": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "file"
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/start": {
+			"post": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Démarrage du workflow de signalement",
+				"description": "",
+				"operationId": "startTask",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "task",
+						"description": "Description du signalement",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/claim/{taskUuid}": {
+			"put": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Demande d'affectation'",
+				"description": "",
+				"operationId": "claimTask",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskUuid",
+						"description": "Identifiant de la tâche associée",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/do/{taskUuid}/{actionName}": {
+			"put": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Demande de traitement",
+				"description": "",
+				"operationId": "doIt",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskUuid",
+						"description": "Identifiant de la tâche associée",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					},
+					{
+						"in": "path",
+						"name": "actionName",
+						"description": "Nom de l'action",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/search": {
+			"get": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Liste les tâche du user courant",
+				"description": "Retourne la liste des tâches de l'utilisateur connecté'",
+				"operationId": "searchTasks",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Task"
+							}
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"ApiError": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				}
+			}
+		},
+		"ConfigurationData": {
+			"type": "object",
+			"properties": {
+				"version": {
+					"type": "string"
+				}
+			}
+		},
+		"Point": {
+			"type": "object",
+			"properties": {
+				"x": {
+					"type": "string"
+				},
+				"y": {
+					"type": "string"
+				}
+			}
+		},
+		"GeographicType": {
+			"type": "string",
+			"description": "Type géographic",
+			"enum": [
+				"POINT",
+				"LINE",
+				"POLYGON"
+			]
+		},
+		"ContextType": {
+			"type": "string",
+			"description": "Type du context du signalement",
+			"enum": [
+				"THEMA",
+				"LAYER"
+			]
+		},
+		"FieldType": {
+			"type": "string",
+			"description": "Type des champs",
+			"enum": [
+				"LONG",
+				"DOUBLE",
+				"STRING",
+				"BOOLEAN",
+				"DATE",
+				"LIST"
+			]
+		},
+		"ValidatorType": {
+			"type": "string",
+			"enum": [
+				"REQUIRED",
+				"MAXLENGTH",
+				"POSITIVE",
+				"NEGATIVE"
+			]
+		},
+		"Validator": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"$ref": "#/definitions/ValidatorType"
+				},
+				"attribute": {
+					"type": "string"
+				}
+			}
+		},
+		"FieldDefinition": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				},
+				"help": {
+					"type": "string"
+				},
+				"type": {
+					"type": "object",
+					"$ref": "#/definitions/FieldType"
+				},
+				"readOnly":{
+					"type": "boolean"
+				},
+				"minOccur": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"maxOccur": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"extendedType": {
+					"type": "string"
+				},
+				"validators": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Validator"
+					}
+				}
+			}
+		},
+		"Field": {
+			"type": "object",
+			"properties": {
+				"values": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"definition": {
+					"type": "object",
+					"$ref": "#/definitions/FieldDefinition"
+				}
+			}
+		},
+		"Form": {
+			"type": "object",
+			"properties": {
+				"fields": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/Field"
+					}
+				}
+			}
+		},
+		"Context": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "object",
+					"$ref": "#/definitions/ContextType"
+				},
+				"name": {
+					"type": "string"
+				}
+			}
+		},
+		"User": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"firstName": {
+					"type": "string"
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"unit": {
+					"type": "string"
+				}
+			}
+		},
+		"Status": {
+			"type": "string",
+			"description": "Etat d'un signalement",
+			"enum": [
+			 	"CREATED",
+        		"RUNNING",
+		        "SUSPENDED",
+		        "CANCELLED",
+		        "COMPLETED",
+		        "DELETED"
+			]
+		},
+		"ReportingDescription": {
+			"type": "object",
+			"properties": {
+				"uuid": {
+					"type": "string",
+					"format": "uuid"
+				},
+				"status": {
+					"type": "object",
+					"$ref": "#/definitions/Status"
+				},
+				"localisation": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Point"
+					}
+				},
+				"context": {
+					"type": "object",
+					"$ref": "#/definitions/Context"
+				},
+				"initiator": {
+					"type": "object",
+					"$ref": "#/definitions/User"
+				},
+				"creationDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"updatedDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"attachments": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"format": "uuid"
+					}
+				}
+			}
+		},
+		"Action": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				}
+			}
+		},
+		"Task": {
+			"type": "object",
+			"properties": {
+				"uuid": {
+					"type": "string",
+					"format": "uuid"
+				},
+				"status": {
+					"type": "object",
+					"$ref": "#/definitions/Status"
+				},
+				"initiator": {
+					"type": "string"
+				},				
+				"creationDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"updatedDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"assignee": {
+					"type": "string"
+				},
+				"actions": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"$ref": "#/definitions/Action"
+					}
+				},
+				"form": {
+					"type": "object",
+					"$ref": "#/definitions/Form"
+				},
+				"asset": {
+					"type": "object",
+					"$ref": "#/definitions/ReportingDescription"
+				}
+			}
+		}
+	}
+}
