@@ -1,0 +1,19 @@
+[{
+    "id": "signalement_0",
+    "enabled": true,
+    "name": "Signalement",
+    "options": {
+    },
+    "title": {
+        "en": "Reporting",
+        "es": "Reporting",
+        "fr": "Signalement",
+        "de": "Reporting"
+    },
+    "description": {
+        "en": "Reporting",
+        "fr": "Signalement",
+        "es": "Reporting",
+        "de": "Reporting"
+    }
+}]
