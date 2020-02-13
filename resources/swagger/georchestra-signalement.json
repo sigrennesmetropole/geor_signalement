@@ -12,7 +12,7 @@
 		}
 	},
 	"host": "",
-	"basePath": "/signalement",
+	"basePath": "/",
 	"tags": [
 		{
 			"name": "administration",
@@ -20,7 +20,11 @@
 		},
 		{
 			"name": "tasks",
-			"description": "Service de gestion des signalements"
+			"description": "Services de gestion des tâches de signalements"
+		},
+		{
+			"name": "reporting",
+			"description": "Services de gestion des signalements"
 		}
 	],
 	"schemes": [
@@ -91,12 +95,12 @@
 				}
 			}
 		},
-		"/task/upload/{taskUuid}": {
+		"/reporting/{uuid}/upload": {
 			"post": {
 				"tags": [
-					"tasks"
+					"reporting"
 				],
-				"summary": "Création d'un signalement brouillon'",
+				"summary": "Téléversement d'une pièce attachée sur un signalement'",
 				"description": "",
 				"operationId": "uploadDocument",
 				"produces": [
@@ -105,8 +109,8 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "taskUuid",
-						"description": "Identifiant de la tâche associée",
+						"name": "uuid",
+						"description": "Identifiant du signalement",
 						"required": true,
 						"type": "string",
 						"format": "uuid"
@@ -139,30 +143,29 @@
 				}
 			}
 		},
-		"/task/download/{taskUuid}/{uuid}": {
+		"/reporting/{uuid}/download/{attachmentId}": {
 			"get": {
 				"tags": [
-					"tasks"
+					"reporting"
 				],
-				"summary": "Création d'un signalement brouillon'",
+				"summary": "Téléchargement d'un pièce attachée à un signalement'",
 				"description": "",
 				"operationId": "downloadDocument",
 				"parameters": [
 					{
 						"in": "path",
-						"name": "taskUuid",
-						"description": "Identifiant de la tâche associée",
+						"name": "uuid",
+						"description": "Identifiant du signalement",
 						"required": true,
 						"type": "string",
 						"format": "uuid"
 					},
 					{
 						"in": "path",
-						"name": "uuid",
+						"name": "attachmentId",
 						"description": "Identifiant de l'attachement",
 						"required": true,
-						"type": "string",
-						"format": "uuid"
+						"type": "string"
 					}
 				],
 				"consumes": [
@@ -228,7 +231,7 @@
 				}
 			}
 		},
-		"/task/claim/{taskUuid}": {
+		"/task/claim/{taskId}": {
 			"put": {
 				"tags": [
 					"tasks"
@@ -242,11 +245,10 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "taskUuid",
+						"name": "taskId",
 						"description": "Identifiant de la tâche associée",
 						"required": true,
-						"type": "string",
-						"format": "uuid"
+						"type": "string"
 					}
 				],
 				"responses": {
@@ -268,7 +270,7 @@
 				}
 			}
 		},
-		"/task/do/{taskUuid}/{actionName}": {
+		"/task/do/{taskId}/{actionName}": {
 			"put": {
 				"tags": [
 					"tasks"
@@ -282,11 +284,10 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "taskUuid",
+						"name": "taskId",
 						"description": "Identifiant de la tâche associée",
 						"required": true,
-						"type": "string",
-						"format": "uuid"
+						"type": "string"
 					},
 					{
 						"in": "path",
@@ -576,8 +577,7 @@
 				"attachments": {
 					"type": "array",
 					"items": {
-						"type": "string",
-						"format": "uuid"
+						"type": "string"
 					}
 				}
 			}
@@ -596,9 +596,8 @@
 		"Task": {
 			"type": "object",
 			"properties": {
-				"uuid": {
-					"type": "string",
-					"format": "uuid"
+				"id": {
+					"type": "string"
 				},
 				"status": {
 					"type": "object",
