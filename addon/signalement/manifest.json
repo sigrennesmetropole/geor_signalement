@@ -7,5 +7,19 @@
 	],
 	"default_options": {
 		"signalementURL": "http://localhost:8082/"
+	},
+	"i18n": {
+		"en": {
+			"signalement.close": "Close"
+		},
+		"es": {
+			"signalement.close": "Cerrar"
+		},
+		"fr": {
+			"signalement.close": "Fermer"
+		},
+		"de": {
+			"signalement.close": "Schließen"
+		}
 	}
 }

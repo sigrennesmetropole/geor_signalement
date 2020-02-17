@@ -17,7 +17,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 	encoding : document.charset || document.characterSet || "UTF-8",
 
 	init : function(record) {
-		this.log("init..." + record + " with target "
+		this.log("Init with target "
 				+ (this.target !== null ? true : false) + " at "
 				+ this.position);
 
@@ -33,6 +33,13 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 				border : false,
 				items : [ '-' ]
 			} ],
+			buttons: [{
+                text: OpenLayers.i18n('signalement.close'),
+                handler: function() {
+                    this.window.hide();
+                },
+                scope: this
+            }],
 			listeners : {
 				hide : function() {
 					this.item && this.item.setChecked(false);
@@ -66,7 +73,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 	},
 
 	destroy : function() {
-
+		this.window.hide();
 		GEOR.Addons.Base.prototype.destroy.call(this);
 	},
 
@@ -74,7 +81,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 	 * Le log de base
 	 */
 	log : function(message) {
-		if (this.option.log === "true") {
+		if (this.options.log === "true") {
 			console.log(message);
 		}
 	},
