@@ -6,14 +6,14 @@
     },
     "title": {
         "en": "Reporting",
-        "es": "Reporting",
+        "es": "Informar",
         "fr": "Signalement",
-        "de": "Reporting"
+        "de": "Berichterstattung"
     },
     "description": {
-        "en": "Reporting",
-        "fr": "Signalement",
-        "es": "Reporting",
-        "de": "Reporting"
+        "en": "Reporting of error for layers or thema",
+        "fr": "Signalement des anomalías sur un couche ou pour un théme donné",
+        "es": "Informar anomalas en una capa o para un tema determinado",
+        "de": "Melden von Anomalien auf einer Ebene oder für ein bestimmtes Thema"
     }
 }]

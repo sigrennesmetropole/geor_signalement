@@ -48,6 +48,8 @@
 		<swagger.plugin.version>2.4.10</swagger.plugin.version>
 		<maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 		<compiler.plugin.version>3.5.1</compiler.plugin.version>
+		<assemby.plugin.version>2.6</assemby.plugin.version>
+		<ant.plugin.version>1.7</ant.plugin.version>
 
 		<!-- java version -->
 		<java.source.version>11</java.source.version>
@@ -79,6 +81,15 @@
 
 	<!-- <repositories> <repository> <id>open.nexus</id> <url>${MVN_GROUP}</url> 
 		</repository> </repositories> -->
+		
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<georchestra.addon.deployDir>C:\Program Files\Apache\apache-tomcat-9.0.26\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
+			</properties>
+		</profile>
+	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
@@ -119,7 +130,7 @@
 				<artifactId>json-smart</artifactId>
 				<version>${minidev.version}</version>
 			</dependency>
-			
+
 			<!-- Swagger dependencies -->
 			<dependency>
 				<groupId>io.springfox</groupId>
@@ -212,6 +223,17 @@
 							</path>
 						</annotationProcessorPaths>
 					</configuration>
+				</plugin>
+
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${assemby.plugin.version}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>${ant.plugin.version}</version>
 				</plugin>
 
 			</plugins>

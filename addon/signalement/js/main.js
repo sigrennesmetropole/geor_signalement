@@ -15,8 +15,17 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
      * or ``UTF-8`` if not.
      */
     encoding: document.charset || document.characterSet || "UTF-8",
+    _triggerButton: null,
 
     init: function(record) {
+    	
+    	this._triggerButton = new Ext.Button({
+            enableToggle: false,
+            tooltip: this.getTooltip(record),
+            iconCls: "addon-signalement"
+        });
+        this._triggerButton.render(document.getElementById("backgrounds-addon-trigger"));
+    	
     },
 
 
