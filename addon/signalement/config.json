@@ -1,19 +1,23 @@
-[{
-    "id": "signalement_0",
-    "enabled": true,
-    "name": "Signalement",
-    "options": {
-    },
-    "title": {
-        "en": "Reporting",
-        "es": "Informar",
-        "fr": "Signalement",
-        "de": "Berichterstattung"
-    },
-    "description": {
-        "en": "Reporting of error for layers or thema",
-        "fr": "Signalement des anomalías sur un couche ou pour un théme donné",
-        "es": "Informar anomalas en una capa o para un tema determinado",
-        "de": "Melden von Anomalien auf einer Ebene oder für ein bestimmtes Thema"
-    }
-}]
+[
+	{
+		"id": "signalement_0",
+		"enabled": true,
+		"name": "Signalement",
+		"options": {
+			"target": "tbar_12",
+			"log": "true"
+		},
+		"title": {
+			"en": "Reporting",
+			"es": "Informar",
+			"fr": "Signalement",
+			"de": "Berichterstattung"
+		},
+		"description": {
+			"en": "Reporting of error for layers or thema",
+			"fr": "Signalement des anomalías sur un couche ou pour un théme donné",
+			"es": "Informar anomalas en una capa o para un tema determinado",
+			"de": "Melden von Anomalien auf einer Ebene oder für ein bestimmtes Thema"
+		}
+	}
+]
