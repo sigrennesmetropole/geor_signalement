@@ -47,7 +47,7 @@ public class ActivitiConfiguration extends AbstractProcessEngineConfigurator {
 		configuration.setEventListeners(new ArrayList<>());
 		configuration.getEventListeners().add(new HookEventListener());
 		configuration.getEventListeners().add(new HookBaseEntityEventListener());
-		configuration.setDeploymentResources(new Resource[] { new ClassPathResource("bpmn/test3.bpmn20.xml") });
+		//configuration.setDeploymentResources(new Resource[] { new ClassPathResource("bpmn/test3.bpmn20.xml") });
 		configuration.addConfigurator(this);
 		return configuration;
 	}

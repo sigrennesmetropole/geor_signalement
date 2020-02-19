@@ -14,13 +14,16 @@ import org.georchestra.signalement.service.sm.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
 
 /**
  * @author FNI18300
  *
  */
-@Controller
+@RestController
+@Api(tags = "tasks")
 public class TaskController implements TaskApi {
 
 	@Autowired

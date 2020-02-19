@@ -16,12 +16,14 @@ import org.georchestra.signalement.core.common.LongId;
 import lombok.Data;
 
 /**
+ * Représente un ensemble d'aire géographique permettant couvrant la métropole
+ * 
  * @author FNI18300
  *
  */
 @Data
 @Entity
-@Table(name="geographic_area")
+@Table(name = "geographic_area")
 public class GeographicAreaEntity implements LongId {
 
 	@Id
@@ -29,6 +31,6 @@ public class GeographicAreaEntity implements LongId {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-    @Column(name = "geometry",columnDefinition="Geometry")
-    private Geometry geometry;
+	@Column(name = "geometry", columnDefinition = "Geometry")
+	private Geometry geometry;
 }

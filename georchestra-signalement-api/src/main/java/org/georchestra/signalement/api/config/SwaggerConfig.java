@@ -28,7 +28,8 @@ public class SwaggerConfig {
 	public Docket productApi() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage("org.georchestra.signalement.api.controller"))
-				.paths(PathSelectors.any()).build().apiInfo(apiInfo());
+				.paths(PathSelectors.any()).build().apiInfo(apiInfo()).securitySchemes(securitySchemes())
+				.securityContexts(securityContexts());
 	}
 
 	protected ApiInfo apiInfo() {
@@ -44,7 +45,7 @@ public class SwaggerConfig {
 
 	protected List<SecurityContext> securityContexts() {
 		List<SecurityContext> securityContexts = Arrays.asList(SecurityContext.builder()
-				.forPaths(PathSelectors.regex("/admin/.*")).securityReferences(securityReferences()).build());
+				.forPaths(PathSelectors.regex("/administration/.*")).securityReferences(securityReferences()).build());
 		return securityContexts;
 	}
 

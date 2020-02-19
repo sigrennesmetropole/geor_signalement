@@ -1,15 +1,22 @@
 package org.georchestra.signalement.api.config;
 
+import java.util.Arrays;
+
+import javax.servlet.Filter;
+
+import org.georchestra.signalement.api.security.PreAuthenticationFilter;
+import org.georchestra.signalement.api.security.PreAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -26,9 +33,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// -- swagger ui
 				.antMatchers("/csrf", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/v2/api-docs/**",
 						"/configuration/ui", "/configuration/security")
-				.permitAll().antMatchers("/admin/**").fullyAuthenticated().and().httpBasic().and().sessionManagement()
+				.permitAll().antMatchers("/administration/**").fullyAuthenticated().and().httpBasic().and()
+				.addFilterAfter(createPreAuthenticationFilter(), BasicAuthenticationFilter.class).sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable();
 	}
+
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
@@ -44,5 +53,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
+	}
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication().withUser("admin").password("{noop}4dM1nApp!").roles("ADMIN");
+		auth.authenticationProvider(createPreAuthenticationProvider());
+	}
+
+	private AuthenticationProvider createPreAuthenticationProvider() {
+		return new PreAuthenticationProvider();
+	}
+	
+
+	private Filter createPreAuthenticationFilter() {
+		return new PreAuthenticationFilter();
 	}
 }

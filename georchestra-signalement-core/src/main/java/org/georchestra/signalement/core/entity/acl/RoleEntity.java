@@ -16,6 +16,8 @@ import org.georchestra.signalement.core.common.LongId;
 import lombok.Data;
 
 /**
+ * Réprésente un rôle pour un workflow
+ * 
  * @author FNI18300
  *
  */

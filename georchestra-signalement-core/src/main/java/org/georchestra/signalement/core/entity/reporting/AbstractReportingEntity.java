@@ -69,10 +69,6 @@ public abstract class AbstractReportingEntity implements LongId {
 	@JoinColumn(name = "abstract_reporting_id")
 	private Set<ReportingComment> comments;
 
-	@OneToMany
-	@JoinColumn(name = "abstract_reporting_id")
-	private Set<AttachmentEntity> attachments;
-
 	public AbstractReportingEntity(GeographicType geographicType) {
 		this.geographicType = geographicType;
 	}

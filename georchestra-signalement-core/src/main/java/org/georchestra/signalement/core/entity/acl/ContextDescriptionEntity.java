@@ -19,6 +19,8 @@ import org.georchestra.signalement.core.dto.GeographicType;
 import lombok.Data;
 
 /**
+ * Description d'un contexte de création d'un signalement
+ * 
  * @author FNI18300
  *
  */
@@ -32,13 +34,36 @@ public class ContextDescriptionEntity implements LongId {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
+	/**
+	 * Le nom du context c'est à dire le nom de la couche ou le nom du thème en
+	 * fonction du {contextType}
+	 */
 	@Column(length = 100, nullable = false, unique = true)
 	private String name;
 
+	/**
+	 * L'identifiant de la définition du processus associé
+	 */
+	@Column(name = "process_definition_id", length = 64)
+	private String processDefinitionId;
+
+	/**
+	 * La version de la définition du processus Chaque fois que la version change il
+	 * faut mettre à jour cette révision pour pointer sur la nouvelle version
+	 */
+	@Column(name = "revision")
+	private Integer revision;
+
+	/**
+	 * Le type de context
+	 */
 	@Column(name = "context_type", nullable = false, length = 30)
 	@Enumerated(EnumType.STRING)
 	private ContextType contextType;
 
+	/**
+	 * le type de selection point, ligne, polygon
+	 */
 	@Column(name = "geographic_type", nullable = false, length = 30)
 	@Enumerated(EnumType.STRING)
 	private GeographicType geographicType;

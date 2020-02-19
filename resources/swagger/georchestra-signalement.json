@@ -54,6 +54,120 @@
 				}
 			}
 		},
+		"/administration/initialize": {
+			"get": {
+				"tags": [
+					"administration"
+				],
+				"summary": "Initialisation applicatives",
+				"description": "Initialisation applicatives",
+				"operationId": "initialize",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		},
+		"/administration/processDefinition/update/{name}": {
+			"post": {
+				"tags": [
+					"administration"
+				],
+				"summary": "Update process definition",
+				"description": "Update process definition",
+				"operationId": "updateProcessDefinition",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"description": "Nom du processus",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "file",
+						"description": "Pièce jointe contenant le fichierbpmn2.0 sous la forme d'un blob",
+						"required": true,
+						"type": "file"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		},
+		"/administration/processDefinition/delete/{name}": {
+			"delete": {
+				"tags": [
+					"administration"
+				],
+				"summary": "Delete process definition",
+				"description": "Delete process definition",
+				"operationId": "deleteProcessDefinition",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"description": "Nom du processus",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		},
+		"/administration/processDefinition/search": {
+			"get": {
+				"tags": [
+					"administration"
+				],
+				"summary": "List process definition",
+				"description": "List process definition",
+				"operationId": "searchProcessDefinition",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ProcessDefinition"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/task/draft": {
 			"post": {
 				"tags": [
@@ -85,6 +199,55 @@
 					},
 					"400": {
 						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/reporting/contextDescription/search": {
+			"get": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Lister les contextes",
+				"description": "Listes les contexts selon le type",
+				"operationId": "searchContextDescriptions",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "contextType",
+						"description": "Type du context",
+						"required": false,
+						"type":"string"
+					},
+					{
+						"in": "query",
+						"name": "geographicType",
+						"description": "Type de sélection",
+						"required": false,
+						"type":"string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ContextDescription"
+							}
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
 					},
 					"500": {
 						"description": "Internal server error",
@@ -368,6 +531,49 @@
 				}
 			}
 		},
+		"PaginationCriteria": {
+	    	"type": "object",
+	    	"properties": {
+	    		"offset": {
+	    			"type": "integer",
+	    			"format": "int32",
+	    			"exemple": "0",
+	    			"required": "true"
+	    		},
+	    		"limit":{
+	    			"type": "integer",
+	    			"format": "int32",
+	    			"exemple": "0",
+	    			"required": "true"
+	    		}
+	    	}
+	    },
+	    "SortCriterion": {
+	    	"type": "object",
+	    	"properties": {
+	    		"property": {
+	    			"type": "string",
+	    			"exemple": "id",
+	    			"required": "true"
+	    		},
+	    		"asc":{
+	    			"type": "boolean",
+	    			"exemple": "true",
+	    			"required": "true"
+	    		}
+	    	}
+	    },
+	    "SortCriteria": {
+	    	"type": "object",
+	    	"properties": {
+	    		"elements": {
+	    			"type": "array",
+	    			"items": {
+	    				"$ref": "#/definitions/SortCriterion"
+	    			}
+	    		}
+	    	}
+	    },
 		"Point": {
 			"type": "object",
 			"properties": {
@@ -387,6 +593,45 @@
 				"LINE",
 				"POLYGON"
 			]
+		},
+		"ProcessDefinition": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"category": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"key": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"version": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"resourceName": {
+					"type": "string"
+				},
+				"deploymentId": {
+					"type": "string"
+				},
+				"diagramResourceName": {
+					"type": "string"
+				},
+				"tenantId": {
+					"type": "string"
+				},
+				"engineVersion": {
+					"type": "string"
+				}
+			}
 		},
 		"ContextType": {
 			"type": "string",
@@ -444,7 +689,7 @@
 					"type": "object",
 					"$ref": "#/definitions/FieldType"
 				},
-				"readOnly":{
+				"readOnly": {
 					"type": "boolean"
 				},
 				"minOccur": {
@@ -493,12 +738,16 @@
 				}
 			}
 		},
-		"Context": {
+		"ContextDescription": {
 			"type": "object",
 			"properties": {
 				"type": {
 					"type": "object",
 					"$ref": "#/definitions/ContextType"
+				},
+				"geographicType": {
+					"type": "object",
+					"$ref": "#/definitions/GeographicType"
 				},
 				"name": {
 					"type": "string"
@@ -530,12 +779,12 @@
 			"type": "string",
 			"description": "Etat d'un signalement",
 			"enum": [
-			 	"CREATED",
-        		"RUNNING",
-		        "SUSPENDED",
-		        "CANCELLED",
-		        "COMPLETED",
-		        "DELETED"
+				"CREATED",
+				"RUNNING",
+				"SUSPENDED",
+				"CANCELLED",
+				"COMPLETED",
+				"DELETED"
 			]
 		},
 		"ReportingDescription": {
@@ -557,7 +806,7 @@
 				},
 				"context": {
 					"type": "object",
-					"$ref": "#/definitions/Context"
+					"$ref": "#/definitions/ContextDescription"
 				},
 				"initiator": {
 					"type": "object",
@@ -605,7 +854,7 @@
 				},
 				"initiator": {
 					"type": "string"
-				},				
+				},
 				"creationDate": {
 					"type": "string",
 					"format": "date"

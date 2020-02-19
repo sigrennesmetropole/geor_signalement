@@ -7,6 +7,11 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
+import org.georchestra.signalement.core.dto.GeographicType;
+import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
+import org.georchestra.signalement.core.entity.reporting.LineReportingEntity;
+import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
+import org.georchestra.signalement.core.entity.reporting.PolygonReportingEntity;
 import org.georchestra.signalement.service.common.UUIDJSONWriter;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +36,7 @@ public class ReportingHelper {
 	 * @throws ParseException
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String,Object> hydrateData(String datas) throws ParseException {
+	public Map<String, Object> hydrateData(String datas) throws ParseException {
 		JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 		return parser.parse(datas, Map.class);
 	}
@@ -43,7 +48,7 @@ public class ReportingHelper {
 	 * @return
 	 * @throws IOException
 	 */
-	public String deshydrateData(Map<String,Object> datas) throws IOException {
+	public String deshydrateData(Map<String, Object> datas) throws IOException {
 		JSONValue.registerWriter(UUID.class, new UUIDJSONWriter());
 		BeansWriter beansWriter = new BeansWriter();
 		StringBuilder builder = new StringBuilder();
@@ -51,5 +56,27 @@ public class ReportingHelper {
 		return builder.toString();
 	}
 
+	/**
+	 * 
+	 * @param geographicType
+	 * @return
+	 */
+	public AbstractReportingEntity createReportingEntity(GeographicType geographicType) {
+		AbstractReportingEntity result = null;
+		switch (geographicType) {
+		case POINT:
+			result = new PointReportingEntity();
+			break;
+		case LINE:
+			result = new LineReportingEntity();
+			break;
+		case POLYGON:
+			result = new PolygonReportingEntity();
+			break;
+		default:
+			break;
+		}
+		return result;
+	}
 
 }
