@@ -22,9 +22,18 @@ import lombok.Data;
 public class LineReportingEntity extends AbstractReportingEntity {
 
     @Column(name = "geometry",columnDefinition="Geometry")
-    private Geometry geometry;
+    private Geometry<?> geometry;
     
     public LineReportingEntity() {
 		super(GeographicType.LINE);
+	}
+
+	@Override
+	public String toString() {
+		return "LineReportingEntity [getId()=" + getId() + ", getUuid()=" + getUuid() + ", getStatus()=" + getStatus()
+				+ ", getGeographicType()=" + getGeographicType() + ", getInitiator()=" + getInitiator()
+				+ ", getCreationDate()=" + getCreationDate() + ", getUpdatedDate()=" + getUpdatedDate()
+				+ ", getDescription()=" + getDescription() + ", getDatas()=" + getDatas() + ", getContextDescription()="
+				+ getContextDescription() + ", geometry=" + geometry + "]";
 	}
 }

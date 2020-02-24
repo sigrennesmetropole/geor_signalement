@@ -82,9 +82,8 @@ public abstract class AbstractReportingEntity implements LongId {
 		this.geographicType = geographicType;
 	}
 
-	public abstract void setGeometry(@SuppressWarnings("rawtypes") Geometry geometry);
+	public abstract void setGeometry(Geometry<?> geometry);
 
-	@SuppressWarnings("rawtypes")
-	public abstract Geometry getGeometry();
+	public abstract Geometry<?> getGeometry();
 
 }

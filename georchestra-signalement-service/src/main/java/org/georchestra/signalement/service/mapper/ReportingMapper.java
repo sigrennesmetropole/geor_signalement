@@ -15,7 +15,6 @@ import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.entity.ged.AttachmentEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.helper.reporting.ReportingHelper;
-import org.georchestra.signalement.service.sm.impl.InitializationServiceImpl;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

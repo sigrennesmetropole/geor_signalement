@@ -9,6 +9,8 @@ package org.georchestra.signalement.service.exception;
  */
 public class RestException extends Exception {
 
+	private static final long serialVersionUID = 2561353827922106484L;
+
 	/**
 	 * 
 	 */

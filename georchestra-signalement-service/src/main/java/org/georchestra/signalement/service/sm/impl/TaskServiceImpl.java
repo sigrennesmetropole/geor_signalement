@@ -202,10 +202,6 @@ public class TaskServiceImpl implements TaskService {
 		if (reportingEntity == null) {
 			reportingEntity = reportingDao.findByUuid(reportingUuid);
 		}
-		// Wierd
-		if (reportingEntity == null) {
-			reportingEntity = new LineReportingEntity();
-		}
 		if (reportingEntity == null) {
 			throw new IllegalArgumentException("Invalid reporting Uuid");
 		}
