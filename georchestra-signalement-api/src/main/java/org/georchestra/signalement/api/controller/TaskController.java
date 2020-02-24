@@ -4,6 +4,7 @@
 package org.georchestra.signalement.api.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -53,6 +54,12 @@ public class TaskController implements TaskApi {
 	@Override
 	public ResponseEntity<Task> startTask(@Valid Task task) throws Exception {
 		return ResponseEntity.ok(taskService.startTask(task));
+	}
+
+	@Override
+	public ResponseEntity<Void> cancelDraft(UUID uuid) throws Exception {
+		taskService.cancelDraft(uuid);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

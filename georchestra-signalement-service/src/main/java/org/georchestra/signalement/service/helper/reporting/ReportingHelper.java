@@ -4,10 +4,15 @@
 package org.georchestra.signalement.service.helper.reporting;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
 import org.georchestra.signalement.core.dto.GeographicType;
+import org.georchestra.signalement.core.dto.ReportingDescription;
+import org.georchestra.signalement.core.dto.Status;
+import org.georchestra.signalement.core.dto.Task;
+import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.LineReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
@@ -77,6 +82,41 @@ public class ReportingHelper {
 			break;
 		}
 		return result;
+	}
+
+	/**
+	 * Construit une instance de signalement
+	 * 
+	 * @param contextDescription
+	 * @param initiator
+	 * @return
+	 */
+	public AbstractReportingEntity createReportingEntity(ContextDescriptionEntity contextDescription,
+			String initiator) {
+		AbstractReportingEntity result = createReportingEntity(contextDescription.getGeographicType());
+		result.setContextDescription(contextDescription);
+		result.setCreationDate(new Date());
+		result.setUpdatedDate(result.getCreationDate());
+		result.setUuid(UUID.randomUUID());
+		result.setInitiator(initiator);
+		result.setStatus(Status.DRAFT);
+		return result;
+	}
+
+	/**
+	 * Créé une tâche à partir d'un signalement
+	 * 
+	 * @param reportingDescription
+	 * @return
+	 */
+	public Task createTaskFromReporting(ReportingDescription reportingDescription) {
+		Task task = new Task();
+		task.setAsset(reportingDescription);
+		task.setCreationDate(reportingDescription.getCreationDate());
+		task.setUpdatedDate(reportingDescription.getUpdatedDate());
+		task.setStatus(reportingDescription.getStatus());
+		task.setInitiator(reportingDescription.getInitiator());
+		return task;
 	}
 
 }

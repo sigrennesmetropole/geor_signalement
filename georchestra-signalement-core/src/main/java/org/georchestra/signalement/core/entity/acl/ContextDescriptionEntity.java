@@ -44,8 +44,8 @@ public class ContextDescriptionEntity implements LongId {
 	/**
 	 * L'identifiant de la définition du processus associé
 	 */
-	@Column(name = "process_definition_id", length = 64)
-	private String processDefinitionId;
+	@Column(name = "process_definition_key", length = 64)
+	private String processDefinitionKey;
 
 	/**
 	 * La version de la définition du processus Chaque fois que la version change il

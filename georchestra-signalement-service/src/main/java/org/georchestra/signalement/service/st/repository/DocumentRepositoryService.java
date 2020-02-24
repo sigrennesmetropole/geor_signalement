@@ -39,4 +39,20 @@ public interface DocumentRepositoryService {
 	 * @return
 	 */
 	List<Long> getDocumentIds(String attachmentId) throws DocumentRepositoryException;
+
+	/**
+	 * Supprime un document par son id
+	 * 
+	 * @param id
+	 * @throws DocumentRepositoryException
+	 */
+	void deleteDocument(Long id) throws DocumentRepositoryException;
+
+	/**
+	 * Supprime tous les documents associés à un identfiiant de rattachemetn
+	 * 
+	 * @param attachmentId
+	 * @throws DocumentRepositoryException
+	 */
+	void deleteDocuments(String attachmentId) throws DocumentRepositoryException;
 }

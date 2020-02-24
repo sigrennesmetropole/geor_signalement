@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.apache.commons.io.FileUtils;
 import org.georchestra.signalement.api.ReportingApi;
 import org.georchestra.signalement.core.common.DocumentContent;
+import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.dto.ContextDescriptionSearchCriteria;
 import org.georchestra.signalement.core.dto.ContextType;
@@ -49,12 +50,41 @@ public class ReportingController implements ReportingApi {
 	private ContextDescriptionService contextDescriptionService;
 
 	@Override
-	public ResponseEntity<Void> uploadDocument(UUID uuid, @Valid MultipartFile file) throws Exception {
+	public ResponseEntity<Attachment> uploadDocument(UUID uuid, @Valid MultipartFile file) throws Exception {
 		File document = java.io.File.createTempFile("upload", ".doc");
 		FileUtils.copyInputStreamToFile(file.getInputStream(), document);
 		DocumentContent content = new DocumentContent(file.getOriginalFilename(), file.getContentType(), document);
-		taskService.addAttachment(uuid, content);
+		return ResponseEntity.ok(taskService.addAttachment(uuid, content));
+	}
+
+	@Override
+	public ResponseEntity<Void> deleteDocument(UUID uuid, Long attachmentId) throws Exception {
+		taskService.removeAttachment(uuid, attachmentId);
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Resource> downloadDocument(UUID uuid, Long attachmentId) throws Exception {
+		DocumentContent documentContent = taskService.getAttachment(uuid, attachmentId);
+		return downloadDocument(documentContent);
+	}
+
+	@Override
+	public ResponseEntity<List<ContextDescription>> searchContextDescriptions(@Valid String contextType,
+			@Valid String geographicType) throws Exception {
+		ContextDescriptionSearchCriteria searchCriteria = new ContextDescriptionSearchCriteria();
+		if (contextType != null) {
+			searchCriteria.setContextType(ContextType.valueOf(contextType));
+		}
+		if (geographicType != null) {
+			searchCriteria.setGeographicType(GeographicType.valueOf(geographicType));
+		}
+		SortCriteria sortCriteria = new SortCriteria();
+		SortCriterion sortCriterion = new SortCriterion();
+		sortCriterion.setAsc(true);
+		sortCriterion.setProperty("name");
+		sortCriteria.addElementsItem(sortCriterion);
+		return ResponseEntity.ok(contextDescriptionService.searchContextDescriptions(searchCriteria, sortCriteria));
 	}
 
 	private ResponseEntity<Resource> downloadDocument(DocumentContent documentContent) throws FileNotFoundException {
@@ -65,29 +95,4 @@ public class ReportingController implements ReportingApi {
 		InputStreamResource inputStreamResource = new InputStreamResource(documentContent.getFileStream());
 		return new ResponseEntity<>(inputStreamResource, responseHeaders, HttpStatus.OK);
 	}
-
-	@Override
-	public ResponseEntity<Resource> downloadDocument(UUID uuid, String attachmentId) throws Exception {
-		DocumentContent documentContent = taskService.getAttachment(uuid, attachmentId);
-		return downloadDocument(documentContent);
-	}
-
-	@Override
-	public ResponseEntity<List<ContextDescription>> searchContextDescriptions(@Valid String contextType,
-			@Valid String geographicType) throws Exception {
-		ContextDescriptionSearchCriteria searchCriteria = new ContextDescriptionSearchCriteria();
-		if( contextType != null)  {
-			searchCriteria.setContextType(ContextType.valueOf(contextType));
-		}
-		if( geographicType != null) {
-			searchCriteria.setGeographicType(GeographicType.valueOf(geographicType));
-		}
-		SortCriteria sortCriteria = new SortCriteria();
-		SortCriterion sortCriterion = new SortCriterion();
-		sortCriterion.setAsc(true);
-		sortCriterion.setProperty("name");
-		sortCriteria.addElementsItem(sortCriterion);
-		return ResponseEntity.ok(contextDescriptionService.searchContextDescriptions(searchCriteria,sortCriteria));
-	}
-
 }

@@ -22,15 +22,19 @@ import org.georchestra.signalement.core.dao.ged.AttachmentDao;
 import org.georchestra.signalement.core.entity.ged.AttachmentEntity;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 import org.georchestra.signalement.service.st.repository.DocumentRepositoryService;
+import org.hibernate.engine.jdbc.BlobProxy;
+import org.postgresql.jdbc.PgConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author FNI18300
  *
  */
 @Service
+@Transactional(readOnly = true)
 public class DocumentRepositoryServiceImpl implements DocumentRepositoryService {
 
 	@Autowired
@@ -40,6 +44,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	private EntityManager entityManager;
 
 	@Override
+	@Transactional(readOnly = false)
 	public Long createDocument(List<String> attachmentIds, DocumentContent documentContent)
 			throws DocumentRepositoryException {
 		AttachmentEntity entity = new AttachmentEntity();
@@ -50,15 +55,23 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 		try (InputStream is = documentContent.getFileStream()) {
 			EntityManagerFactoryInfo info = (EntityManagerFactoryInfo) entityManager.getEntityManagerFactory();
 			Connection connection = info.getDataSource().getConnection();
-			Blob blob = connection.createBlob();
-			OutputStream os = blob.setBinaryStream(0);
-			IOUtils.copy(is, os);
-			entity.setContent(blob);
+			if (connection instanceof java.sql.Wrapper) {
+				connection = ((java.sql.Wrapper) connection).unwrap(PgConnection.class);
+			}
+			if (connection instanceof PgConnection) {
+				Blob blob = BlobProxy.generateProxy(is, documentContent.getFileSize());
+				entity.setContent(blob);
+			} else {
+				Blob blob = connection.createBlob();
+				OutputStream os = blob.setBinaryStream(0);
+				IOUtils.copy(is, os);
+				entity.setContent(blob);
+			}
+			entity = attachmentDao.save(entity);
 		} catch (Exception e) {
 			throw new DocumentRepositoryException("Failed to create blob", e);
 		}
 
-		entity = attachmentDao.save(entity);
 		return entity.getId();
 	}
 
@@ -109,5 +122,25 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 			throw new DocumentRepositoryException("Failed to read blob", e);
 		}
 		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteDocument(Long id) throws DocumentRepositoryException {
+		Optional<AttachmentEntity> optionalEntity = attachmentDao.findById(id);
+		if (optionalEntity.isPresent()) {
+			attachmentDao.delete(optionalEntity.get());
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteDocuments(String attachmentId) throws DocumentRepositoryException {
+		List<AttachmentEntity> entities = attachmentDao.findByAttachmentIds(attachmentId);
+		if (CollectionUtils.isNotEmpty(entities)) {
+			for (AttachmentEntity entity : entities) {
+				attachmentDao.delete(entity);
+			}
+		}
 	}
 }

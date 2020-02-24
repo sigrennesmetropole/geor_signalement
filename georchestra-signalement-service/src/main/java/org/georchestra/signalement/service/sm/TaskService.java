@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.georchestra.signalement.core.common.DocumentContent;
+import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
+import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 
 /**
  * @author FNI18300
@@ -19,6 +21,8 @@ public interface TaskService {
 	Task claimTask(String taskId);
 
 	Task createDraft(ReportingDescription reportingDescription);
+	
+	void cancelDraft(UUID reportingUuid);
 
 	void doIt(String taskId, String actionName);
 
@@ -26,7 +30,9 @@ public interface TaskService {
 
 	Task startTask(Task task);
 
-	void addAttachment(UUID reportingUuid, DocumentContent content);
+	Attachment addAttachment(UUID reportingUuid, DocumentContent content) throws DocumentRepositoryException;
 
-	DocumentContent getAttachment(UUID reportingUuid, String attachmentId);
+	DocumentContent getAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
+	
+	void removeAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
 }

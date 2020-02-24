@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AttachmentDao extends QueryDslDao<AttachmentEntity, Long> {
 
-	@Query(value = "select a from AttachmentEntity a where a.attachmentIds = :attachmentId ")
+	@Query(value = "select a from AttachmentEntity a, IN(a.attachmentIds) as attachmentIds where attachmentIds = :attachmentId ")
 	List<AttachmentEntity> findByAttachmentIds(@Param("attachmentId") String attachmentId);
 
 }
