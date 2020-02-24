@@ -111,6 +111,7 @@ CREATE TABLE context_description
     context_type character varying(30)  NOT NULL,
     geographic_type character varying(30)  NOT NULL,
     name character varying(100)  NOT NULL,
+    label character varying(250)  NOT NULL,
     process_definition_key character varying(64) ,
     revision integer,
     CONSTRAINT context_description_pkey PRIMARY KEY (id),

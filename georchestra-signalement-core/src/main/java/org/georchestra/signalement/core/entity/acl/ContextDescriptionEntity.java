@@ -40,6 +40,12 @@ public class ContextDescriptionEntity implements LongId {
 	 */
 	@Column(length = 100, nullable = false, unique = true)
 	private String name;
+	
+	/**
+	 * Libellé du contexte à afficher en front
+	 */
+	@Column(length = 250, nullable = false, unique = true)
+	private String label;
 
 	/**
 	 * L'identifiant de la définition du processus associé

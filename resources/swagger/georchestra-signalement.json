@@ -855,6 +855,9 @@
 				},
 				"name": {
 					"type": "string"
+				},
+				"label": {
+					"type": "string"
 				}
 			}
 		},
