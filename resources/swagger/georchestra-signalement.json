@@ -845,7 +845,7 @@
 		"ContextDescription": {
 			"type": "object",
 			"properties": {
-				"type": {
+				"contextType": {
 					"type": "object",
 					"$ref": "#/definitions/ContextType"
 				},
