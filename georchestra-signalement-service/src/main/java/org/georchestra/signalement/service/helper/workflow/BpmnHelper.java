@@ -26,6 +26,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class BpmnHelper {
+	
+	public static final String DEFAULT_ACTION = "default";
 
 	@Autowired
 	private ProcessEngine processEngine;
@@ -106,6 +108,12 @@ public class BpmnHelper {
 			if (flowElement != null && flowElement instanceof UserTask) {
 				handleUserTask(result, flowElement);
 			}
+		}
+		if(result.isEmpty()) {
+			Action action = new Action();
+			action.setLabel("Envoyer");
+			action.setName(DEFAULT_ACTION);
+			result.add(action);
 		}
 		return result;
 	}

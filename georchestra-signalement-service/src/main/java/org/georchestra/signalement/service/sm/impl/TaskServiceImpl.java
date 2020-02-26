@@ -40,7 +40,6 @@ import org.georchestra.signalement.service.st.repository.DocumentRepositoryServi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +52,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class TaskServiceImpl implements TaskService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
+
+	private static final String ACTION_VARIABLE_NAME = "action";
 
 	@Autowired
 	private ProcessEngine processEngine;
@@ -193,13 +194,13 @@ public class TaskServiceImpl implements TaskService {
 		if (task != null) {
 			if (authentificationHelper.getUsername().equalsIgnoreCase(task.getAssignee())) {
 				SequenceFlow sequenceFlow = bpmnHelper.lookupSequenceFlow(task, actionName);
-				if (sequenceFlow != null) {
+				if (sequenceFlow != null || BpmnHelper.DEFAULT_ACTION.equals(actionName)) {
 					String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
 					LOGGER.debug("DoIt on reporting {}", processInstanceBusinessKey);
 					UUID uuid = UUID.fromString(processInstanceBusinessKey);
 					AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
 					Map<String, Object> variables = fillProcessVariables(reportingEntity, null);
-					variables.put("action", actionName);
+					variables.put(ACTION_VARIABLE_NAME, actionName);
 					org.activiti.engine.TaskService taskService = processEngine.getTaskService();
 					taskService.complete(taskId, variables);
 					LOGGER.debug("Done on task {}=>{}", taskId, actionName);

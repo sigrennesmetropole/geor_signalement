@@ -246,7 +246,7 @@
 				}
 			}
 		},
-		"/reporting/attachment/configuration":{
+		"/reporting/attachment/configuration": {
 			"get": {
 				"tags": [
 					"reporting"
@@ -257,8 +257,7 @@
 				"produces": [
 					"application/json"
 				],
-				"parameters": [
-				],
+				"parameters": [],
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -295,14 +294,14 @@
 						"name": "contextType",
 						"description": "Type du context",
 						"required": false,
-						"type":"string"
+						"type": "string"
 					},
 					{
 						"in": "query",
 						"name": "geographicType",
 						"description": "Type de sélection",
 						"required": false,
-						"type":"string"
+						"type": "string"
 					}
 				],
 				"responses": {
@@ -650,48 +649,48 @@
 			}
 		},
 		"PaginationCriteria": {
-	    	"type": "object",
-	    	"properties": {
-	    		"offset": {
-	    			"type": "integer",
-	    			"format": "int32",
-	    			"exemple": "0",
-	    			"required": "true"
-	    		},
-	    		"limit":{
-	    			"type": "integer",
-	    			"format": "int32",
-	    			"exemple": "0",
-	    			"required": "true"
-	    		}
-	    	}
-	    },
-	    "SortCriterion": {
-	    	"type": "object",
-	    	"properties": {
-	    		"property": {
-	    			"type": "string",
-	    			"exemple": "id",
-	    			"required": "true"
-	    		},
-	    		"asc":{
-	    			"type": "boolean",
-	    			"exemple": "true",
-	    			"required": "true"
-	    		}
-	    	}
-	    },
-	    "SortCriteria": {
-	    	"type": "object",
-	    	"properties": {
-	    		"elements": {
-	    			"type": "array",
-	    			"items": {
-	    				"$ref": "#/definitions/SortCriterion"
-	    			}
-	    		}
-	    	}
-	    },
+			"type": "object",
+			"properties": {
+				"offset": {
+					"type": "integer",
+					"format": "int32",
+					"exemple": "0",
+					"required": "true"
+				},
+				"limit": {
+					"type": "integer",
+					"format": "int32",
+					"exemple": "0",
+					"required": "true"
+				}
+			}
+		},
+		"SortCriterion": {
+			"type": "object",
+			"properties": {
+				"property": {
+					"type": "string",
+					"exemple": "id",
+					"required": "true"
+				},
+				"asc": {
+					"type": "boolean",
+					"exemple": "true",
+					"required": "true"
+				}
+			}
+		},
+		"SortCriteria": {
+			"type": "object",
+			"properties": {
+				"elements": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/SortCriterion"
+					}
+				}
+			}
+		},
 		"Point": {
 			"type": "object",
 			"properties": {
@@ -847,10 +846,10 @@
 		"Section": {
 			"type": "object",
 			"properties": {
-				"name":{
+				"name": {
 					"type": "string"
 				},
-				"label":{
+				"label": {
 					"type": "string"
 				},
 				"fields": {
@@ -932,8 +931,8 @@
 				},
 				"mimeTypes": {
 					"type": "array",
-					"items":{
-						"type":"string"
+					"items": {
+						"type": "string"
 					}
 				}
 			}
@@ -1026,7 +1025,6 @@
 				"actions": {
 					"type": "array",
 					"items": {
-						"type": "string",
 						"$ref": "#/definitions/Action"
 					}
 				},
