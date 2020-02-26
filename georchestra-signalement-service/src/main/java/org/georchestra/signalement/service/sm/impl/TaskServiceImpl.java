@@ -3,6 +3,7 @@
  */
 package org.georchestra.signalement.service.sm.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
@@ -21,15 +23,17 @@ import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
 import org.georchestra.signalement.core.dto.Attachment;
+import org.georchestra.signalement.core.dto.AttachmentConfiguration;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
-import org.georchestra.signalement.core.entity.reporting.LineReportingEntity;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
+import org.georchestra.signalement.service.helper.reporting.AttachmentHelper;
 import org.georchestra.signalement.service.helper.reporting.ReportingHelper;
+import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
 import org.georchestra.signalement.service.mapper.ReportingMapper;
 import org.georchestra.signalement.service.sm.TaskService;
 import org.georchestra.signalement.service.st.repository.DocumentRepositoryService;
@@ -38,18 +42,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author FNI18300
  *
  */
 @Component
+@Transactional(readOnly = true)
 public class TaskServiceImpl implements TaskService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
-
-	@Value("${attachment.max-count:5}")
-	private int attachmentMaxCount;
 
 	@Autowired
 	private ProcessEngine processEngine;
@@ -68,6 +71,12 @@ public class TaskServiceImpl implements TaskService {
 
 	@Autowired
 	private AuthentificationHelper authentificationHelper;
+
+	@Autowired
+	private BpmnHelper bpmnHelper;
+
+	@Autowired
+	private AttachmentHelper attachmentHelper;
 
 	@Autowired
 	private ReportingMapper reportingMapper;
@@ -93,6 +102,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public Task startTask(Task task) {
 		if (task == null || task.getAsset() == null) {
 			throw new IllegalArgumentException("Task with asset is mandatory");
@@ -102,10 +112,11 @@ public class TaskServiceImpl implements TaskService {
 			throw new IllegalArgumentException("Invalid task");
 		}
 		// TODO set geometry ou update data
+		reportingMapper.updateEntityFromDto(task.getAsset(), reportingEntity);
 		reportingEntity.setUpdatedDate(new Date());
 		reportingDao.save(reportingEntity);
 
-		Map<String, Object> variables = fillProcessVariables(null);
+		Map<String, Object> variables = fillProcessVariables(reportingEntity, null);
 		ProcessInstance processInstance = startProcessInstance(reportingEntity, variables);
 
 		Task outputTask = reportingHelper.createTaskFromReporting(reportingMapper.entityToDto(reportingEntity));
@@ -115,13 +126,15 @@ public class TaskServiceImpl implements TaskService {
 		return outputTask;
 	}
 
-	private Map<String, Object> fillProcessVariables(Map<String, Object> variables) {
+	private Map<String, Object> fillProcessVariables(AbstractReportingEntity reportingEntity,
+			Map<String, Object> variables) {
 		if (variables == null) {
 			variables = new HashMap<String, Object>();
 		}
-		variables.put("employeeName", "Kermit");
-		variables.put("numberOfDays", new Integer(4));
-		variables.put("vacationMotivation", "I'm really tired!");
+		if (reportingEntity != null) {
+			variables.put("meId", reportingEntity.getId());
+			variables.put("meUuid", reportingEntity.getUuid());
+		}
 		return variables;
 	}
 
@@ -130,7 +143,7 @@ public class TaskServiceImpl implements TaskService {
 		String processDefinitionId = lookupProcessInstanceId(reportingEntity.getContextDescription());
 		RuntimeService runtimeService = processEngine.getRuntimeService();
 		ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinitionId,
-				reportingEntity.getId().toString(), variables);
+				reportingEntity.getUuid().toString(), variables);
 		return processInstance;
 	}
 
@@ -153,24 +166,88 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public Task claimTask(String taskId) {
-		// TODO Auto-generated method stub
-		return null;
+		Task result = null;
+		LOGGER.debug("Claim on task {}=>{}", taskId);
+		org.activiti.engine.task.Task task = bpmnHelper.queryTaskById(taskId);
+		if (task != null) {
+			org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+			String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
+			LOGGER.debug("Claim on reporting {}", processInstanceBusinessKey);
+			UUID uuid = UUID.fromString(processInstanceBusinessKey);
+			// TODO checker que l'on peut claimer...
+			AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+			taskService.claim(taskId, authentificationHelper.getUsername());
+		} else {
+			LOGGER.info("Skip claim on task {} invalid id", taskId);
+		}
+		return result;
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void doIt(String taskId, String actionName) {
-		// TODO Auto-generated method stub
+		LOGGER.debug("DoIt on task {}=>{}", taskId, actionName);
+		org.activiti.engine.task.Task task = bpmnHelper.queryTaskById(taskId);
+		if (task != null) {
+			if (authentificationHelper.getUsername().equalsIgnoreCase(task.getAssignee())) {
+				SequenceFlow sequenceFlow = bpmnHelper.lookupSequenceFlow(task, actionName);
+				if (sequenceFlow != null) {
+					String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
+					LOGGER.debug("DoIt on reporting {}", processInstanceBusinessKey);
+					UUID uuid = UUID.fromString(processInstanceBusinessKey);
+					AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+					Map<String, Object> variables = fillProcessVariables(reportingEntity, null);
+					variables.put("action", actionName);
+					org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+					taskService.complete(taskId, variables);
+					LOGGER.debug("Done on task {}=>{}", taskId, actionName);
+				} else {
+					LOGGER.info("Skip doIt on task {} invalid actionname {}", taskId, actionName);
+					throw new IllegalArgumentException("Action name is invalid");
+				}
+			} else {
+				LOGGER.info("Skip doIt on task {} invalid assigneee {} vrs {}", taskId, task.getAssignee(),
+						authentificationHelper.getUsername());
+				throw new IllegalArgumentException("Task is not assigned to you");
+			}
+		} else {
+			LOGGER.info("Skip doIt on task {} invalid id", taskId);
+		}
+	}
 
+	private AbstractReportingEntity loadAndUpdateReporting(UUID uuid) {
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
+		if (reportingEntity != null) {
+			reportingEntity.setUpdatedDate(new Date());
+			reportingDao.save(reportingEntity);
+		}
+		return reportingEntity;
 	}
 
 	@Override
 	public List<Task> searchTasks() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Task> results = null;
+		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+		List<org.activiti.engine.task.Task> tasks = taskService.createTaskQuery()
+				.taskAssignee(authentificationHelper.getUsername()).orderByTaskPriority().asc().orderByTaskCreateTime()
+				.desc().list();
+		if (CollectionUtils.isNotEmpty(tasks)) {
+			results = new ArrayList<>(tasks.size());
+			for (org.activiti.engine.task.Task task : tasks) {
+				LOGGER.info("Task:{}", task);
+				String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
+				UUID uuid = UUID.fromString(processInstanceBusinessKey);
+				AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+				results.add(reportingHelper.createTaskFromWorkflow(task, reportingMapper.entityToDto(reportingEntity)));
+			}
+		}
+		return results;
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public Attachment addAttachment(UUID reportingUuid, DocumentContent documentContent)
 			throws DocumentRepositoryException {
 		Attachment result = null;
@@ -182,8 +259,12 @@ public class TaskServiceImpl implements TaskService {
 			throw new IllegalArgumentException("Invalid reporting Uuid");
 		}
 		List<Long> attachmentIds = documentRepositoryService.getDocumentIds(reportingUuid.toString());
-		if (attachmentIds != null && attachmentIds.size() > attachmentMaxCount) {
+		if (attachmentIds != null && attachmentIds.size() > attachmentHelper.getAttachmentMaxCount()) {
 			throw new IllegalArgumentException("Maximum attachments per reporting is reached");
+		}
+		if (!attachmentHelper.acceptAttachmentMimeType(documentContent.getContentType())) {
+			throw new IllegalArgumentException(
+					"Invalid mime type (supported:" + attachmentHelper.getAttachmentMimeTypes() + ")");
 		}
 
 		Long documentId = documentRepositoryService.createDocument(Arrays.asList(reportingUuid.toString()),
@@ -214,6 +295,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void removeAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException {
 		AbstractReportingEntity reportingEntity = DRAFT_REPORTING_ENTITIES.get(reportingUuid);
 		if (reportingEntity == null) {
@@ -250,6 +332,11 @@ public class TaskServiceImpl implements TaskService {
 		} catch (Exception e) {
 			LOGGER.warn("Failed to delete attachments", e);
 		}
+	}
+
+	@Override
+	public AttachmentConfiguration getAttachmentConfiguration() {
+		return attachmentHelper.getAttachmentConfiguration();
 	}
 
 }

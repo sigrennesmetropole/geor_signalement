@@ -246,6 +246,38 @@
 				}
 			}
 		},
+		"/reporting/attachment/configuration":{
+			"get": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Lister la configuration liées aux pièces jointes",
+				"description": "Lister la configuration liées aux pièces jointes",
+				"operationId": "getAttachmentConfiguration",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/AttachmentConfiguration"
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
 		"/reporting/contextDescription/search": {
 			"get": {
 				"tags": [
@@ -884,6 +916,25 @@
 				},
 				"mimeType": {
 					"type": "string"
+				}
+			}
+		},
+		"AttachmentConfiguration": {
+			"type": "object",
+			"properties": {
+				"maxSize": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"maxCount": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"mimeTypes": {
+					"type": "array",
+					"items":{
+						"type":"string"
+					}
 				}
 			}
 		},

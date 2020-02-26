@@ -3,6 +3,7 @@
  */
 package org.georchestra.signalement.api.listener;
 
+import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.slf4j.Logger;
@@ -20,16 +21,36 @@ public class HookEventListener implements ActivitiEventListener {
 	public void onEvent(ActivitiEvent event) {
 		switch (event.getType()) {
 
+		case ENGINE_CLOSED:
+			LOGGER.info("Activiti - Engine closed.");
+			break;
+
+		case ENGINE_CREATED:
+			LOGGER.info("Activiti - Engine created...");
+			break;
+
 		case JOB_EXECUTION_SUCCESS:
-			LOGGER.info("A job well done! " + event);
+			LOGGER.info("Activiti - A job well done! " + event);
 			break;
 
 		case JOB_EXECUTION_FAILURE:
-			LOGGER.info("A job has failed... " + event);
+			LOGGER.info("Activiti - A job has failed... " + event);
+			break;
+
+		case ENTITY_CREATED:
+			ActivitiEntityEvent ec = (ActivitiEntityEvent) event;
+			Object o1 = ec.getEntity();
+			LOGGER.info("Activiti - Entity created: " + event.getType() + "/" + o1 + "=> " + event);
+			break;
+
+		case ENTITY_INITIALIZED:
+			ActivitiEntityEvent ei = (ActivitiEntityEvent) event;
+			Object o2 = ei.getEntity();
+			LOGGER.info("Activiti - Entity initialized: " + event.getType() + "/" + o2 + "=> " + event);
 			break;
 
 		default:
-			LOGGER.info("Event received: " + event.getType() + "=> " + event);
+			LOGGER.info("Activiti - Event received: " + event.getType() + "=> " + event);
 		}
 	}
 

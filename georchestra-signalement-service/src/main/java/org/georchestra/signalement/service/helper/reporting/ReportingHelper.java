@@ -5,9 +5,11 @@ package org.georchestra.signalement.service.helper.reporting;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.georchestra.signalement.core.dto.Action;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
@@ -18,6 +20,8 @@ import org.georchestra.signalement.core.entity.reporting.LineReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PolygonReportingEntity;
 import org.georchestra.signalement.service.common.UUIDJSONWriter;
+import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.minidev.json.JSONStyle;
@@ -32,6 +36,9 @@ import net.minidev.json.reader.BeansWriter;
  */
 @Component
 public class ReportingHelper {
+
+	@Autowired
+	private BpmnHelper bpmnHelper;
 
 	/**
 	 * Parse une définition de formulaire
@@ -116,6 +123,20 @@ public class ReportingHelper {
 		task.setUpdatedDate(reportingDescription.getUpdatedDate());
 		task.setStatus(reportingDescription.getStatus());
 		task.setInitiator(reportingDescription.getInitiator());
+		return task;
+	}
+
+	public Task createTaskFromWorkflow(org.activiti.engine.task.Task input, ReportingDescription reportingDescription) {
+		Task task = new Task();
+		task.setAsset(reportingDescription);
+		task.setCreationDate(reportingDescription.getCreationDate());
+		task.setUpdatedDate(reportingDescription.getUpdatedDate());
+		task.setStatus(reportingDescription.getStatus());
+		task.setInitiator(reportingDescription.getInitiator());
+		List<Action> actions = bpmnHelper.computeTaskActions(input);
+		task.setActions(actions);
+		task.setAssignee(input.getAssignee());
+		task.setId(input.getId());
 		return task;
 	}
 

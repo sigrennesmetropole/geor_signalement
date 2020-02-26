@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dto.Attachment;
+import org.georchestra.signalement.core.dto.AttachmentConfiguration;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
@@ -35,4 +36,6 @@ public interface TaskService {
 	DocumentContent getAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
 	
 	void removeAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
+	
+	AttachmentConfiguration getAttachmentConfiguration();
 }
