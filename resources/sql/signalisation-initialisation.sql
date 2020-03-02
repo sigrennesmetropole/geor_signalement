@@ -186,7 +186,7 @@ CREATE TABLE process_form_definition
  	id bigint NOT NULL DEFAULT nextval('process_form_definition_id_seq'::regclass),
     process_definition_id character varying(64)  NOT NULL,
     revision integer,
-    service_task_id character varying(64) ,
+    user_task_id character varying(64) ,
     form_definition_id bigint,
     CONSTRAINT process_form_definition_pkey PRIMARY KEY (id),
     CONSTRAINT fka46uc2xkhmviwxnbbgudfi3n3 FOREIGN KEY (form_definition_id)

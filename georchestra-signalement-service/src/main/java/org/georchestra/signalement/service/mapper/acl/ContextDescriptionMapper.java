@@ -1,10 +1,11 @@
-package org.georchestra.signalement.service.mapper;
+package org.georchestra.signalement.service.mapper.acl;
 
 
 import java.util.List;
 
 import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
+import org.georchestra.signalement.service.mapper.AbstractMapper;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;

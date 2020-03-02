@@ -36,8 +36,8 @@ public class ProcessFormDefinitionEntity implements LongId {
 	@Column(name = "revision")
 	private Integer revision;
 
-	@Column(name = "service_task_id", length = 64)
-	private String serviceTaskId;
+	@Column(name = "user_task_id", length = 64)
+	private String userTaskId;
 
 	@ManyToOne
 	@JoinColumn(name = "form_definition_id")

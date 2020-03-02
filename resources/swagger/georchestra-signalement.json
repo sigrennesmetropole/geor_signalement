@@ -807,7 +807,8 @@
 					"$ref": "#/definitions/FieldType"
 				},
 				"readOnly": {
-					"type": "boolean"
+					"type": "boolean",
+					"nullable": false
 				},
 				"minOccur": {
 					"type": "integer",
@@ -852,6 +853,9 @@
 				"label": {
 					"type": "string"
 				},
+				"readOnly": {
+					"type": "boolean"
+				},
 				"fields": {
 					"type": "array",
 					"items": {
@@ -864,7 +868,7 @@
 		"Form": {
 			"type": "object",
 			"properties": {
-				"fields": {
+				"sections": {
 					"type": "array",
 					"items": {
 						"type": "object",

@@ -34,7 +34,7 @@ import org.georchestra.signalement.service.helper.authentification.Authentificat
 import org.georchestra.signalement.service.helper.reporting.AttachmentHelper;
 import org.georchestra.signalement.service.helper.reporting.ReportingHelper;
 import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
-import org.georchestra.signalement.service.mapper.ReportingMapper;
+import org.georchestra.signalement.service.mapper.reporting.ReportingMapper;
 import org.georchestra.signalement.service.sm.TaskService;
 import org.georchestra.signalement.service.st.repository.DocumentRepositoryService;
 import org.slf4j.Logger;
@@ -228,6 +228,20 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	public Task getTask(String taskId) {
+		Task result = null;
+		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+		List<org.activiti.engine.task.Task> tasks = taskService.createTaskQuery()
+				.taskAssignee(authentificationHelper.getUsername()).taskId(taskId).orderByTaskPriority().asc()
+				.orderByTaskCreateTime().desc().list();
+		if (CollectionUtils.isNotEmpty(tasks)) {
+			org.activiti.engine.task.Task task = tasks.get(0);
+			result = convertTask(task);
+		}
+		return result;
+	}
+
+	@Override
 	public List<Task> searchTasks() {
 		List<Task> results = null;
 		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
@@ -237,14 +251,20 @@ public class TaskServiceImpl implements TaskService {
 		if (CollectionUtils.isNotEmpty(tasks)) {
 			results = new ArrayList<>(tasks.size());
 			for (org.activiti.engine.task.Task task : tasks) {
-				LOGGER.info("Task:{}", task);
-				String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
-				UUID uuid = UUID.fromString(processInstanceBusinessKey);
-				AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
-				results.add(reportingHelper.createTaskFromWorkflow(task, reportingMapper.entityToDto(reportingEntity)));
+				results.add(convertTask(task));
 			}
 		}
 		return results;
+	}
+
+	private Task convertTask(org.activiti.engine.task.Task task) {
+		Task result;
+		LOGGER.info("Task:{}", task);
+		String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
+		UUID uuid = UUID.fromString(processInstanceBusinessKey);
+		AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+		result = reportingHelper.createTaskFromWorkflow(task, reportingMapper.entityToDto(reportingEntity));
+		return result;
 	}
 
 	@Override
@@ -339,5 +359,4 @@ public class TaskServiceImpl implements TaskService {
 	public AttachmentConfiguration getAttachmentConfiguration() {
 		return attachmentHelper.getAttachmentConfiguration();
 	}
-
 }

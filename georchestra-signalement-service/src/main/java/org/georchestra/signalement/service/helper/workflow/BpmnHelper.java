@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class BpmnHelper {
-	
+
 	public static final String DEFAULT_ACTION = "default";
 
 	@Autowired
@@ -91,6 +91,27 @@ public class BpmnHelper {
 	}
 
 	/**
+	 * Recherche la tâche utilisateur de la task
+	 * 
+	 * @param task
+	 * @return
+	 */
+	public UserTask lookupUserTask(org.activiti.engine.task.Task task) {
+		RepositoryService repositoryService = processEngine.getRepositoryService();
+		String processDefinitionId = task.getProcessDefinitionId();
+		ProcessInstance processInstance = lookupProcessInstance(task);
+		BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+		org.activiti.bpmn.model.Process process = bpmnModel.getProcessById(processInstance.getProcessDefinitionKey());
+		if (process != null) {
+			FlowElement flowElement = process.getFlowElement(task.getTaskDefinitionKey());
+			if (flowElement != null && flowElement instanceof UserTask) {
+				return (UserTask) flowElement;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Calcule la liste des actions d'une tâche
 	 * 
 	 * @param task
@@ -109,7 +130,7 @@ public class BpmnHelper {
 				handleUserTask(result, flowElement);
 			}
 		}
-		if(result.isEmpty()) {
+		if (result.isEmpty()) {
 			Action action = new Action();
 			action.setLabel("Envoyer");
 			action.setName(DEFAULT_ACTION);

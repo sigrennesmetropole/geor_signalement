@@ -28,6 +28,8 @@ public interface TaskService {
 	void doIt(String taskId, String actionName);
 
 	List<Task> searchTasks();
+	
+	Task getTask(String taskId);
 
 	Task startTask(Task task);
 

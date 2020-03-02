@@ -35,9 +35,6 @@
 		<commons.lang.version>3.9</commons.lang.version>
 		<commons.collections.version>4.4</commons.collections.version>
 
-		<!-- <httpclient.version>4.5.10</httpclient.version> <json.simple.version>1.1</json.simple.version> 
-			<javax.validation.version>2.0.1.Final</javax.validation.version> -->
-
 		<springfox.version>2.8.0</springfox.version>
 		<mapstruct.version>1.2.0.Final</mapstruct.version>
 		<lombok.version>1.18.6</lombok.version>
@@ -45,9 +42,8 @@
 		<jsoup.version>1.12.1</jsoup.version>
 
 		<activiti.version>7.1.0.M5</activiti.version>
-		<!-- <spring-activiti.version>2.2.4.RELEASE</spring-activiti.version> -->
 
-		<swagger.plugin.version>2.4.10</swagger.plugin.version>
+		<swagger.plugin.version>2.4.12</swagger.plugin.version>
 		<maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 		<compiler.plugin.version>3.5.1</compiler.plugin.version>
 		<assemby.plugin.version>2.6</assemby.plugin.version>
@@ -88,7 +84,8 @@
 		<profile>
 			<id>dev</id>
 			<properties>
-				<georchestra.addon.deployDir>C:\Program Files\Apache\apache-tomcat-9.0.26\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
+				<georchestra.addon.deployDir>C:\Program
+					Files\Apache\apache-tomcat-9.0.26\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
 			</properties>
 		</profile>
 	</profiles>

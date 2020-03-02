@@ -39,8 +39,7 @@ public class SectionDefinitionEntity implements LongId {
 	/**
 	 * Contient un flux json constitué par une liste de FieldDefinition
 	 */
-	@Lob
-	@Column(name = "definition", nullable = false)
+	@Column(name = "definition", nullable = false, columnDefinition = "text", length = 4086)
 	private String definition;
 
 }

@@ -4,17 +4,18 @@
 package org.georchestra.signalement.service.helper.form;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import org.georchestra.signalement.core.dto.FormDefinition;
-import org.georchestra.signalement.service.common.UUIDJSONWriter;
+import org.georchestra.signalement.service.exception.FormDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import net.minidev.json.JSONStyle;
-import net.minidev.json.JSONValue;
-import net.minidev.json.parser.JSONParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 import net.minidev.json.parser.ParseException;
-import net.minidev.json.reader.BeansWriter;
 
 /**
  * Helper pour la sérialisation des définitions de formulaire
@@ -25,16 +26,24 @@ import net.minidev.json.reader.BeansWriter;
 @Component
 public class FormDefinitionHelper {
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	/**
 	 * Parse une définition de formulaire
 	 * 
 	 * @param formDefinition
 	 * @return
 	 * @throws ParseException
+	 * @throws IOException
 	 */
-	public FormDefinition hydrateForm(String formDefinition) throws ParseException {
-		JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-		return parser.parse(formDefinition, FormDefinition.class);
+	public FormDefinition hydrateForm(String formDefinition) throws FormDefinitionException {
+		ObjectReader objectReader = objectMapper.readerFor(FormDefinition.class);
+		try {
+			return objectReader.readValue(formDefinition);
+		} catch (IOException e) {
+			throw new FormDefinitionException("Failed to hydrate:" + formDefinition, e);
+		}
 	}
 
 	/**
@@ -44,12 +53,13 @@ public class FormDefinitionHelper {
 	 * @return
 	 * @throws IOException
 	 */
-	public String deshydrateForm(FormDefinition form) throws IOException {
-		JSONValue.registerWriter(UUID.class, new UUIDJSONWriter());
-		BeansWriter beansWriter = new BeansWriter();
-		StringBuilder builder = new StringBuilder();
-		beansWriter.writeJSONString(form, builder, new JSONStyle((JSONStyle.FLAG_IGNORE_NULL)));
-		return builder.toString();
+	public String deshydrateForm(FormDefinition form) throws FormDefinitionException {
+		ObjectWriter objectWriter = objectMapper.writer();
+		try {
+			return objectWriter.writeValueAsString(form);
+		} catch (JsonProcessingException e) {
+			throw new FormDefinitionException("Failed to deshydrate:" + form, e);
+		}
 	}
 
 }

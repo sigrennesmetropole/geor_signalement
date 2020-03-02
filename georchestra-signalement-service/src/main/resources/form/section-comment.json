@@ -1,0 +1,19 @@
+{
+	"fieldDefinitions": [
+		{
+			"name": "comment-user",
+			"label": "Commentaire sur le traitement du signalement",
+			"type": "STRING",
+			"readOnly": false,
+			"minOccur": 0,
+			"maxOccur": 1,
+			"extendedType": "textarea",
+			"validators": [
+				{
+					"type": "MAXLENGTH",
+					"attribute": "1024"
+				}
+			]
+		}
+	]
+}

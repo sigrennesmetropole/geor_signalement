@@ -17,11 +17,12 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
-import org.georchestra.signalement.core.dao.acl.ContextDescriptionCustomDao;
-import org.georchestra.signalement.core.dto.ContextDescriptionSearchCriteria;
+import org.georchestra.signalement.core.dao.form.ProcessFormDefinitionCustomDao;
+import org.georchestra.signalement.core.dto.ProcessFormDefinitionSearchCriteria;
 import org.georchestra.signalement.core.dto.SortCriteria;
-import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
+import org.georchestra.signalement.core.entity.form.ProcessFormDefinitionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,40 +33,58 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Repository
-public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl implements ContextDescriptionCustomDao {
+public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl implements ProcessFormDefinitionCustomDao {
 
+	private static final String PROCESS_DEFINITION_ID_PROPERTY = "processDefinitionId";
+	private static final String USER_TASK_ID_PROPERTY = "userTaskId";
+	private static final String REVISION_PROPERTY = "revision";
 	@Autowired
 	private EntityManager entityManager;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<ContextDescriptionEntity> searchContextDescriptions(ContextDescriptionSearchCriteria searchCriteria,
-			SortCriteria sortCriteria) {
-		List<ContextDescriptionEntity> result = null;
+	public List<ProcessFormDefinitionEntity> searchProcessFormDefintions(
+			ProcessFormDefinitionSearchCriteria searchCriteria, SortCriteria sortCriteria) {
+		List<ProcessFormDefinitionEntity> result = null;
 
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-		CriteriaQuery<ContextDescriptionEntity> searchQuery = builder.createQuery(ContextDescriptionEntity.class);
-		Root<ContextDescriptionEntity> searchRoot = searchQuery.from(ContextDescriptionEntity.class);
+		CriteriaQuery<ProcessFormDefinitionEntity> searchQuery = builder.createQuery(ProcessFormDefinitionEntity.class);
+		Root<ProcessFormDefinitionEntity> searchRoot = searchQuery.from(ProcessFormDefinitionEntity.class);
 
 		buildQuery(searchCriteria, builder, searchQuery, searchRoot);
 		applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
 
-		TypedQuery<ContextDescriptionEntity> typedQuery = entityManager.createQuery(searchQuery);
+		TypedQuery<ProcessFormDefinitionEntity> typedQuery = entityManager.createQuery(searchQuery);
 		result = typedQuery.getResultList().stream().distinct().collect(Collectors.toList());
 
 		return result;
 	}
 
-	private void buildQuery(ContextDescriptionSearchCriteria searchCriteria, CriteriaBuilder builder,
-			CriteriaQuery<ContextDescriptionEntity> criteriaQuery, Root<ContextDescriptionEntity> root) {
+	private void buildQuery(ProcessFormDefinitionSearchCriteria searchCriteria, CriteriaBuilder builder,
+			CriteriaQuery<ProcessFormDefinitionEntity> criteriaQuery, Root<ProcessFormDefinitionEntity> root) {
 		if (searchCriteria != null) {
 			List<Predicate> predicates = new ArrayList<>();
-			if (searchCriteria.getContextType() != null) {
-				predicates.add(builder.equal(root.get("contextType"), searchCriteria.getContextType()));
+			if (StringUtils.isNotEmpty(searchCriteria.getProcessDefinitionId())) {
+				predicates.add(builder.equal(root.get(PROCESS_DEFINITION_ID_PROPERTY), searchCriteria.getProcessDefinitionId()));
 			}
-			if (searchCriteria.getGeographicType() != null) {
-				predicates.add(builder.equal(root.get("geographicType"), searchCriteria.getGeographicType()));
+			if (searchCriteria.getRevision() != null || searchCriteria.isAcceptFlexRevision()) {
+				Predicate p = builder.equal(root.get(REVISION_PROPERTY), searchCriteria.getRevision());
+				if (!searchCriteria.isAcceptFlexRevision()) {
+					predicates.add(p);
+				} else {
+					Predicate f = builder.isNull(root.get(REVISION_PROPERTY));
+					predicates.add(builder.or(p, f));
+				}
+			}
+			if (StringUtils.isNotEmpty(searchCriteria.getUserTaskId())) {
+				Predicate p = builder.equal(root.get(USER_TASK_ID_PROPERTY), searchCriteria.getUserTaskId());
+				if (!searchCriteria.isAcceptFlexUserTaskId()) {
+					predicates.add(p);
+				} else {
+					Predicate f = builder.isNull(root.get(USER_TASK_ID_PROPERTY));
+					predicates.add(builder.or(p, f));
+				}
 			}
 			if (CollectionUtils.isNotEmpty(predicates)) {
 				criteriaQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));

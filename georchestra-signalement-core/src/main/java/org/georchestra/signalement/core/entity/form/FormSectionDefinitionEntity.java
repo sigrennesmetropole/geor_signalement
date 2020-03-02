@@ -34,7 +34,7 @@ public class FormSectionDefinitionEntity implements LongId, Ordered {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "readOnly", nullable = false)
+	@Column(name = "read_only", nullable = false)
 	private boolean readOnly;
 
 	@Column(name = "order_", nullable = false)

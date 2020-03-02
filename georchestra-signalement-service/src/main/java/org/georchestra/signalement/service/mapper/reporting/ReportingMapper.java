@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.georchestra.signalement.service.mapper;
+package org.georchestra.signalement.service.mapper.reporting;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +27,7 @@ import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.ged.AttachmentEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.helper.reporting.ReportingHelper;
+import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

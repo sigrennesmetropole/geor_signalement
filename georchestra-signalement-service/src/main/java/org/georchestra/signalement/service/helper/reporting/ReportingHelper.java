@@ -9,18 +9,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.activiti.bpmn.model.UserTask;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.apache.commons.collections4.CollectionUtils;
+import org.georchestra.signalement.core.dao.form.ProcessFormDefinitionCustomDao;
 import org.georchestra.signalement.core.dto.Action;
 import org.georchestra.signalement.core.dto.GeographicType;
+import org.georchestra.signalement.core.dto.ProcessFormDefinitionSearchCriteria;
 import org.georchestra.signalement.core.dto.ReportingDescription;
+import org.georchestra.signalement.core.dto.SortCriteria;
+import org.georchestra.signalement.core.dto.SortCriterion;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
+import org.georchestra.signalement.core.entity.form.ProcessFormDefinitionEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.LineReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PolygonReportingEntity;
 import org.georchestra.signalement.service.common.UUIDJSONWriter;
+import org.georchestra.signalement.service.exception.FormDefinitionException;
 import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
+import org.georchestra.signalement.service.mapper.form.FormMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,8 +49,16 @@ import net.minidev.json.reader.BeansWriter;
 @Component
 public class ReportingHelper {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReportingHelper.class);
+
 	@Autowired
 	private BpmnHelper bpmnHelper;
+
+	@Autowired
+	private FormMapper formMapper;
+
+	@Autowired
+	private ProcessFormDefinitionCustomDao processFormDefinitionCustomDao;
 
 	/**
 	 * Parse une définition de formulaire
@@ -137,7 +157,42 @@ public class ReportingHelper {
 		task.setActions(actions);
 		task.setAssignee(input.getAssignee());
 		task.setId(input.getId());
+		ProcessFormDefinitionSearchCriteria searchCriteria = createSearchCriteria(input);
+		SortCriteria sortCriteria = createSortCriteria();
+		List<ProcessFormDefinitionEntity> processFormDefinitionEntities = processFormDefinitionCustomDao
+				.searchProcessFormDefintions(searchCriteria, sortCriteria);
+		if (CollectionUtils.isNotEmpty(processFormDefinitionEntities)) {
+			ProcessFormDefinitionEntity processFormDefinitionEntity = processFormDefinitionEntities.get(0);
+			try {
+				task.setForm(formMapper.entityToDto(processFormDefinitionEntity.getFormDefinition()));
+			} catch (FormDefinitionException e) {
+				LOGGER.warn("Failed to set form for task:" + input.getId(), e);
+			}
+		}
 		return task;
+	}
+
+	private SortCriteria createSortCriteria() {
+		SortCriteria sortCriteria = new SortCriteria();
+		sortCriteria.addElementsItem(createAscSortCriterion("revision"));
+		sortCriteria.addElementsItem(createAscSortCriterion("userTaskId"));
+		return sortCriteria;
+	}
+
+	private SortCriterion createAscSortCriterion(String property) {
+		SortCriterion sortCriterion = new SortCriterion();
+		sortCriterion.setProperty(property);
+		sortCriterion.asc(true);
+		return sortCriterion;
+	}
+
+	private ProcessFormDefinitionSearchCriteria createSearchCriteria(org.activiti.engine.task.Task input) {
+		ProcessInstance processInstance = bpmnHelper.lookupProcessInstance(input);
+		UserTask userTask = bpmnHelper.lookupUserTask(input);
+		ProcessFormDefinitionSearchCriteria searchCriteria = new ProcessFormDefinitionSearchCriteria(
+				processInstance.getProcessDefinitionKey(), processInstance.getProcessDefinitionVersion(), true,
+				userTask.getId(), true);
+		return searchCriteria;
 	}
 
 }

@@ -30,6 +30,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -91,6 +96,7 @@
 				<groupId>io.swagger</groupId>
 				<artifactId>swagger-codegen-maven-plugin</artifactId>
 				<configuration>
+					<verbose>true</verbose>
 					<modelPackage>org.georchestra.signalement.core.dto</modelPackage>
 					<inputSpec>resources/swagger/georchestra-signalement.json</inputSpec>
 					<language>spring</language>

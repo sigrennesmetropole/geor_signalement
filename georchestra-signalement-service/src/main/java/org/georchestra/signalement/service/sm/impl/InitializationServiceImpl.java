@@ -15,7 +15,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.service.exception.InitializationException;
-import org.georchestra.signalement.service.mapper.ProcessDefinitionMapper;
+import org.georchestra.signalement.service.mapper.workflow.ProcessDefinitionMapper;
 import org.georchestra.signalement.service.sm.InitializationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

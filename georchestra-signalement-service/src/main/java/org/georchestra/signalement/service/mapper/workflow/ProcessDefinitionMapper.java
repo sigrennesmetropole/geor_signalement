@@ -1,4 +1,4 @@
-package org.georchestra.signalement.service.mapper;
+package org.georchestra.signalement.service.mapper.workflow;
 
 import org.activiti.engine.repository.ProcessDefinition;
 import org.mapstruct.Mapper;
