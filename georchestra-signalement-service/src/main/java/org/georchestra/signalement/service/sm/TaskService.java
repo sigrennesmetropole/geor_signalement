@@ -11,7 +11,10 @@ import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.AttachmentConfiguration;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
+import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
+import org.georchestra.signalement.service.exception.FormConvertException;
+import org.georchestra.signalement.service.exception.FormDefinitionException;
 
 /**
  * @author FNI18300
@@ -30,6 +33,8 @@ public interface TaskService {
 	List<Task> searchTasks();
 	
 	Task getTask(String taskId);
+	
+	Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException;
 
 	Task startTask(Task task);
 

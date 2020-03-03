@@ -62,4 +62,14 @@ public class TaskController implements TaskApi {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@Override
+	public ResponseEntity<Task> getTask(String taskId) throws Exception {
+		return ResponseEntity.ok(taskService.getTask(taskId));
+	}
+
+	@Override
+	public ResponseEntity<Task> updateTask(@Valid Task task) throws Exception {
+		return ResponseEntity.ok(taskService.updateTask(task));
+	}
+
 }

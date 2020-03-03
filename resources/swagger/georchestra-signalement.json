@@ -550,6 +550,86 @@
 				}
 			}
 		},
+		"/task/{taskId}": {
+			"get": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Récupérer une tâche d'un signalement",
+				"description": "",
+				"operationId": "getTask",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskId",
+						"description": "Identifiant de la tâche associée",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/update": {
+			"put": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Mise à jour de la tâche du signalement",
+				"description": "",
+				"operationId": "updateTask",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "task",
+						"description": "Description du signalement",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
 		"/task/do/{taskId}/{actionName}": {
 			"put": {
 				"tags": [

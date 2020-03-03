@@ -24,13 +24,18 @@ import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
 import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.AttachmentConfiguration;
+import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
+import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
+import org.georchestra.signalement.service.exception.FormConvertException;
+import org.georchestra.signalement.service.exception.FormDefinitionException;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
+import org.georchestra.signalement.service.helper.form.FormHelper;
 import org.georchestra.signalement.service.helper.reporting.AttachmentHelper;
 import org.georchestra.signalement.service.helper.reporting.ReportingHelper;
 import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
@@ -74,6 +79,9 @@ public class TaskServiceImpl implements TaskService {
 	private AuthentificationHelper authentificationHelper;
 
 	@Autowired
+	private FormHelper formHelper;
+
+	@Autowired
 	private BpmnHelper bpmnHelper;
 
 	@Autowired
@@ -113,6 +121,7 @@ public class TaskServiceImpl implements TaskService {
 			throw new IllegalArgumentException("Invalid task");
 		}
 		// TODO set geometry ou update data
+		// mise à jour de l'entité
 		reportingMapper.updateEntityFromDto(task.getAsset(), reportingEntity);
 		reportingEntity.setUpdatedDate(new Date());
 		reportingDao.save(reportingEntity);
@@ -146,24 +155,6 @@ public class TaskServiceImpl implements TaskService {
 		ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinitionId,
 				reportingEntity.getUuid().toString(), variables);
 		return processInstance;
-	}
-
-	private String lookupProcessInstanceId(ContextDescriptionEntity contextDescription) {
-		String result = null;
-		RepositoryService repositoryService = processEngine.getRepositoryService();
-
-		ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().active()
-				.processDefinitionKey(contextDescription.getProcessDefinitionKey());
-		if (contextDescription.getRevision() != null) {
-			processDefinitionQuery.processDefinitionVersion(contextDescription.getRevision());
-		} else {
-			processDefinitionQuery.latestVersion();
-		}
-		List<ProcessDefinition> processDefinitions = processDefinitionQuery.list();
-		if (CollectionUtils.isNotEmpty(processDefinitions)) {
-			result = processDefinitions.get(0).getId();
-		}
-		return result;
 	}
 
 	@Override
@@ -218,13 +209,39 @@ public class TaskServiceImpl implements TaskService {
 		}
 	}
 
-	private AbstractReportingEntity loadAndUpdateReporting(UUID uuid) {
-		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
-		if (reportingEntity != null) {
-			reportingEntity.setUpdatedDate(new Date());
-			reportingDao.save(reportingEntity);
+	@Override
+	public Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException {
+		Task result = null;
+		if (task == null || task.getId() == null) {
+			throw new IllegalArgumentException("Invalid task:" + task);
 		}
-		return reportingEntity;
+		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+		List<org.activiti.engine.task.Task> tasks = taskService.createTaskQuery()
+				.taskAssignee(authentificationHelper.getUsername()).taskId(task.getId()).orderByTaskPriority().asc()
+				.orderByTaskCreateTime().desc().list();
+		if (CollectionUtils.isNotEmpty(tasks)) {
+			// récupération de la tâche
+			org.activiti.engine.task.Task originalTask = tasks.get(0);
+			// récupération de l'entité associée
+			String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(originalTask);
+			UUID uuid = UUID.fromString(processInstanceBusinessKey);
+			AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+			// mise à jour de l'entité
+			reportingMapper.updateEntityFromDto(task.getAsset(), reportingEntity);
+			// mise à jour des datas de l'entité
+			updateReportingDatas(task, originalTask, reportingEntity);
+		}
+		return result;
+	}
+
+	private void updateReportingDatas(Task task, org.activiti.engine.task.Task originalTask,
+			AbstractReportingEntity reportingEntity)
+			throws DataException, FormDefinitionException, FormConvertException {
+		Map<String, Object> datas = reportingHelper.hydrateData(reportingEntity.getDatas());
+		Form orignalForm = formHelper.lookupForm(originalTask);
+		formHelper.copyFormData(task.getForm(), orignalForm);
+		formHelper.fillMap(orignalForm, datas);
+		reportingEntity.setDatas(reportingHelper.deshydrateData(datas));
 	}
 
 	@Override
@@ -255,16 +272,6 @@ public class TaskServiceImpl implements TaskService {
 			}
 		}
 		return results;
-	}
-
-	private Task convertTask(org.activiti.engine.task.Task task) {
-		Task result;
-		LOGGER.info("Task:{}", task);
-		String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
-		UUID uuid = UUID.fromString(processInstanceBusinessKey);
-		AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
-		result = reportingHelper.createTaskFromWorkflow(task, reportingMapper.entityToDto(reportingEntity));
-		return result;
 	}
 
 	@Override
@@ -358,5 +365,40 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public AttachmentConfiguration getAttachmentConfiguration() {
 		return attachmentHelper.getAttachmentConfiguration();
+	}
+
+	private Task convertTask(org.activiti.engine.task.Task task) {
+		LOGGER.info("Task:{}", task);
+		String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
+		UUID uuid = UUID.fromString(processInstanceBusinessKey);
+		AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+		return reportingHelper.createTaskFromWorkflow(task, reportingMapper.entityToDto(reportingEntity));
+	}
+
+	private AbstractReportingEntity loadAndUpdateReporting(UUID uuid) {
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
+		if (reportingEntity != null) {
+			reportingEntity.setUpdatedDate(new Date());
+			reportingDao.save(reportingEntity);
+		}
+		return reportingEntity;
+	}
+
+	private String lookupProcessInstanceId(ContextDescriptionEntity contextDescription) {
+		String result = null;
+		RepositoryService repositoryService = processEngine.getRepositoryService();
+
+		ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().active()
+				.processDefinitionKey(contextDescription.getProcessDefinitionKey());
+		if (contextDescription.getRevision() != null) {
+			processDefinitionQuery.processDefinitionVersion(contextDescription.getRevision());
+		} else {
+			processDefinitionQuery.latestVersion();
+		}
+		List<ProcessDefinition> processDefinitions = processDefinitionQuery.list();
+		if (CollectionUtils.isNotEmpty(processDefinitions)) {
+			result = processDefinitions.get(0).getId();
+		}
+		return result;
 	}
 }
