@@ -96,7 +96,6 @@
 				<groupId>io.swagger</groupId>
 				<artifactId>swagger-codegen-maven-plugin</artifactId>
 				<configuration>
-					<verbose>true</verbose>
 					<modelPackage>org.georchestra.signalement.core.dto</modelPackage>
 					<inputSpec>resources/swagger/georchestra-signalement.json</inputSpec>
 					<language>spring</language>

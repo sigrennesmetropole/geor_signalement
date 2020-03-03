@@ -14,9 +14,14 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.core.dao.form.ProcessFormDefinitionCustomDao;
 import org.georchestra.signalement.core.dto.Action;
+import org.georchestra.signalement.core.dto.Field;
+import org.georchestra.signalement.core.dto.FieldDefinition;
+import org.georchestra.signalement.core.dto.FieldType;
+import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.ProcessFormDefinitionSearchCriteria;
 import org.georchestra.signalement.core.dto.ReportingDescription;
+import org.georchestra.signalement.core.dto.Section;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.SortCriterion;
 import org.georchestra.signalement.core.dto.Status;
@@ -165,11 +170,50 @@ public class ReportingHelper {
 			ProcessFormDefinitionEntity processFormDefinitionEntity = processFormDefinitionEntities.get(0);
 			try {
 				task.setForm(formMapper.entityToDto(processFormDefinitionEntity.getFormDefinition()));
+				fillFormWithData(task.getForm(), reportingDescription);
 			} catch (FormDefinitionException e) {
 				LOGGER.warn("Failed to set form for task:" + input.getId(), e);
 			}
 		}
 		return task;
+	}
+
+	private void fillFormWithData(Form form, ReportingDescription reportingDescription) {
+		if (form != null && CollectionUtils.isNotEmpty(form.getSections()) && reportingDescription.getDatas() != null) {
+			Map<String, Object> datas = (Map<String, Object>) reportingDescription.getDatas();
+			for (Section section : form.getSections()) {
+				if (CollectionUtils.isNotEmpty(section.getFields())) {
+					for (Field field : section.getFields()) {
+						Object value = datas.get(field.getDefinition().getName());
+						if (value != null) {
+							/*
+							 * if( FieldType.LIST == field.getDefinition().getType() &&
+							 * field.getDefinition().getMaxOccur() == null ||
+							 * field.getDefinition().getMaxOccur() == -1)) {
+							 * 
+							 * } field.addValuesItem(value.toString());
+							 */
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private boolean isRequired(FieldDefinition fieldDefinition) {
+		boolean result = false;
+		if (Boolean.TRUE.equals(fieldDefinition.isRequired())) {
+			result = true;
+		}
+		return result;
+	}
+
+	private boolean isMultiple(FieldDefinition fieldDefinition) {
+		boolean result = false;
+		if (Boolean.TRUE.equals(fieldDefinition.isMultiple())) {
+			result = true;
+		}
+		return result;
 	}
 
 	private SortCriteria createSortCriteria() {

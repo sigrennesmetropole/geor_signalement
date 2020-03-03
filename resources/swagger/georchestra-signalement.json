@@ -807,16 +807,13 @@
 					"$ref": "#/definitions/FieldType"
 				},
 				"readOnly": {
-					"type": "boolean",
-					"nullable": false
+					"type": "boolean"
 				},
-				"minOccur": {
-					"type": "integer",
-					"format": "int32"
+				"required": {
+					"type": "boolean"
 				},
-				"maxOccur": {
-					"type": "integer",
-					"format": "int32"
+				"multiple": {
+					"type": "boolean"
 				},
 				"extendedType": {
 					"type": "string"
