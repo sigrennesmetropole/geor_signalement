@@ -105,6 +105,7 @@ public class TaskServiceImpl implements TaskService {
 		}
 		AbstractReportingEntity reportingEntity = reportingHelper.createReportingEntity(contextDescription,
 				authentificationHelper.getUsername());
+		reportingMapper.updateEntityFromDto(reportingDescription, reportingEntity);
 		DRAFT_REPORTING_ENTITIES.put(reportingEntity.getUuid(), reportingEntity);
 
 		return reportingHelper.createTaskFromReporting(reportingMapper.entityToDto(reportingEntity));
@@ -210,6 +211,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException {
 		Task result = null;
 		if (task == null || task.getId() == null) {

@@ -5,13 +5,16 @@ package org.georchestra.signalement.service.helper.reporting;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.Action;
 import org.georchestra.signalement.core.dto.Form;
+import org.georchestra.signalement.core.dto.FormDefinition;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
@@ -30,6 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import net.minidev.json.JSONStyle;
 import net.minidev.json.JSONValue;
@@ -52,6 +60,9 @@ public class ReportingHelper {
 	@Autowired
 	private FormHelper formHelper;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	/**
 	 * Parse une définition de formulaire
 	 * 
@@ -59,14 +70,25 @@ public class ReportingHelper {
 	 * @return
 	 * @throws ParseException
 	 */
-	@SuppressWarnings("unchecked")
 	public Map<String, Object> hydrateData(String datas) throws DataException {
-		JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-		try {
-			return parser.parse(datas, Map.class);
-		} catch (ParseException e) {
-			throw new DataException("Failed to hydrate data:" + datas, e);
+		Map<String, Object> result = null;
+		// JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+		if (StringUtils.isNotEmpty(datas)) {
+			ObjectReader objectReader = objectMapper.readerFor(Map.class);
+			try {
+				return objectReader.readValue(datas);
+			} catch (IOException e) {
+				throw new DataException("Failed to hydrate:" + datas, e);
+			}
+//			try {
+//				result = parser.parse(datas, Map.class);
+//			} catch (ParseException e) {
+//				throw new DataException("Failed to hydrate data:" + datas, e);
+//			}
+		} else {
+			result = new HashMap<>();
 		}
+		return result;
 	}
 
 	/**
@@ -77,15 +99,23 @@ public class ReportingHelper {
 	 * @throws IOException
 	 */
 	public String deshydrateData(Map<String, Object> datas) throws DataException {
-		JSONValue.registerWriter(UUID.class, new UUIDJSONWriter());
-		BeansWriter beansWriter = new BeansWriter();
-		StringBuilder builder = new StringBuilder();
-		try {
-			beansWriter.writeJSONString(datas, builder, new JSONStyle((JSONStyle.FLAG_IGNORE_NULL)));
-		} catch (IOException e) {
-			throw new DataException("Failed to deshydrate data", e);
+		/*
+		 * JSONValue.registerWriter(UUID.class, new UUIDJSONWriter()); BeansWriter
+		 * beansWriter = new BeansWriter(); StringBuilder builder = new StringBuilder();
+		 * if (datas != null) { try { beansWriter.writeJSONString(datas, builder, new
+		 * JSONStyle((JSONStyle.FLAG_IGNORE_NULL))); } catch (IOException e) { throw new
+		 * DataException("Failed to deshydrate data", e); } } return builder.toString();
+		 */
+		String result = null;
+		if (datas != null) {
+			ObjectWriter objectWriter = objectMapper.writer();
+			try {
+				result = objectWriter.writeValueAsString(datas);
+			} catch (JsonProcessingException e) {
+				throw new DataException("Failed to deshydrate:" + datas, e);
+			}
 		}
-		return builder.toString();
+		return result;
 	}
 
 	/**

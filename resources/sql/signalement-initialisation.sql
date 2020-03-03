@@ -51,9 +51,9 @@ CREATE TABLE signalement.abstract_reporting
 
 ALTER TABLE signalement.abstract_reporting   OWNER to signalement;
 
-CREATE SEQUENCE signalement.abstract_reporting_seq;
-ALTER SEQUENCE signalement.abstract_reporting_seq OWNER TO signalement;
-ALTER TABLE signalement.abstract_reporting ALTER COLUMN ID SET DEFAULT nextval('signalement.abstract_reporting_seq'::regclass);
+CREATE SEQUENCE signalement.abstract_reporting_id_seq;
+ALTER SEQUENCE signalement.abstract_reporting_id_seq OWNER TO signalement;
+ALTER TABLE signalement.abstract_reporting ALTER COLUMN ID SET DEFAULT nextval('signalement.abstract_reporting_id_seq'::regclass);
 
 -- DROP TABLE signalement.line_reporting;
 CREATE TABLE signalement.line_reporting

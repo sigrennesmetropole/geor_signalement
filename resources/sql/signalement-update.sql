@@ -6,3 +6,5 @@ INSERT INTO form_section_definition ( read_only, order_, section_definition_id, 
 insert into process_form_definition ( process_definition_id, revision, user_task_id, form_definition_id) values ( 'simpleReportingProcess', null, null, currval('form_definition_id_seq') );
 insert into process_form_definition ( process_definition_id, revision, user_task_id, form_definition_id) values ( 'simpleReportingProcess', null, 'UserTask_1', currval('form_definition_id_seq'));
 insert into process_form_definition ( process_definition_id, revision, user_task_id, form_definition_id) values ( 'simpleReportingProcess', 8, 'UserTask_1', currval('form_definition_id_seq'));
+
+INSERT INTO signalement.context_description(context_type, geographic_type, name, label, process_definition_key, revision) VALUES ( 'LAYER', 'POINT', 'layer1', 'Layer 1', 'simpleReportingProcess', null);

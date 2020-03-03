@@ -5,8 +5,8 @@
 			"label": "Commentaire sur le traitement du signalement",
 			"type": "STRING",
 			"readOnly": false,
-			"minOccur": 0,
-			"maxOccur": 1,
+			"required": false,
+			"multiple": false,
 			"extendedType": "textarea",
 			"validators": [
 				{
