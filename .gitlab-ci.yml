@@ -25,6 +25,8 @@ sbapi:build:
   script:
     - sh ./mvnw $MAVEN_CLI_OPTS -U package
   stage: build
+  tags: 
+   - cdp-rennes  
   artifacts:
     paths:
       - $CI_PROJECT_DIR/georchestra-signalements-api/target/georchestra-signalements-api-*.jar
