@@ -29,6 +29,7 @@ public class PreAuthenticationToken extends AbstractAuthenticationToken {
 
 	/**
 	 * Constructeur
+	 * 
 	 * @param username
 	 * @param roles
 	 */
@@ -44,6 +45,7 @@ public class PreAuthenticationToken extends AbstractAuthenticationToken {
 
 	/**
 	 * Construction de la listes de roles
+	 * 
 	 * @param roles
 	 * @return
 	 */
@@ -63,5 +65,30 @@ public class PreAuthenticationToken extends AbstractAuthenticationToken {
 	@Override
 	public Object getPrincipal() {
 		return this.principal;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((principal == null) ? 0 : principal.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PreAuthenticationToken other = (PreAuthenticationToken) obj;
+		if (principal == null) {
+			if (other.principal != null)
+				return false;
+		} else if (!principal.equals(other.principal))
+			return false;
+		return true;
 	}
 }

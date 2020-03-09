@@ -39,7 +39,7 @@ public class WorkflowContext {
 	 * @param message
 	 */
 	public void info(String message) {
-		LOGGER.info("WkC - " + message);
+		LOGGER.info("WkC - {}", message);
 	}
 
 	/**
@@ -83,19 +83,20 @@ public class WorkflowContext {
 	/**
 	 * Retourne la liste des users candidats pour la tâche
 	 * 
-	 * @param scriptContext
+	 * @param scriptContext   le context
 	 * @param executionEntity
 	 * @param roleName        le rôle rechercher
 	 * @return la liste des users par leur identifiant sec-username
 	 */
-	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName) {
+	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
+			String roleName) {
 		return Arrays.asList("toto@open.com");
 	}
-	
+
 	/**
 	 * Retourne la liste des users candidats pour la tâche
 	 * 
-	 * @param scriptContext
+	 * @param scriptContext   le context
 	 * @param executionEntity
 	 * @param roleName        le rôle rechercher
 	 * @return la liste des users par leur identifiant sec-username

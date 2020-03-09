@@ -18,6 +18,7 @@ import org.georchestra.signalement.core.dto.AttachmentConfiguration;
 import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.dto.ContextDescriptionSearchCriteria;
 import org.georchestra.signalement.core.dto.ContextType;
+import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.SortCriterion;
@@ -93,6 +94,11 @@ public class ReportingController implements ReportingApi {
 	public ResponseEntity<AttachmentConfiguration> getAttachmentConfiguration() throws Exception {
 		return ResponseEntity.ok(taskService.getAttachmentConfiguration());
 	}
+	
+	@Override
+	public ResponseEntity<Form> lookupDrafForm(@Valid String contextDescriptionName) throws Exception {
+		return ResponseEntity.ok(taskService.lookupDrafForm(contextDescriptionName));
+	}
 
 	private ResponseEntity<Resource> downloadDocument(DocumentContent documentContent) throws FileNotFoundException {
 		HttpHeaders responseHeaders = new HttpHeaders();
@@ -102,5 +108,6 @@ public class ReportingController implements ReportingApi {
 		InputStreamResource inputStreamResource = new InputStreamResource(documentContent.getFileStream());
 		return new ResponseEntity<>(inputStreamResource, responseHeaders, HttpStatus.OK);
 	}
+
 
 }

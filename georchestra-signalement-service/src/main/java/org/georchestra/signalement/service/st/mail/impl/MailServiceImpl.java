@@ -31,7 +31,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-
 /**
  * @author FNI18300
  *
@@ -123,7 +122,7 @@ public class MailServiceImpl implements MailService {
 	}
 
 	private void handleBody(MimeMessageHelper helper, MailDescription mailDescription)
-			throws FileNotFoundException, IOException, MessagingException {
+			throws IOException, MessagingException {
 		String text = null;
 		InputStream bodyStream = null;
 		try {

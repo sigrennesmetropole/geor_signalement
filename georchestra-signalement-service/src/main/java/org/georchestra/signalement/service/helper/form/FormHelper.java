@@ -14,7 +14,9 @@ import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.form.ProcessFormDefinitionCustomDao;
+import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.dto.Field;
 import org.georchestra.signalement.core.dto.FieldDefinition;
 import org.georchestra.signalement.core.dto.FieldType;
@@ -23,6 +25,7 @@ import org.georchestra.signalement.core.dto.ProcessFormDefinitionSearchCriteria;
 import org.georchestra.signalement.core.dto.Section;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.SortCriterion;
+import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.form.ProcessFormDefinitionEntity;
 import org.georchestra.signalement.service.exception.FormConvertException;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
@@ -44,6 +47,8 @@ public class FormHelper {
 
 	private static final String DEFAULT_DATA_FORMAT = "dd/MM/yyyy";
 
+	private static final String DRAFT_USER_TASK_ID = "draft";
+
 	@Autowired
 	private FormMapper formMapper;
 
@@ -52,6 +57,9 @@ public class FormHelper {
 
 	@Autowired
 	private ProcessFormDefinitionCustomDao processFormDefinitionCustomDao;
+
+	@Autowired
+	private ContextDescriptionDao contextDescriptionDao;
 
 	/**
 	 * Retourne le formulaire le plus adapté à la tâche
@@ -81,6 +89,27 @@ public class FormHelper {
 		}
 		return result;
 	}
+	
+	public Form lookupDraftForm(ContextDescription contextDescription) throws FormDefinitionException {
+		return lookupDraftForm(contextDescription.getName());
+	}
+
+	public Form lookupDraftForm(String contextDescriptionName) throws FormDefinitionException {
+		Form result = null;
+		ProcessFormDefinitionSearchCriteria searchCriteria = createSearchCriteria(contextDescriptionName);
+		SortCriteria sortCriteria = createSortCriteria();
+		List<ProcessFormDefinitionEntity> processFormDefinitionEntities = processFormDefinitionCustomDao
+				.searchProcessFormDefintions(searchCriteria, sortCriteria);
+		if (CollectionUtils.isNotEmpty(processFormDefinitionEntities)) {
+			ProcessFormDefinitionEntity processFormDefinitionEntity = processFormDefinitionEntities.get(0);
+			try {
+				result = formMapper.entityToDto(processFormDefinitionEntity.getFormDefinition());
+			} catch (FormDefinitionException e) {
+				LOGGER.warn("Failed to set form for draft task", e);
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * Copie les données d'un formulaire source dans une cible. Le formulaire cible
@@ -93,13 +122,17 @@ public class FormHelper {
 	public void copyFormData(Form source, Form target) {
 		if (source != null && target != null && CollectionUtils.isNotEmpty(target.getSections())) {
 			for (Section section : target.getSections()) {
-				if (CollectionUtils.isNotEmpty(section.getFields())) {
-					for (Field targetField : section.getFields()) {
-						Field sourceField = lookupField(source, targetField.getDefinition().getName());
-						if (sourceField != null) {
-							targetField.setValues(sourceField.getValues());
-						}
-					}
+				copySectionData(source, section);
+			}
+		}
+	}
+
+	private void copySectionData(Form source, Section section) {
+		if (CollectionUtils.isNotEmpty(section.getFields())) {
+			for (Field targetField : section.getFields()) {
+				Field sourceField = lookupField(source, targetField.getDefinition().getName());
+				if (sourceField != null) {
+					targetField.setValues(sourceField.getValues());
 				}
 			}
 		}
@@ -116,13 +149,19 @@ public class FormHelper {
 		Field result = null;
 		if (form != null && CollectionUtils.isNotEmpty(form.getSections())) {
 			for (Section section : form.getSections()) {
-				if (CollectionUtils.isNotEmpty(section.getFields())) {
-					for (Field field : section.getFields()) {
-						if (field.getDefinition().getName().equals(name)) {
-							result = field;
-							break;
-						}
-					}
+				result = lookupField(section, name);
+			}
+		}
+		return result;
+	}
+
+	private Field lookupField(Section section, String name) {
+		Field result = null;
+		if (CollectionUtils.isNotEmpty(section.getFields())) {
+			for (Field field : section.getFields()) {
+				if (field.getDefinition().getName().equals(name)) {
+					result = field;
+					break;
 				}
 			}
 		}
@@ -159,21 +198,29 @@ public class FormHelper {
 			if (CollectionUtils.isNotEmpty(section.getFields())) {
 				for (Field field : section.getFields()) {
 					Object value = datas.get(field.getDefinition().getName());
-					if (value != null) {
-						if (FieldType.LIST == field.getDefinition().getType() && field.getDefinition().isMultiple()) {
-							if (value instanceof Collection) {
-								for (Object itemValue : ((Collection<?>) value)) {
-									field.addValuesItem(itemValue.toString());
-								}
-							} else {
-								field.addValuesItem(value.toString());
-							}
-						} else {
-							field.addValuesItem(value.toString());
-						}
-					}
+					fillField(field, value);
 				}
 			}
+		}
+	}
+
+	private void fillField(Field field, Object value) {
+		if (value != null) {
+			if (FieldType.LIST == field.getDefinition().getType() && field.getDefinition().isMultiple()) {
+				fillFieldList(field, value);
+			} else {
+				field.addValuesItem(value.toString());
+			}
+		}
+	}
+
+	private void fillFieldList(Field field, Object value) {
+		if (value instanceof Collection) {
+			for (Object itemValue : ((Collection<?>) value)) {
+				field.addValuesItem(itemValue.toString());
+			}
+		} else {
+			field.addValuesItem(value.toString());
 		}
 	}
 
@@ -188,19 +235,22 @@ public class FormHelper {
 		for (Section section : form.getSections()) {
 			if (CollectionUtils.isNotEmpty(section.getFields())) {
 				for (Field field : section.getFields()) {
-					FieldDefinition fieldDefinition = field.getDefinition();
-					List<String> values = field.getValues();
-					if (CollectionUtils.isNotEmpty(values)) {
-						if (FieldType.LIST == fieldDefinition.getType() && fieldDefinition.isMultiple()) {
-							datas.put(fieldDefinition.getName(), values);
-						} else {
-							// il n'y a qu'une valeur car on gère le multiple que pour les listes à choix
-							String value = values.get(0);
-							Object convertedValue = convertValue(fieldDefinition, value);
-							datas.put(fieldDefinition.getName(), convertedValue);
-						}
-					}
+					fillMap(field.getDefinition(), datas, field.getValues());
 				}
+			}
+		}
+	}
+
+	private void fillMap(FieldDefinition fieldDefinition, Map<String, Object> datas, List<String> values)
+			throws FormConvertException {
+		if (CollectionUtils.isNotEmpty(values)) {
+			if (FieldType.LIST == fieldDefinition.getType() && fieldDefinition.isMultiple()) {
+				datas.put(fieldDefinition.getName(), values);
+			} else {
+				// il n'y a qu'une valeur car on gère le multiple que pour les listes à choix
+				String value = values.get(0);
+				Object convertedValue = convertValue(fieldDefinition, value);
+				datas.put(fieldDefinition.getName(), convertedValue);
 			}
 		}
 	}
@@ -242,6 +292,18 @@ public class FormHelper {
 		ProcessFormDefinitionSearchCriteria searchCriteria = new ProcessFormDefinitionSearchCriteria(
 				processInstance.getProcessDefinitionKey(), processInstance.getProcessDefinitionVersion(), true,
 				userTask.getId(), true);
+		return searchCriteria;
+	}
+
+	private ProcessFormDefinitionSearchCriteria createSearchCriteria(String contextDescriptionName) {
+		ContextDescriptionEntity contextDescriptionEntity = contextDescriptionDao
+				.findByName(contextDescriptionName);
+		if (contextDescriptionEntity == null) {
+			throw new IllegalArgumentException("Invalid context name:" + contextDescriptionName);
+		}
+		String processInstanceId = bpmnHelper.lookupProcessInstanceBusinessKey(contextDescriptionEntity);
+		ProcessFormDefinitionSearchCriteria searchCriteria = new ProcessFormDefinitionSearchCriteria(processInstanceId,
+				null, true, DRAFT_USER_TASK_ID, true);
 		return searchCriteria;
 	}
 

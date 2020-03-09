@@ -16,6 +16,7 @@ public class CoreAspect {
 
 	@Pointcut("execution(* org.georchestra.signalement.core.dao.**.impl.*.*(..))")
 	public void businessMethods() {
+		// Do nothing - c'est une déclaration point cut
 	}
 
 	@Around("businessMethods()")

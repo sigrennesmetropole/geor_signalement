@@ -3,16 +3,20 @@
  */
 package org.georchestra.signalement.api.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.api.TaskApi;
+import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.service.sm.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;

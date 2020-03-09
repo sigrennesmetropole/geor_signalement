@@ -30,27 +30,27 @@ public class HookEventListener implements ActivitiEventListener {
 			break;
 
 		case JOB_EXECUTION_SUCCESS:
-			LOGGER.info("Activiti - A job well done! " + event);
+			LOGGER.info("Activiti - A job well done! {}", event);
 			break;
 
 		case JOB_EXECUTION_FAILURE:
-			LOGGER.info("Activiti - A job has failed... " + event);
+			LOGGER.info("Activiti - A job has failed... {}", event);
 			break;
 
 		case ENTITY_CREATED:
 			ActivitiEntityEvent ec = (ActivitiEntityEvent) event;
 			Object o1 = ec.getEntity();
-			LOGGER.info("Activiti - Entity created: " + event.getType() + "/" + o1 + "=> " + event);
+			LOGGER.info("Activiti - Entity created: {}/{}=>{}", event.getType(), o1, event);
 			break;
 
 		case ENTITY_INITIALIZED:
 			ActivitiEntityEvent ei = (ActivitiEntityEvent) event;
 			Object o2 = ei.getEntity();
-			LOGGER.info("Activiti - Entity initialized: " + event.getType() + "/" + o2 + "=> " + event);
+			LOGGER.info("Activiti - Entity initialized: {}/{}=>{}", event.getType(), o2, event);
 			break;
 
 		default:
-			LOGGER.info("Activiti - Event received: " + event.getType() + "=> " + event);
+			LOGGER.info("Activiti - Event received: {}=>{}", event.getType(), event);
 		}
 	}
 

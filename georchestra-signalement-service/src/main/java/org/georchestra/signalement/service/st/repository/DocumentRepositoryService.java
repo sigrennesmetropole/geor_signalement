@@ -3,6 +3,7 @@ package org.georchestra.signalement.service.st.repository;
 import java.util.List;
 
 import org.georchestra.signalement.core.common.DocumentContent;
+import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 
 public interface DocumentRepositoryService {
@@ -30,7 +31,7 @@ public interface DocumentRepositoryService {
 	 * @param attachmentId
 	 * @return
 	 */
-	List<DocumentContent> getDocuments(String attachmentId) throws DocumentRepositoryException;
+	List<DocumentContent> getDocumentContents(String attachmentId) throws DocumentRepositoryException;
 
 	/**
 	 * Retourne les ids des documents associé à un Id
@@ -39,6 +40,14 @@ public interface DocumentRepositoryService {
 	 * @return
 	 */
 	List<Long> getDocumentIds(String attachmentId) throws DocumentRepositoryException;
+
+	/**
+	 * Retourne l'enveloppe des documents associé à un Id
+	 * 
+	 * @param attachmentId
+	 * @return
+	 */
+	List<Attachment> getDocuments(String attachmentId);
 
 	/**
 	 * Supprime un document par son id

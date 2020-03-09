@@ -14,7 +14,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.Action;
 import org.georchestra.signalement.core.dto.Form;
-import org.georchestra.signalement.core.dto.FormDefinition;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
@@ -24,7 +23,6 @@ import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity
 import org.georchestra.signalement.core.entity.reporting.LineReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PolygonReportingEntity;
-import org.georchestra.signalement.service.common.UUIDJSONWriter;
 import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
 import org.georchestra.signalement.service.helper.form.FormHelper;
@@ -39,11 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import net.minidev.json.JSONStyle;
-import net.minidev.json.JSONValue;
-import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
-import net.minidev.json.reader.BeansWriter;
 
 /**
  * @author FNI18300
@@ -72,7 +66,6 @@ public class ReportingHelper {
 	 */
 	public Map<String, Object> hydrateData(String datas) throws DataException {
 		Map<String, Object> result = null;
-		// JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
 		if (StringUtils.isNotEmpty(datas)) {
 			ObjectReader objectReader = objectMapper.readerFor(Map.class);
 			try {
@@ -80,11 +73,6 @@ public class ReportingHelper {
 			} catch (IOException e) {
 				throw new DataException("Failed to hydrate:" + datas, e);
 			}
-//			try {
-//				result = parser.parse(datas, Map.class);
-//			} catch (ParseException e) {
-//				throw new DataException("Failed to hydrate data:" + datas, e);
-//			}
 		} else {
 			result = new HashMap<>();
 		}
@@ -99,13 +87,6 @@ public class ReportingHelper {
 	 * @throws IOException
 	 */
 	public String deshydrateData(Map<String, Object> datas) throws DataException {
-		/*
-		 * JSONValue.registerWriter(UUID.class, new UUIDJSONWriter()); BeansWriter
-		 * beansWriter = new BeansWriter(); StringBuilder builder = new StringBuilder();
-		 * if (datas != null) { try { beansWriter.writeJSONString(datas, builder, new
-		 * JSONStyle((JSONStyle.FLAG_IGNORE_NULL))); } catch (IOException e) { throw new
-		 * DataException("Failed to deshydrate data", e); } } return builder.toString();
-		 */
 		String result = null;
 		if (datas != null) {
 			ObjectWriter objectWriter = objectMapper.writer();
@@ -142,6 +123,49 @@ public class ReportingHelper {
 	}
 
 	/**
+	 * @param reportingEntity
+	 * @param geographicType
+	 * @return vrai si le type géographique change
+	 */
+	public boolean checkTransmutationNeeded(AbstractReportingEntity reportingEntity, GeographicType geographicType) {
+		return geographicType != reportingEntity.getGeographicType();
+	}
+
+	/**
+	 * @param reportingEntity
+	 * @param geographicType
+	 * @return vrai si le context change
+	 */
+	public boolean checkContextChange(AbstractReportingEntity reportingEntity,
+			ContextDescriptionEntity contextDescription) {
+		return reportingEntity.getContextDescription().getId() != contextDescription.getId();
+	}
+
+	/**
+	 * @param reportingEntity
+	 * @param geographicType
+	 * @return un signalement transmuté
+	 */
+	public AbstractReportingEntity transmuteReportingEntity(AbstractReportingEntity reportingEntity,
+			ContextDescriptionEntity contextDescription) {
+		AbstractReportingEntity result = reportingEntity;
+		if (checkContextChange(reportingEntity, contextDescription)) {
+			if (checkTransmutationNeeded(reportingEntity, contextDescription.getGeographicType())) {
+				result = createReportingEntity(contextDescription.getGeographicType());
+			}
+			result.setContextDescription(contextDescription);
+			result.setCreationDate(reportingEntity.getCreationDate());
+			result.setUpdatedDate(reportingEntity.getUpdatedDate());
+			result.setUuid(reportingEntity.getUuid());
+			result.setInitiator(reportingEntity.getInitiator());
+			result.setDescription(reportingEntity.getDescription());
+			result.setStatus(reportingEntity.getStatus());
+			result.setDatas(reportingEntity.getDatas());
+		}
+		return result;
+	}
+
+	/**
 	 * Construit une instance de signalement
 	 * 
 	 * @param contextDescription
@@ -173,6 +197,12 @@ public class ReportingHelper {
 		task.setUpdatedDate(reportingDescription.getUpdatedDate());
 		task.setStatus(reportingDescription.getStatus());
 		task.setInitiator(reportingDescription.getInitiator());
+		try {
+			task.setForm(formHelper.lookupDraftForm(reportingDescription.getContextDescription()));
+			fillFormWithData(task.getForm(), reportingDescription);
+		} catch (FormDefinitionException e) {
+			LOGGER.warn("Failed to set form for draft:" + reportingDescription.getUuid(), e);
+		}
 		return task;
 	}
 

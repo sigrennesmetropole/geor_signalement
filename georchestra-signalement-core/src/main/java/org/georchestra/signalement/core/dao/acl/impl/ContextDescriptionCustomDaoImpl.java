@@ -69,26 +69,36 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 				predicates.add(builder.equal(root.get(PROCESS_DEFINITION_ID_PROPERTY), searchCriteria.getProcessDefinitionId()));
 			}
 			if (searchCriteria.getRevision() != null || searchCriteria.isAcceptFlexRevision()) {
-				Predicate p = builder.equal(root.get(REVISION_PROPERTY), searchCriteria.getRevision());
-				if (!searchCriteria.isAcceptFlexRevision()) {
-					predicates.add(p);
-				} else {
-					Predicate f = builder.isNull(root.get(REVISION_PROPERTY));
-					predicates.add(builder.or(p, f));
-				}
+				buildPredicateRevision(searchCriteria, builder, root, predicates);
 			}
 			if (StringUtils.isNotEmpty(searchCriteria.getUserTaskId())) {
-				Predicate p = builder.equal(root.get(USER_TASK_ID_PROPERTY), searchCriteria.getUserTaskId());
-				if (!searchCriteria.isAcceptFlexUserTaskId()) {
-					predicates.add(p);
-				} else {
-					Predicate f = builder.isNull(root.get(USER_TASK_ID_PROPERTY));
-					predicates.add(builder.or(p, f));
-				}
+				buildPredicateUserTaskId(searchCriteria, builder, root, predicates);
 			}
 			if (CollectionUtils.isNotEmpty(predicates)) {
 				criteriaQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
 			}
+		}
+	}
+
+	private void buildPredicateRevision(ProcessFormDefinitionSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<ProcessFormDefinitionEntity> root, List<Predicate> predicates) {
+		Predicate p = builder.equal(root.get(REVISION_PROPERTY), searchCriteria.getRevision());
+		if (!searchCriteria.isAcceptFlexRevision()) {
+			predicates.add(p);
+		} else {
+			Predicate f = builder.isNull(root.get(REVISION_PROPERTY));
+			predicates.add(builder.or(p, f));
+		}
+	}
+
+	private void buildPredicateUserTaskId(ProcessFormDefinitionSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<ProcessFormDefinitionEntity> root, List<Predicate> predicates) {
+		Predicate p = builder.equal(root.get(USER_TASK_ID_PROPERTY), searchCriteria.getUserTaskId());
+		if (!searchCriteria.isAcceptFlexUserTaskId()) {
+			predicates.add(p);
+		} else {
+			Predicate f = builder.isNull(root.get(USER_TASK_ID_PROPERTY));
+			predicates.add(builder.or(p, f));
 		}
 	}
 

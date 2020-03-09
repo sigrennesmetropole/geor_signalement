@@ -5,6 +5,8 @@ package org.georchestra.signalement.api.listener;
 
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.BaseEntityEventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author FNI18300
@@ -12,29 +14,33 @@ import org.activiti.engine.delegate.event.BaseEntityEventListener;
  */
 public class HookBaseEntityEventListener extends BaseEntityEventListener {
 
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(HookBaseEntityEventListener.class);
+
+	
 	@Override
 	protected void onCreate(ActivitiEvent event) {
-		System.out.println("Create:" + event);
+		LOGGER.debug("Create:{}",event);
 	}
 
 	@Override
 	protected void onInitialized(ActivitiEvent event) {
-		System.out.println("Initialize:" + event );
+		LOGGER.debug("Initialize:{}", event );
 	}
 
 	@Override
 	protected void onDelete(ActivitiEvent event) {
-		System.out.println("Delete:" + event);
+		LOGGER.debug("Delete:{}",event);
 	}
 
 	@Override
 	protected void onUpdate(ActivitiEvent event) {
-		System.out.println("Update:" + event);
+		LOGGER.debug("Update:{}",event);
 	}
 
 	@Override
 	protected void onEntityEvent(ActivitiEvent event) {
-		System.out.println("Entity:" + event);
+		LOGGER.debug("Entity:{}",event);
 	}
 
 }

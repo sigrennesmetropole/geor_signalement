@@ -14,9 +14,12 @@ import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.core.dto.Action;
+import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,10 +64,7 @@ public class BpmnHelper {
 		List<ProcessInstance> associatedInstances = runtimeService.createProcessInstanceQuery()
 				.processInstanceId(processInstanceId).list();
 		if (CollectionUtils.isNotEmpty(associatedInstances)) {
-			for (ProcessInstance associatedInstance : associatedInstances) {
-				result = associatedInstance;
-				break;
-			}
+			result = associatedInstances.get(0);
 		}
 		return result;
 	}
@@ -82,12 +82,32 @@ public class BpmnHelper {
 		List<ProcessInstance> associatedInstances = runtimeService.createProcessInstanceQuery()
 				.processInstanceId(processInstanceId).list();
 		if (CollectionUtils.isNotEmpty(associatedInstances)) {
-			for (ProcessInstance associatedInstance : associatedInstances) {
-				processInstanceBusinessKey = associatedInstance.getBusinessKey();
-				break;
-			}
+			processInstanceBusinessKey = associatedInstances.get(0).getBusinessKey();
 		}
 		return processInstanceBusinessKey;
+	}
+
+	/**
+	 * 
+	 * @param contextDescription
+	 * @return l'id de process instance pour un contexte
+	 */
+	public String lookupProcessInstanceBusinessKey(ContextDescriptionEntity contextDescription) {
+		String result = null;
+		RepositoryService repositoryService = processEngine.getRepositoryService();
+
+		ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().active()
+				.processDefinitionKey(contextDescription.getProcessDefinitionKey());
+		if (contextDescription.getRevision() != null) {
+			processDefinitionQuery.processDefinitionVersion(contextDescription.getRevision());
+		} else {
+			processDefinitionQuery.latestVersion();
+		}
+		List<ProcessDefinition> processDefinitions = processDefinitionQuery.list();
+		if (CollectionUtils.isNotEmpty(processDefinitions)) {
+			result = processDefinitions.get(0).getKey();
+		}
+		return result;
 	}
 
 	/**
@@ -104,7 +124,7 @@ public class BpmnHelper {
 		org.activiti.bpmn.model.Process process = bpmnModel.getProcessById(processInstance.getProcessDefinitionKey());
 		if (process != null) {
 			FlowElement flowElement = process.getFlowElement(task.getTaskDefinitionKey());
-			if (flowElement != null && flowElement instanceof UserTask) {
+			if (flowElement instanceof UserTask) {
 				return (UserTask) flowElement;
 			}
 		}
@@ -126,7 +146,7 @@ public class BpmnHelper {
 		org.activiti.bpmn.model.Process process = bpmnModel.getProcessById(processInstance.getProcessDefinitionKey());
 		if (process != null) {
 			FlowElement flowElement = process.getFlowElement(task.getTaskDefinitionKey());
-			if (flowElement != null && flowElement instanceof UserTask) {
+			if (flowElement instanceof UserTask) {
 				handleUserTask(result, flowElement);
 			}
 		}
@@ -162,7 +182,7 @@ public class BpmnHelper {
 
 	private SequenceFlow lookupSequenceFlowInUserTask(FlowElement flowElement, String actionName) {
 		SequenceFlow result = null;
-		if (flowElement != null && flowElement instanceof UserTask) {
+		if (flowElement instanceof UserTask) {
 			List<SequenceFlow> outgoings = ((UserTask) flowElement).getOutgoingFlows();
 			for (SequenceFlow outgoing : outgoings) {
 				FlowElement subFlowElement = outgoing.getTargetFlowElement();

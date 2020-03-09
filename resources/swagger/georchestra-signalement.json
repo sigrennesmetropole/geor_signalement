@@ -326,6 +326,45 @@
 				}
 			}
 		},
+		"/reporting/form/draft/{contextDescriptionName}": {
+			"get": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Retourne le formulaire draft",
+				"description": "Retourne le formulaire associé à l'état draft",
+				"operationId": "lookupDrafForm",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "contextDescriptionName",
+						"description": "Le nom du contexte, thème ou couche",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Form"
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
 		"/reporting/{uuid}/upload": {
 			"post": {
 				"tags": [

@@ -8,29 +8,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-
 @Aspect
 @Component
 public class ApiAspect {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApiAspect.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApiAspect.class);
 
-    /**
-     * Pour chaque entrée dans un controller
-     */
-    @Pointcut("execution(* org.georchestra.signalement.api.controller.*.*(..))")
-    public void businessMethods() {
-        // Laisser le contructeur vide
-    }
+	/**
+	 * Pour chaque entrée dans un controller
+	 */
+	@Pointcut("execution(* org.georchestra.signalement.api.controller.*.*(..))")
+	public void businessMethods() {
+		// Laisser le contructeur vide
+	}
 
-
-    @Around("businessMethods()")
-    public Object profile(ProceedingJoinPoint pjp) throws Throwable {
-        long start = System.currentTimeMillis();
-        Object output = pjp.proceed();
-        long elapsedTime = System.currentTimeMillis() - start;
-        LOG.info(String.format("%s - %s %s", elapsedTime, pjp.getSignature().getDeclaringTypeName(), pjp.getSignature().getName()));
-        return output;
-    }
+	@Around("businessMethods()")
+	public Object profile(ProceedingJoinPoint pjp) throws Throwable {
+		long start = System.currentTimeMillis();
+		Object output = pjp.proceed();
+		long elapsedTime = System.currentTimeMillis() - start;
+		LOGGER.info("{} - {} {}", elapsedTime, pjp.getSignature().getDeclaringTypeName(), pjp.getSignature().getName());
+		return output;
+	}
 
 }
