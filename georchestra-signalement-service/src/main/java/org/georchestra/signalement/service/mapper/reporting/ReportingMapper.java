@@ -3,17 +3,10 @@
  */
 package org.georchestra.signalement.service.mapper.reporting;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.georchestra.signalement.core.common.DocumentContent;
-import org.georchestra.signalement.core.dao.ged.AttachmentDao;
-import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.ReportingDescription;
-import org.georchestra.signalement.core.entity.ged.AttachmentEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.helper.reporting.ReportingHelper;
 import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;

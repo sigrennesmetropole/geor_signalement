@@ -19,6 +19,10 @@
 			"description": "Administration de la plateforme de signalement"
 		},
 		{
+			"name": "user",
+			"description": "Services de gestion des utilisateurs"
+		},
+		{
 			"name": "tasks",
 			"description": "Services de gestion des tâches de signalements"
 		},
@@ -163,6 +167,35 @@
 							"items": {
 								"$ref": "#/definitions/ProcessDefinition"
 							}
+						}
+					}
+				}
+			}
+		},
+		"/user/me":{
+			"get": {
+				"tags": [
+					"user"
+				],
+				"summary": "Récupération des données de l'utilisateur connecté'",
+				"description": "",
+				"operationId": "getMe",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
 						}
 					}
 				}
@@ -1114,6 +1147,26 @@
 					"type": "string"
 				},
 				"label": {
+					"type": "string"
+				}
+			}
+		},
+		"User": {
+			"type": "object",
+			"properties": {
+				"login": {
+					"type": "string"
+				},
+				"firstName": {
+					"type": "string"
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"organization": {
 					"type": "string"
 				}
 			}

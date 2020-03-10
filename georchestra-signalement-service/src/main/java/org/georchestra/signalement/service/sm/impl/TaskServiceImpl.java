@@ -60,10 +60,6 @@ public class TaskServiceImpl implements TaskService {
 
 	private static final String ACTION_VARIABLE_NAME = "action";
 
-	private static Map<UUID, AbstractReportingEntity> DRAFT_REPORTING_ENTITIES = new HashMap<>();
-
-	private static Map<UUID, List<DocumentContent>> DRAFT_ATTACHMENTS_ENTITIES = new HashMap<>();
-
 	@Autowired
 	private ProcessEngine processEngine;
 
@@ -100,6 +96,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public Task createDraft(ReportingDescription reportingDescription) {
 		// contrôle des paramètres
 		if (reportingDescription == null || reportingDescription.getContextDescription() == null) {
@@ -122,9 +119,10 @@ public class TaskServiceImpl implements TaskService {
 		// mise à jour de l'entité
 		reportingMapper.updateEntityFromDto(reportingDescription, reportingEntity);
 
-		// mise en cache
-		DRAFT_REPORTING_ENTITIES.put(reportingEntity.getUuid(), reportingEntity);
+		// sauvegarde
+		reportingDao.save(reportingEntity);
 
+		// conversion
 		return reportingHelper.createTaskFromReporting(reportingMapper.entityToDto(reportingEntity));
 	}
 
@@ -137,24 +135,12 @@ public class TaskServiceImpl implements TaskService {
 			throw new IllegalArgumentException("Task with asset is mandatory");
 		}
 		// récupération du signalement draft
-		AbstractReportingEntity reportingEntity = DRAFT_REPORTING_ENTITIES.get(task.getAsset().getUuid());
-		if (reportingEntity == null) {
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(task.getAsset().getUuid());
+		if (reportingEntity == null || reportingEntity.getStatus() != Status.DRAFT) {
 			throw new IllegalArgumentException("Invalid task");
 		}
 		// mise à jour de l'entité
-		task = updateDraftTask(task, reportingEntity);
-
-		// l'entité peut avoir changer en cas de cnahgement de contexte
-		reportingEntity = DRAFT_REPORTING_ENTITIES.get(task.getAsset().getUuid());
-		reportingDao.save(reportingEntity);
-
-		// ajout des attachments
-		List<DocumentContent> attachments = DRAFT_ATTACHMENTS_ENTITIES.get(reportingEntity.getUuid());
-		if (CollectionUtils.isNotEmpty(attachments)) {
-			for (DocumentContent attachment : attachments) {
-				addRunningAttachment(reportingEntity.getUuid(), attachment);
-			}
-		}
+		reportingEntity = updateDraftReporting(task, reportingEntity);
 
 		// Démarrage du processus
 		Map<String, Object> variables = fillProcessVariables(reportingEntity, null);
@@ -164,28 +150,7 @@ public class TaskServiceImpl implements TaskService {
 		Task outputTask = reportingHelper.createTaskFromReporting(reportingMapper.entityToDto(reportingEntity));
 		outputTask.setId(processInstance.getId());
 
-		// nettoyage
-		DRAFT_REPORTING_ENTITIES.remove(reportingEntity.getUuid());
-		DRAFT_ATTACHMENTS_ENTITIES.remove(reportingEntity.getUuid());
 		return outputTask;
-	}
-
-	private Map<String, Object> fillProcessVariables(AbstractReportingEntity reportingEntity,
-			Map<String, Object> variables) throws DataException {
-		if (variables == null) {
-			variables = new HashMap<>();
-		}
-		if (reportingEntity != null) {
-			variables.put("meId", reportingEntity.getId());
-			variables.put("meUuid", reportingEntity.getUuid());
-			Map<String, Object> datas = reportingHelper.hydrateData(reportingEntity.getDatas());
-			if (MapUtils.isNotEmpty(datas)) {
-				for (Map.Entry<String, Object> data : datas.entrySet()) {
-					variables.put(data.getKey(), data.getValue());
-				}
-			}
-		}
-		return variables;
 	}
 
 	@Override
@@ -246,17 +211,23 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	@Transactional(readOnly = false)
 	public Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException {
-		Task result = null;
 		if (task == null || task.getAsset() == null) {
 			throw new IllegalArgumentException("Task with asset is mandatory");
 		}
-		// récupération du signalement draft
-		AbstractReportingEntity reportingEntity = DRAFT_REPORTING_ENTITIES.get(task.getAsset().getUuid());
-		if (reportingEntity != null) {
-			result = updateDraftTask(task, reportingEntity);
-		} else {
+		Task result = null;
+		if (task.getId() != null) {
 			result = updateRunningTask(task);
+		} else {
+			// récupération du signalement draft si on a pas trouvé de tâche associé
+			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(task.getAsset().getUuid());
+			if (reportingEntity != null && reportingEntity.getStatus() == Status.DRAFT) {
+				result = reportingHelper.createTaskFromReporting(
+						reportingMapper.entityToDto(updateDraftReporting(task, reportingEntity)));
+			} else {
+				throw new IllegalArgumentException("Task does no exists or has a bad status");
+			}
 		}
+
 		return result;
 	}
 
@@ -297,13 +268,7 @@ public class TaskServiceImpl implements TaskService {
 	@Transactional(readOnly = false)
 	public Attachment addAttachment(UUID reportingUuid, DocumentContent documentContent)
 			throws DocumentRepositoryException {
-		Attachment result = null;
-		boolean draft = true;
-		AbstractReportingEntity reportingEntity = DRAFT_REPORTING_ENTITIES.get(reportingUuid);
-		if (reportingEntity == null) {
-			reportingEntity = reportingDao.findByUuid(reportingUuid);
-			draft = false;
-		}
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(reportingUuid);
 		if (reportingEntity == null) {
 			throw new IllegalArgumentException(INVALID_REPORTING_UUID_MESSAGE);
 		}
@@ -311,36 +276,19 @@ public class TaskServiceImpl implements TaskService {
 			throw new IllegalArgumentException(
 					"Invalid mime type (supported:" + attachmentHelper.getAttachmentMimeTypes() + ")");
 		}
-		if (draft) {
-			result = addDraftAttachment(reportingUuid, documentContent);
-		} else {
-			result = addRunningAttachment(reportingUuid, documentContent);
-		}
-		return result;
+		return addRunningAttachment(reportingUuid, documentContent);
 	}
 
 	@Override
 	public DocumentContent getAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException {
 		DocumentContent result = null;
-		boolean draft = true;
-		AbstractReportingEntity reportingEntity = DRAFT_REPORTING_ENTITIES.get(reportingUuid);
-		if (reportingEntity == null) {
-			reportingEntity = reportingDao.findByUuid(reportingUuid);
-			draft = false;
-		}
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(reportingUuid);
 		if (reportingEntity == null) {
 			throw new IllegalArgumentException(INVALID_REPORTING_UUID_MESSAGE);
 		}
-		if (draft) {
-			List<DocumentContent> attachments = DRAFT_ATTACHMENTS_ENTITIES.get(reportingUuid);
-			if (attachments.size() > attachmentId) {
-				result = attachments.get(attachmentId.intValue());
-			}
-		} else {
-			List<Long> documentIds = documentRepositoryService.getDocumentIds(reportingUuid.toString());
-			if (documentIds != null && documentIds.contains(attachmentId)) {
-				result = documentRepositoryService.getDocument(attachmentId);
-			}
+		List<Long> documentIds = documentRepositoryService.getDocumentIds(reportingUuid.toString());
+		if (documentIds != null && documentIds.contains(attachmentId)) {
+			result = documentRepositoryService.getDocument(attachmentId);
 		}
 		return result;
 	}
@@ -348,34 +296,19 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	@Transactional(readOnly = false)
 	public void removeAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException {
-		AbstractReportingEntity reportingEntity = DRAFT_REPORTING_ENTITIES.get(reportingUuid);
-		boolean draft = true;
-		if (reportingEntity == null) {
-			reportingEntity = reportingDao.findByUuid(reportingUuid);
-			draft = false;
-		}
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(reportingUuid);
 		if (reportingEntity == null) {
 			throw new IllegalArgumentException(INVALID_REPORTING_UUID_MESSAGE);
 		}
-		if (draft) {
-			List<DocumentContent> attachments = DRAFT_ATTACHMENTS_ENTITIES.get(reportingUuid);
-			if (attachments.size() > attachmentId) {
-				attachments.remove(attachmentId.intValue());
-			}
-		} else {
-			List<Long> documentIds = documentRepositoryService.getDocumentIds(reportingUuid.toString());
-			if (documentIds != null && documentIds.contains(attachmentId)) {
-				documentRepositoryService.deleteDocument(attachmentId);
-			}
+		List<Long> documentIds = documentRepositoryService.getDocumentIds(reportingUuid.toString());
+		if (documentIds != null && documentIds.contains(attachmentId)) {
+			documentRepositoryService.deleteDocument(attachmentId);
 		}
 	}
 
 	@Override
 	public void cancelDraft(UUID reportingUuid) {
-		AbstractReportingEntity reportingEntity = DRAFT_REPORTING_ENTITIES.get(reportingUuid);
-		if (reportingEntity == null) {
-			reportingEntity = reportingDao.findByUuid(reportingUuid);
-		}
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(reportingUuid);
 		if (reportingEntity == null) {
 			throw new IllegalArgumentException(INVALID_REPORTING_UUID_MESSAGE);
 		}
@@ -383,13 +316,8 @@ public class TaskServiceImpl implements TaskService {
 			throw new IllegalArgumentException("Invalid reporting status:" + reportingEntity.getStatus());
 		}
 		try {
-			if (reportingEntity.getId() == null) {
-				DRAFT_REPORTING_ENTITIES.remove(reportingUuid);
-				DRAFT_ATTACHMENTS_ENTITIES.remove(reportingUuid);
-			} else {
-				reportingDao.delete(reportingEntity);
-				documentRepositoryService.deleteDocuments(reportingUuid.toString());
-			}
+			reportingDao.delete(reportingEntity);
+			documentRepositoryService.deleteDocuments(reportingUuid.toString());
 		} catch (Exception e) {
 			LOGGER.warn("Failed to delete attachments", e);
 		}
@@ -432,9 +360,10 @@ public class TaskServiceImpl implements TaskService {
 				variables);
 	}
 
-	private Task updateDraftTask(Task task, AbstractReportingEntity reportingEntity)
+	private AbstractReportingEntity updateDraftReporting(Task task, AbstractReportingEntity reportingEntity)
 			throws DataException, FormDefinitionException, FormConvertException {
 		ReportingDescription reporting = task.getAsset();
+		AbstractReportingEntity targetReportingEntity = reportingEntity;
 		// contrôle de changement de context
 		if (!reporting.getContextDescription().getName().equals(reportingEntity.getContextDescription().getName())) {
 			// s'il a changé, il faut transmuter le signalement
@@ -444,23 +373,26 @@ public class TaskServiceImpl implements TaskService {
 				throw new IllegalArgumentException(
 						"Invalid context name:" + reporting.getContextDescription().getName());
 			}
-			reportingEntity = reportingHelper.transmuteReportingEntity(reportingEntity, contextDescription);
-			DRAFT_REPORTING_ENTITIES.put(reportingEntity.getUuid(), reportingEntity);
+			targetReportingEntity = reportingHelper.transmuteReportingEntity(reportingEntity, contextDescription);
 		}
 
 		// mise à jour dernière date de modification
-		reportingEntity.setUpdatedDate(new Date());
+		targetReportingEntity.setUpdatedDate(new Date());
 
 		// TODO set geometry
 
 		// mise à jour de l'entité
-		reportingMapper.updateEntityFromDto(reporting, reportingEntity);
+		reportingMapper.updateEntityFromDto(reporting, targetReportingEntity);
 
 		// mise à jour des datas de l'entité
 		updateDraftReportingDatas(task, reportingEntity);
 
-		// conversion
-		return reportingHelper.createTaskFromReporting(reportingMapper.entityToDto(reportingEntity));
+		// si on a transmuter il faut supprimer l'ancienne entité
+		if (targetReportingEntity != reportingEntity) {
+			reportingDao.delete(reportingEntity);
+			reportingDao.save(targetReportingEntity);
+		}
+		return targetReportingEntity;
 	}
 
 	private void updateDraftReportingDatas(Task task, AbstractReportingEntity reportingEntity)
@@ -524,22 +456,22 @@ public class TaskServiceImpl implements TaskService {
 		return result;
 	}
 
-	private Attachment addDraftAttachment(UUID reportingUuid, DocumentContent documentContent) {
-		Attachment result = null;
-		List<DocumentContent> attachments = DRAFT_ATTACHMENTS_ENTITIES.get(reportingUuid);
-		if (attachments != null && attachments.size() > attachmentHelper.getAttachmentMaxCount()) {
-			throw new IllegalArgumentException("Maximum attachments per reporting is reached");
+	private Map<String, Object> fillProcessVariables(AbstractReportingEntity reportingEntity,
+			Map<String, Object> variables) throws DataException {
+		if (variables == null) {
+			variables = new HashMap<>();
 		}
-		if (attachments == null) {
-			attachments = new ArrayList<>();
-			DRAFT_ATTACHMENTS_ENTITIES.put(reportingUuid, attachments);
+		if (reportingEntity != null) {
+			variables.put("meId", reportingEntity.getId());
+			variables.put("meUuid", reportingEntity.getUuid());
+			Map<String, Object> datas = reportingHelper.hydrateData(reportingEntity.getDatas());
+			if (MapUtils.isNotEmpty(datas)) {
+				for (Map.Entry<String, Object> data : datas.entrySet()) {
+					variables.put(data.getKey(), data.getValue());
+				}
+			}
 		}
-		result = new Attachment();
-		result.setMimeType(documentContent.getContentType());
-		result.setName(documentContent.getFileName());
-		result.setId((long) (attachments.size() + 1));
-		attachments.add(documentContent);
-		return result;
+		return variables;
 	}
 
 }

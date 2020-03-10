@@ -84,8 +84,7 @@
 		<profile>
 			<id>dev</id>
 			<properties>
-				<georchestra.addon.deployDir>C:\Program
-					Files\Apache\apache-tomcat-9.0.26\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
+				<georchestra.addon.deployDir>C:\Program Files\Apache\apache-tomcat-9.0.26\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
 			</properties>
 		</profile>
 	</profiles>
