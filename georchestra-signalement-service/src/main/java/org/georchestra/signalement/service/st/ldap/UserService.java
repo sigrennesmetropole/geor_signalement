@@ -13,4 +13,6 @@ public interface UserService {
 
 	
 	User getMe();
+	
+	User getUserByLogin(String login);
 }
