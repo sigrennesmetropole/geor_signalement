@@ -49,6 +49,12 @@ public class HookEventListener implements ActivitiEventListener {
 			LOGGER.info("Activiti - Entity initialized: {}/{}=>{}", event.getType(), o2, event);
 			break;
 
+		case TASK_ASSIGNED:
+			ActivitiEntityEvent ea = (ActivitiEntityEvent) event;
+			Object o3 = ea.getEntity();
+			LOGGER.info("Activiti - Entity initialized: {}/{}=>{}", event.getType(), o3, event);
+			break;
+
 		default:
 			LOGGER.info("Activiti - Event received: {}=>{}", event.getType(), event);
 		}

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import org.activiti.engine.cfg.AbstractProcessEngineConfigurator;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.spring.SpringProcessEngineConfiguration;
-import org.georchestra.signalement.api.listener.HookBaseEntityEventListener;
 import org.georchestra.signalement.api.listener.HookEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,8 +43,6 @@ public class ActivitiConfiguration extends AbstractProcessEngineConfigurator {
 		configuration.setTransactionManager(transactionManager);
 		configuration.setEventListeners(new ArrayList<>());
 		configuration.getEventListeners().add(new HookEventListener());
-		configuration.getEventListeners().add(new HookBaseEntityEventListener());
-		//configuration.setDeploymentResources(new Resource[] { new ClassPathResource("bpmn/test3.bpmn20.xml") });
 		configuration.addConfigurator(this);
 		return configuration;
 	}
