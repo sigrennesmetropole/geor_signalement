@@ -85,10 +85,12 @@ public class PreAuthenticationToken extends AbstractAuthenticationToken {
 			return false;
 		PreAuthenticationToken other = (PreAuthenticationToken) obj;
 		if (principal == null) {
-			if (other.principal != null)
+			if (other.principal != null) {
 				return false;
-		} else if (!principal.equals(other.principal))
+			}
+		} else if (!principal.equals(other.principal)) {
 			return false;
+		}
 		return true;
 	}
 }

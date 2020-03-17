@@ -11,9 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
+
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.delegate.event.ActivitiEntityEvent;
+import org.activiti.engine.delegate.event.ActivitiEvent;
+import org.activiti.engine.delegate.event.ActivitiEventListener;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -52,13 +58,15 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 @Transactional(readOnly = true)
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	private static final String INVALID_REPORTING_UUID_MESSAGE = "Invalid reporting Uuid";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
 
 	private static final String ACTION_VARIABLE_NAME = "action";
+
+	private static final Map<String, String> EXECUTION_ENTITIES = new HashMap<>();
 
 	@Autowired
 	private ProcessEngine processEngine;
@@ -89,6 +97,9 @@ public class TaskServiceImpl implements TaskService {
 
 	@Autowired
 	private ReportingMapper reportingMapper;
+
+	@Autowired
+	private TaskService me;
 
 	@Override
 	public Form lookupDrafForm(String contextDescriptionName) throws FormDefinitionException {
@@ -474,4 +485,64 @@ public class TaskServiceImpl implements TaskService {
 		return variables;
 	}
 
+	@PostConstruct
+	public void initialize() {
+		processEngine.getRuntimeService().addEventListener((ActivitiEventListener) me);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void onEvent(ActivitiEvent event) {
+		switch (event.getType()) {
+		case ENTITY_CREATED:
+			cacheEntiy(event);
+			break;
+		case TASK_ASSIGNED:
+			assign(event);
+			break;
+		default:
+			// NOTHING
+		}
+
+	}
+
+	@Override
+	public boolean isFailOnException() {
+		return true;
+	}
+
+	protected void cacheEntiy(ActivitiEvent event) {
+		ActivitiEntityEvent ea = (ActivitiEntityEvent) event;
+		if (ea.getEntity() instanceof ExecutionEntity) {
+			ExecutionEntity executionEntity = (ExecutionEntity) ea.getEntity();
+			if (executionEntity.getBusinessKey() != null) {
+				// stocke ici lors de la création de l'entité d'exécution d'un nouveau workflow,
+				// la business key si elle est pas nulle
+				// dans le workflow simple, on passe ici 2 fois (pour chaque étape)
+				// mais la deuxième fois, il n'y a pas de businessKey
+				EXECUTION_ENTITIES.put(executionEntity.getProcessInstanceId(), executionEntity.getBusinessKey());
+			}
+		}
+
+	}
+
+	protected void assign(ActivitiEvent event) {
+		ActivitiEntityEvent ea = (ActivitiEntityEvent) event;
+		if (ea.getEntity() instanceof org.activiti.engine.task.Task) {
+			org.activiti.engine.task.Task originalTask = (org.activiti.engine.task.Task) ea.getEntity();
+
+			String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(originalTask);
+			if (processInstanceBusinessKey == null) {
+				// si on a pas trouvé la business key, c'est sans doute que tout ça n'a pas été
+				// encore flushé
+				// du coup on ne peut pas retrouver toutes les informations
+				processInstanceBusinessKey = EXECUTION_ENTITIES.get(event.getProcessInstanceId());
+			}
+			String assignee = originalTask.getAssignee();
+			UUID uuid = UUID.fromString(processInstanceBusinessKey);
+			AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+			reportingEntity.setAssignee(assignee);
+
+		}
+	}
 }

@@ -60,6 +60,9 @@ public abstract class AbstractReportingEntity implements LongId {
 	@Column(name = "creation_date", nullable = false)
 	private Date creationDate;
 
+	@Column(name = "assignee", nullable = false, length = 100)
+	private String assignee;
+
 	@Column(name = "updated_date", nullable = false)
 	private Date updatedDate;
 

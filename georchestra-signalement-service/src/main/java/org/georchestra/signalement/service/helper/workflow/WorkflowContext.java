@@ -84,7 +84,7 @@ public class WorkflowContext {
 	 * Retourne la liste des users candidats pour la tâche
 	 * 
 	 * @param scriptContext   le context
-	 * @param executionEntity
+	 * @param executionEntity l'entité d'execution
 	 * @param roleName        le rôle rechercher
 	 * @return la liste des users par leur identifiant sec-username
 	 */
@@ -97,7 +97,7 @@ public class WorkflowContext {
 	 * Retourne la liste des users candidats pour la tâche
 	 * 
 	 * @param scriptContext   le context
-	 * @param executionEntity
+	 * @param executionEntity l'entité d'execution
 	 * @param roleName        le rôle rechercher
 	 * @return la liste des users par leur identifiant sec-username
 	 */

@@ -138,7 +138,7 @@ public class ReportingHelper {
 	 */
 	public boolean checkContextChange(AbstractReportingEntity reportingEntity,
 			ContextDescriptionEntity contextDescription) {
-		return reportingEntity.getContextDescription().getId() != contextDescription.getId();
+		return !reportingEntity.getContextDescription().getId().equals(contextDescription.getId());
 	}
 
 	/**

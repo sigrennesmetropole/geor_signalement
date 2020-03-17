@@ -89,7 +89,7 @@ public class FormHelper {
 		}
 		return result;
 	}
-	
+
 	public Form lookupDraftForm(ContextDescription contextDescription) throws FormDefinitionException {
 		return lookupDraftForm(contextDescription.getName());
 	}
@@ -296,15 +296,12 @@ public class FormHelper {
 	}
 
 	private ProcessFormDefinitionSearchCriteria createSearchCriteria(String contextDescriptionName) {
-		ContextDescriptionEntity contextDescriptionEntity = contextDescriptionDao
-				.findByName(contextDescriptionName);
+		ContextDescriptionEntity contextDescriptionEntity = contextDescriptionDao.findByName(contextDescriptionName);
 		if (contextDescriptionEntity == null) {
 			throw new IllegalArgumentException("Invalid context name:" + contextDescriptionName);
 		}
 		String processInstanceId = bpmnHelper.lookupProcessInstanceBusinessKey(contextDescriptionEntity);
-		ProcessFormDefinitionSearchCriteria searchCriteria = new ProcessFormDefinitionSearchCriteria(processInstanceId,
-				null, true, DRAFT_USER_TASK_ID, true);
-		return searchCriteria;
+		return new ProcessFormDefinitionSearchCriteria(processInstanceId, null, true, DRAFT_USER_TASK_ID, true);
 	}
 
 	private SortCriteria createSortCriteria() {
