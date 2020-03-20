@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<style type="text/css">
+body {
+	font-size: small;
+	font-family: "Vista Sans OT", "Verdana", "Arial";
+}
+
+.bold {
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+	<div>
+		<p>Madame, Monsieur,</p>
+
+		<p>Vous avez soumis le signalement suivant :
+			<ul>
+				<#if reporting.creationDate??>
+					<li>${reporting.creationDate?date}</li>	
+				</#if>
+				<#if reporting.contextDescription??>
+					<li>
+					<#if reporting.contextDescription.contextType.name() == "LAYER">
+						Couche
+					<#else>
+						Thème 
+					</#if>
+					&quot;${reporting.contextDescription.label?string}&quot;
+					</li>	
+				</#if>
+			</ul>
+		</p>
+		<p>Vous serez informé au fur et à mesure de son traitement par les
+			services en charge du signalement.</p>
+		<p>En vous souhaitant bonne r&eacute;ception</p>
+		<p class="bold">Signal'bots</p>
+	</div>
+</body>
+</html>

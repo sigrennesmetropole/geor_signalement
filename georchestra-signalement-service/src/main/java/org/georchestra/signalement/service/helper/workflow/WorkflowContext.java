@@ -3,6 +3,7 @@
  */
 package org.georchestra.signalement.service.helper.workflow;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -11,9 +12,22 @@ import java.util.UUID;
 import javax.script.ScriptContext;
 
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.apache.commons.lang3.StringUtils;
+import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
+import org.georchestra.signalement.core.dto.EMailData;
 import org.georchestra.signalement.core.dto.Status;
+import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
+import org.georchestra.signalement.service.exception.DocumentGenerationException;
+import org.georchestra.signalement.service.exception.DocumentModelNotFoundException;
+import org.georchestra.signalement.service.exception.EMailException;
+import org.georchestra.signalement.service.helper.mail.EmailDataModel;
+import org.georchestra.signalement.service.st.generator.GenerationConnector;
+import org.georchestra.signalement.service.st.generator.impl.CompositeTemplateLoader;
+import org.georchestra.signalement.service.st.ldap.UserService;
+import org.georchestra.signalement.service.st.mail.MailDescription;
+import org.georchestra.signalement.service.st.mail.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +46,15 @@ public class WorkflowContext {
 
 	@Autowired
 	private ReportingDao reportingDao;
+
+	@Autowired
+	private MailService mailService;
+
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private GenerationConnector generationConnector;
 
 	/**
 	 * Méthode utilitaire de log
@@ -76,8 +99,56 @@ public class WorkflowContext {
 	 * @param a
 	 * @param b
 	 */
-	public void sendEMail(ScriptContext scriptContext, ExecutionEntity executionEntity, String subject, String body) {
+	public void sendEMail(ScriptContext scriptContext, ExecutionEntity executionEntity, EMailData eMailData) {
 		LOGGER.debug("Send email...");
+		String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
+		try {
+			UUID uuid = UUID.fromString(processInstanceBusinessKey);
+			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
+			if (reportingEntity != null && eMailData != null) {
+				sendEMailToInitiator(executionEntity, reportingEntity, eMailData);
+			} else {
+				LOGGER.warn("WkC - No initiator to send email {}", processInstanceBusinessKey);
+			}
+		} catch (Exception e) {
+			LOGGER.warn("WkC - Failed to send mail for " + processInstanceBusinessKey, e);
+		}
+	}
+
+	private void sendEMailToInitiator(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
+			EMailData eMailData)
+			throws EMailException, IOException, DocumentModelNotFoundException, DocumentGenerationException {
+		User user = userService.getUserByLogin(reportingEntity.getInitiator());
+		if (user != null) {
+			MailDescription mailDescription = new MailDescription();
+			mailDescription.setSubject(generateSubject(eMailData));
+			mailDescription.addTo(user.getEmail());
+			mailDescription.setHtml(true);
+			mailDescription.setBody(generateEMailBody(executionEntity, reportingEntity, eMailData));
+			mailService.sendMail(mailDescription);
+		}
+	}
+
+	private String generateSubject(EMailData eMailData) {
+		String subject = "No subject";
+		if( StringUtils.isNotEmpty(eMailData.getSubject())){
+			subject = eMailData.getSubject();
+		}
+		return subject;
+	}
+
+	private DocumentContent generateEMailBody(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
+			EMailData eMailData) throws IOException, DocumentModelNotFoundException, DocumentGenerationException {
+		EmailDataModel emailDataModel = null;
+		if (StringUtils.isNotEmpty(eMailData.getBody())) {
+			emailDataModel = new EmailDataModel(executionEntity, reportingEntity,
+					GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString() + ":"
+							+ eMailData.getBody());
+		} else {
+			emailDataModel = new EmailDataModel(executionEntity, reportingEntity, eMailData.getFileBody());
+		}
+
+		return generationConnector.generateDocument(emailDataModel);
 	}
 
 	/**
@@ -90,7 +161,7 @@ public class WorkflowContext {
 	 */
 	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
 			String roleName) {
-		return Arrays.asList("toto@open.com");
+		return Arrays.asList("testuser");
 	}
 
 	/**
@@ -102,6 +173,6 @@ public class WorkflowContext {
 	 * @return la liste des users par leur identifiant sec-username
 	 */
 	public String computeHumanPerformer(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName) {
-		return "toto@open.com";
+		return "testuser";
 	}
 }

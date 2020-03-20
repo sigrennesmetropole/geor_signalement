@@ -291,8 +291,8 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	}
 
 	@Override
-	public DocumentContent getAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException {
-		DocumentContent result = null;
+	public Attachment getAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException {
+		Attachment result = null;
 		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(reportingUuid);
 		if (reportingEntity == null) {
 			throw new IllegalArgumentException(INVALID_REPORTING_UUID_MESSAGE);
@@ -300,6 +300,32 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		List<Long> documentIds = documentRepositoryService.getDocumentIds(reportingUuid.toString());
 		if (documentIds != null && documentIds.contains(attachmentId)) {
 			result = documentRepositoryService.getDocument(attachmentId);
+		}
+		return result;
+	}
+
+	@Override
+	public List<Attachment> getAttachments(UUID reportingUuid) {
+		List<Attachment> result = null;
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(reportingUuid);
+		if (reportingEntity == null) {
+			throw new IllegalArgumentException(INVALID_REPORTING_UUID_MESSAGE);
+		}
+		result = documentRepositoryService.getDocuments(reportingUuid.toString());
+		return result;
+	}
+
+	@Override
+	public DocumentContent getAttachmentContent(UUID reportingUuid, Long attachmentId)
+			throws DocumentRepositoryException {
+		DocumentContent result = null;
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(reportingUuid);
+		if (reportingEntity == null) {
+			throw new IllegalArgumentException(INVALID_REPORTING_UUID_MESSAGE);
+		}
+		List<Long> documentIds = documentRepositoryService.getDocumentIds(reportingUuid.toString());
+		if (documentIds != null && documentIds.contains(attachmentId)) {
+			result = documentRepositoryService.getDocumentContent(attachmentId);
 		}
 		return result;
 	}
@@ -541,8 +567,11 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			String assignee = originalTask.getAssignee();
 			UUID uuid = UUID.fromString(processInstanceBusinessKey);
 			AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
-			reportingEntity.setAssignee(assignee);
-
+			if (reportingEntity != null) {
+				reportingEntity.setAssignee(assignee);
+			} else {
+				LOGGER.warn("Failed to update assignee for {} to {}", originalTask.getId(), originalTask.getAssignee());
+			}
 		}
 	}
 }

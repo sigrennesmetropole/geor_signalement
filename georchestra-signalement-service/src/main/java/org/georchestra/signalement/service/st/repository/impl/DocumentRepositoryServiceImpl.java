@@ -57,7 +57,7 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 	}
 
 	@Override
-	public DocumentContent getDocument(Long id) throws DocumentRepositoryException {
+	public DocumentContent getDocumentContent(Long id) throws DocumentRepositoryException {
 		DocumentContent result = null;
 		Optional<AttachmentEntity> optionalEntity = attachmentDao.findById(id);
 		if (optionalEntity.isPresent()) {
@@ -76,6 +76,16 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 			for (AttachmentEntity entity : entities) {
 				result.add(convertEntityToDocumentContent(entity));
 			}
+		}
+		return result;
+	}
+
+	@Override
+	public Attachment getDocument(Long id) {
+		Attachment result = null;
+		Optional<AttachmentEntity> entity = attachmentDao.findById(id);
+		if (entity.isPresent()) {
+			result = convertEntityToAttachment(entity.get());
 		}
 		return result;
 	}
@@ -158,5 +168,4 @@ public class DocumentRepositoryServiceImpl implements DocumentRepositoryService 
 			}
 		}
 	}
-
 }

@@ -67,7 +67,7 @@ public class ReportingController implements ReportingApi {
 
 	@Override
 	public ResponseEntity<Resource> downloadDocument(UUID uuid, Long attachmentId) throws Exception {
-		DocumentContent documentContent = taskService.getAttachment(uuid, attachmentId);
+		DocumentContent documentContent = taskService.getAttachmentContent(uuid, attachmentId);
 		return downloadDocument(documentContent);
 	}
 

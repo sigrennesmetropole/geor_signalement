@@ -18,12 +18,28 @@ public interface DocumentRepositoryService {
 	Long createDocument(List<String> attachmentIds, DocumentContent documentContent) throws DocumentRepositoryException;
 
 	/**
+	 * Retourne l'enveloppe d'un document associé à un Id
+	 * 
+	 * @param attachmentId
+	 * @return
+	 */
+	Attachment getDocument(Long id);
+
+	/**
 	 * Retourne un document par son id
 	 * 
 	 * @param id
 	 * @return
 	 */
-	DocumentContent getDocument(Long id) throws DocumentRepositoryException;
+	DocumentContent getDocumentContent(Long id) throws DocumentRepositoryException;
+
+	/**
+	 * Retourne l'enveloppe des documents associé à un Id
+	 * 
+	 * @param attachmentId
+	 * @return
+	 */
+	List<Attachment> getDocuments(String attachmentId);
 
 	/**
 	 * Retourne les documents associé à un Id
@@ -40,14 +56,6 @@ public interface DocumentRepositoryService {
 	 * @return
 	 */
 	List<Long> getDocumentIds(String attachmentId) throws DocumentRepositoryException;
-
-	/**
-	 * Retourne l'enveloppe des documents associé à un Id
-	 * 
-	 * @param attachmentId
-	 * @return
-	 */
-	List<Attachment> getDocuments(String attachmentId);
 
 	/**
 	 * Supprime un document par son id

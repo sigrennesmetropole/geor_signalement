@@ -114,14 +114,24 @@ public interface TaskService {
 	Attachment addAttachment(UUID reportingUuid, DocumentContent content) throws DocumentRepositoryException;
 
 	/**
-	 * Retourne un document pour un signalement et un id
+	 * Retourne  la description d'un attachment pour un signalement et un id
 	 * 
 	 * @param reportingUuid
 	 * @param attachmentId
 	 * @return
 	 * @throws DocumentRepositoryException
 	 */
-	DocumentContent getAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
+	Attachment getAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
+	
+	/**
+	 * Retourne le document pour un signalement et un id
+	 * 
+	 * @param reportingUuid
+	 * @param attachmentId
+	 * @return
+	 * @throws DocumentRepositoryException
+	 */
+	DocumentContent getAttachmentContent(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
 
 	/**
 	 * Supprime un document attaché à un signalement
@@ -131,6 +141,13 @@ public interface TaskService {
 	 * @throws DocumentRepositoryException
 	 */
 	void removeAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
+	
+	/**
+	 * Retourne la liste des attachements d'un signalement
+	 * @param reportingUuid
+	 * @return
+	 */
+	List<Attachment> getAttachments(UUID reportingUuid);
 
 	/**
 	 * Retourne la configuration associé à la gestion des documents
