@@ -240,6 +240,7 @@ ALTER SEQUENCE signalement.user__id_seq OWNER TO signalement;
 CREATE TABLE signalement.user_
 (
     id bigint NOT NULL DEFAULT nextval('signalement.user__id_seq'::regclass),
+    login character varying(100)  NOT NULL,
     email character varying(150)  NOT NULL,
     first_name character varying(150) ,
     last_name character varying(150) ,

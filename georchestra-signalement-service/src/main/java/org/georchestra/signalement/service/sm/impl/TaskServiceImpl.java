@@ -21,18 +21,22 @@ import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
+import org.georchestra.signalement.core.dao.acl.RoleCustomDao;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
 import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.AttachmentConfiguration;
 import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.ReportingDescription;
+import org.georchestra.signalement.core.dto.RoleSearchCriteria;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
+import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
@@ -73,6 +77,9 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	@Autowired
 	private ReportingDao reportingDao;
+
+	@Autowired
+	private RoleCustomDao roleCustomDao;
 
 	@Autowired
 	private DocumentRepositoryService documentRepositoryService;
@@ -259,10 +266,17 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	@Override
 	public List<Task> searchTasks() {
 		List<Task> results = null;
+		String username = authentificationHelper.getUsername();
+		List<String> roleNames = collectRoleNames(username);
 		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
-		List<org.activiti.engine.task.Task> tasks = taskService.createTaskQuery()
-				.taskAssignee(authentificationHelper.getUsername()).orderByTaskPriority().asc().orderByTaskCreateTime()
-				.desc().list();
+		TaskQuery taskQuery = taskService.createTaskQuery();
+		if (CollectionUtils.isNotEmpty(roleNames)) {
+			taskQuery.or().taskCandidateOrAssigned(username).taskCandidateGroupIn(roleNames).endOr();
+		} else {
+			taskQuery.taskCandidateOrAssigned(username);
+		}
+		List<org.activiti.engine.task.Task> tasks = taskQuery.orderByTaskPriority().asc().orderByTaskCreateTime().desc()
+				.list();
 		if (CollectionUtils.isNotEmpty(tasks)) {
 			results = new ArrayList<>(tasks.size());
 			for (org.activiti.engine.task.Task originalTask : tasks) {
@@ -573,5 +587,18 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 				LOGGER.warn("Failed to update assignee for {} to {}", originalTask.getId(), originalTask.getAssignee());
 			}
 		}
+	}
+	
+	private List<String> collectRoleNames(String username) {
+		List<String> roleNames = new ArrayList<>();
+		RoleSearchCriteria searchCriteria = new RoleSearchCriteria();
+		searchCriteria.setUserNames(Arrays.asList(username));
+		List<RoleEntity> roles = roleCustomDao.searchRoles(searchCriteria, null);
+		if (CollectionUtils.isNotEmpty(roles)) {
+			for (RoleEntity role : roles) {
+				roleNames.add(role.getName());
+			}
+		}
+		return roleNames;
 	}
 }

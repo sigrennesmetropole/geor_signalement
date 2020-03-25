@@ -232,10 +232,12 @@ public class FormHelper {
 	 * @throws FormConvertException
 	 */
 	public void fillMap(Form form, Map<String, Object> datas) throws FormConvertException {
-		for (Section section : form.getSections()) {
-			if (CollectionUtils.isNotEmpty(section.getFields())) {
-				for (Field field : section.getFields()) {
-					fillMap(field.getDefinition(), datas, field.getValues());
+		if (form != null && CollectionUtils.isNotEmpty(form.getSections())) {
+			for (Section section : form.getSections()) {
+				if (CollectionUtils.isNotEmpty(section.getFields())) {
+					for (Field field : section.getFields()) {
+						fillMap(field.getDefinition(), datas, field.getValues());
+					}
 				}
 			}
 		}

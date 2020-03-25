@@ -80,7 +80,7 @@
 				}
 			}
 		},
-		"/administration/processDefinition/update/{name}": {
+		"/administration/processDefinition/update/{deploymentName}": {
 			"post": {
 				"tags": [
 					"administration"
@@ -94,8 +94,8 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "name",
-						"description": "Nom du processus",
+						"name": "deploymentName",
+						"description": "Nom de la ressource de déploiement (la catégorie du déploiement sera le nom suffixé par _catergory)",
 						"required": true,
 						"type": "string"
 					},

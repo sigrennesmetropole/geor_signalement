@@ -33,6 +33,9 @@ public class UserEntity implements LongId {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
 	private Long id;
+	
+	@Column(name = "login", nullable = false, length = 100)
+	private String login;
 
 	/**
 	 * Addresse email permettant de faire le lien avec la personne authentifiée

@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- origin at X=0.0 Y=0.0 -->
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://signalement.georchestra.org/1.0/model" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Definitions_0v7t65f" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.5.1.Final-v20190425-2005-B1" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ext="http://org.eclipse.bpmn2/ext" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Definitions_1" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.5.1.Final-v20190425-2005-B1" targetNamespace="http://org.eclipse.bpmn2/default/process">
   <bpmn:itemDefinition id="ItemDefinition_18" isCollection="false" structureRef="xs:boolean"/>
   <bpmn:itemDefinition id="ItemDefinition_1" isCollection="false" structureRef="xs:string"/>
-  <bpmn:itemDefinition id="SubjectDefinition" isCollection="false" structureRef="xs:string"/>
-  <bpmn:itemDefinition id="FileBodyDefinition" isCollection="false" structureRef="xs:string"/>
   <bpmn:itemDefinition id="EMailData" isCollection="false" structureRef="org.georchestra.signalement.core.dto.EMailData"/>
   <bpmn:itemDefinition id="ItemDefinition_1711" isCollection="true" structureRef="xs:string"/>
   <bpmn:itemDefinition id="ItemDefinition_1481" isCollection="false" structureRef="xs:byte"/>
   <bpmn:itemDefinition id="ItemDefinition_1480" isCollection="false" structureRef="xs:date"/>
   <bpmn:itemDefinition id="ItemDefinition_1482" isCollection="false" structureRef="xs:decimal"/>
   <bpmn:itemDefinition id="ItemDefinition_1499" isCollection="false" structureRef="xs:int"/>
-  <bpmn:resource id="Resource_2" name="Validator"/>
-  <bpmn:process id="simpleReportingProcess" name="Simple Reporting" isExecutable="true">
+  <bpmn:process id="simpleGroupReportingProcess" name="Simple Group Reporting" isExecutable="true">
     <bpmn:documentation id="Documentation_2"><![CDATA[Processus de traitement simple d'un signalement]]></bpmn:documentation>
     <bpmn:startEvent id="StartEvent_1" name="Draft">
       <bpmn:outgoing>SequenceFlow_1</bpmn:outgoing>
@@ -32,11 +29,11 @@
         <bpmn:outputSet id="OutputSet_3" name="Output Set 3"/>
       </bpmn:ioSpecification>
       <bpmn:property id="Property_1" itemSubjectRef="ItemDefinition_18" name="action"/>
-      <bpmn:humanPerformer id="HumanPerformer_1" name="Human Performer 1">
-        <bpmn:resourceAssignmentExpression id="ResourceAssignmentExpression_3">
-          <bpmn:formalExpression id="FormalExpression_3" evaluatesToTypeRef="ItemDefinition_1" language="http://www.java.com/java">${workflowContext.computeHumanPerformer(null,execution,&quot;Validator&quot;, &quot;Nouveau signalement&quot;, &quot;file:assignee-mail.html&quot;)}</bpmn:formalExpression>
+      <bpmn:potentialOwner id="PotentialOwner_1" name="Potential Owner 1">
+        <bpmn:resourceAssignmentExpression id="ResourceAssignmentExpression_4">
+          <bpmn:formalExpression id="FormalExpression_8" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,&quot;Validator&quot;, &quot;Nouveau signalement&quot;, &quot;file:assignee-mail.html&quot;)})</bpmn:formalExpression>
         </bpmn:resourceAssignmentExpression>
-      </bpmn:humanPerformer>
+      </bpmn:potentialOwner>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_3" name="done" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_2">
       <bpmn:documentation id="Documentation_13"><![CDATA[Traitement du signalement]]></bpmn:documentation>
@@ -56,46 +53,6 @@
       <bpmn:documentation id="Documentation_4"><![CDATA[Positionne le workflow dans l'état "en attente" (pending)]]></bpmn:documentation>
       <bpmn:incoming>SequenceFlow_1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13</bpmn:outgoing>
-      <bpmn:ioSpecification id="InputOutputSpecification_1">
-        <bpmn:dataInput id="DataInput_1" itemSubjectRef="SubjectDefinition" name="subject"/>
-		<bpmn:dataInput id="DataInput_2" itemSubjectRef="FileBodyDefinition" name="fileBody"/>
-		<bpmn:dataOutput id="DataOutput_1" itemSubjectRef="EMailData" name="emailData"/>
-        <bpmn:inputSet id="InputSet_1" name="emailDataInputSet">
-          <bpmn:dataInputRefs>DataInput_1</bpmn:dataInputRefs>
-		  <bpmn:dataInputRefs>DataInput_2</bpmn:dataInputRefs>
-        </bpmn:inputSet>
-        <bpmn:outputSet id="OutputSet_2" name="emailDataOutputSet">
-          <bpmn:dataOutputRefs>DataOutput_1</bpmn:dataOutputRefs>
-        </bpmn:outputSet>
-      </bpmn:ioSpecification>
-      <bpmn:dataInputAssociation id="DataInputAssociation_1">
-        <bpmn:targetRef>DataInput_1</bpmn:targetRef>
-        <bpmn:assignment id="Assignment_1">
-          <bpmn:from xsi:type="bpmn:tFormalExpression" id="FormalExpression_1_1_1" evaluatesToTypeRef="ItemDefinition_1">&quot;Création d'un signalement&quot;</bpmn:from>
-          <bpmn:to xsi:type="bpmn:tFormalExpression" id="FormalExpression_1_1_2">DataInput_1</bpmn:to>
-        </bpmn:assignment>
-      </bpmn:dataInputAssociation>
-	  <bpmn:dataInputAssociation id="DataInputAssociation_2">
-        <bpmn:targetRef>DataInput_2</bpmn:targetRef>
-        <bpmn:assignment id="Assignment_2">
-          <bpmn:from xsi:type="bpmn:tFormalExpression" id="FormalExpression_1_2_1" evaluatesToTypeRef="ItemDefinition_1">&quot;initiator-mail.html&quot;</bpmn:from>
-          <bpmn:to xsi:type="bpmn:tFormalExpression" id="FormalExpression_1_2_2">DataInput_2</bpmn:to>
-        </bpmn:assignment>
-      </bpmn:dataInputAssociation>
-      <bpmn:dataOutputAssociation id="DataOutputAssociation_1">
-        <bpmn:targetRef>DataOutput_1</bpmn:targetRef>
-        <bpmn:assignment id="Assignment_3">
-          <bpmn:from xsi:type="bpmn:tFormalExpression" id="FormalExpression_1_3_1">DataInput_1</bpmn:from>
-          <bpmn:to xsi:type="bpmn:tFormalExpression" id="FormalExpression_1_3_2">${getDataOutput(&quot;DataOutput_1&quot;).subject}</bpmn:to>
-        </bpmn:assignment>
-      </bpmn:dataOutputAssociation>
-	  <bpmn:dataOutputAssociation id="DataOutputAssociation_2">
-        <bpmn:targetRef>DataOutput_1</bpmn:targetRef>
-        <bpmn:assignment id="Assignment_4">
-          <bpmn:from xsi:type="bpmn:tFormalExpression" id="FormalExpression_1_4_1">DataInput_2</bpmn:from>
-          <bpmn:to xsi:type="bpmn:tFormalExpression" id="FormalExpression_1_4_2">${getDataOutput(&quot;DataOutput_1&quot;).fileBody}</bpmn:to>
-        </bpmn:assignment>
-	  </bpmn:dataOutputAssociation>
       <bpmn:script>
       	workflowContext.info(&quot;Update status pending&quot;);
       	workflowContext.updateStatus(context, execution, &quot;PENDING&quot;);
@@ -109,11 +66,6 @@
       <bpmn:documentation id="Documentation_5"><![CDATA[Positionne le workflow dans l'état "terminé" (completed)]]></bpmn:documentation>
       <bpmn:incoming>SequenceFlow_3</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_2</bpmn:outgoing>
-      <bpmn:ioSpecification id="InputOutputSpecification_3">
-        <bpmn:inputSet id="InputSet_5" name="email.subject"/>
-        <bpmn:inputSet id="InputSet_6" name="email.body"/>
-        <bpmn:outputSet id="OutputSet_4" name="email.subject"/>
-      </bpmn:ioSpecification>
       <bpmn:script>
       	workflowContext.info(&quot;Update status complete&quot;);
       	workflowContext.updateStatus(context, execution, &quot;COMPLETED&quot;);
@@ -126,11 +78,6 @@
       <bpmn:documentation id="Documentation_7"><![CDATA[Positionne le workflow dans l'état "abandonné" (Canceled)]]></bpmn:documentation>
       <bpmn:incoming>SequenceFlow_4</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_6</bpmn:outgoing>
-      <bpmn:ioSpecification id="InputOutputSpecification_4">
-        <bpmn:inputSet id="InputSet_7" name="email.subject"/>
-        <bpmn:inputSet id="InputSet_8" name="email.body"/>
-        <bpmn:outputSet id="OutputSet_5" name="email.subject"/>
-      </bpmn:ioSpecification>
       <bpmn:script>
       	workflowContext.info(&quot;Update status canceled&quot;);
       	workflowContext.updateStatus(context, execution, &quot;CANCELLED&quot;);
@@ -140,8 +87,8 @@
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_6" sourceRef="ScriptTask_3" targetRef="EndEvent_13bsqqd"/>
   </bpmn:process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="simpleReportingProcess">
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1" name="Default Process Diagram">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="simpleGroupReportingProcess">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds height="36.0" width="36.0" x="99.0" y="102.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_4" labelStyle="BPMNLabelStyle_1">

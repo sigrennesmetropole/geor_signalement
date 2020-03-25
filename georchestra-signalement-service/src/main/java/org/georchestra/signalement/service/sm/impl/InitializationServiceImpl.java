@@ -44,10 +44,10 @@ public class InitializationServiceImpl implements InitializationService {
 	}
 
 	@Override
-	public void updateProcessDefinition(String processDefinitionName, DocumentContent documentContent)
+	public void updateProcessDefinition(String deploymentName, DocumentContent documentContent)
 			throws InitializationException {
 		LOGGER.info("Start update process definition ...");
-		if (documentContent == null || StringUtils.isEmpty(processDefinitionName)) {
+		if (documentContent == null || StringUtils.isEmpty(deploymentName)) {
 			throw new IllegalArgumentException("Name and document required");
 		}
 		if (!documentContent.getContentType().equalsIgnoreCase(MimeTypeUtils.APPLICATION_XML_VALUE)
@@ -57,23 +57,23 @@ public class InitializationServiceImpl implements InitializationService {
 		RepositoryService repositoryService = processEngine.getRepositoryService();
 		if (documentContent.isFile()) {
 			try (FileInputStream fis = new FileInputStream(documentContent.getFile())) {
-				LOGGER.info("Deploy file {}", processDefinitionName);
-				Deployment deployment = repositoryService.createDeployment().name(processDefinitionName)
-						.category(processDefinitionName + "_category")
+				LOGGER.info("Deploy file {}", deploymentName);
+				Deployment deployment = repositoryService.createDeployment().name(deploymentName)
+						.category(deploymentName + "_category")
 						.addInputStream(documentContent.getFileName(), fis).deploy();
 				LOGGER.info("Deploy {}", deployment.getId());
 			} catch (Exception e) {
-				throw new InitializationException("Failed to deploy file:" + processDefinitionName, e);
+				throw new InitializationException("Failed to deploy file:" + deploymentName, e);
 			}
 		} else if (documentContent.isStream()) {
 			try {
-				LOGGER.info("Deploy stream {}", processDefinitionName);
-				Deployment deployment = repositoryService.createDeployment().name(processDefinitionName)
-						.category(processDefinitionName + "_category")
+				LOGGER.info("Deploy stream {}", deploymentName);
+				Deployment deployment = repositoryService.createDeployment().name(deploymentName)
+						.category(deploymentName + "_category")
 						.addInputStream(documentContent.getFileName(), documentContent.getFileStream()).deploy();
 				LOGGER.info("Deploy {}", deployment.getId());
 			} catch (Exception e) {
-				throw new InitializationException("Failed to deploy stream:" + processDefinitionName, e);
+				throw new InitializationException("Failed to deploy stream:" + deploymentName, e);
 			} finally {
 				documentContent.closeStream();
 			}

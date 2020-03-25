@@ -56,11 +56,11 @@ public class AdministrationController implements AdministrationApi {
 	}
 
 	@Override
-	public ResponseEntity<Boolean> updateProcessDefinition(String name, @Valid MultipartFile file) throws Exception {
+	public ResponseEntity<Boolean> updateProcessDefinition(String deploymentName, @Valid MultipartFile file) throws Exception {
 		File document = java.io.File.createTempFile("upload", ".bpmn");
 		FileUtils.copyInputStreamToFile(file.getInputStream(), document);
 		DocumentContent content = new DocumentContent(file.getOriginalFilename(), file.getContentType(), document);
-		initializationService.updateProcessDefinition(name, content);
+		initializationService.updateProcessDefinition(deploymentName, content);
 		return ResponseEntity.ok(true);
 	}
 

@@ -12,6 +12,7 @@ import java.util.UUID;
 import javax.script.ScriptContext;
 
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
@@ -24,7 +25,6 @@ import org.georchestra.signalement.service.exception.DocumentModelNotFoundExcept
 import org.georchestra.signalement.service.exception.EMailException;
 import org.georchestra.signalement.service.helper.mail.EmailDataModel;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
-import org.georchestra.signalement.service.st.generator.impl.CompositeTemplateLoader;
 import org.georchestra.signalement.service.st.ldap.UserService;
 import org.georchestra.signalement.service.st.mail.MailDescription;
 import org.georchestra.signalement.service.st.mail.MailService;
@@ -43,6 +43,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class WorkflowContext {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowContext.class);
+
+	private static final String FILE_PREFIX = "file:";
 
 	@Autowired
 	private ReportingDao reportingDao;
@@ -106,7 +108,7 @@ public class WorkflowContext {
 			UUID uuid = UUID.fromString(processInstanceBusinessKey);
 			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
 			if (reportingEntity != null && eMailData != null) {
-				sendEMailToInitiator(executionEntity, reportingEntity, eMailData);
+				sendEMail(executionEntity, reportingEntity, eMailData, Arrays.asList(reportingEntity.getInitiator()));
 			} else {
 				LOGGER.warn("WkC - No initiator to send email {}", processInstanceBusinessKey);
 			}
@@ -115,23 +117,112 @@ public class WorkflowContext {
 		}
 	}
 
-	private void sendEMailToInitiator(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
-			EMailData eMailData)
+	/**
+	 * Retourne la liste des users candidats pour la tâche
+	 * 
+	 * @param scriptContext   le context
+	 * @param executionEntity l'entité d'execution
+	 * @param roleName        le rôle rechercher
+	 * @return la liste des users par leur identifiant sec-username
+	 */
+	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
+			String roleName, String subject, String body) {
+		LOGGER.debug("computePotentialOwners...");
+		List<String> recipients = Arrays.asList("testuser");
+		EMailData eMailData = new EMailData(subject, null, null);
+		if (body != null && body.startsWith(FILE_PREFIX)) {
+			eMailData.setFileBody(body.substring(FILE_PREFIX.length()));
+		} else {
+			eMailData.setBody(body);
+		}
+		sendEMail(executionEntity, eMailData, recipients);
+		return recipients;
+	}
+	
+	/**
+	 * Retourne la liste des users candidats pour la tâche
+	 * 
+	 * @param scriptContext   le context
+	 * @param executionEntity l'entité d'execution
+	 * @param roleName        le rôle rechercher
+	 * @return la liste des users par leur identifiant sec-username
+	 */
+	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
+			String roleName, EMailData eMailData) {
+		LOGGER.debug("computePotentialOwners...");
+		List<String> recipients = Arrays.asList("testuser");
+		sendEMail(executionEntity, eMailData, recipients);
+		return recipients;
+	}
+
+	/**
+	 * Retourne la liste des users candidats pour la tâche
+	 * 
+	 * @param scriptContext   le context
+	 * @param executionEntity l'entité d'execution
+	 * @param roleName        le rôle rechercher
+	 * @return la liste des users par leur identifiant sec-username
+	 */
+	public String computeHumanPerformer(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName,
+			EMailData eMailData) {
+		LOGGER.debug("computeHumanPerformer...");
+		String result = "testuser";
+		sendEMail(executionEntity, eMailData, Arrays.asList(result));
+		return result;
+	}
+
+	public String computeHumanPerformer(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName,
+			String subject, String body) {
+		LOGGER.debug("computeHumanPerformer...");
+		String result = "testuser";
+		EMailData eMailData = new EMailData(subject, null, null);
+		if (body != null && body.startsWith(FILE_PREFIX)) {
+			eMailData.setFileBody(body.substring(FILE_PREFIX.length()));
+		} else {
+			eMailData.setBody(body);
+		}
+		sendEMail(executionEntity, eMailData, Arrays.asList(result));
+		return result;
+	}
+
+	private void sendEMail(ExecutionEntity executionEntity, EMailData eMailData, List<String> recipients) {
+		if (eMailData != null && CollectionUtils.isNotEmpty(recipients)) {
+			String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
+			try {
+				UUID uuid = UUID.fromString(processInstanceBusinessKey);
+				AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
+				if (reportingEntity != null) {
+					sendEMail(executionEntity, reportingEntity, eMailData, recipients);
+				} else {
+					LOGGER.warn("WkC - No taget to send email {}", processInstanceBusinessKey);
+				}
+			} catch (Exception e) {
+				LOGGER.warn("WkC - Failed to send mail to " + recipients + " for " + processInstanceBusinessKey, e);
+			}
+		}
+	}
+
+	private void sendEMail(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
+			EMailData eMailData, List<String> recipients)
 			throws EMailException, IOException, DocumentModelNotFoundException, DocumentGenerationException {
-		User user = userService.getUserByLogin(reportingEntity.getInitiator());
-		if (user != null) {
-			MailDescription mailDescription = new MailDescription();
-			mailDescription.setSubject(generateSubject(eMailData));
-			mailDescription.addTo(user.getEmail());
-			mailDescription.setHtml(true);
-			mailDescription.setBody(generateEMailBody(executionEntity, reportingEntity, eMailData));
-			mailService.sendMail(mailDescription);
+		if (CollectionUtils.isNotEmpty(recipients)) {
+			for (String recipient : recipients) {
+				User user = userService.getUserByLogin(recipient);
+				if (user != null) {
+					MailDescription mailDescription = new MailDescription();
+					mailDescription.setSubject(generateSubject(eMailData));
+					mailDescription.addTo(user.getEmail());
+					mailDescription.setHtml(true);
+					mailDescription.setBody(generateEMailBody(executionEntity, reportingEntity, eMailData));
+					mailService.sendMail(mailDescription);
+				}
+			}
 		}
 	}
 
 	private String generateSubject(EMailData eMailData) {
 		String subject = "No subject";
-		if( StringUtils.isNotEmpty(eMailData.getSubject())){
+		if (StringUtils.isNotEmpty(eMailData.getSubject())) {
 			subject = eMailData.getSubject();
 		}
 		return subject;
@@ -149,30 +240,5 @@ public class WorkflowContext {
 		}
 
 		return generationConnector.generateDocument(emailDataModel);
-	}
-
-	/**
-	 * Retourne la liste des users candidats pour la tâche
-	 * 
-	 * @param scriptContext   le context
-	 * @param executionEntity l'entité d'execution
-	 * @param roleName        le rôle rechercher
-	 * @return la liste des users par leur identifiant sec-username
-	 */
-	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
-			String roleName) {
-		return Arrays.asList("testuser");
-	}
-
-	/**
-	 * Retourne la liste des users candidats pour la tâche
-	 * 
-	 * @param scriptContext   le context
-	 * @param executionEntity l'entité d'execution
-	 * @param roleName        le rôle rechercher
-	 * @return la liste des users par leur identifiant sec-username
-	 */
-	public String computeHumanPerformer(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName) {
-		return "testuser";
 	}
 }
