@@ -9,18 +9,27 @@ package org.georchestra.signalement.core.dto;
  */
 public class EMailData {
 
+	public static final String FILE_PREFIX = "file:";
+
 	private String subject;
-	
+
 	private String body;
-	
+
 	private String fileBody;
 
 	public EMailData() {
-		super();
+	}
+
+	public EMailData(String subject, String body) {
+		this.subject = subject;
+		if (body != null && body.startsWith(FILE_PREFIX)) {
+			this.fileBody = body.substring(FILE_PREFIX.length());
+		} else {
+			this.body = body;
+		}
 	}
 
 	public EMailData(String subject, String body, String fileBody) {
-		super();
 		this.subject = subject;
 		this.body = body;
 		this.fileBody = fileBody;

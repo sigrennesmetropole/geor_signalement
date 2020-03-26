@@ -44,8 +44,6 @@ public class WorkflowContext {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowContext.class);
 
-	private static final String FILE_PREFIX = "file:";
-
 	@Autowired
 	private ReportingDao reportingDao;
 
@@ -124,12 +122,7 @@ public class WorkflowContext {
 	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
 			String roleName, String subject, String body) {
 		LOGGER.debug("computePotentialOwners...");
-		EMailData eMailData = new EMailData(subject, null, null);
-		if (body != null && body.startsWith(FILE_PREFIX)) {
-			eMailData.setFileBody(body.substring(FILE_PREFIX.length()));
-		} else {
-			eMailData.setBody(body);
-		}
+		EMailData eMailData = new EMailData(subject, body);
 		return computePotentialOwners(scriptContext, executionEntity, roleName, eMailData);
 	}
 
@@ -184,12 +177,7 @@ public class WorkflowContext {
 	public String computeHumanPerformer(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName,
 			String subject, String body) {
 		LOGGER.debug("computeHumanPerformer...");
-		EMailData eMailData = new EMailData(subject, null, null);
-		if (body != null && body.startsWith(FILE_PREFIX)) {
-			eMailData.setFileBody(body.substring(FILE_PREFIX.length()));
-		} else {
-			eMailData.setBody(body);
-		}
+		EMailData eMailData = new EMailData(subject, body);
 		return computeHumanPerformer(scriptContext, executionEntity, roleName, eMailData);
 	}
 
