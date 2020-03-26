@@ -103,17 +103,13 @@ public class WorkflowContext {
 	 */
 	public void sendEMail(ScriptContext scriptContext, ExecutionEntity executionEntity, EMailData eMailData) {
 		LOGGER.debug("Send email...");
-		String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
 		try {
-			UUID uuid = UUID.fromString(processInstanceBusinessKey);
-			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
+			AbstractReportingEntity reportingEntity = lookupReportingEntity(executionEntity);
 			if (reportingEntity != null && eMailData != null) {
 				sendEMail(executionEntity, reportingEntity, eMailData, Arrays.asList(reportingEntity.getInitiator()));
-			} else {
-				LOGGER.warn("WkC - No initiator to send email {}", processInstanceBusinessKey);
 			}
 		} catch (Exception e) {
-			LOGGER.warn("WkC - Failed to send mail for " + processInstanceBusinessKey, e);
+			LOGGER.warn("WkC - Failed to send mail for " + executionEntity.getProcessDefinitionKey(), e);
 		}
 	}
 
@@ -128,17 +124,15 @@ public class WorkflowContext {
 	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
 			String roleName, String subject, String body) {
 		LOGGER.debug("computePotentialOwners...");
-		List<String> recipients = Arrays.asList("testuser");
 		EMailData eMailData = new EMailData(subject, null, null);
 		if (body != null && body.startsWith(FILE_PREFIX)) {
 			eMailData.setFileBody(body.substring(FILE_PREFIX.length()));
 		} else {
 			eMailData.setBody(body);
 		}
-		sendEMail(executionEntity, eMailData, recipients);
-		return recipients;
+		return computePotentialOwners(scriptContext, executionEntity, roleName, eMailData);
 	}
-	
+
 	/**
 	 * Retourne la liste des users candidats pour la tâche
 	 * 
@@ -151,7 +145,15 @@ public class WorkflowContext {
 			String roleName, EMailData eMailData) {
 		LOGGER.debug("computePotentialOwners...");
 		List<String> recipients = Arrays.asList("testuser");
-		sendEMail(executionEntity, eMailData, recipients);
+		AbstractReportingEntity reportingEntity = lookupReportingEntity(executionEntity);
+		if (reportingEntity != null) {
+			try {
+				// Ici il faut calcule le contenue de recipients
+				sendEMail(executionEntity, reportingEntity, eMailData, recipients);
+			} catch (Exception e) {
+				LOGGER.warn("Failed to send email to " + recipients + " from " + reportingEntity, e);
+			}
+		}
 		return recipients;
 	}
 
@@ -167,45 +169,47 @@ public class WorkflowContext {
 			EMailData eMailData) {
 		LOGGER.debug("computeHumanPerformer...");
 		String result = "testuser";
-		sendEMail(executionEntity, eMailData, Arrays.asList(result));
+		AbstractReportingEntity reportingEntity = lookupReportingEntity(executionEntity);
+		if (reportingEntity != null) {
+			try {
+				// Ici il faut calcule le contenue de result
+				sendEMail(executionEntity, reportingEntity, eMailData, Arrays.asList(result));
+			} catch (Exception e) {
+				LOGGER.warn("Failed to send email to " + result + " from " + reportingEntity, e);
+			}
+		}
 		return result;
 	}
 
 	public String computeHumanPerformer(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName,
 			String subject, String body) {
 		LOGGER.debug("computeHumanPerformer...");
-		String result = "testuser";
 		EMailData eMailData = new EMailData(subject, null, null);
 		if (body != null && body.startsWith(FILE_PREFIX)) {
 			eMailData.setFileBody(body.substring(FILE_PREFIX.length()));
 		} else {
 			eMailData.setBody(body);
 		}
-		sendEMail(executionEntity, eMailData, Arrays.asList(result));
-		return result;
+		return computeHumanPerformer(scriptContext, executionEntity, roleName, eMailData);
 	}
 
-	private void sendEMail(ExecutionEntity executionEntity, EMailData eMailData, List<String> recipients) {
-		if (eMailData != null && CollectionUtils.isNotEmpty(recipients)) {
-			String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
-			try {
-				UUID uuid = UUID.fromString(processInstanceBusinessKey);
-				AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
-				if (reportingEntity != null) {
-					sendEMail(executionEntity, reportingEntity, eMailData, recipients);
-				} else {
-					LOGGER.warn("WkC - No taget to send email {}", processInstanceBusinessKey);
-				}
-			} catch (Exception e) {
-				LOGGER.warn("WkC - Failed to send mail to " + recipients + " for " + processInstanceBusinessKey, e);
-			}
+	private AbstractReportingEntity lookupReportingEntity(ExecutionEntity executionEntity) {
+		AbstractReportingEntity result = null;
+		String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
+		if (processInstanceBusinessKey != null) {
+			UUID uuid = UUID.fromString(processInstanceBusinessKey);
+			result = reportingDao.findByUuid(uuid);
 		}
+		if (result == null) {
+			LOGGER.warn("WkC - No target for {}", processInstanceBusinessKey);
+		}
+		return result;
 	}
 
 	private void sendEMail(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
 			EMailData eMailData, List<String> recipients)
 			throws EMailException, IOException, DocumentModelNotFoundException, DocumentGenerationException {
-		if (CollectionUtils.isNotEmpty(recipients)) {
+		if (eMailData != null && CollectionUtils.isNotEmpty(recipients)) {
 			for (String recipient : recipients) {
 				User user = userService.getUserByLogin(recipient);
 				if (user != null) {
