@@ -5,7 +5,8 @@
 		"name": "Signalement",
 		"options": {
 			"target": "tbar_12",
-			"log": "true"
+			"log": "true",
+			"layerTreeAction" : "true"
 		},
 		"title": {
 			"en": "Reporting",

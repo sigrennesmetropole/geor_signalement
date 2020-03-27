@@ -67,8 +67,22 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
      * characterSet if existing or ``UTF-8`` if not.
      */
     encoding: document.charset || document.characterSet || "UTF-8",
+    
+    /**
+     * fields used to build tree Action Menu item
+     */
+    title : null,
+    iconCls: null,
+    qtip: null,
+    
+    /**
+     * field used to store current layer record
+     */
+    layerRecord: null,
 
     init: function (record) {
+    	
+    	initActionMenuDate();
 
         this.userStore = new Ext.data.JsonStore({
             root: "",
@@ -250,6 +264,41 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 
 
     },
+    
+    /**
+     * @function layerTreeHandler
+     *
+     * Handler for the layer tree Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
+     * @param event - event which trigger the action
+     * @param layerRecord - layerRecord on which operate
+     */
+    layerTreeHandler: function(menuitem, event, layerRecord) {
+        if (this.active) {
+            return;
+        }
+        // set layer record:
+        this.layerRecord = layerRecord;
+        // TODO 
+        // si la layer est associé à un contexte signalement on ouvre la fenêtre pour cette couche
+        // dans le cas contraire soit on affiche un message indiquant que la couche ne supporte pas le signalement
+        // soit on ouvre la fenêtre de signalement par thème
+        this.showSignalementWindow();
+    },
+    
+    /**
+     * @function initActionMenuDate
+     * 
+     * Initialize fields used by tree Actions menu to create MenuItem
+     */
+    initActionMenuDate: function() {
+    	this.iconCls ='addon-signalement';
+        this.title =  this.getText(record);
+        this.qtip = this.getTooltip(record);
+    }
 
     destroy: function () {
         this.window.hide();
