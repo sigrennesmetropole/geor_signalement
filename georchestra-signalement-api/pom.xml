@@ -216,5 +216,34 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>dev-yri</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy-addon</id>
+								<phase>package</phase>
+								<configuration>
+									<target name="copy addon to georchestra">
+										<copy todir="${georchestra.addon.deployDir}">
+											<fileset dir="../addon/">
+												<exclude name="**/addon-assembly.xml" />
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

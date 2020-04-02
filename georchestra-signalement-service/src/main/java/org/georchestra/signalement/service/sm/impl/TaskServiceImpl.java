@@ -358,6 +358,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void cancelDraft(UUID reportingUuid) {
 		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(reportingUuid);
 		if (reportingEntity == null) {

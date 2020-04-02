@@ -42,6 +42,7 @@ CREATE TABLE signalement.abstract_reporting
     context_description_id bigint,
     creation_date timestamp without time zone NOT NULL,
     updated_date timestamp without time zone NOT NULL,
+    assignee character varying(100),
     CONSTRAINT abstract_reporting_pkey PRIMARY KEY (id),
     CONSTRAINT fk8eihrfrctlvi6pgik8a05eosw FOREIGN KEY (context_description_id)
         REFERENCES signalement.context_description (id) MATCH SIMPLE
