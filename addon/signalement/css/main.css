@@ -1,3 +1,9 @@
 .addon-signalement {
     background-image: url(../img/warning-icon-16x16.png) !important;
 }
+.upload-icon{
+    background-image: url(../img/add-icon-16x16.png) !important;
+}
+.draw-icon{
+    background-image: url(../img/draw-icon-16x16.png) !important;
+}

@@ -39,6 +39,7 @@ sbapi:sonar:
   except:
     refs:
       - master
+  allow_failure: true
   script:
     - >
       sh ./mvnw $MAVEN_CLI_OPTS -U compile sonar:sonar
@@ -48,6 +49,7 @@ sbapi:sonar:
       -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
       -Dsonar.gitlab.project_id=$CI_PROJECT_ID
       -Dsonar.branch.name=$CI_COMMIT_REF_NAME
+            
 
 # On master, do not use branch parameter
 sbapi:sonar:master:

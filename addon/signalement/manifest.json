@@ -1,25 +1,81 @@
 {
 	"js": [
-		"js/main.js"
+		"js/main.js",
+		"js/fileupload.js"
 	],
 	"css": [
-		"css/main.css"
+		"css/main.css",
+		"css/fileuploadfield.css"
 	],
 	"default_options": {
-		"signalementURL": "http://localhost:8082/"
+		"signalementURL": "http://localhost:8082/",
+		"contextType": "reporting/contextDescription/search",
+		"taskType": "task/draft"
 	},
 	"i18n": {
 		"en": {
-			"signalement.close": "Close"
+			"signalement.close": "Close",
+			"signalement.cancel": "Cancel",
+			"signalement.create": "Create",
+			"signalement.user": "User",
+			"signalement.login": "You are",
+			"signalement.organization": "Your organization",
+			"signalement.email": "Your mail address",
+			"signalement.reporting.thema": "Reporting on thema",
+			"signalement.reporting.layer": "Reporting on layer",
+			"signalement.attachment.files": "Attachment(s)",
+			"signalement.attachment.select": "Select attachment file",
+			"signalement.attachment.delete": "Delete attachment file",
+			"signalement.localization": "Localize reporting",
+			"signalement.localization.tips": "Clic on button to localize reporting on map"
 		},
 		"es": {
-			"signalement.close": "Cerrar"
+			"signalement.close": "Cerrar",
+			"signalement.cancel": "Cancel",
+			"signalement.create": "Create",
+			"signalement.user": "User",
+			"signalement.login": "You are",
+			"signalement.organization": "Your organization",
+			"signalement.email": "Your mail address",
+			"signalement.reporting.thema": "Reporting on thema",
+			"signalement.reporting.layer": "Reporting on layer",
+			"signalement.attachment.files": "Attachment(s)",
+			"signalement.attachment.select": "Select attachment file",
+			"signalement.attachment.delete": "Delete attachment file",
+			"signalement.localization": "Localize reporting",
+			"signalement.localization.tips": "Clic on button to localize reporting on map"
 		},
 		"fr": {
-			"signalement.close": "Fermer"
+			"signalement.close": "Fermer",
+			"signalement.cancel": "Abandonner",
+			"signalement.create": "Créer",
+			"signalement.user": "Utilisateur",
+			"signalement.login": "Vous êtes",
+			"signalement.organization": "Collectivité",
+			"signalement.email": "Votre adresse mail",
+			"signalement.reporting.thema": "Signalement sur la thématique",
+			"signalement.reporting.layer": "Signalement sur la couche",
+			"signalement.attachment.files": "Pièce(s) jointe(s)",
+			"signalement.attachment.select": "Sélectionner un document",
+			"signalement.attachment.delete": "Supprimer un document",
+			"signalement.localization": "Géolocation de l'anomalie",
+			"signalement.localization.tips": "Cliquer sur le bouton pour géolocaliser le signalement sur la carte"
 		},
 		"de": {
-			"signalement.close": "Schließen"
+			"signalement.close": "Schließen",
+			"signalement.cancel": "Cancel",
+			"signalement.create": "Create",
+			"signalement.user": "User",
+			"signalement.login": "You are",
+			"signalement.organization": "Your organization",
+			"signalement.email": "Your mail address",
+			"signalement.reporting.thema": "Reporting on thema",
+			"signalement.reporting.layer": "Reporting on layer",
+			"signalement.attachment.files": "Attachment(s)",
+			"signalement.attachment.select": "Select attachment file",
+			"signalement.attachment.delete": "Delete attachment file",
+			"signalement.localization": "Localize reporting",
+			"signalement.localization.tips": "Clic on button to localize reporting on map"
 		}
 	}
 }

@@ -90,6 +90,12 @@
 				<georchestra.addon.deployDir>C:\Program Files\Apache\apache-tomcat-9.0.26\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
 			</properties>
 		</profile>
+		<profile>
+			<id>dev-yri</id>
+			<properties>
+				<georchestra.addon.deployDir>C:\Program Files (x86)\Apache\Tomcat 9.0\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
+			</properties>
+		</profile>
 	</profiles>
 
 	<dependencyManagement>
