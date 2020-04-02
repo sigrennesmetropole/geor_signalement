@@ -893,6 +893,31 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         request.open('POST', this.options.signalementURL + "reporting/" + task.asset.uuid + "/upload");
         request.send(formData);
     },
+    
+    /**
+     * @function layerTreeHandler
+     *
+     * Handler for the layer tree Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
+     * @param event - event which trigger the action
+     * @param layerRecord - layerRecord on which operate
+     */
+    layerTreeHandler: function(menuitem, event, layerRecord) {
+        if (this.active) {
+            return;
+        }
+        // set layer record:
+        this.layerRecord = layerRecord;
+        // TODO 
+        // si la layer est associé à un contexte signalement on ouvre la fenêtre pour cette couche
+        // dans le cas contraire soit on affiche un message indiquant que la couche ne supporte pas le signalement
+        // soit on ouvre la fenêtre de signalement par thème
+        this.showSignalementWindow();
+    },
+
 
     destroy: function () {
         this.map.removeLayer(this.vectorLayer);
