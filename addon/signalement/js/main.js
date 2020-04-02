@@ -917,7 +917,17 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         // soit on ouvre la fenêtre de signalement par thème
         this.showSignalementWindow();
     },
-
+    
+    /**
+     * @function initActionMenuDate
+     * 
+     * Initialize fields used by tree Actions menu to create MenuItem
+     */
+    initActionMenuDate: function() {
+    	this.iconCls ='addon-signalement';
+        this.title =  this.getText(record);
+        this.qtip = this.getTooltip(record);
+    },
 
     destroy: function () {
         this.map.removeLayer(this.vectorLayer);
