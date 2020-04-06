@@ -94,10 +94,10 @@ public class WorkflowContext {
 	}
 
 	/**
-	 * Méthode d'envoie de courriel
-	 * 
-	 * @param a
-	 * @param b
+	 * Envoi de courriel
+	 * @param scriptContext   le context du script
+	 * @param executionEntity le context d'execution
+	 * @param eMailData
 	 */
 	public void sendEMail(ScriptContext scriptContext, ExecutionEntity executionEntity, EMailData eMailData) {
 		LOGGER.debug("Send email...");

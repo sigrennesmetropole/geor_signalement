@@ -157,19 +157,7 @@ public class GenerationConnectorImpl implements GenerationConnector {
 				realTemplateName = extractTemplateName(templateName);
 				compositeTemplateLoader.putTemplate(realTemplateName, extractTemplateContent(templateName));
 			}
-//			File templateFile = new File(templateName);
-//			if (templateFile.exists()) {
-//				configuration.set
-//			} else {
-//				File freemarkerBaseDirectoryFile = new File(freemarkerBaseDirectory);
-//				if (freemarkerBaseDirectoryFile.exists()) {
-//					configuration.setDirectoryForTemplateLoading(freemarkerBaseDirectoryFile);
-//				} else {
-//					configuration.setClassLoaderForTemplateLoading(Thread.currentThread().getContextClassLoader(),
-//							freemarkerBaseDirectory);
-//				}
-//			}
-			configuration.setTemplateUpdateDelayMilliseconds(5 * 60 * 1000);
+			configuration.setTemplateUpdateDelayMilliseconds(5L * 60L * 1000L);
 			configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
 			configuration.setLocale(Locale.FRANCE);
 			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);

@@ -22,11 +22,13 @@ import freemarker.cache.TemplateLoader;
  */
 public class CompositeTemplateLoader implements TemplateLoader {
 
-	private static int FILE_TEMPLATE_LOADER_INDEX = 0;
+	private static final String STRING_TEMPLATE_SOURCE = "StringTemplateSource";
 
-	private static int CLASS_TEMPLATE_LOADER_INDEX = 1;
+	private static final int FILE_TEMPLATE_LOADER_INDEX = 0;
 
-	private static int STRING_TEMPLATE_LOADER_INDEX = 2;
+	private static final int CLASS_TEMPLATE_LOADER_INDEX = 1;
+
+	private static final int STRING_TEMPLATE_LOADER_INDEX = 2;
 
 	private List<TemplateLoader> templateLoaders = new ArrayList<>();
 
@@ -64,7 +66,7 @@ public class CompositeTemplateLoader implements TemplateLoader {
 	public long getLastModified(Object templateSource) {
 		if (templateSource instanceof File) {
 			return templateLoaders.get(FILE_TEMPLATE_LOADER_INDEX).getLastModified(templateSource);
-		} else if (templateSource.getClass().getSimpleName().endsWith("StringTemplateSource")) {
+		} else if (templateSource.getClass().getSimpleName().endsWith(STRING_TEMPLATE_SOURCE)) {
 			return templateLoaders.get(STRING_TEMPLATE_LOADER_INDEX).getLastModified(templateSource);
 		} else {
 			return templateLoaders.get(CLASS_TEMPLATE_LOADER_INDEX).getLastModified(templateSource);
@@ -75,7 +77,7 @@ public class CompositeTemplateLoader implements TemplateLoader {
 	public Reader getReader(Object templateSource, String encoding) throws IOException {
 		if (templateSource instanceof File) {
 			return templateLoaders.get(FILE_TEMPLATE_LOADER_INDEX).getReader(templateSource, encoding);
-		} else if (templateSource.getClass().getSimpleName().endsWith("StringTemplateSource")) {
+		} else if (templateSource.getClass().getSimpleName().endsWith(STRING_TEMPLATE_SOURCE)) {
 			return templateLoaders.get(STRING_TEMPLATE_LOADER_INDEX).getReader(templateSource, encoding);
 		} else {
 			return templateLoaders.get(CLASS_TEMPLATE_LOADER_INDEX).getReader(templateSource, encoding);
@@ -86,7 +88,7 @@ public class CompositeTemplateLoader implements TemplateLoader {
 	public void closeTemplateSource(Object templateSource) throws IOException {
 		if (templateSource instanceof File) {
 			templateLoaders.get(FILE_TEMPLATE_LOADER_INDEX).closeTemplateSource(templateSource);
-		} else if (templateSource.getClass().getSimpleName().endsWith("StringTemplateSource")) {
+		} else if (templateSource.getClass().getSimpleName().endsWith(STRING_TEMPLATE_SOURCE)) {
 			templateLoaders.get(STRING_TEMPLATE_LOADER_INDEX).closeTemplateSource(templateSource);
 		} else {
 			templateLoaders.get(CLASS_TEMPLATE_LOADER_INDEX).closeTemplateSource(templateSource);

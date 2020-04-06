@@ -1,6 +1,7 @@
 package org.georchestra.signalement.service.st.generator.datamodel;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -122,8 +123,7 @@ public final class DataModelUtils {
 	 * @throws UnsupportedEncodingException
 	 */
 	public static String encodeCharset(String chaine, String charset) throws UnsupportedEncodingException {
-		String result = new String(chaine.getBytes("UTF-8"), charset);
-		return result;
+		return new String(chaine.getBytes(StandardCharsets.UTF_8), charset);
 	}
 
 	/**
