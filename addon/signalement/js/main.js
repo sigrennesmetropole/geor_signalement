@@ -130,6 +130,11 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     attachmentConfigurationStore: null,
 
     /**
+     * Information about signalement if it's used for layer or thema
+     */
+    reportThema: true,
+
+    /**
      * Informations retrieved from addon server about " list of themas »
      */
     themasStore: null,
@@ -388,8 +393,21 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     },
 
     buildForm: function() {
-    	var themas = this.noteStore.getThemas();
-    	var addon = this;
+        var storeCombo, valueCombo, titleCombo, iconGeom;
+        // teste si le signalement est pour une couche ou thématique
+        if(this.reportThema == true){
+            storeCombo= this.themasStore;
+            valueCombo= this.noteStore.getThemas()[0].name;
+            titleCombo=  this.tr('signalement.reporting.thema');
+        }else{
+            storeCombo= this.layersStore;
+            valueCombo= this.noteStore.getTask().asset.contextDescription.name;
+            titleCombo=  this.tr('signalement.reporting.layer');
+        }
+        iconGeom= this.noteStore.getTask().asset.geographicType;
+
+
+        var addon = this;
     	var layerFeature;
 
         var drawActionControl = function (typeGeom) {
@@ -402,7 +420,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             if (typeGeom == 'POLYGON') {
                 layerFeature = new OpenLayers.Control.DrawFeature(
                     addon.vectorLayer, OpenLayers.Handler.Polygon);
-            } else if (typeGeom == 'LIGNE') {
+            } else if (typeGeom == 'LINE') {
                 layerFeature = new OpenLayers.Control.DrawFeature(
                 	addon.vectorLayer, OpenLayers.Handler.Path);
             } else if (typeGeom == 'POINT') {
@@ -430,7 +448,6 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             for (var i = 0; i < list.length; i++) {
                 listLocalisation.push({'x': list[i].x, 'y': list[i].y});
             }
-            console.log('listLocalisation:' + listLocalisation);
             addon.noteStore.updateLocalisation(listLocalisation);
             Ext.getCmp('createButton').setDisabled(false);
 
@@ -477,7 +494,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 },
                 {
                     xtype: 'fieldset',
-                    title: this.tr('signalement.reporting.thema'),
+                    title:titleCombo,
                     collapsible: false,
                     width: 500,
                     items: [{
@@ -493,12 +510,14 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                                 forceSelection: true,
                                 displayField: 'label',
                                 valueField: 'name',
-                                store: this.themasStore,
-                                value: themas[0].name,
+                                store: storeCombo,
+                                value: valueCombo,
                                 listeners: {
                                     select: function (combo, record) {
                                         addon.noteStore.getTask().asset.contextDescription = record.data;
                                         addon.noteStore.getTask().asset.geographicType = record.data.geographicType;
+                                        //changer l'icon pour dessiner une feature en fonction de la geometrie
+                                        Ext.getCmp('drawBtn').setIconClass(record.data.geographicType);
 
                                         if (addon.vectorLayer != undefined) {
                                             addon.vectorLayer.destroyFeatures();
@@ -535,7 +554,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             id: 'form-file-field',
                             emptyText: this.tr('signalement.attachment.select'),
                             fieldLabel: this.tr('signalement.attachment.add'),
-                            name: 'photo-path',
+                            name: 'file',
                             buttonText: '',
                             buttonCfg: {
                                 iconCls: 'upload-icon'
@@ -565,7 +584,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                         {
                             xtype: 'button',
                             id: 'drawBtn',
-                            iconCls: 'draw-icon',
+                            iconCls: iconGeom,
                             scope: this,
                             handler: function () {
                                 if (addon.vectorLayer != undefined) {
@@ -589,9 +608,13 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     },
 
     buildSignalementWindow: function () {
-        var themas = this.noteStore.getThemas();
 
         var form = this.buildForm();
+        //Dans le cas d'un signalement d'une couche le button est grisé
+        if(this.reportThema == false){
+            Ext.getCmp('combo').setDisabled(true);
+        }
+
 
         this.signalementWindow = new Ext.Window({
             title: this.getText(this.initRecord),
@@ -612,11 +635,18 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     id: 'closeButton',
                     text: this.tr("signalement.close"),
                     handler: function () {
-                        if (this.vectorLayer != undefined) {
-                            this.vectorLayer.destroyFeatures();
-                            this.map.removeLayer(this.vectorLayer);
-                        }
-                        this.closeSignalementWindow();
+                        var addon =this;
+                        // message d'alert pour confirmer la fermeture de la fenetre
+                        Ext.MessageBox.confirm(this.tr("signalement.msgBox.title"), this.tr("signalement.msgBox.info"), function (btn) {
+                            if(btn =='yes'){
+                                if (addon.vectorLayer != undefined) {
+                                    addon.vectorLayer.destroyFeatures();
+                                    addon.map.removeLayer(addon.vectorLayer);
+                                }
+                                addon.closeSignalementWindow();
+                            }
+                        });
+
                     },
                     scope: this
                 }
@@ -649,13 +679,26 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         }
     },
 
-    showSignalementWindow: function () {
+    showSignalementWindow: function (layer) {
         this.userStore.load();
         this.remainingXHRs += 1;
-
-        if (this.themaStoreLoaded /*remainingXHRs==0*/) {
-            this.createDraftTask();
+        var params;
+        // parametre pour signalement par couche ou par theme
+        if (layer == undefined) {
+            var themas = this.noteStore.getThemas();
+            params= {
+                "description": "",
+                "contextDescription": themas[0]
+            };
+        }else{
+            //var layers = this.noteStore.getLayers();
+            params= {
+                "description": "",
+                "contextDescription": layer
+            };
         }
+        this.createDraftTask(params);
+
 
     },
 
@@ -710,12 +753,8 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         });
     },
 
-    createDraftTask: function () {
-        var themas = this.noteStore.getThemas();
-        var params = {
-            "description": "",
-            "contextDescription": themas[0]
-        };
+    createDraftTask: function (params) {
+
         Ext.Ajax.request({
             url: this.options.signalementURL + "task/draft",
             method: 'POST',
@@ -825,12 +864,10 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     	formData.set("file", file , file.name);
     	var request = new XMLHttpRequest();
     	request.onload = function(response, a) {
-    		console.log(response, a);
     		if (request.status == 200) {
     			var attachment = Ext.util.JSON.decode(request.responseText)
     			task.asset.attachments.push(attachment);
     			Ext.getCmp('attachmentPanel').getStore().loadData(task.asset.attachments);
-                console.log("attachmentPanel", Ext.getCmp('attachmentPanel').getStore());
 
             }else {
                 console.log("upload file", request.status);
@@ -864,11 +901,25 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         }
         // set layer record:
         this.layerRecord = layerRecord;
-        // TODO 
+
+        // on cherche si le layer est associé à une couche
+        var layerReport;
+        this.noteStore.getLayers().forEach(function (layer) {
+            if(layer.name == layerRecord.data.name){
+                layerReport=layer;
+            }
+        })
+
         // si la layer est associé à un contexte signalement on ouvre la fenêtre pour cette couche
-        // dans le cas contraire soit on affiche un message indiquant que la couche ne supporte pas le signalement
-        // soit on ouvre la fenêtre de signalement par thème
-        this.showSignalementWindow();
+        // dans le cas contraire  on affiche un message indiquant que la couche ne supporte pas le signalement
+        if(layerReport) {
+            this.reportThema = false;
+            this.showSignalementWindow(layerReport);
+        }else{
+            Ext.Msg.show({
+                msg: this.tr('signalement.localization.layer')
+            });
+        }
     },
 
     /**
@@ -914,7 +965,8 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     _onCheckchange: function (item, checked) {
         this.log("Change:" + item);
         if (checked) {
-            // appel
+            // signalement par thème
+            this.reportThema=true;
             this.showSignalementWindow();
         }
     }

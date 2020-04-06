@@ -32,7 +32,11 @@
 			"signalement.attachment.error": "le fichier n'a pas été uploadé",
 			"signalement.attachment.delete": "Delete attachment file",
 			"signalement.localization": "Localize reporting",
-			"signalement.localization.tips": "Clic on button to localize reporting on map"
+			"signalement.localization.tips": "Clic on button to localize reporting on map",
+			"signalement.localization.layer": "La couche n'est pas signalable",
+			"signalement.msgBox.title": "Signalement",
+			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+
 		},
 		"es": {
 			"signalement.close": "Cerrar",
@@ -54,7 +58,12 @@
 			"signalement.attachment.select": "Select attachment file",
 			"signalement.attachment.delete": "Delete attachment file",
 			"signalement.localization": "Localize reporting",
-			"signalement.localization.tips": "Clic on button to localize reporting on map"
+			"signalement.localization.tips": "Clic on button to localize reporting on map",
+			"signalement.localization.layer": "La couche n'est pas signalable",
+			"signalement.msgBox.title": "Signalement",
+			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+
+
 		},
 		"fr": {
 			"signalement.close": "Fermer",
@@ -78,7 +87,11 @@
 			"signalement.localization": "Géolocation de l'anomalie",
 			"signalement.localization.tips": "Cliquer sur le bouton pour géolocaliser le signalement sur la carte",
 			"signalement.task.create": "La tâche de signalement a été créée",
-			"signalement.task.error": "La tâche de signalement n'a pas été créée"
+			"signalement.task.error": "La tâche de signalement n'a pas été créée",
+			"signalement.localization.layer": "La couche n'est pas signalable",
+			"signalement.msgBox.title": "Signalement",
+			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+
 		},
 		"de": {
 			"signalement.close": "Schließen",
@@ -100,7 +113,12 @@
 			"signalement.attachment.select": "Sélectionner un document",
 			"signalement.attachment.delete": "Delete attachment file",
 			"signalement.localization": "Localize reporting",
-			"signalement.localization.tips": "Clic on button to localize reporting on map"
+			"signalement.localization.tips": "Clic on button to localize reporting on map",
+			"signalement.localization.layer": "La couche n'est pas signalable",
+			"signalement.msgBox.title": "Signalement",
+			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+
+
 		}
 	}
 }
