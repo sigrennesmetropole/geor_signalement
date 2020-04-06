@@ -99,116 +99,18 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
      * characterSet if existing or ``UTF-8`` if not.
      */
     encoding: document.charset || document.characterSet || "UTF-8",
-    
+
     /**
      * fields used to build tree Action Menu item
      */
     title : null,
     iconCls: null,
     qtip: null,
-    
+
     /**
      * field used to store current layer record
      */
     layerRecord: null,
-
-    init: function (record) {
-    	
-    	initActionMenuDate();
-
-        this.userStore = new Ext.data.JsonStore({
-            root: "",
-            fields: [
-                "login",
-                "firstName",
-                "lastName",
-                "email",
-                "organisation"
-            ],
-            proxy: new Ext.data.HttpProxy({
-                method: "GET",
-                url: this.options.signalementURL + "user/me"
-            }),
-            listeners: {
-                "load": {
-                    fn: function(store, records) {
-                        //We assume there is only 1 returned record
-                        this.log("load :", records[0]);
-                        this.noteStore.updateUser(records[0]);
-                        this.checkRemainingXHRs();
-                    },
-                    scope: this
-                }
-            }
-        });
-
-        this.log("Init with target "
-            + (this.target !== null ? true : false) + " at "
-            + this.position);
-
-        this.signalementWindow = new Ext.Window({
-            title: this.getText(record),
-            width: 640,
-            height: 380,
-            closable: true,
-            closeAction: "hide",
-            autoScroll: true,
-            items: [
-                new Ext.FormPanel({
-                    labelWidth: 100, // label settings here cascade unless overridden
-                    frame: true,
-                    bodyStyle: 'padding:5px 5px 0',
-                    width: 640,
-                    defaults: {width: 230},
-                    defaultType: 'textfield',
-                    store: this.noteStore,
-                    items: [{
-                        fieldLabel: 'Vous êtes',
-                        name: 'name',
-                        dataIndex:'login'
-                    }, {
-                        fieldLabel: 'Collectivité ',
-                        name: 'collectivite'
-                    }, {
-                        fieldLabel: 'Votre adresse mail',
-                        name: 'email',
-                        vtype: 'email'
-
-                    }, {
-                        xtype: 'compositefield',
-                        anchor: '-20',
-                        msgTarget: 'side',
-                        fieldLabel: 'Signalement sur la couche',
-                        items: [
-                            {
-                                width: 200,
-                                xtype: 'combo',
-                                mode: 'local',
-                                triggerAction: 'all',
-                                forceSelection: true,
-                                editable: false,
-                                fieldLabel: 'Title',
-                                name: 'title',
-                                hiddenName: 'title',
-                                displayField: 'name',
-                                valueField: 'value',
-                                store: new Ext.data.JsonStore({
-                                    fields: ['name', 'value'],
-                                    data: [
-                                        {name: 'Mr', value: 'mr'},
-                                        {name: 'Mrs', value: 'mrs'},
-                                        {name: 'Miss', value: 'miss'}
-                                    ]
-                                })
-                            }
-                        ]
-                    }, {
-                            xtype: 'textfield',
-                            fieldLabel: 'Objet',
-                            height: 100,
-                            width: 300,
-                    }
-                    ]
 
     initRecord: null,
     /**
@@ -240,7 +142,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     layersStore: null,
 
     layersStoreLoaded: false,
-    
+
     vectorLayer: null,
 
     /**
@@ -258,6 +160,8 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 
     init: function (record) {
         this.initRecord = record;
+
+        this.initActionMenuDate();
 
         if (this.target) {
             // create a button to be inserted in toolbar:
@@ -375,7 +279,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 "contextType",
                 "geographicType",
                 "name",
-                "label",
+                "label"
             ],
             baseParams: {
                 contextType: 'THEMA'
@@ -409,7 +313,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 "contextType",
                 "geographicType",
                 "name",
-                "label",
+                "label"
             ],
             baseParams: {
                 contextType: 'LAYER'
@@ -436,45 +340,58 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     },
 
     buildAttachmentPanel: function() {
-    	return new Ext.grid.GridPanel({
+        return new Ext.grid.GridPanel({
     		id: "attachmentPanel",
-    	    store: new Ext.data.JsonStore({
-    	        autoDestroy: true,
-    	        id: "attachmentStore",
-    	        root: ''
-    	    }),
+    	    store:new Ext.data.JsonStore({
+                autoDestroy: true,
+                fields: [
+                    {name: 'id'},
+                    {name: 'name'},
+                    {name: 'mimeType'}
+                ]
+
+            }) ,
     	    colModel: new Ext.grid.ColumnModel({
     	        defaults: {
     	            sortable: false
     	        },
     	        columns: [
-    	            {id: 'id', header: 'Nom', dataIndex: 'name'},
+    	            {   id: 'id',
+                        header: 'Name',
+                        dataIndex: 'name'},
     	            {
     	            	xtype: 'actioncolumn',
     	            	items: [
     	                    {
-    	                        icon   : 'img/delete.gif',                // Use a URL in the icon config
+                                iconCls: 'delete-icon',
     	                        tooltip: this.tr('signalement.attachment.delete'),
-    	                        handler: function(grid, rowIndex, colIndex) {
-    	                            var rec = store.getAt(rowIndex);
-    	                            alert("Sell " + rec);
-    	                        }
+    	                        handler: function(grid, rowIndex) {
+    	                            var attachement = this.noteStore.getTask().asset.attachments[rowIndex];
+                                    this.deleteAttachment(attachement,rowIndex);
+    	                        },
+                                scope: this
     	                    }
     	                ]
     	            }
     	        ]
     	    }),
-    	    iconCls: 'attachment-grid'
+    	    iconCls: 'attachment-grid',
+            stripeRows: true,
+            autoExpandColumn: 'id',
+            height: 100,
+            width: 400,
+            //title: 'Array Grid',
+            // config options for stateful behavior
+            stateful: true,
+            stateId: 'grid'
     	});
     },
-    
+
     buildForm: function() {
     	var themas = this.noteStore.getThemas();
     	var addon = this;
-    	
-    	var addon = this;
-        var layerFeature;
-        
+    	var layerFeature;
+
         var drawActionControl = function (typeGeom) {
 
             addon.vectorLayer = new OpenLayers.Layer.Vector("Signalement");
@@ -518,7 +435,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             Ext.getCmp('createButton').setDisabled(false);
 
         }
-    	
+
     	return new Ext.FormPanel({
             id: 'form-panel',
             labelWidth: 100,
@@ -582,7 +499,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                                     select: function (combo, record) {
                                         addon.noteStore.getTask().asset.contextDescription = record.data;
                                         addon.noteStore.getTask().asset.geographicType = record.data.geographicType;
-                                        console.log("task: " + addon.noteStore.getTask());
+
                                         if (addon.vectorLayer != undefined) {
                                             addon.vectorLayer.destroyFeatures();
                                         }
@@ -606,7 +523,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             height: 100,
                             width: 300
                     }]
-                }, 
+                },
                 {
                     xtype: 'fieldset',
                     title: this.tr('signalement.attachment.files'),
@@ -640,6 +557,10 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     title: this.tr('signalement.localization'),
                     collapsible: false,
                     width: 500,
+                    layout: {
+                        type: 'hbox',
+                        align: 'middle'
+                    },
                     items: [
                         {
                             xtype: 'button',
@@ -658,8 +579,8 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                         },
                         {
                             xtype: 'displayfield',
-                            value: this.tr('signalement.localization.tips')
-
+                            value: this.tr('signalement.localization.tips'),
+                            style : 'font-size: 12px',
                         }
                    ]
                 }
@@ -691,9 +612,9 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     id: 'closeButton',
                     text: this.tr("signalement.close"),
                     handler: function () {
-                        if (addon.vectorLayer != undefined) {
-                            addon.vectorLayer.destroyFeatures();
-                            addon.map.removeLayer(addon.vectorLayer);
+                        if (this.vectorLayer != undefined) {
+                            this.vectorLayer.destroyFeatures();
+                            this.map.removeLayer(this.vectorLayer);
                         }
                         this.closeSignalementWindow();
                     },
@@ -746,6 +667,17 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         }
     },
 
+    closeWindow: function () {
+        if (this.signalementWindow != null) {
+            Ext.getCmp('closeButton').setDisabled(true);
+            Ext.getCmp('createButton').setDisabled(true);
+            this.noteStore.updateTask({});
+            this.signalementWindow.hide();
+            this.signalementWindow.destroy();
+            this.signalementWindow = null;
+        }
+    },
+
     createTask: function () {
         var task = this.noteStore.getTask();
         task.asset.description = Ext.getCmp('objet').getValue();
@@ -759,17 +691,25 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             },
             success: function (response) {
                 this.log("response: ", response);
-
-                //this.fireEvent("success", this, response);
+                if (this.vectorLayer != undefined) {
+                    this.vectorLayer.destroyFeatures();
+                    this.map.removeLayer(this.vectorLayer);
+                }
+                this.closeWindow();
+                Ext.Msg.show({
+                    msg: this.tr('signalement.task.create')
+                });
             },
             failure: function (response) {
+                Ext.Msg.show({
+                    msg: this.tr('signalement.task.error')
+                });
                 this.log("response: ", response);
-                //this.fireEvent("exception", this, response);
             },
             scope: this
         });
     },
-    
+
     createDraftTask: function () {
         var themas = this.noteStore.getThemas();
         var params = {
@@ -805,11 +745,10 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 
     deleteDraftTask: function () {
         var task = this.noteStore.getTask();
-        var params = {};
         Ext.Ajax.request({
             url: this.options.signalementURL + "task/cancel/" + task.asset.uuid,
             method: 'DELETE',
-            jsonData: params,
+            jsonData: task,
             headers: {
                 "Content-Type": "application/json; charset=" + this.encoding
             },
@@ -826,8 +765,8 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             scope: this
         });
     },
-    
-    deleteAttachment: function (attachment) {
+
+    deleteAttachment: function (attachment,index) {
         var task = this.noteStore.getTask();
         Ext.Ajax.request({
             url: this.options.signalementURL + "reporting/" + task.asset.uuid + "/delete/" + attachment.id,
@@ -836,17 +775,18 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 "Content-Type": "application/json; charset=" + this.encoding
             },
             success: function (response) {
-                task.attachments.remove(attachment);
-                Ext.getCmp('attachmentPanel').getStore().remove(attachment);
-            },
+                //supprimer l'element de attachements
+                task.asset.attachments.splice(index,1);
+                Ext.getCmp('attachmentPanel').getStore().loadData(task.asset.attachments);
+                },
             failure: function (response) {
                 this.log("task bad-response: ", response);
             },
             scope: this
         });
     },
-    
-    uploadAttachment: function(fileField, value) {
+
+    uploadAttachment: function(fileField, value,data) {
     	var task = this.noteStore.getTask();
     	if( !task.asset.attachments){
     		task.asset.attachments = [];
@@ -857,20 +797,29 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     		return;
     	}
     	if( file.size > this.noteStore.getAttachmentConfiguration().maxSize){
-    		// todo message erreur
+            Ext.Msg.show({
+                title:this.tr('signalement.attachment.file'),
+                msg: this.tr('signalement.attachment.size') + this.noteStore.getAttachmentConfiguration().maxSize
+            });
     		return;
     	}
     	if( task.asset.attachments.length+1 > this.noteStore.getAttachmentConfiguration().maxCount){
-    		// todo message erreur
+            Ext.Msg.show({
+                title:this.tr('signalement.attachment.file'),
+                msg: this.tr('signalement.attachment.length')
+            });
     		return;
     	}
     	if( this.noteStore.getAttachmentConfiguration().mimeTypes.includes(file.type) == false){
-    		// todo message erreur
+            Ext.Msg.show({
+                title:this.tr('signalement.attachment.file'),
+                msg: this.tr('signalement.attachment.typeFile')
+            });
     		return;
     	}
-    	
+
     	var form = document.getElementById('signalement-form-id');
-    	
+
     	var formData = new FormData();
     	var addon = this;
     	formData.set("file", file , file.name);
@@ -880,20 +829,24 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     		if (request.status == 200) {
     			var attachment = Ext.util.JSON.decode(request.responseText)
     			task.asset.attachments.push(attachment);
-    			Ext.getCmp('attachmentPanel').getStore().add(attachment);
-    		}else {
-    			// todo
+    			Ext.getCmp('attachmentPanel').getStore().loadData(task.asset.attachments);
+                console.log("attachmentPanel", Ext.getCmp('attachmentPanel').getStore());
+
+            }else {
+                console.log("upload file", request.status);
     		}
-    			
+
     	}
     	request.onerror = function(response, b) {
-    		// todo 
-    		console.log(response, b);
+            Ext.Msg.show({
+                msg: this.tr('signalement.attachment.error')
+            });
+            console.log(response, b);
     	}
         request.open('POST', this.options.signalementURL + "reporting/" + task.asset.uuid + "/upload");
         request.send(formData);
     },
-    
+
     /**
      * @function layerTreeHandler
      *
@@ -917,16 +870,16 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         // soit on ouvre la fenêtre de signalement par thème
         this.showSignalementWindow();
     },
-    
+
     /**
      * @function initActionMenuDate
-     * 
+     *
      * Initialize fields used by tree Actions menu to create MenuItem
      */
     initActionMenuDate: function() {
     	this.iconCls ='addon-signalement';
-        this.title =  this.getText(record);
-        this.qtip = this.getTooltip(record);
+        this.title =  this.getText(this.initRecord);
+        this.qtip = this.getTooltip(this.initRecord);
     },
 
     destroy: function () {

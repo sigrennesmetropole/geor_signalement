@@ -4,6 +4,15 @@
 .upload-icon{
     background-image: url(../img/add-icon-16x16.png) !important;
 }
+
 .draw-icon{
     background-image: url(../img/draw-icon-16x16.png) !important;
+}
+
+.delete-icon{
+    background-image: url(../img/delete-icon-16x16.png) !important;
+}
+.x-action-col-cell img {
+    height: 16px;
+    width: 16px;
 }
