@@ -132,8 +132,9 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		AbstractReportingEntity reportingEntity = reportingHelper.createReportingEntity(contextDescription,
 				authentificationHelper.getUsername());
 
-		// TODO set geometry
-
+		// set geometry
+		reportingHelper.updateLocalization(reportingEntity, reportingDescription.getLocalisation());		
+		
 		// mise à jour de l'entité
 		reportingMapper.updateEntityFromDto(reportingDescription, reportingEntity);
 
@@ -431,7 +432,8 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		// mise à jour dernière date de modification
 		targetReportingEntity.setUpdatedDate(new Date());
 
-		// TODO set geometry
+		//set geometry
+		reportingHelper.updateLocalization(reportingEntity, reporting.getLocalisation());
 
 		// mise à jour de l'entité
 		reportingMapper.updateEntityFromDto(reporting, targetReportingEntity);

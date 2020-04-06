@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.Action;
 import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.GeographicType;
+import org.georchestra.signalement.core.dto.Point;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
@@ -226,6 +227,14 @@ public class ReportingHelper {
 		}
 
 		return task;
+	}
+
+	public void updateLocalization(AbstractReportingEntity reportingEntity, List<Point> localisation) {
+		if (CollectionUtils.isEmpty(localisation)) {
+			
+		} else {
+			reportingEntity.setGeometry(null);
+		}
 	}
 
 	private void fillFormWithData(Form form, ReportingDescription reportingDescription) {
