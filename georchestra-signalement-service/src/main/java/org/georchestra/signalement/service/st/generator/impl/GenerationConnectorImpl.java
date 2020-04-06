@@ -21,6 +21,7 @@ import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.service.exception.DocumentGenerationException;
 import org.georchestra.signalement.service.exception.DocumentModelNotFoundException;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
+import org.georchestra.signalement.service.st.generator.GenerationConnectorConstants;
 import org.georchestra.signalement.service.st.generator.PDFConverterType;
 import org.georchestra.signalement.service.st.generator.datamodel.DataModel;
 import org.georchestra.signalement.service.st.generator.datamodel.GenerationFormat;
@@ -97,7 +98,7 @@ public class GenerationConnectorImpl implements GenerationConnector {
 		String extensionModele = FilenameUtils.getExtension(nomFichierModele);
 
 		if (ArrayUtils.contains(FREE_MARKER_EXTENSION, extensionModele)
-				|| nomFichierModele.startsWith(GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX)) {
+				|| nomFichierModele.startsWith(GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX)) {
 			return generateFreeMarkerDocument(dataModel);
 		}
 		throw new DocumentGenerationException("Invalid format:" + extensionModele);
@@ -153,7 +154,7 @@ public class GenerationConnectorImpl implements GenerationConnector {
 			}
 			configuration.setTemplateLoader(compositeTemplateLoader);
 
-			if (templateName.startsWith(GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX)) {
+			if (templateName.startsWith(GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX)) {
 				realTemplateName = extractTemplateName(templateName);
 				compositeTemplateLoader.putTemplate(realTemplateName, extractTemplateContent(templateName));
 			}
@@ -177,15 +178,15 @@ public class GenerationConnectorImpl implements GenerationConnector {
 	}
 
 	private String extractTemplateContent(String templateName) {
-		String nameAndContent = templateName.substring(GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX.length());
+		String nameAndContent = templateName.substring(GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX.length());
 		int index = nameAndContent.indexOf(':');
 		return nameAndContent.substring(index + 1);
 	}
 
 	private String extractTemplateName(String templateName) {
-		String nameAndContent = templateName.substring(GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX.length());
+		String nameAndContent = templateName.substring(GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX.length());
 		int index = nameAndContent.indexOf(':');
-		return templateName.substring(0, index + GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX.length());
+		return templateName.substring(0, index + GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX.length());
 	}
 
 	@Override
@@ -408,9 +409,8 @@ public class GenerationConnectorImpl implements GenerationConnector {
 	private void loadFontFile(ITextRenderer renderer, URL url) {
 		File root = new File(url.getFile());
 		// parcourt des fichiers supportés par flying saucer
-		File[] fontFiles = root.listFiles((File dir, String fileName) -> {
-			return fileName.endsWith(FONT_TTF) || fileName.endsWith(FONT_OTF);
-		});
+		File[] fontFiles = root
+				.listFiles((File dir, String fileName) -> fileName.endsWith(FONT_TTF) || fileName.endsWith(FONT_OTF));
 		if (ArrayUtils.isNotEmpty(fontFiles)) {
 			for (File fontFile : fontFiles) {
 				try {

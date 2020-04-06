@@ -23,11 +23,11 @@ public class EmailDataModel extends DataModel {
 	private AbstractReportingEntity reportingEntity;
 
 	/**
-	 * @throws IOException
-	 * 
+	 * @param executionEntity
+	 * @param reportingEntity
+	 * @param template
 	 */
-	public EmailDataModel(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity, String template)
-			throws IOException {
+	public EmailDataModel(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity, String template) {
 		super(GenerationFormat.HTML);
 		this.executionEntity = executionEntity;
 		this.reportingEntity = reportingEntity;

@@ -9,7 +9,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.georchestra.signalement.service.st.generator.GenerationConnector;
+import org.georchestra.signalement.service.st.generator.GenerationConnectorConstants;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.FileTemplateLoader;
@@ -49,7 +49,7 @@ public class CompositeTemplateLoader implements TemplateLoader {
 	@Override
 	public Object findTemplateSource(String name) throws IOException {
 		Object result = null;
-		if (name.startsWith(GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX)) {
+		if (name.startsWith(GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX)) {
 			result = templateLoaders.get(STRING_TEMPLATE_LOADER_INDEX).findTemplateSource(name);
 		} else {
 			for (TemplateLoader templateLoader : templateLoaders) {
@@ -96,8 +96,8 @@ public class CompositeTemplateLoader implements TemplateLoader {
 	}
 
 	public void putTemplate(String name, String templateContent) {
-		if (!name.startsWith(GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX)) {
-			throw new IllegalArgumentException("Tempalte name must start with:" + GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX);
+		if (!name.startsWith(GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX)) {
+			throw new IllegalArgumentException("Tempalte name must start with:" + GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX);
 		}
 		((StringTemplateLoader) templateLoaders.get(STRING_TEMPLATE_LOADER_INDEX)).putTemplate(name, templateContent);
 	}

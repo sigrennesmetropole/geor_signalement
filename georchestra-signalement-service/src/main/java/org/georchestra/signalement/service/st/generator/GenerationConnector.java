@@ -12,9 +12,6 @@ import org.georchestra.signalement.service.st.generator.datamodel.DataModel;
  *
  */
 public interface GenerationConnector {
-	
-
-	public static final String STRING_TEMPLATE_LOADER_PREFIX = "stl:";
 
 	/**
 	 * génère un document à partir d'un modele odt et de données
