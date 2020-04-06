@@ -25,6 +25,7 @@ import org.georchestra.signalement.service.exception.DocumentModelNotFoundExcept
 import org.georchestra.signalement.service.exception.EMailException;
 import org.georchestra.signalement.service.helper.mail.EmailDataModel;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
+import org.georchestra.signalement.service.st.generator.GenerationConnectorConstants;
 import org.georchestra.signalement.service.st.ldap.UserService;
 import org.georchestra.signalement.service.st.mail.MailDescription;
 import org.georchestra.signalement.service.st.mail.MailService;
@@ -225,7 +226,7 @@ public class WorkflowContext {
 		EmailDataModel emailDataModel = null;
 		if (StringUtils.isNotEmpty(eMailData.getBody())) {
 			emailDataModel = new EmailDataModel(executionEntity, reportingEntity,
-					GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString() + ":"
+					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString() + ":"
 							+ eMailData.getBody());
 		} else {
 			emailDataModel = new EmailDataModel(executionEntity, reportingEntity, eMailData.getFileBody());

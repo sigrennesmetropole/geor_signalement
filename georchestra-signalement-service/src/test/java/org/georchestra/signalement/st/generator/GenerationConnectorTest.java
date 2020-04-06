@@ -15,6 +15,7 @@ import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
 import org.georchestra.signalement.service.helper.mail.EmailDataModel;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
+import org.georchestra.signalement.service.st.generator.GenerationConnectorConstants;
 import org.georchestra.signalement.service.st.generator.datamodel.GenerationFormat;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +53,7 @@ public class GenerationConnectorTest {
 			entity.getContextDescription().setLabel("Label 1");
 			entity.getContextDescription().setContextType(ContextType.LAYER);
 			EmailDataModel emailDataModel = new EmailDataModel(null, entity,
-					GenerationConnector.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString());
+					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString());
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
 			Assert.assertNotNull(document);
 			Assert.assertNotNull(document.getFile());
