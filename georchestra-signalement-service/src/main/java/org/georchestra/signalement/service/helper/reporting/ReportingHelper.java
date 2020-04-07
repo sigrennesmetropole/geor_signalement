@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.vividsolutions.jts.geom.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.Action;
@@ -49,7 +50,9 @@ public class ReportingHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportingHelper.class);
 
-	@Autowired
+    private static final int SRID = 4326;
+
+    @Autowired
 	private BpmnHelper bpmnHelper;
 
 	@Autowired
@@ -230,8 +233,13 @@ public class ReportingHelper {
 	}
 
 	public void updateLocalization(AbstractReportingEntity reportingEntity, List<Point> localisation) {
-		if (CollectionUtils.isEmpty(localisation)) {
-			
+		if (!CollectionUtils.isEmpty(localisation)) {
+            // get geometry from coordinate XY
+            Geometry geometry = convertCoordinateToGeometry(localisation,reportingEntity.getGeographicType());
+            geometry.setSRID(SRID);
+            // set geomtrie selon le type
+            reportingEntity.setGeometry(geometry);
+
 		} else {
 			reportingEntity.setGeometry(null);
 		}
@@ -243,5 +251,69 @@ public class ReportingHelper {
 			Map<String, Object> datas = (Map<String, Object>) reportingDescription.getDatas();
 			formHelper.fillForm(form, datas);
 		}
+	}
+
+
+	/**
+	 * Convertir les coordonnées XY en geometrie Point ou Ligne ou Polygone
+	 *
+	 *
+	 * @return
+	 */
+	public Geometry convertCoordinateToGeometry(List<Point> localisation, GeographicType geographicType) {
+		Geometry geometry =  null;
+		Coordinate[] coordinates ;
+
+		switch (geographicType) {
+			case POINT:
+				coordinates = getCoordinate(localisation, false);
+				geometry = new GeometryFactory().createPoint(coordinates[0]);
+				break;
+			case LINE:
+				coordinates = getCoordinate(localisation, false);
+				geometry = new GeometryFactory().createLineString(coordinates);
+				break;
+			case POLYGON:
+
+				coordinates = getCoordinate(localisation, true);
+				LinearRing linear = new GeometryFactory().createLinearRing(coordinates);
+				geometry = new Polygon(linear, null, new GeometryFactory());
+				break;
+			default:
+				break;
+		}
+		return geometry;
+	}
+
+	/**
+	 *  récuperer la liste des coordonées à partir d'un tableau de x et de y
+	 * @param localisation
+	 * @param isClosed (true dans le cas d'un polygone pour ajouter la dernier coordonne qui est la meme que le premiere)
+	 * @return
+	 */
+	public Coordinate[] getCoordinate (List<Point> localisation, boolean isClosed){
+		int size = localisation.size();
+		Coordinate[] coordinates;
+		if(isClosed == false) {
+			coordinates = new Coordinate[size];
+			for (int i = 0; i < size; i++) {
+				addCoordinate(localisation, coordinates, i);
+			}
+		}else {
+			// on ajoute la derniere coordonnée qui est la meme que la premiere coordonnée
+			// pour fermer le polygone
+			coordinates = new Coordinate[size + 1];
+			for (int i = 0; i < size ; i++) {
+				addCoordinate(localisation, coordinates, i);
+			}
+			coordinates[size] = new Coordinate(coordinates[0].x,coordinates[0].y);
+		}
+		return coordinates;
+	}
+
+	private void addCoordinate(List<Point> localisation, Coordinate[] coordinates, int i) {
+		Double coordinateX = Double.valueOf(localisation.get(i).getX());
+		Double coordinateY = Double.valueOf(localisation.get(i).getY());
+		coordinates[i] = new Coordinate(coordinateX, coordinateY);
 	}
 }

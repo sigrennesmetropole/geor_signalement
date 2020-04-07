@@ -28,13 +28,7 @@ import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.acl.RoleCustomDao;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
-import org.georchestra.signalement.core.dto.Attachment;
-import org.georchestra.signalement.core.dto.AttachmentConfiguration;
-import org.georchestra.signalement.core.dto.Form;
-import org.georchestra.signalement.core.dto.ReportingDescription;
-import org.georchestra.signalement.core.dto.RoleSearchCriteria;
-import org.georchestra.signalement.core.dto.Status;
-import org.georchestra.signalement.core.dto.Task;
+import org.georchestra.signalement.core.dto.*;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
@@ -433,7 +427,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		targetReportingEntity.setUpdatedDate(new Date());
 
 		//set geometry
-		reportingHelper.updateLocalization(reportingEntity, reporting.getLocalisation());
+		reportingHelper.updateLocalization(targetReportingEntity, reporting.getLocalisation());
 
 		// mise à jour de l'entité
 		reportingMapper.updateEntityFromDto(reporting, targetReportingEntity);

@@ -20,7 +20,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.geolatte.geom.Geometry;
+import com.vividsolutions.jts.geom.Geometry;
 import org.georchestra.signalement.core.common.LongId;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.Status;
@@ -85,8 +85,8 @@ public abstract class AbstractReportingEntity implements LongId {
 		this.geographicType = geographicType;
 	}
 
-	public abstract void setGeometry(Geometry<?> geometry);
+	public abstract void setGeometry(Geometry geometry);
 
-	public abstract Geometry<?> getGeometry();
+	public abstract Geometry getGeometry();
 
 }

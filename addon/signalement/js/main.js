@@ -49,7 +49,7 @@ Ext.namespace("GEOR.Addons", "GEOR.data");
             this.add([noteRecord]);
         },
         updateLocalisation: function (points) {
-            this.getTask().asset.localization = points;
+            this.getTask().asset.localisation = points;
         },
         getUser: function () {
             return this.getAt(0).get("user");
