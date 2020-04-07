@@ -7,7 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.geolatte.geom.Geometry;
+import com.vividsolutions.jts.geom.Geometry;
 import org.georchestra.signalement.core.dto.GeographicType;
 
 import lombok.Data;
@@ -21,8 +21,9 @@ import lombok.Data;
 @Table(name="line_reporting")
 public class LineReportingEntity extends AbstractReportingEntity {
 
-    @Column(name = "geometry",columnDefinition="Geometry")
-    private Geometry<?> geometry;
+
+	@Column(name = "geometry",columnDefinition="Geometry")
+    private Geometry geometry;
     
     public LineReportingEntity() {
 		super(GeographicType.LINE);
@@ -35,5 +36,15 @@ public class LineReportingEntity extends AbstractReportingEntity {
 				+ ", getCreationDate()=" + getCreationDate() + ", getUpdatedDate()=" + getUpdatedDate()
 				+ ", getDescription()=" + getDescription() + ", getDatas()=" + getDatas() + ", getContextDescription()="
 				+ getContextDescription() + ", geometry=" + geometry + "]";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return super.equals(o);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 }

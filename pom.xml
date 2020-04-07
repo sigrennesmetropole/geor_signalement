@@ -43,6 +43,7 @@
 		<itextpdf.version>5.5.13.1</itextpdf.version>
 		<flyingsauver.version>9.1.19</flyingsauver.version>
 		<jtidy.version>r938</jtidy.version>
+		<geotools.version>16.1</geotools.version>
 
 		<activiti.version>7.1.0.M5</activiti.version>
 
@@ -230,6 +231,12 @@
 				<groupId>net.sf.jtidy</groupId>
 				<artifactId>jtidy</artifactId>
 				<version>${jtidy.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>geotools</artifactId>
+				<version>${geotools.version}</version>
 			</dependency>
 
 			<!-- https://mvnrepository.com/artifact/com.google.code.maven-replacer-plugin/maven-replacer-plugin -->
