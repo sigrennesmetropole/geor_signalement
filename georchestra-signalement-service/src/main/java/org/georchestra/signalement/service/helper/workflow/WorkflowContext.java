@@ -57,6 +57,9 @@ public class WorkflowContext {
 	@Autowired
 	private GenerationConnector generationConnector;
 
+	@Autowired
+	private AssignmentHelper assignmentHelper;
+
 	/**
 	 * Méthode utilitaire de log
 	 * 
@@ -138,8 +141,10 @@ public class WorkflowContext {
 	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
 			String roleName, EMailData eMailData) {
 		LOGGER.debug("computePotentialOwners...");
-		List<String> recipients = Arrays.asList("testuser");
 		AbstractReportingEntity reportingEntity = lookupReportingEntity(executionEntity);
+		// retourne une liste des logins des utilisateurs qui seront assignées à la tache
+		List<String> recipients = assignmentHelper.computeAssignees(reportingEntity, roleName);
+
 		if (reportingEntity != null) {
 			try {
 				// Ici il faut calcule le contenue de recipients

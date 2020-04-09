@@ -6,7 +6,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE SCHEMA IF NOT EXISTS signalement AUTHORIZATION signalement;
 
-ALTER ROLE signalement SET search_path TO signalement;
+ALTER ROLE signalement SET search_path TO signalement,public;
 -- SET search_path TO signalement;
 
 -- DROP SEQUENCE signalement.context_description_id_seq;

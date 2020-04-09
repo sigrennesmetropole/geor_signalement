@@ -31,6 +31,9 @@ public class GeographicAreaEntity implements LongId {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
+	@Column(name = "nom")
+	private Long nom;
+
 	@Column(name = "geometry", columnDefinition = "Geometry")
 	private Geometry geometry;
 }
