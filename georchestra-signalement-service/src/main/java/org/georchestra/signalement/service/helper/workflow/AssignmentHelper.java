@@ -1,5 +1,6 @@
 package org.georchestra.signalement.service.helper.workflow;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.core.dao.acl.GeographicAreaCustumDao;
 import org.georchestra.signalement.core.dao.acl.RoleDao;
 import org.georchestra.signalement.core.dao.acl.UserDao;
@@ -14,57 +15,101 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Component
 public class AssignmentHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AssignmentHelper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AssignmentHelper.class);
 
-    @Autowired
-    private GeographicAreaCustumDao geographicAreaCustumDao;
+	@Autowired
+	private GeographicAreaCustumDao geographicAreaCustumDao;
 
-    @Autowired
-    private RoleDao roleDao;
+	@Autowired
+	private RoleDao roleDao;
 
-    @Autowired
-    private UserDao userDao;
+	@Autowired
+	private UserDao userDao;
 
-    /**
-     *  Récuperer la liste des users
-     *
-     * @param reportingEntity
-     * @param roleName
-     * @return
-     */
-    public  List<String> computeAssignees(AbstractReportingEntity reportingEntity, String roleName) {
+	/**
+	 * Récuperer le login des users pour leur affecter la tache
+	 *
+	 * @param reportingEntity
+	 * @param roleName
+	 * @return
+	 */
+	public List<String> computeAssignees(AbstractReportingEntity reportingEntity, String roleName) {
+		List<String> assignees = new ArrayList<>();
 
-        List<String> listUserLogin = new ArrayList<>();
+		// récuper les user par intersction des geomtries et en fonction du role et du
+		// context description
+		List<UserEntity> userEntities = getUserEntities(reportingEntity, roleName);
 
+		// Recuperer les logins des users
+		if (CollectionUtils.isNotEmpty(userEntities)) {
+			for (UserEntity userEntity : userEntities) {
+				assignees.add(userEntity.getLogin());
+			}
+		}
+		return assignees;
+	}
 
-        // récuper l'id du role name
-        Long idRole = null;
+	/**
+	 * Récuperer le login d'un user pour lui affecter la tache
+	 *
+	 * @param reportingEntity
+	 * @param roleName
+	 * @return
+	 */
+	public String computeAssignee(AbstractReportingEntity reportingEntity, String roleName) {
+		String assignee = null;
 
-        RoleEntity roleEntity = roleDao.findByName(roleName);
-        if(roleEntity != null){
-            idRole = roleEntity.getId();
-        }
+		// récuper les user par intersction des geomtries et en fonction du role et du
+		// context description
+		List<UserEntity> userEntities = getUserEntities(reportingEntity, roleName);
 
-        // récuper l'id du context description
-        Long idContextDescription = reportingEntity.getContextDescription().getId();
+		// Recuperer le logins de l'utilisaeur
+		if (CollectionUtils.isNotEmpty(userEntities)) {
 
-        // Faire l'intersection entre la geometrie du signalement et la table geographicArea et recuperer l'id geographicArea
-        Long idGographicArea = geographicAreaCustumDao.findGeographicAreaIntersectWithGeometry(reportingEntity.getGeometry(), reportingEntity.getGeographicType());
+			if (userEntities.size() > 1) {
+				LOGGER.warn("Find more than user to compute human perfomer from " + reportingEntity);
+			}
 
-        // faire une requete custom pour recuperer la liste d'utilisateur de la tale user_role_contexte
-        // à partir de idGographicArea, idContextDescription et idRole
+			assignee = userEntities.get(0).getLogin();
+		}
 
-        List<UserEntity> listUserEntities = userDao.findUsers(idRole, idContextDescription, idGographicArea);
+		return assignee;
 
-        // Recuperer les logins des users
-        for(UserEntity userEntity : listUserEntities){
-            listUserLogin.add(userEntity.getLogin());
-        }
+	}
 
-        return listUserLogin;
-    }
+	/**
+	 * Récuperer la liste des utilisateur
+	 * 
+	 * @param reportingEntity
+	 * @param roleName
+	 * @return
+	 */
+	private List<UserEntity> getUserEntities(AbstractReportingEntity reportingEntity, String roleName) {
+
+		// récuper l'id du role name
+		Long idRole = null;
+		RoleEntity roleEntity = roleDao.findByName(roleName);
+		if (roleEntity != null) {
+			idRole = roleEntity.getId();
+		}
+
+		// récuper l'id du context description
+		Long idContextDescription = reportingEntity.getContextDescription().getId();
+
+		// Faire l'intersection entre la geometrie du signalement et la table
+		// geographicArea et recuperer l'id geographicArea
+		Long idGographicArea = geographicAreaCustumDao.findGeographicAreaIntersectWithGeometry(
+				reportingEntity.getGeometry(), reportingEntity.getGeographicType());
+
+		// faire une requete custom pour recuperer la liste d'utilisateur de la tale
+		// user_role_contexte
+		// à partir de idGographicArea, idContextDescription et idRole
+
+		List<UserEntity> userEntities = userDao.findUsers(idRole, idContextDescription, idGographicArea);
+
+		return userEntities;
+	}
 }

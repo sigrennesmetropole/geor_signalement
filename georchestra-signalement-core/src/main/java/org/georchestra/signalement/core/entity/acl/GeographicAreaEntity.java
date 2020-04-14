@@ -32,7 +32,7 @@ public class GeographicAreaEntity implements LongId {
 	private Long id;
 
 	@Column(name = "nom")
-	private Long nom;
+	private String nom;
 
 	@Column(name = "geometry", columnDefinition = "Geometry")
 	private Geometry geometry;
