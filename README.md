@@ -1,6 +1,28 @@
 # addon-signalement
 
-#### Design des procesuss
+#### Gestion des droits 
+
+![Gestion des contextes et des droits](readme/UserRole.png)
+
+La classe User permet de gérer les utilisateurs potentiellement concernés par un signalement.
+Les User , identifiés par leur login, doivent aussi être présents dans le LDAP.
+
+La classe ContextDescription permet de lister les thèmes et les couches candidates pour un signalement.
+Chaque contexte indique s'il s'agit d'un thème ou d'une couche, s'il s'agit d'une sélection par point, ligne ou polygon.
+Chaque contexte est associé à un processus (et éventuellement une version de ce processus).
+
+Un utilisateur peut être associé par le biais de la classe UserRoleContext :
+* A une liste de rôles, 
+* A une liste de couples (rôle, context)
+* A une liste de triplets (rôle, context, aire géographic)
+
+
+
+#### Design des processus
+
+### Créer un processus dans la base
+
+Le seul moyen de créer un nouveau processus ou une nouvelle version d'un processus est d'utiliser swagger et la méthode "admin" associée.
 
 #### Bien modéliser
 
