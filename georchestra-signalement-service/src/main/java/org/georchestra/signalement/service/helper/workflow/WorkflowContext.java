@@ -4,10 +4,7 @@
 package org.georchestra.signalement.service.helper.workflow;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import javax.script.ScriptContext;
 
@@ -141,19 +138,18 @@ public class WorkflowContext {
 	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
 			String roleName, EMailData eMailData) {
 		LOGGER.debug("computePotentialOwners...");
+		List<String> assignees = null;
 		AbstractReportingEntity reportingEntity = lookupReportingEntity(executionEntity);
-		// retourne une liste des logins des utilisateurs qui seront assignées à la tache
-		List<String> recipients = assignmentHelper.computeAssignees(reportingEntity, roleName);
-
 		if (reportingEntity != null) {
+			assignees = assignmentHelper.computeAssignees(reportingEntity, roleName);
 			try {
 				// Ici il faut calcule le contenue de recipients
-				sendEMail(executionEntity, reportingEntity, eMailData, recipients);
+				sendEMail(executionEntity, reportingEntity, eMailData, assignees);
 			} catch (Exception e) {
-				LOGGER.warn("Failed to send email to " + recipients + " from " + reportingEntity, e);
+				LOGGER.warn("Failed to send email to " + assignees + " from " + reportingEntity, e);
 			}
 		}
-		return recipients;
+		return assignees;
 	}
 
 	/**
@@ -167,17 +163,18 @@ public class WorkflowContext {
 	public String computeHumanPerformer(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName,
 			EMailData eMailData) {
 		LOGGER.debug("computeHumanPerformer...");
-		String result = "testuser";
+		String assignee = null;
 		AbstractReportingEntity reportingEntity = lookupReportingEntity(executionEntity);
 		if (reportingEntity != null) {
+			assignee = assignmentHelper.computeAssignee(reportingEntity, roleName);
 			try {
 				// Ici il faut calcule le contenue de result
-				sendEMail(executionEntity, reportingEntity, eMailData, Arrays.asList(result));
+				sendEMail(executionEntity, reportingEntity, eMailData, Arrays.asList(assignee));
 			} catch (Exception e) {
-				LOGGER.warn("Failed to send email to " + result + " from " + reportingEntity, e);
+				LOGGER.warn("Failed to send email to " + assignee + " from " + reportingEntity, e);
 			}
 		}
-		return result;
+		return assignee;
 	}
 
 	public String computeHumanPerformer(ScriptContext scriptContext, ExecutionEntity executionEntity, String roleName,
