@@ -16,11 +16,11 @@ body {
 	<div>
 		<p>Madame, Monsieur,</p>
 
-		<p>Vous avez soumis le signalement suivant :
+		<p>Vous avez soumis le signalement suivant
+			<#if reporting.creationDate??>
+				le ${reporting.creationDate?date}
+			</#if> :
 			<ul>
-				<#if reporting.creationDate??>
-					<li>${reporting.creationDate?date}</li>	
-				</#if>
 				<#if reporting.contextDescription??>
 					<li>
 					<#if reporting.contextDescription.contextType.name() == "LAYER">
@@ -31,6 +31,17 @@ body {
 					&quot;${reporting.contextDescription.label?string}&quot;
 					</li>	
 				</#if>
+				<#if reporting.status??>
+					<li>
+						Status: &quot;${reporting.status?string}&quot;
+					</li>
+				</#if>
+				<#if reporting.description??>
+					<li>
+						Description: ${reporting.description?string}
+					</li>
+				</#if>
+
 			</ul>
 		</p>
 		<p>Vous serez informé au fur et à mesure de son traitement par les

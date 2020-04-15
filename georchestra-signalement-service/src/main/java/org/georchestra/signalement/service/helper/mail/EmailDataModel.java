@@ -8,15 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.georchestra.signalement.core.dto.User;
+
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.st.generator.datamodel.DataModel;
 import org.georchestra.signalement.service.st.generator.datamodel.GenerationFormat;
+import org.georchestra.signalement.service.st.ldap.UserService;
 
 /**
  * @author FNI18300
  *
  */
 public class EmailDataModel extends DataModel {
+
+	private UserService userService;
 
 	private ExecutionEntity executionEntity;
 
@@ -27,10 +32,11 @@ public class EmailDataModel extends DataModel {
 	 * @param reportingEntity
 	 * @param template
 	 */
-	public EmailDataModel(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity, String template) {
+	public EmailDataModel(UserService userService, ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity, String template) {
 		super(GenerationFormat.HTML);
 		this.executionEntity = executionEntity;
 		this.reportingEntity = reportingEntity;
+		this.userService = userService;
 		setModelFileName(template);
 	}
 
@@ -39,12 +45,17 @@ public class EmailDataModel extends DataModel {
 		Map<Object, Object> datas = new HashMap<>();
 		datas.put("execution", executionEntity);
 		datas.put("reporting", reportingEntity);
+		datas.put("dataModelUtils", this);
 		return datas;
 	}
 
 	@Override
 	protected String generateFileName() {
 		return "emailBody.html";
+	}
+
+	public User getUser(String login) {
+		return userService.getUserByLogin(login);
 	}
 
 }
