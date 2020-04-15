@@ -17,6 +17,7 @@ import org.georchestra.signalement.service.helper.mail.EmailDataModel;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
 import org.georchestra.signalement.service.st.generator.GenerationConnectorConstants;
 import org.georchestra.signalement.service.st.generator.datamodel.GenerationFormat;
+import org.georchestra.signalement.service.st.ldap.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +41,9 @@ public class GenerationConnectorTest {
 	@Autowired
 	private GenerationConnector generationConnector;
 
+	@Autowired
+	private UserService userService;
+
 	@Test
 	public void generateStringBody() {
 		try (InputStream is = Thread.currentThread().getContextClassLoader()
@@ -52,7 +56,8 @@ public class GenerationConnectorTest {
 			entity.setContextDescription(new ContextDescriptionEntity());
 			entity.getContextDescription().setLabel("Label 1");
 			entity.getContextDescription().setContextType(ContextType.LAYER);
-			EmailDataModel emailDataModel = new EmailDataModel(null, entity,
+			entity.setAssignee("testuser");
+			EmailDataModel emailDataModel = new EmailDataModel(userService, null, entity,
 					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString());
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
 			Assert.assertNotNull(document);
@@ -64,15 +69,9 @@ public class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBody() {
+	public void generateFileBodyTemplateInitiator() {
 		try {
-			PointReportingEntity entity = new PointReportingEntity();
-			entity.setCreationDate(new Date());
-			entity.setUpdatedDate(new Date());
-			entity.setContextDescription(new ContextDescriptionEntity());
-			entity.getContextDescription().setLabel("Label 1");
-			entity.getContextDescription().setContextType(ContextType.LAYER);
-			EmailDataModel emailDataModel = new EmailDataModel(null, entity, "initiator-mail.html");
+			EmailDataModel emailDataModel = getEmailDataModel("initiator-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
 			Assert.assertNotNull(document);
 			Assert.assertNotNull(document.getFile());
@@ -81,4 +80,58 @@ public class GenerationConnectorTest {
 			Assert.fail("failed to generate:" + e.getMessage());
 		}
 	}
+
+	@Test
+	public void generateFileBodyTemplateAssigneMail() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("assignee-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void generateFileBodyTemplateInitiatorCancelled() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("initiator-cancelled-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void generateFileBodyTemplateInitiatorCompletedMail() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("initiator-completed-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
+
+	private EmailDataModel getEmailDataModel(String template) {
+		PointReportingEntity entity = new PointReportingEntity();
+		entity.setCreationDate(new Date());
+		entity.setUpdatedDate(new Date());
+		entity.setContextDescription(new ContextDescriptionEntity());
+		entity.getContextDescription().setLabel("Label 1");
+		entity.getContextDescription().setContextType(ContextType.LAYER);
+		entity.setAssignee("testuser");
+		entity.setInitiator("testuser");
+		entity.setDescription("bla bla bla bla");
+		return new EmailDataModel(userService, null, entity, template);
+	}
+
 }

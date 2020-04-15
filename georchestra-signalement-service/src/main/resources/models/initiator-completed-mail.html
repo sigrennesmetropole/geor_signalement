@@ -16,11 +16,12 @@ body {
 	<div>
 		<p>Madame, Monsieur,</p>
 
-		<p>Le signalement ci-dessous que vous aviez soumis a été traité et validé :
+		<p>Le signalement ci-dessous que vous aviez soumis
+			<#if reporting.creationDate??>
+				le ${reporting.creationDate?date}
+			</#if>
+			a été traité et validé :
 			<ul>
-				<#if reporting.creationDate??>
-					<li>${reporting.creationDate?date}</li>	
-				</#if>
 				<#if reporting.contextDescription??>
 					<li>
 					<#if reporting.contextDescription.contextType.name() == "LAYER">
@@ -30,6 +31,41 @@ body {
 					</#if>
 					&quot;${reporting.contextDescription.label?string}&quot;
 					</li>	
+				</#if>
+
+				<#if reporting.status??>
+					<li>
+						Status: &quot;${reporting.status?string}&quot;
+					</li>
+				</#if>
+				<#if reporting.description??>
+					<li>
+						Description: ${reporting.description?string}
+					</li>
+				</#if>
+
+				<#if (dataModelUtils.getUser(reporting.assignee))??>
+					<#assign user = dataModelUtils.getUser(reporting.assignee)>
+					<li>
+						Le signalement a été traité par :
+					</li>
+					<ul>
+						<li>
+							Prénom: ${user.getFirstName()?string}
+						</li>
+						<li>
+							Nom: ${user.getLastName()?string}
+						</li>
+						<li>
+							Email: ${user.getEmail()?string}
+						</li>
+						<li>
+							Login: ${user.getLogin()?string}
+						</li>
+						<li>
+							Organisation: ${user.getOrganization()?string}
+						</li>
+					</ul>
 				</#if>
 			</ul>
 		</p>
