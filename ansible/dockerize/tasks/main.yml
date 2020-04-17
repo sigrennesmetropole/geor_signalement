@@ -1,0 +1,97 @@
+---
+# create root directory
+- name: Creates directory application
+  file:
+    state: directory
+    mode: 0775
+    path: "{{ item }}"
+  with_items:
+    - "{{signalement_image_directory}}/"
+    - "{{signalement_image_directory}}/signalement"
+        
+# copy addon
+- name: Copy addon to mapfishapp
+  unarchive:
+    src: "{{ signalement_addon_name }}"
+    dest: "{{signalement_addon_directory}}"
+    remote_src: no
+    mode: 0775
+   
+- name: Set backend url
+  replace:
+    destfile: "{{signalement_addon_directory}}/signalement/manifest.json"
+    regexp: '\"http://.*\"'
+    replace: '"{{signalement_backend_url}}"'
+    backup: yes  
+
+# update security proxy
+- name: Update security proxy
+  template:
+    src: targets-mapping.properties
+    dest: "{{ signalement_config_directory }}/security-proxy"
+    mode: 0644
+ 
+# copy images 
+- name: Copy signalement api Dockerfile
+  template:
+    src: Dockerfile.api
+    dest: "{{ signalement_image_directory }}/Dockerfile"
+    mode: 0770
+    
+- name: Copy signalement war
+  copy:
+    src: "{{ signalement_war_name }}"
+    dest: "{{ signalement_image_directory }}/signalement.origin.war"
+    mode: 0770 
+
+- name: Delete previous war explosion
+  shell:
+    cmd: "rm -rf {{signalement_image_directory}}/signalement/*"
+    chdir: "{{signalement_image_directory}}"
+       
+- name: Unarchive war
+  unarchive:
+    src: "{{ signalement_image_directory }}/signalement.origin.war"
+    dest: "{{signalement_image_directory}}/signalement"
+    remote_src: yes
+    mode: 0775
+   
+- name: Copy signalement api properties file
+  template:
+    src: signalement.properties.j2
+    dest: "{{ signalement_image_directory }}/signalement/WEB-INF/classes/signalement.properties"
+    mode: 0770
+
+#- name: Copy tomcat lib jar
+#  copy:
+#    src: "tomcat-juli.jar"
+#    dest: "{{ signalement_image_directory }}/signalement/WEB-INF/lib/tomcat-juli.jar"
+#    mode: 0770     
+
+- name: Archive war
+  archive:
+    path: "{{ signalement_image_directory }}/signalement/*"
+    dest: "{{signalement_image_directory}}/signalement.war"
+    format: zip
+    mode: 0644
+  
+- name: Build signalement api image
+  shell: 
+    cmd: docker build -t signalement-image {{signalement_image_directory}}
+    chdir: "{{signalement_image_directory}}"  
+    
+- name: Copy docker compose file
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{signalement_docker_directory}}/docker-compose.yml"
+    mode: 0664
+    
+#- name: Stop docker compose
+#  shell:
+#    cmd: docker-compose down
+#    chdir: "{{signalement_docker_directory}}"
+    
+- name: Restart docker compose
+  shell:
+    cmd: docker-compose up -d --build
+    chdir: "{{signalement_docker_directory}}"    
