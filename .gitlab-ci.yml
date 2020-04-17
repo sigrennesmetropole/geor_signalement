@@ -117,7 +117,7 @@ signalementapi:deploy:master:
    - cdp-rennes  
   image: ansible/ansible-runner
   dependencies:
-    - signalementapi:build
+    - signalementapi:build:master
   only:
     refs:
       - open/master
