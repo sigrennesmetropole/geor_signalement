@@ -83,6 +83,7 @@ signalementapi:sonar:master:
   only:
     refs:
       - open/master
+  allow_failure: true
   script:
     - >
       sh ./mvnw $MAVEN_CLI_OPTS -U compile sonar:sonar
