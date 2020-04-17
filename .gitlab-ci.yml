@@ -38,7 +38,7 @@ signalementapi:build:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
       
-signalementapi:build:master
+signalementapi:build:master:
   script:
     - sh ./mvnw $MAVEN_CLI_OPTS -U package -DskipTests
   stage: build
