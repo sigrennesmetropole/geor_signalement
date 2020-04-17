@@ -26,6 +26,10 @@ signalementapi:build:
   script:
     - sh ./mvnw $MAVEN_CLI_OPTS -U package
   stage: build
+  except:
+    refs:
+      - master
+      - open/master  
   tags: 
    - cdp-rennes  
   artifacts:
@@ -33,6 +37,22 @@ signalementapi:build:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
+      
+signalementapi:build:master
+  script:
+    - sh ./mvnw $MAVEN_CLI_OPTS -U package -DskipTests
+  stage: build
+  tags: 
+   - cdp-rennes
+  only:
+    refs:
+      - master
+      - open/master   
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip      
 
 # Sonar code quality analysis - note a full test coverage report through a jacoco.exec merged file in base project folder
 signalementapi:sonar:
