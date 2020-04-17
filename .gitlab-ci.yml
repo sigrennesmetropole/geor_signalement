@@ -19,9 +19,10 @@ default:
 stages:
   - build
   - test
+  - deploy
 
 # Build job with maven plugin execution policies define in parent pom
-sbapi:build:
+signalementapi:build:
   script:
     - sh ./mvnw $MAVEN_CLI_OPTS -U package
   stage: build
@@ -29,16 +30,19 @@ sbapi:build:
    - cdp-rennes  
   artifacts:
     paths:
-      - $CI_PROJECT_DIR/georchestra-signalements-api/target/georchestra-signalements-api-*.jar
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
 
 # Sonar code quality analysis - note a full test coverage report through a jacoco.exec merged file in base project folder
-sbapi:sonar:
+signalementapi:sonar:
   stage: test
   dependencies:
-    - sbapi:build
+    - signalementapi:build
   except:
     refs:
       - master
+      - open/master
   allow_failure: true
   script:
     - >
@@ -52,13 +56,13 @@ sbapi:sonar:
             
 
 # On master, do not use branch parameter
-sbapi:sonar:master:
+signalementapi:sonar:master:
   stage: test
   dependencies:
-    - sbapi:build
+    - signalementapi:build
   only:
     refs:
-      - master
+      - open/master
   script:
     - >
       sh ./mvnw $MAVEN_CLI_OPTS -U compile sonar:sonar
@@ -67,3 +71,40 @@ sbapi:sonar:master:
       -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA
       -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
       -Dsonar.gitlab.project_id=$CI_PROJECT_ID
+
+signalementapi:deploy:
+  stage: deploy
+  tags: 
+   - cdp-rennes
+  image: ansible/ansible-runner
+  dependencies:
+    - signalementapi:build
+  only:
+    refs:
+      - open/develop
+  script:
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.war 
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api-addon.zip
+    - cd $CI_PROJECT_DIR/ansible  
+    - chmod og-rw key/id_rsa
+    - cp signalement_dev_var.yml $HOME/signalement_var.yml
+    - ansible-playbook signalement-docker.yml -v -i "10.50.1.21," -u root --private-key=key/id_rsa --ssh-common-args=-oStrictHostKeyChecking=no
+
+signalementapi:deploy:master:
+  stage: deploy
+  tags: 
+   - cdp-rennes  
+  image: ansible/ansible-runner
+  dependencies:
+    - signalementapi:build
+  only:
+    refs:
+      - open/master
+  script:
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.war 
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api-addon.zip
+    - cd $CI_PROJECT_DIR/ansible  
+    - chmod og-rw key/id_rsa
+    - cp signalement_dev_var.yml $HOME/signalement_var.yml
+    - ansible-playbook signalement-docker.yml -v -i "194.2.68.134," -u root --private-key=key/id_rsa --ssh-common-args=-oStrictHostKeyChecking=no
+    
