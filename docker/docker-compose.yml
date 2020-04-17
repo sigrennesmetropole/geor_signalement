@@ -8,14 +8,17 @@ proxy:
     - header
   environment:
     - XMX=512M
+
 mapfishapp:
   environment:
     - XMX=1024M
   build: mapfishapp
-urbanisme:
+
+signalement:
   build: signalement
   environment:
     - ADD_JAVA_OPTS=-Dgeorchestra.datadir=/etc/georchestra
+
 header:
   environment:
     - XMX=512M

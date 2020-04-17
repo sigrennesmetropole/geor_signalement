@@ -8,9 +8,7 @@
 		"css/fileuploadfield.css"
 	],
 	"default_options": {
-		"signalementURL": "http://localhost:8082/",
-		"contextType": "reporting/contextDescription/search",
-		"taskType": "task/draft"
+		"signalementURL": "http://localhost:8082/"
 	},
 	"i18n": {
 		"en": {

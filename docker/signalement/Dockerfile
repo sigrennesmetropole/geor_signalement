@@ -1,6 +1,6 @@
 FROM jetty:9.3-jre8
 
-ADD signalement-0.0.1-SNAPSHOT.war /var/lib/jetty/webapps/signalement.war
+ADD georchestra-signalement-1.0-SNAPSHOT.war /var/lib/jetty/webapps/signalement.war
 ADD etc/ /etc
 
 CMD [ "sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \

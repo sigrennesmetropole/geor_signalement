@@ -94,7 +94,7 @@
 		<profile>
 			<id>dev-yri</id>
 			<properties>
-				<georchestra.addon.deployDir>C:\Program Files (x86)\Apache\Tomcat 9.0\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
+				<georchestra.addon.deployDir>C:\Program Files (x86)\Apache\Tomcat9.0\georchestra\mapfishapp\addons</georchestra.addon.deployDir>
 			</properties>
 		</profile>
 	</profiles>
@@ -201,7 +201,7 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-			
+
 			<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
 			<dependency>
 				<groupId>org.freemarker</groupId>
@@ -221,7 +221,7 @@
 				<artifactId>xmlworker</artifactId>
 				<version>${itextpdf.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.xhtmlrenderer</groupId>
 				<artifactId>flying-saucer-pdf-itext5</artifactId>
@@ -294,6 +294,16 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>${ant.plugin.version}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
 				</plugin>
 
 			</plugins>

@@ -1,0 +1,17 @@
+FROM jetty:9.3-jre8
+USER root
+MAINTAINER fni18300@open-groupe.com
+ENV TZ=Europe/Paris
+EXPOSE {{signalement_server_port}}
+
+RUN mkdir -p /opt/signalement/data/models
+
+ADD signalement.war /var/lib/jetty/webapps/signalement.war
+
+CMD [ "sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
+      ${ADD_JAVA_OPTS}                                   \
+      -Xmx${XMX:-1G} -Xms${XMX:-1G}                      \
+      -jar /usr/local/jetty/start.jar" ]
+
+
+
