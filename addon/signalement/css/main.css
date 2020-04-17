@@ -18,13 +18,13 @@
 }
 
 .POINT{
-    background-image: url(../img/draw-icon-16x16.png) !important;
+    background-image: url(../img/point.png) !important;
 }
 
 .POLYGON{
-    background-image: url(../img/delete-icon-16x16.png) !important;
+    background-image: url(../img/polygon.png) !important;
 }
 
 .LINE{
-    background-image: url(../img/add-icon-16x16.png) !important;
+    background-image: url(../img/line.png) !important;
 }
