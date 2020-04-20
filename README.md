@@ -24,6 +24,18 @@ Un utilisateur peut être associé par le biais de la classe UserRoleContext :
 
 Le seul moyen de créer un nouveau processus ou une nouvelle version d'un processus est d'utiliser swagger et la méthode "admin" associée.
 
+Pour uploader un fichier en ligne de commande :
+
+```java
+curl -v -X POST "http://localhost:8082/signalement/administration/processDefinition/update/simple" -H "accept: application/json" -H "authorization: Basic YWRtaW46NGRNMW5BcHAh" -H  "Content-Type: multipart/form-data" -F "file=@/tmp/simple.bpmn20.xml;type=application/xml"
+```
+
+Pour lister les processus déclarés :
+
+```java
+curl -X GET "http://georchestra.open-dev.com:8082/signalement/administration/processDefinition/search" -H  "accept: application/json" -H  "authorization: Basic YWRtaW46NGRNMW5BcHAh"
+```
+
 #### Bien modéliser
 
 Pour bien modéliser un processus, il est recommandé à chaque étape, de mettre à jour les données du signalement correspondant et notamment :
