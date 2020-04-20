@@ -268,7 +268,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             },
             proxy: new Ext.data.HttpProxy({
                 method: "GET",
-                url: this.options.signalementURL + this.options.contextType
+                url: this.options.signalementURL + "reporting/contextDescription/search"
             }),
             listeners: {
                 "load": {
@@ -302,7 +302,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             },
             proxy: new Ext.data.HttpProxy({
                 method: "GET",
-                url: this.options.signalementURL + this.options.contextType
+                url: this.options.signalementURL + "reporting/contextDescription/search"
             }),
             listeners: {
                 "load": {
@@ -508,13 +508,13 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 },
                 {
                     xtype: 'fieldset',
-                    title: "Objet",
+                    title: this.tr("signalement.description"),
                     id: "object",
                     collapsible: false,
                     width: 500,
                     items: [
                         {
-                            xtype: 'textfield',
+                            xtype: 'textarea',
                             id: 'objet',
                             height: 100,
                             width: 300

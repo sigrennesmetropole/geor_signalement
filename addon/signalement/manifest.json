@@ -19,6 +19,7 @@
 			"signalement.login": "You are",
 			"signalement.organization": "Your organization",
 			"signalement.email": "Your mail address",
+			"signalement.description": "Object",
 			"signalement.reporting.thema": "Reporting on thema",
 			"signalement.reporting.layer": "Reporting on layer",
 			"signalement.attachment.add": "Ajouter",
@@ -44,6 +45,7 @@
 			"signalement.login": "You are",
 			"signalement.organization": "Your organization",
 			"signalement.email": "Your mail address",
+			"signalement.description": "Object",			
 			"signalement.reporting.thema": "Reporting on thema",
 			"signalement.reporting.layer": "Reporting on layer",
 			"signalement.attachment.add": "Ajouter",
@@ -71,6 +73,7 @@
 			"signalement.login": "Vous êtes",
 			"signalement.organization": "Collectivité",
 			"signalement.email": "Votre adresse mail",
+			"signalement.description": "Objet",			
 			"signalement.reporting.thema": "Signalement sur la thématique",
 			"signalement.reporting.layer": "Signalement sur la couche",
 			"signalement.attachment.add": "Ajouter",
@@ -99,6 +102,7 @@
 			"signalement.login": "You are",
 			"signalement.organization": "Your organization",
 			"signalement.email": "Your mail address",
+			"signalement.description": "Object",			
 			"signalement.reporting.thema": "Reporting on thema",
 			"signalement.reporting.layer": "Reporting on layer",
 			"signalement.attachment.add": "Ajouter",
@@ -115,8 +119,6 @@
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
-
-
 		}
 	}
 }
