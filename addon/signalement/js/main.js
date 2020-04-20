@@ -77,28 +77,6 @@ Ext.namespace("GEOR.Addons", "GEOR.data");
  * Urbanisme addon
  */
 GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
-    /**
-     * Window containing the « note de signalement » - {Ext.Window}
-     */
-    signalementWindow: null,
-
-    /**
-     * Informations retrieved from addon server about « user »
-     */
-    userStore : null,
-
-    /**
-     * Data representing a Note de renseignement de signalement - {Object}
-     */
-    noteStore: new GEOR.data.NoteStore(),
-
-    /**
-     * api: config[encoding] ``String`` The encoding to set in the headers when
-     * requesting the print service. Prevent character encoding issues,
-     * especially when using IE. Default is retrieved from document charset or
-     * characterSet if existing or ``UTF-8`` if not.
-     */
-    encoding: document.charset || document.characterSet || "UTF-8",
 
     /**
      * fields used to build tree Action Menu item
@@ -119,12 +97,6 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     signalementWindow: null,
 
     /**
-     * Informations retrieved from addon server about " user »
-     */
-    userStore: null,
-    test: null,
-
-    /**
      * Information retrieved from addon server about "attachment configuration"
      */
     attachmentConfigurationStore: null,
@@ -133,7 +105,12 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
      * Information about signalement if it's used for layer or thema
      */
     reportThema: true,
-
+    
+    /**
+     * Informations retrieved from addon server about « user »
+     */
+    userStore : null,
+    
     /**
      * Informations retrieved from addon server about " list of themas »
      */
@@ -291,7 +268,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             },
             proxy: new Ext.data.HttpProxy({
                 method: "GET",
-                url: this.options.signalementURL + this.options.contextType
+                url: this.options.signalementURL + "reporting/contextDescription/search"
             }),
             listeners: {
                 "load": {
@@ -325,7 +302,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             },
             proxy: new Ext.data.HttpProxy({
                 method: "GET",
-                url: this.options.signalementURL + this.options.contextType
+                url: this.options.signalementURL + "reporting/contextDescription/search"
             }),
             listeners: {
                 "load": {
@@ -531,13 +508,13 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 },
                 {
                     xtype: 'fieldset',
-                    title: "Objet",
+                    title: this.tr("signalement.description"),
                     id: "object",
                     collapsible: false,
                     width: 500,
                     items: [
                         {
-                            xtype: 'textfield',
+                            xtype: 'textarea',
                             id: 'objet',
                             height: 100,
                             width: 300
@@ -862,6 +839,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     	var formData = new FormData();
     	var addon = this;
     	formData.set("file", file , file.name);
+    	
     	var request = new XMLHttpRequest();
     	request.onload = function(response, a) {
     		if (request.status == 200) {
@@ -880,8 +858,20 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             });
             console.log(response, b);
     	}
-        request.open('POST', this.options.signalementURL + "reporting/" + task.asset.uuid + "/upload");
+    	
+    	var originalUrl = this.options.signalementURL + "reporting/" + task.asset.uuid + "/upload"; 
+    	var url = encodeURIComponent(originalUrl);
+    	var proxyHost = OpenLayers.ProxyHost;
+    	if( proxyHost !== "") {
+    		var i = document.URL.indexOf(document.domain);
+    		var j = document.URL.indexOf("/",i);
+    		var prefix = document.URL.substring(0,j);
+    		request.open('POST', prefix + proxyHost + url);
+    	} else {
+    		request.open('POST', originalUrl);
+    	}
         request.send(formData);
+        
     },
 
     /**
