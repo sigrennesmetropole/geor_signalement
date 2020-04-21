@@ -1,0 +1,50 @@
+.addon-signalement {
+    background-image: url(../img/warning-icon-16x16.png) !important;
+}
+.upload-icon{
+    background-image: url(../img/add-icon-16x16.png) !important;
+}
+
+.draw-icon{
+    background-image: url(../img/draw-icon-16x16.png) !important;
+}
+
+.delete-icon{
+    background-image: url(../img/delete-icon-16x16.png) !important;
+}
+
+.help-icon{
+    background-image: url(../img/question-white.png) !important;
+}
+
+.x-action-col-cell img {
+    height: 16px;
+    width: 16px;
+}
+
+.POINT{
+    background-image: url(../img/point.png) !important;
+}
+
+.POLYGON{
+    background-image: url(../img/polygon.png) !important;
+}
+
+.LINE{
+    background-image: url(../img/line.png) !important;
+}
+
+.labelFile{
+    font-size: 12px;
+    font-style: italic;
+    color:gray
+}
+
+.labelButtonGeom{
+    font-size: 12px;
+}
+
+.helpButton{
+    margin-right: 330px;
+}
+
