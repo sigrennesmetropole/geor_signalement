@@ -389,7 +389,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 
         var drawActionControl = function (typeGeom) {
 
-            addon.vectorLayer = new OpenLayers.Layer.Vector("Signalement");
+            addon.vectorLayer = new OpenLayers.Layer.Vector(this.tr('signalement.layer.name'));
 
             //add vector layer in map
             addon.map.addLayer(addon.vectorLayer);
@@ -564,10 +564,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             iconCls: iconGeom,
                             scope: this,
                             handler: function () {
-                                if (addon.vectorLayer != undefined) {
-                                    addon.vectorLayer.destroyFeatures();
-                                    addon.map.removeLayer(addon.vectorLayer);
-                                }
+                                this.removeLayer(addon);
                                 drawActionControl(this.noteStore.getTask().asset.geographicType);
                                 Ext.getCmp('createButton').setDisabled(true);
 
@@ -616,10 +613,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                         // message d'alert pour confirmer la fermeture de la fenetre
                         Ext.MessageBox.confirm(this.tr("signalement.msgBox.title"), this.tr("signalement.msgBox.info"), function (btn) {
                             if(btn =='yes'){
-                                if (addon.vectorLayer != undefined) {
-                                    addon.vectorLayer.destroyFeatures();
-                                    addon.map.removeLayer(addon.vectorLayer);
-                                }
+                                addon.removeLayer(addon);
                                 addon.closeSignalementWindow();
                             }
                         });
@@ -711,10 +705,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             },
             success: function (response) {
                 this.log("response: ", response);
-                if (this.vectorLayer != undefined) {
-                    this.vectorLayer.destroyFeatures();
-                    this.map.removeLayer(this.vectorLayer);
-                }
+                this.removeLayer(this);
                 this.closeWindow();
                 Ext.Msg.show({
                     msg: this.tr('signalement.task.create')
@@ -923,11 +914,21 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         this.qtip = this.getTooltip(this.initRecord);
     },
 
+    removeLayer: function( addon ){
+        if (addon.vectorLayer != undefined ) {
+            addon.map.layers.map(function(layer) {
+                if(layer.name == this.tr('signalement.layer.name')){
+                    addon.map.removeLayer(layer);
+                }
+            } )
+        }
+    },
+
     destroy: function () {
-        this.map.removeLayer(this.vectorLayer);
         this.userStore.destroy();
         this.noteStore.destroy();
-        this.listThemaStore.destroy();
+        this.themasStore.destroy();
+        this.layersStore.destroy();
         GEOR.Addons.Base.prototype.destroy.call(this);
     },
 

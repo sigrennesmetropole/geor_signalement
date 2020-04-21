@@ -34,7 +34,8 @@
 			"signalement.localization.tips": "Clic on button to localize reporting on map",
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
-			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
+			"signalement.layer.name": "Signalement"
 
 		},
 		"es": {
@@ -61,7 +62,8 @@
 			"signalement.localization.tips": "Clic on button to localize reporting on map",
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
-			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
+			"signalement.layer.name": "Signalement"
 
 
 		},
@@ -91,7 +93,8 @@
 			"signalement.task.error": "La tâche de signalement n'a pas été créée",
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
-			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
+			"signalement.layer.name": "Signalement"
 
 		},
 		"de": {
@@ -118,7 +121,8 @@
 			"signalement.localization.tips": "Clic on button to localize reporting on map",
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
-			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
+			"signalement.layer.name": "Signalement"
 		}
 	}
 }
