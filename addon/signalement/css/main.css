@@ -28,3 +28,13 @@
 .LINE{
     background-image: url(../img/line.png) !important;
 }
+
+.labelFile{
+    font-size: 12px;
+    font-style: italic;
+    color:gray
+}
+
+.labelButtonGeom{
+    font-size: 12px;
+}

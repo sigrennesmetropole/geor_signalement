@@ -35,7 +35,8 @@
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
-			"signalement.layer.name": "Signalement"
+			"signalement.layer.name": "Signalement",
+			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson"
 
 		},
 		"es": {
@@ -63,7 +64,8 @@
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
-			"signalement.layer.name": "Signalement"
+			"signalement.layer.name": "Signalement",
+			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson"
 
 
 		},
@@ -94,7 +96,8 @@
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
-			"signalement.layer.name": "Signalement"
+			"signalement.layer.name": "Signalement",
+			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson"
 
 		},
 		"de": {
@@ -122,7 +125,8 @@
 			"signalement.localization.layer": "La couche n'est pas signalable",
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
-			"signalement.layer.name": "Signalement"
+			"signalement.layer.name": "Signalement",
+			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson"
 		}
 	}
 }

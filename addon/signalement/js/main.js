@@ -545,6 +545,11 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                                 }
                             }
                         },
+                        {
+                            xtype: 'displayfield',
+                            value: this.tr('signalement.fileUpload.info'),
+                            cls : 'labelFile',
+                        },
                         this.buildAttachmentPanel()
                     ]
                 },
@@ -573,7 +578,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                         {
                             xtype: 'displayfield',
                             value: this.tr('signalement.localization.tips'),
-                            style : 'font-size: 12px',
+                            cls : 'labelButtonGeom',
                         }
                    ]
                 }
