@@ -42,13 +42,13 @@ public class PreAuthenticationFilter implements Filter {
 			if (username != null) {
 				SecurityContextHolder.getContext().setAuthentication(createAuthentication(httpServletRequest));
 
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("Populated SecurityContextHolder with pre-auth token: '{}'",
+				if (LOGGER.isInfoEnabled()) {
+					LOGGER.info("Populated SecurityContextHolder with pre-auth token: '{}'",
 							SecurityContextHolder.getContext().getAuthentication());
 				}
 			} else {
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("SecurityContextHolder not populated with pre-auth token");
+				if (LOGGER.isInfoEnabled()) {
+					LOGGER.info("SecurityContextHolder not populated with pre-auth token");
 				}
 			}
 		}

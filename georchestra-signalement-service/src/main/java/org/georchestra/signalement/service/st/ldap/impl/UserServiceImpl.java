@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByLogin(String username) {
-		LOGGER.debug("Search user by login {}",username);
+		LOGGER.info("Search user by login {}",username);
 		User result = null;
 		LdapQueryBuilder queryBuilder = LdapQueryBuilder.query().searchScope(SearchScope.SUBTREE).countLimit(5)
 				.attributes(attributes);
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
 
 		List<User> users = ldapTemplate.search(queryBuilder, new UserAttributeMapper(attributeMappings));
 		if (CollectionUtils.isNotEmpty(users)) {
-			LOGGER.debug("Search user by login {} found {}",username, users);
+			LOGGER.info("Search user by login {} found {}",username, users);
 			result = users.get(0);
 		}
 		return result;

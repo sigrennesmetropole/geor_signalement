@@ -96,6 +96,7 @@ public class WorkflowContext {
 
 	/**
 	 * Envoi de courriel
+	 * 
 	 * @param scriptContext   le context du script
 	 * @param executionEntity le context d'execution
 	 * @param eMailData
@@ -143,6 +144,7 @@ public class WorkflowContext {
 		if (reportingEntity != null) {
 			assignees = assignmentHelper.computeAssignees(reportingEntity, roleName);
 			try {
+				LOGGER.info("Assignees:{}" + assignees);
 				// Ici il faut calcule le contenue de recipients
 				sendEMail(executionEntity, reportingEntity, eMailData, assignees);
 			} catch (Exception e) {
@@ -168,6 +170,7 @@ public class WorkflowContext {
 		if (reportingEntity != null) {
 			assignee = assignmentHelper.computeAssignee(reportingEntity, roleName);
 			try {
+				LOGGER.info("Assignees:{}" + assignee);
 				// Ici il faut calcule le contenue de result
 				sendEMail(executionEntity, reportingEntity, eMailData, Arrays.asList(assignee));
 			} catch (Exception e) {
@@ -211,6 +214,8 @@ public class WorkflowContext {
 					mailDescription.setHtml(true);
 					mailDescription.setBody(generateEMailBody(executionEntity, reportingEntity, eMailData));
 					mailService.sendMail(mailDescription);
+				} else {
+					LOGGER.warn("No user for  {}", recipient);
 				}
 			}
 		}
@@ -229,8 +234,8 @@ public class WorkflowContext {
 		EmailDataModel emailDataModel = null;
 		if (StringUtils.isNotEmpty(eMailData.getBody())) {
 			emailDataModel = new EmailDataModel(userService, executionEntity, reportingEntity,
-					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString() + ":"
-							+ eMailData.getBody());
+					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString()
+							+ ":" + eMailData.getBody());
 		} else {
 			emailDataModel = new EmailDataModel(userService, executionEntity, reportingEntity, eMailData.getFileBody());
 		}
