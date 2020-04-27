@@ -68,7 +68,7 @@
 
 		},
 		"fr": {
-			"signalement.close": "Fermer",
+			"signalement.close": "Annuler",
 			"signalement.cancel": "Abandonner",
 			"signalement.create": "Créer",
 			"signalement.user": "Utilisateur",
