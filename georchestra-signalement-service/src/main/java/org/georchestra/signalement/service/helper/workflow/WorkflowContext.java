@@ -204,6 +204,7 @@ public class WorkflowContext {
 			for (String recipient : recipients) {
 				User user = userService.getUserByLogin(recipient);
 				if (user != null) {
+					LOGGER.info("Send mail to {}", user);
 					MailDescription mailDescription = new MailDescription();
 					mailDescription.setSubject(generateSubject(eMailData));
 					mailDescription.addTo(user.getEmail());

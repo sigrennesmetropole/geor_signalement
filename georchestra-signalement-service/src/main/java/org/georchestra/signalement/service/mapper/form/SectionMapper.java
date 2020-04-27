@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.Field;
 import org.georchestra.signalement.core.dto.FieldDefinition;
 import org.georchestra.signalement.core.dto.FormDefinition;
@@ -42,15 +43,17 @@ public abstract class SectionMapper {
 	@AfterMapping
 	public void afterMapping(SectionDefinitionEntity sectionDefinitionEntity, @MappingTarget Section section)
 			throws FormDefinitionException {
-		FormDefinition formDefinition = formDefinitionHelper.hydrateForm(sectionDefinitionEntity.getDefinition());
-		if (formDefinition != null && CollectionUtils.isNotEmpty(formDefinition.getFieldDefinitions())) {
-			List<Field> fields = new ArrayList<>();
-			for (FieldDefinition fieldDefinition : formDefinition.getFieldDefinitions()) {
-				Field field = new Field();
-				field.setDefinition(fieldDefinition);
-				fields.add(field);
+		if (StringUtils.isNotEmpty(sectionDefinitionEntity.getDefinition())) {
+			FormDefinition formDefinition = formDefinitionHelper.hydrateForm(sectionDefinitionEntity.getDefinition());
+			if (formDefinition != null && CollectionUtils.isNotEmpty(formDefinition.getFieldDefinitions())) {
+				List<Field> fields = new ArrayList<>();
+				for (FieldDefinition fieldDefinition : formDefinition.getFieldDefinitions()) {
+					Field field = new Field();
+					field.setDefinition(fieldDefinition);
+					fields.add(field);
+				}
+				section.setFields(fields);
 			}
-			section.setFields(fields);
 		}
 	}
 }
