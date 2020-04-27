@@ -194,6 +194,23 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>mapstore-addon/addon-assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -236,6 +253,28 @@
 									<target name="copy mapfish-addon to georchestra">
 										<copy todir="${georchestra.mapfish-addon.deployDir}">
 											<fileset dir="../mapfish-addon/">
+												<exclude name="**/addon-assembly.xml" />
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy-mapfish-addon</id>
+								<phase>package</phase>
+								<configuration>
+									<target name="copy mapstore-addon to georchestra">
+										<copy todir="${georchestra.mapstore-addon.deployDir}">
+											<fileset dir="../mapstore-addon/">
 												<exclude name="**/addon-assembly.xml" />
 											</fileset>
 										</copy>
