@@ -1,5 +1,5 @@
 import {actions} from '../actions/signalement';
-const assign = require('object-assign');
+import assign from 'object-assign';
 
 const initialState = {
 		attachmentConfiguration: null,
@@ -7,30 +7,15 @@ const initialState = {
 		layers: null
 };
 
-export default function onlineStoreApp(state = initialState, action) {
+export function signalementReducer(state = initialState, action) {
     switch(action.type) {
-        case actions.ADD_TO_CART:
-            return Object.assign({}, state, { items : [...state.items, action.payload]});
-        case actions.UPDATE_CART:
-            return Object.assign({}, state, {
-                items: state.items.map(item => {
-                    return item.id === action.payload.item.id ? Object.assign({}, item, {
-                        quantity: action.payload.quantity
-                    } ) :  item;
-                }) 
-            });
-        case actions.REMOVE_FROM_CART:
-            return Object.assign({}, state, {
-                items: state.items.filter(item => {
-                    return item.id !== action.payload.item.id;
-                })
-            });
-        case actions.SAVE_CART:
-            saveToLocalStorage(action.payload.items);
-            return Object.assign({}, state, {items: action.payload.items});
-        case actions.RESET_CART:
+        case actions.ATTACHMENT_CONFIGURATION_LOAD:
+            return Object.assign({}, state, {attachmentConfiguration: action.payload.attachmentConfiguration});
+        case actions.THEMAS_LOAD:
             saveToLocalStorage([]);
-            return Object.assign({}, state, {items: []});
+            return Object.assign({}, state, {themas: action.payload.themas});
+        case actions.LAYERS_LOAD:
+        	return Object.assign({}, state, {layers: action.payload.layers});
         default:
             return state;
     }
