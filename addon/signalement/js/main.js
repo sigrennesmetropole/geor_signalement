@@ -540,6 +540,9 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             	"fileselected": {
                                     fn: function (fileuploadfield, v) {
                                     	this.uploadAttachment(fileuploadfield, v);
+                                    	//afficher que le nom fichier ajouter sans le fakepath
+                                        var fileName = v.replace(/C:\\fakepath\\/g, '');
+                                        fileuploadfield.setRawValue(fileName);
                                     },
                                     scope: this
                                 }
