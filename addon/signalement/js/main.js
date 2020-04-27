@@ -370,7 +370,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     },
 
     buildForm: function() {
-        var storeCombo, valueCombo, titleCombo, iconGeom;
+        var storeCombo, valueCombo, titleCombo, iconGeom, nbrCharLimit = 1000;
         // teste si le signalement est pour une couche ou thématique
         if(this.reportThema == true){
             storeCombo= this.themasStore;
@@ -517,8 +517,23 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             xtype: 'textarea',
                             id: 'objet',
                             height: 100,
-                            width: 300
-                    }]
+                            width: 300,
+                            maxLength: nbrCharLimit,
+                            enableKeyEvents : true,
+                            listeners: {
+                                keyup: function(){
+                                    var nbrChar = nbrCharLimit - Ext.getCmp('objet').getValue().length;
+                                    Ext.get('numChar').update(nbrChar);
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'displayfield',
+                            id:'labelObjet',
+                            value: 'nombre de caractères restants: <span id="numChar">'+ nbrCharLimit +'</span>',
+                            cls : 'labelFile'
+                        }
+                        ]
                 },
                 {
                     xtype: 'fieldset',
