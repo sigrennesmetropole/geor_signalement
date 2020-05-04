@@ -14,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
 import org.georchestra.signalement.service.st.ldap.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.core.LdapTemplate;
@@ -27,6 +29,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserServiceImpl implements UserService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Value("${ldap.attribute.login}")
 	private String loginAttribute;
@@ -66,6 +70,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByLogin(String username) {
+		LOGGER.info("Search user by login {}",username);
 		User result = null;
 		LdapQueryBuilder queryBuilder = LdapQueryBuilder.query().searchScope(SearchScope.SUBTREE).countLimit(5)
 				.attributes(attributes);
@@ -80,6 +85,7 @@ public class UserServiceImpl implements UserService {
 
 		List<User> users = ldapTemplate.search(queryBuilder, new UserAttributeMapper(attributeMappings));
 		if (CollectionUtils.isNotEmpty(users)) {
+			LOGGER.info("Search user by login {} found {}",username, users);
 			result = users.get(0);
 		}
 		return result;
