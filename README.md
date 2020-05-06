@@ -4,10 +4,10 @@
 
 ![Gestion des contextes et des droits](readme/UserRole.png)
 
-La classe User permet de gérer les utilisateurs potentiellement concernés par un signalement.
-Les User , identifiés par leur login, doivent aussi être présents dans le LDAP.
+La classe _User_ permet de gérer les utilisateurs potentiellement concernés par un signalement.
+Les _User_s , identifiés par leur login, doivent aussi être présents dans le LDAP.
 
-La classe ContextDescription permet de lister les thèmes et les couches candidates pour un signalement.
+La classe _ContextDescription_ permet de lister les thèmes et les couches candidates pour un signalement.
 Chaque contexte indique s'il s'agit d'un thème ou d'une couche, s'il s'agit d'une sélection par point, ligne ou polygon.
 Chaque contexte est associé à un processus (et éventuellement une version de ce processus).
 
@@ -16,6 +16,45 @@ Un utilisateur peut être associé par le biais de la classe UserRoleContext :
 * A une liste de couples (rôle, context)
 * A une liste de triplets (rôle, context, aire géographic)
 
+#### Configuration des champs de formulaire d'une étape
+
+![Gestion des formulaires](readme/FormDefinition.png)
+
+Il est possible d'associer à une étape utilisateur un formulaire sous la forme d'un FormDefinition au moyen de la classe _ProcessFormDefinition_.
+Si aucune version n'est précisée (_version = null_), toutes les versions sont impactées.
+
+Chaque formulaire est constitué d'une liste de sections dont l'odre d'affichage est défini par le champ order de la classe _FormSectionDefintion_.
+
+Chaque section peut être en lecture pour un formulaire donné seule ou non (par exemple pour afficher le commentaire d'une étape précédente non modifiable).
+
+Chaque section possède (_SectionDefintion_):
+* un nom unique, 
+* un libellé,
+* une définition sous le forme d'un flux json.
+
+Le flux json est constitué comme suit:
+<pre>
+{
+"fieldDefinitions": [
+		{
+		"name": <string>,
+		"label": <string>,
+		"type": ("STRING"|"BOOLEAN"|"LONG"|"DOUBLE"|"LIST"),
+		"readOnly": false|true,
+		"required": false|true,
+		"multiple": false|true,
+		"extendedType": "<flux json d'une liste d'objet avec code et label>",
+		"validators": [
+			{
+				"type": ("MAXLENGTH"|"POSITIVE"|"NEGATIVE"),
+				"attribute": ("<integer pour maxlength>"|null)
+			}
+		]
+	},...
+]
+}
+</pre>
+ 
 
 
 #### Design des processus
