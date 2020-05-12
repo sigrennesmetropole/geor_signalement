@@ -1,5 +1,187 @@
 # addon-signalement
 
+## I - Construction de l'application
+
+Le projet _git_ est construit comme suit :
+
+- `docker` : ce répertoire contient des propositions de fichiers Dockerfile pour la construction/modification des images dockers ainsi  qu'une proposition pour le fichier _docker-compose.yml_
+- `georchestra-signalement-api` : il s'agit du sous-projet maven contenant l'application et les controleurs
+- `georchestra-signalement-core` : il s'agit du sous-projet maven contenant les entités et les DAO
+- `georchestra-signalement-service` : il s'agit du sous-projet maven contenant les services métiers, les services techniques
+- `mapfish-addon` : il s'agit des sources de l'addon pour mapfishapp
+- `mapstore-addon` :  il s'agit des sources de l'addon pour mapstore
+- `readme` : les données nécessaires au présent document
+- `resources` :  les resources avec notamment :
+  - `sql` qui contient les fichiers SQL d'initialisation
+  - `swagger`qui contient le fichier swagger permettant de générer l'ensemble des services REST du back-office
+  
+Le back-office est construit à partir de la commande maven
+`mvn -DskipTest package`
+
+Le résultat de cette construction est :
+* Un fichier WAR `[projet]/georchestra-signalement-api/target/georchestra-signalement-api-1.0-SNAPSHOT.war` déployable directement dans Tomcat ou Jetty
+* Un fichier SpringBoot JAR `[projet]/georchestra-signalement-api/target/georchestra-signalement-api-1.0-SNAPSHOT.jar`
+* Un fichier `[projet]/georchestra-signalement-api/target/georchestra-signalement-api-1.0-SNAPSHOT-addon.zip`contenant l'addon MapfishApp
+* Un fichier `[projet]/georchestra-signalement-api/target/georchestra-signalement-api-1.0-SNAPSHOT-extension.zip`contenant l'addon Mapstore
+
+## II - Installation
+
+L'addon signalement est conçu pour s'installer au sein d'une installation GeOrchestra existante mais la partie "backend" est indépendante de GeOrchestra.
+
+#### Base de données
+
+L'installation peut être réalisée soit :
+* Dans une base de données dédiée
+* Dans un schéma d'une base de données existantes
+
+Dans tous les cas, il faut en premier lieu créer un utilisateur Postgres _signalement_.
+
+```sql
+CREATE USER signalement WITH
+  LOGIN
+  NOSUPERUSER
+  INHERIT
+  NOCREATEDB
+  NOCREATEROLE
+  NOREPLICATION;
+```
+
+Si l'installation est réalisée dans une base de données dédiée, il faut créer cette base :
+
+```sql
+CREATE DATABASE signalement
+    WITH 
+    OWNER = signalement
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'en_US.utf8'
+    LC_CTYPE = 'en_US.utf8'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+```
+
+Il faut ensuite exécuter le script `[projet]/resources/sql/signalement-initialisation.sql` en tant qu'administrateur postgres.
+
+Ce script réalise les opérations suivantes :
+* Création des extensions geospatiales nécessaires
+* Création d'un schéma _signalement_
+* Modification du user _signalement_ afin de lui affecter un _search_path_ à _signalement,public_
+* Création des tables, index, séquences dans le schéma
+
+**Remarque**: seules les tables propres aux modules sont créées. Les tables propres à Activiti (le moteur de workflow) sont créées automatiquement au démarrage du service.
+
+#### Déploiement de l'application _back-office_
+
+Le back-office peut être démarrer :
+* Soit dans un container Tomcat 9.
+
+Il suffit alors de déposer le fichier WAR produit dans le répertoire webapps de Tomcat.
+
+* Soit dans un container Jetty
+
+Il suffit alors de copier le fichier WAR produit dans le répertoire webapps de Jetty puis de lancer Jetty
+
+```sh
+cp signalement.war /var/lib/jetty/webapps/signalement.war
+java -Djava.io.tmpdir=/tmp/jetty \
+      -Dgeorchestra.datadir=/etc/georchestra 	\
+      -Xmx${XMX:-1G} -Xms${XMX:-1G}           \
+      -jar /usr/local/jetty/start.jar"
+```
+
+* Soit en lançant l'application SpringBoot à partir du JAR 
+
+```
+java -jar signalement.jar
+```
+
+La configuration du back-office de trouve dans le fichier `signalement.properties`. Les principales propriétés sont :
+
+```java
+# TEMPORARY DIRECTORY
+temporary.directory=${java.io.tmpdir}/signalement
+
+# LOG
+logging.level.org.springframework=DEBUG
+logging.level.org.georchestra=DEBUG
+
+# SERVER 
+server.port=<port applicatif pour l'exécution en springboot>
+
+# BDD
+spring.datasource.url=jdbc:postgresql://localhost:5432/signalement?ApplicationName=signalement
+spring.datasource.username=signalement
+spring.datasource.password=signalement
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.properties.hibernate.dialect = org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults = false
+
+spring.security.user.name=admin
+spring.security.user.password={noop}<mot de passe admin>
+spring.security.user.roles=USER
+
+# UPLOAD
+# Taille maximum des fichiers à importer
+spring.servlet.multipart.max-file-size=10MB
+
+attachment.max-count=5
+attachment.mime-types=image/png,image/jpeg,image/tiff,application/pdf,text/plain,text/html,text/csv,application/vnd.dxf,application/vnd.dwg,\
+	application/vnd.oasis.opendocument.text,application/vnd.oasis.opendocument.spreadsheet,application/vnd.oasis.opendocument.presentation,application/vnd.oasis.opendocument.graphics,\
+	application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,\
+	application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+# EMAIL
+mail.transport.protocol=smtp
+mail.smtp.host=<host>
+mail.smtp.auth=false
+mail.smtp.port=<port>
+mail.smtp.user=
+mail.smtp.password=
+mail.smtp.starttls.enable=true
+mail.debug=false
+mail.from=signalement@rennesmetropole.fr
+
+#LDAP
+spring.ldap.urls=ldap://<host georchestra ldap>:<port>
+spring.ldap.base=<la racine dn par exemple dc=georchestra,dc=org>
+spring.ldap.username=<dn d'un compte ayant de droit de lecture sur le ldap par exemple cn=admin,dc=georchestra,dc=org>
+spring.ldap.password=<mot de passe>
+
+ldap.user.searchBase=ou=users
+ldap.objectClass=person
+ldap.attribute.login=cn
+ldap.attribute.firstName=givenname
+ldap.attribute.lastName=sn
+ldap.attribute.organization=description
+ldap.attribute.email=mail
+
+# GENERATION
+freemarker.clearCache=false
+freemarker.baseDirectory=${java.io.tmpdir}/models
+freemarker.basePackage=models
+freemarker.cssFile=
+freemarker.fontsPath=fonts
+
+```
+
+#### Déploiement de l'addon MapfishApp
+
+Le déploiement de l'addon MapfishApp est réalisé en dézippant le fichier `georchestra-signalement-api-1.0-SNAPSHOT-extension.zip` dans le répertoire `[georchestra]/config/mapfishapp/addons`.
+
+Il faut ensuite modifier la propriété `signalementURL` présente dans fichier `manifest.json` afin de renseigner l'URL vers le back-office.
+
+```json
+	"default_options": {
+		"signalementURL": "http://localhost:8082/"
+	},
+```
+
+#### Déploiement de l'addon Mapstore`
+
+*TODO*
+
+## III - Configuration
+
 #### Gestion des droits 
 
 ![Gestion des contextes et des droits](readme/UserRole.png)
@@ -8,13 +190,13 @@ La classe _User_ permet de gérer les utilisateurs potentiellement concernés pa
 Les _User_s , identifiés par leur login, doivent aussi être présents dans le LDAP.
 
 La classe _ContextDescription_ permet de lister les thèmes et les couches candidates pour un signalement.
-Chaque contexte indique s'il s'agit d'un thème ou d'une couche, s'il s'agit d'une sélection par point, ligne ou polygon.
-Chaque contexte est associé à un processus (et éventuellement une version de ce processus).
+Chaque contexte indique s'il s'agit d'un thème ou d'une couche, s'il s'agit d'une sélection par point, ligne ou polygone.
+Chaque contexte est associé à un processus (et éventuellement une version de ce processus) qui sera utilisé lors de la création d'un signalement.
 
-Un utilisateur peut être associé par le biais de la classe UserRoleContext :
+Un utilisateur peut être associé par le biais de la classe _UserRoleContext_ :
 * A une liste de rôles, 
 * A une liste de couples (rôle, context)
-* A une liste de triplets (rôle, context, aire géographic)
+* A une liste de triplets (rôle, context, aire géographique)
 
 #### Configuration des champs de formulaire d'une étape
 
@@ -23,9 +205,10 @@ Un utilisateur peut être associé par le biais de la classe UserRoleContext :
 Il est possible d'associer à une étape utilisateur un formulaire sous la forme d'un FormDefinition au moyen de la classe _ProcessFormDefinition_.
 Si aucune version n'est précisée (_version = null_), toutes les versions sont impactées.
 
-Chaque formulaire est constitué d'une liste de sections dont l'odre d'affichage est défini par le champ order de la classe _FormSectionDefintion_.
-
-Chaque section peut être en lecture pour un formulaire donné seule ou non (par exemple pour afficher le commentaire d'une étape précédente non modifiable).
+Chaque formulaire est associé à une liste de sections par le biais de la classe _FormSectionDefintion_.
+Cette classe de liaison permet de définir :
+* l'ordre d'affichage grâce aux champ order
+* si la section est en lecture seule pour ce formulaire (par exemple pour afficher le commentaire d'une étape précédente non modifiable).
 
 Chaque section possède (_SectionDefintion_):
 * un nom unique, 
@@ -33,7 +216,8 @@ Chaque section possède (_SectionDefintion_):
 * une définition sous le forme d'un flux json.
 
 Le flux json est constitué comme suit:
-<pre>
+
+```java
 {
 "fieldDefinitions": [
 		{
@@ -53,9 +237,7 @@ Le flux json est constitué comme suit:
 	},...
 ]
 }
-</pre>
- 
-
+```
 
 #### Design des processus
 
