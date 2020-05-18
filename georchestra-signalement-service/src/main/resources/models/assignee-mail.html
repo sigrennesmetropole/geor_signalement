@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<style type="text/css">
+body {
+	font-size: small;
+	font-family: "Vista Sans OT", "Verdana", "Arial";
+}
+
+.bold {
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+	<div>
+		<p>Madame, Monsieur,</p>
+
+		<p>Le signalement suivant a été soumis
+			<#if reporting.creationDate??>
+				le ${reporting.creationDate?date}
+			</#if>
+			et vous a été assigné :
+
+			<ul>
+				<#if reporting.contextDescription??>
+					<li>
+					<#if reporting.contextDescription.contextType.name() == "LAYER">
+						Couche
+					<#else>
+						Thème
+					</#if>
+					&quot;${reporting.contextDescription.label?string}&quot;
+					</li>
+				</#if>
+                <#if reporting.status??>
+                    <li>
+                        Status: &quot;${reporting.status?string}&quot;
+                    </li>
+                </#if>
+				<#if reporting.description??>
+					<li>
+						Description: ${reporting.description?string}
+					</li>
+				</#if>
+
+				<#if (dataModelUtils.getUser(reporting.initiator))??>
+					<#assign user = dataModelUtils.getUser(reporting.initiator)>
+					<li>
+						Le signalement a été soumis par :
+					</li>
+					<ul>
+						<li>
+							Prénom: ${user.getFirstName()?string}
+						</li>
+						<li>
+							Nom: ${user.getLastName()?string}
+						</li>
+						<li>
+							Email: ${user.getEmail()?string}
+						</li>
+						<li>
+							Login: ${user.getLogin()?string}
+						</li>
+						<li>
+							Organisation: ${user.getOrganization()?string}
+						</li>
+					</ul>
+				</#if>
+			</ul>
+		</p>
+		<p>Vous serez informé au fur et à mesure de son traitement par les
+			services en charge du signalement.</p>
+		<p>En vous souhaitant bonne r&eacute;ception</p>
+		<p class="bold">Signal'bots</p>
+	</div>
+</body>
+</html>

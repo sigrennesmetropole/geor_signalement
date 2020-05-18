@@ -1,0 +1,25 @@
+proxy:
+  build: proxy
+  ports:
+    - "8080:8080"
+  links:
+    - mapfishapp
+    - signalement
+    - header
+  environment:
+    - XMX=512M
+
+mapfishapp:
+  environment:
+    - XMX=1024M
+  build: mapfishapp
+
+signalement:
+  build: signalement
+  environment:
+    - ADD_JAVA_OPTS=-Dgeorchestra.datadir=/etc/georchestra
+
+header:
+  environment:
+    - XMX=512M
+  image: georchestra/header
