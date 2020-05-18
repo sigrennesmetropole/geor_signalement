@@ -1,0 +1,25 @@
+---
+# les documents YAML commencent toujours par "---"
+
+# le nom de l'hôte ou groupe concerné
+- hosts: all
+  vars_files:
+    - ~/signalement_var.yml
+  roles:
+    - {
+      role: dockerize,
+      signalement_db_host: '{{db_host}}',
+      signalement_db_port: '{{db_port}}',
+      signalement_db_name: '{{db_name}}',
+      signalement_db_user: '{{db_user}}',
+      signalement_server_expose_port: '{{server_expose_port}}',
+      signalement_db_password: '{{db_password}}',
+      signalement_admin_password: '{{admin_password}}',
+      signalement_smtp_host: '{{smtp_host}}',
+      signalement_smtp_port: '{{smtp_port}}',
+      signalement_smtp_username: '{{smtp_username}}',
+      signalement_ldap_host: '{{ldap_host}}',
+      signalement_ldap_port: '{{ldap_port}}',
+      signalement_ldap_username: '{{ldap_username}}',
+      signalement_ldap_password: '{{ldap_password}}',
+      }

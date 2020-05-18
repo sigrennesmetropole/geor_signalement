@@ -1,0 +1,1215 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "1.0.0",
+		"title": "Georchestra - Plugin Signalement API",
+		"contact": {
+			"email": "guillaume.morin@open-groupe.com"
+		},
+		"license": {
+			"name": "Apache 2.0",
+			"url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+		}
+	},
+	"host": "",
+	"basePath": "/",
+	"tags": [
+		{
+			"name": "administration",
+			"description": "Administration de la plateforme de signalement"
+		},
+		{
+			"name": "user",
+			"description": "Services de gestion des utilisateurs"
+		},
+		{
+			"name": "tasks",
+			"description": "Services de gestion des tâches de signalements"
+		},
+		{
+			"name": "reporting",
+			"description": "Services de gestion des signalements"
+		}
+	],
+	"schemes": [
+		"https",
+		"http"
+	],
+	"paths": {
+		"/administration/configuration": {
+			"get": {
+				"tags": [
+					"administration"
+				],
+				"summary": "Récupération des propriétés de configuration",
+				"description": "Ensemble des propriétés de configuration",
+				"operationId": "getConfiguration",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/ConfigurationData"
+						}
+					}
+				}
+			}
+		},
+		"/administration/initialize": {
+			"get": {
+				"tags": [
+					"administration"
+				],
+				"summary": "Initialisation applicatives",
+				"description": "Initialisation applicatives",
+				"operationId": "initialize",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		},
+		"/administration/processDefinition/update/{deploymentName}": {
+			"post": {
+				"tags": [
+					"administration"
+				],
+				"summary": "Update process definition",
+				"description": "Update process definition",
+				"operationId": "updateProcessDefinition",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "deploymentName",
+						"description": "Nom de la ressource de déploiement (la catégorie du déploiement sera le nom suffixé par _catergory)",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "file",
+						"description": "Pièce jointe contenant le fichierbpmn2.0 sous la forme d'un blob",
+						"required": true,
+						"type": "file"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		},
+		"/administration/processDefinition/delete/{name}": {
+			"delete": {
+				"tags": [
+					"administration"
+				],
+				"summary": "Delete process definition",
+				"description": "Delete process definition",
+				"operationId": "deleteProcessDefinition",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"description": "Nom du processus",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		},
+		"/administration/processDefinition/search": {
+			"get": {
+				"tags": [
+					"administration"
+				],
+				"summary": "List process definition",
+				"description": "List process definition",
+				"operationId": "searchProcessDefinition",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ProcessDefinition"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/me":{
+			"get": {
+				"tags": [
+					"user"
+				],
+				"summary": "Récupération des données de l'utilisateur connecté'",
+				"description": "",
+				"operationId": "getMe",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/draft": {
+			"post": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Création d'un signalement brouillon'",
+				"description": "",
+				"operationId": "createDraft",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "reportingDescription",
+						"description": "Description du signalement",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ReportingDescription"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/cancel/{uuid}": {
+			"delete": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Abandon d'un signalement brouillon'",
+				"description": "",
+				"operationId": "cancelDraft",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "uuid",
+						"description": "Identifiant du signalement",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/reporting/attachment/configuration": {
+			"get": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Lister la configuration liées aux pièces jointes",
+				"description": "Lister la configuration liées aux pièces jointes",
+				"operationId": "getAttachmentConfiguration",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/AttachmentConfiguration"
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/reporting/contextDescription/search": {
+			"get": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Lister les contextes",
+				"description": "Listes les contexts selon le type",
+				"operationId": "searchContextDescriptions",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "contextType",
+						"description": "Type du context",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "geographicType",
+						"description": "Type de sélection",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ContextDescription"
+							}
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/reporting/form/draft/{contextDescriptionName}": {
+			"get": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Retourne le formulaire draft",
+				"description": "Retourne le formulaire associé à l'état draft",
+				"operationId": "lookupDrafForm",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "contextDescriptionName",
+						"description": "Le nom du contexte, thème ou couche",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Form"
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/reporting/{uuid}/upload": {
+			"post": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Téléversement d'une pièce jointe sur un signalement'",
+				"description": "",
+				"operationId": "uploadDocument",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "uuid",
+						"description": "Identifiant du signalement",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					},
+					{
+						"in": "formData",
+						"name": "file",
+						"description": "Pièce jointe sous la forme d'un blob",
+						"required": true,
+						"type": "file"
+					}
+				],
+				"consumes": [
+					"multipart/form-data",
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Attachment"
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/reporting/{uuid}/delete/{attachmentId}": {
+			"delete": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Suppression d'un pièce jointe sur un signalement",
+				"description": "",
+				"operationId": "deleteDocument",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "uuid",
+						"description": "Identifiant du signalement",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					},
+					{
+						"in": "path",
+						"name": "attachmentId",
+						"description": "Identifiant de l'attachement",
+						"required": true,
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/reporting/{uuid}/download/{attachmentId}": {
+			"get": {
+				"tags": [
+					"reporting"
+				],
+				"summary": "Téléchargement d'un pièce attachée à un signalement'",
+				"description": "",
+				"operationId": "downloadDocument",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "uuid",
+						"description": "Identifiant du signalement",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					},
+					{
+						"in": "path",
+						"name": "attachmentId",
+						"description": "Identifiant de l'attachement",
+						"required": true,
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "file"
+						}
+					},
+					"400": {
+						"description": "bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/start": {
+			"post": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Démarrage du workflow de signalement",
+				"description": "",
+				"operationId": "startTask",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "task",
+						"description": "Description du signalement",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/claim/{taskId}": {
+			"put": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Demande d'affectation'",
+				"description": "",
+				"operationId": "claimTask",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskId",
+						"description": "Identifiant de la tâche associée",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/{taskId}": {
+			"get": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Récupérer une tâche d'un signalement",
+				"description": "",
+				"operationId": "getTask",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskId",
+						"description": "Identifiant de la tâche associée",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/update": {
+			"put": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Mise à jour de la tâche du signalement",
+				"description": "",
+				"operationId": "updateTask",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "task",
+						"description": "Description du signalement",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Task"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/do/{taskId}/{actionName}": {
+			"put": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Demande de traitement",
+				"description": "",
+				"operationId": "doIt",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskId",
+						"description": "Identifiant de la tâche associée",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "path",
+						"name": "actionName",
+						"description": "Nom de l'action",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/search": {
+			"get": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Liste les tâche du user courant",
+				"description": "Retourne la liste des tâches de l'utilisateur connecté'",
+				"operationId": "searchTasks",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Task"
+							}
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"ApiError": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				}
+			}
+		},
+		"ConfigurationData": {
+			"type": "object",
+			"properties": {
+				"version": {
+					"type": "string"
+				}
+			}
+		},
+		"PaginationCriteria": {
+			"type": "object",
+			"properties": {
+				"offset": {
+					"type": "integer",
+					"format": "int32",
+					"exemple": "0",
+					"required": "true"
+				},
+				"limit": {
+					"type": "integer",
+					"format": "int32",
+					"exemple": "0",
+					"required": "true"
+				}
+			}
+		},
+		"SortCriterion": {
+			"type": "object",
+			"properties": {
+				"property": {
+					"type": "string",
+					"exemple": "id",
+					"required": "true"
+				},
+				"asc": {
+					"type": "boolean",
+					"exemple": "true",
+					"required": "true"
+				}
+			}
+		},
+		"SortCriteria": {
+			"type": "object",
+			"properties": {
+				"elements": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/SortCriterion"
+					}
+				}
+			}
+		},
+		"Point": {
+			"type": "object",
+			"properties": {
+				"x": {
+					"type": "string"
+				},
+				"y": {
+					"type": "string"
+				}
+			}
+		},
+		"GeographicType": {
+			"type": "string",
+			"description": "Type géographic",
+			"enum": [
+				"POINT",
+				"LINE",
+				"POLYGON"
+			]
+		},
+		"ProcessDefinition": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"category": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"key": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"version": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"resourceName": {
+					"type": "string"
+				},
+				"deploymentId": {
+					"type": "string"
+				},
+				"diagramResourceName": {
+					"type": "string"
+				},
+				"tenantId": {
+					"type": "string"
+				},
+				"engineVersion": {
+					"type": "string"
+				}
+			}
+		},
+		"ContextType": {
+			"type": "string",
+			"description": "Type du context du signalement",
+			"enum": [
+				"THEMA",
+				"LAYER"
+			]
+		},
+		"FieldType": {
+			"type": "string",
+			"description": "Type des champs",
+			"enum": [
+				"LONG",
+				"DOUBLE",
+				"STRING",
+				"BOOLEAN",
+				"DATE",
+				"LIST"
+			]
+		},
+		"ValidatorType": {
+			"type": "string",
+			"enum": [
+				"REQUIRED",
+				"MAXLENGTH",
+				"POSITIVE",
+				"NEGATIVE"
+			]
+		},
+		"Validator": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"$ref": "#/definitions/ValidatorType"
+				},
+				"attribute": {
+					"type": "string"
+				}
+			}
+		},
+		"FieldDefinition": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				},
+				"help": {
+					"type": "string"
+				},
+				"type": {
+					"type": "object",
+					"$ref": "#/definitions/FieldType"
+				},
+				"readOnly": {
+					"type": "boolean"
+				},
+				"required": {
+					"type": "boolean"
+				},
+				"multiple": {
+					"type": "boolean"
+				},
+				"extendedType": {
+					"type": "string"
+				},
+				"validators": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Validator"
+					}
+				}
+			}
+		},
+		"Field": {
+			"type": "object",
+			"properties": {
+				"values": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"definition": {
+					"type": "object",
+					"$ref": "#/definitions/FieldDefinition"
+				}
+			}
+		},
+		"Section": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				},
+				"readOnly": {
+					"type": "boolean"
+				},
+				"fields": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/Field"
+					}
+				}
+			}
+		},
+		"Form": {
+			"type": "object",
+			"properties": {
+				"sections": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/Section"
+					}
+				}
+			}
+		},
+		"ContextDescription": {
+			"type": "object",
+			"properties": {
+				"contextType": {
+					"type": "object",
+					"$ref": "#/definitions/ContextType"
+				},
+				"geographicType": {
+					"type": "object",
+					"$ref": "#/definitions/GeographicType"
+				},
+				"name": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				}
+			}
+		},
+		"Status": {
+			"type": "string",
+			"description": "Etat d'un signalement",
+			"enum": [
+				"DRAFT",
+				"PENDING",
+				"CANCELLED",
+				"COMPLETED",
+				"DELETED"
+			]
+		},
+		"Attachment": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"name": {
+					"type": "string"
+				},
+				"mimeType": {
+					"type": "string"
+				}
+			}
+		},
+		"AttachmentConfiguration": {
+			"type": "object",
+			"properties": {
+				"maxSize": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"maxCount": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"mimeTypes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"ReportingDescription": {
+			"type": "object",
+			"properties": {
+				"uuid": {
+					"type": "string",
+					"format": "uuid"
+				},
+				"status": {
+					"type": "object",
+					"$ref": "#/definitions/Status"
+				},
+				"geographicType": {
+					"type": "object",
+					"$ref": "#/definitions/GeographicType"
+				},
+				"contextDescription": {
+					"type": "object",
+					"$ref": "#/definitions/ContextDescription"
+				},
+				"initiator": {
+					"type": "string"
+				},
+				"creationDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"updatedDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"description": {
+					"type": "string"
+				},
+				"localisation": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Point"
+					}
+				},
+				"attachments": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Attachment"
+					}
+				},
+				"datas": {
+					"type": "object"
+				}
+			}
+		},
+		"Action": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				}
+			}
+		},
+		"User": {
+			"type": "object",
+			"properties": {
+				"login": {
+					"type": "string"
+				},
+				"firstName": {
+					"type": "string"
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"organization": {
+					"type": "string"
+				}
+			}
+		},
+		"Task": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"status": {
+					"type": "object",
+					"$ref": "#/definitions/Status"
+				},
+				"initiator": {
+					"type": "string"
+				},
+				"creationDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"updatedDate": {
+					"type": "string",
+					"format": "date"
+				},
+				"assignee": {
+					"type": "string"
+				},
+				"actions": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Action"
+					}
+				},
+				"form": {
+					"type": "object",
+					"$ref": "#/definitions/Form"
+				},
+				"asset": {
+					"type": "object",
+					"$ref": "#/definitions/ReportingDescription"
+				}
+			}
+		}
+	}
+}
