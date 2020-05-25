@@ -36,7 +36,10 @@
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
 			"signalement.layer.name": "Signalement",
-			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson"
+			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
+			"signalement.tooltip.point": "Draw a Point",
+			"signalement.tooltip.polygon": "Draw a Polygon",
+			"signalement.tooltip.line": "Draw a Line"
 
 		},
 		"es": {
@@ -65,7 +68,10 @@
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
 			"signalement.layer.name": "Signalement",
-			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson"
+			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
+			"signalement.tooltip.point": "Draw a Point",
+			"signalement.tooltip.polygon": "Draw a Polygon",
+			"signalement.tooltip.line": "Draw a Line"
 
 
 		},
@@ -97,7 +103,10 @@
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
 			"signalement.layer.name": "Signalement",
-			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson"
+			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
+			"signalement.tooltip.point": "Dessiner un Point",
+			"signalement.tooltip.polygon": "Dessiner un Polygone",
+			"signalement.tooltip.line": "Dessiner une Ligne"
 
 		},
 		"de": {
@@ -126,7 +135,10 @@
 			"signalement.msgBox.title": "Signalement",
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
 			"signalement.layer.name": "Signalement",
-			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson"
+			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
+			"signalement.tooltip.point": "Draw a Point",
+			"signalement.tooltip.polygon": "Draw a Polygon",
+			"signalement.tooltip.line": "Draw a Line"
 		}
 	}
 }
