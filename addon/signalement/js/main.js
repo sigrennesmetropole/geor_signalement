@@ -426,8 +426,20 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 listLocalisation.push({'x': list[i].x, 'y': list[i].y});
             }
             addon.noteStore.updateLocalisation(listLocalisation);
-            Ext.getCmp('createButton').setDisabled(false);
+            disableButtonCreate();
 
+        }
+
+        var disableButtonCreate = function () {
+            if( Ext.getCmp('objet').getValue().length > 0 &&
+                Ext.getCmp('objet').getValue().length <= nbrCharLimit  &&
+                addon.noteStore.getTask().asset.localisation != undefined){
+
+                Ext.getCmp('createButton').setDisabled(false);
+
+            }else{
+                Ext.getCmp('createButton').setDisabled(true);
+            }
         }
 
     	return new Ext.FormPanel({
@@ -523,7 +535,11 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             listeners: {
                                 keyup: function(){
                                     var nbrChar = nbrCharLimit - Ext.getCmp('objet').getValue().length;
-                                    Ext.get('numChar').update(nbrChar);
+                                    if(nbrChar < 0){
+                                        Ext.getCmp('objet').setValue( Ext.getCmp('objet').getValue().substr(0, nbrCharLimit))
+                                    }
+                                    Ext.get('numChar').update(''+nbrChar);
+                                    disableButtonCreate();
                                 }
                             }
                         },
