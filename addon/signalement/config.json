@@ -6,7 +6,8 @@
 		"options": {
 			"target": "tbar_12",
 			"log": "true",
-			"layerTreeAction" : "true"
+			"layerTreeAction" : "true",
+			"helpURL": "https://google.com"
 		},
 		"title": {
 			"en": "Reporting",
