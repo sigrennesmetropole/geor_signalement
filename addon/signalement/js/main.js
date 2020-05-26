@@ -507,6 +507,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                                         addon.noteStore.getTask().asset.geographicType = record.data.geographicType;
                                         //changer l'icon pour dessiner une feature en fonction de la geometrie
                                         Ext.getCmp('drawBtn').setIconClass(record.data.geographicType);
+                                        Ext.getCmp('drawBtn').setTooltip(addon.changeTooltipMsg(record.data.geographicType));
 
                                         if (addon.vectorLayer != undefined) {
                                             addon.vectorLayer.destroyFeatures();
@@ -602,6 +603,13 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             id: 'drawBtn',
                             iconCls: iconGeom,
                             scope: this,
+                            listeners: {
+                                "mouseover": function () {
+                                    var geographicType =  this.noteStore.getTask().asset.geographicType;
+                                    Ext.getCmp('drawBtn').setTooltip(this.changeTooltipMsg(geographicType));
+                                },
+                                scope: this
+                            },
                             handler: function () {
                                 this.removeLayer(addon);
                                 drawActionControl(this.noteStore.getTask().asset.geographicType);
@@ -951,6 +959,25 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 msg: this.tr('signalement.localization.layer')
             });
         }
+    },
+
+    changeTooltipMsg(geographicType){
+        let tooltip;
+        switch (geographicType) {
+            case 'POINT':
+                tooltip = this.tr('signalement.tooltip.point');
+                break;
+            case 'POLYGON':
+                tooltip = this.tr('signalement.tooltip.polygon');
+                break;
+            case 'LINE':
+                tooltip = this.tr('signalement.tooltip.line');
+                break;
+            default:
+                tooltip='';
+        }
+
+        return tooltip;
     },
 
     /**
