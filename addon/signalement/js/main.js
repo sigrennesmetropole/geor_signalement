@@ -747,7 +747,8 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 this.removeLayer(this);
                 this.closeWindow();
                 Ext.Msg.show({
-                    msg: this.tr('signalement.task.create')
+                    msg: this.tr('signalement.task.create'),
+                    buttons: Ext.Msg.OK
                 });
             },
             failure: function (response) {
