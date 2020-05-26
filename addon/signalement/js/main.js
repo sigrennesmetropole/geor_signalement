@@ -635,6 +635,16 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             autoScroll: false,
             items: [form],
             buttons: [
+                {
+                    text: 'aide',
+                    iconCls: 'help-icon',
+                    iconAlign: "left",
+                    cls : 'helpButton',
+                    handler: function () {
+                        window.open(this.options.helpURL)
+                    },
+                    scope: this
+                },
             	{
 	                id: 'createButton',
 	                text: this.tr('signalement.create'),
