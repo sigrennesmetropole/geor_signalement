@@ -6,6 +6,7 @@
 		"options": {
 			"target": "tbar_12",
 			"log": "true",
+<<<<<<< HEAD
 			"layerTreeAction" : "true",
 			"helpURL": "https://google.com"
 		},
@@ -20,6 +21,21 @@
 			"fr": "Effectuer un signalement sur une couche ou une thématique donnée",
 			"es": "Informar sobre una capa o temática determinada",
 			"de": "Bericht über eine bestimmte Ebene oder ein bestimmtes Thema"
+=======
+			"layerTreeAction" : "true"
+		},
+		"title": {
+			"en": "Reporting",
+			"es": "Informar",
+			"fr": "Signalement",
+			"de": "Berichterstattung"
+		},
+		"description": {
+			"en": "Reporting of error for layers or thema",
+			"fr": "Signalement des anomalíes sur une couche ou pour un théme donné",
+			"es": "Informar anomalas en una capa o para un tema determinado",
+			"de": "Melden von Anomalien auf einer Ebene oder für ein bestimmtes Thema"
+>>>>>>> branch 'feature/CDCRM-469' of https://gitlab.boost.open.global/rennes-metropole/signalement/signalement-backend.git
 		}
 	}
 ]

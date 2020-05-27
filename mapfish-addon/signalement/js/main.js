@@ -370,6 +370,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     },
 
     buildForm: function() {
+<<<<<<< HEAD
         var storeCombo, valueCombo, titleCombo, iconGeom, nbrCharLimit = 1000;
         // teste si le signalement est pour une couche ou thématique
         if(this.reportThema == true){
@@ -1006,6 +1007,566 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         this.noteStore.destroy();
         this.themasStore.destroy();
         this.layersStore.destroy();
+=======
+        var storeCombo, valueCombo, titleCombo, iconGeom;
+        // teste si le signalement est pour une couche ou thématique
+        if(this.reportThema == true){
+            storeCombo= this.themasStore;
+            valueCombo= this.noteStore.getThemas()[0].name;
+            titleCombo=  this.tr('signalement.reporting.thema');
+        }else{
+            storeCombo= this.layersStore;
+            valueCombo= this.noteStore.getTask().asset.contextDescription.name;
+            titleCombo=  this.tr('signalement.reporting.layer');
+        }
+        iconGeom= this.noteStore.getTask().asset.geographicType;
+
+
+        var addon = this;
+    	var layerFeature;
+
+        var drawActionControl = function (typeGeom) {
+
+            addon.vectorLayer = new OpenLayers.Layer.Vector("Signalement");
+
+            //add vector layer in map
+            addon.map.addLayer(addon.vectorLayer);
+
+            if (typeGeom == 'POLYGON') {
+                layerFeature = new OpenLayers.Control.DrawFeature(
+                    addon.vectorLayer, OpenLayers.Handler.Polygon);
+            } else if (typeGeom == 'LINE') {
+                layerFeature = new OpenLayers.Control.DrawFeature(
+                	addon.vectorLayer, OpenLayers.Handler.Path);
+            } else if (typeGeom == 'POINT') {
+                layerFeature = new OpenLayers.Control.DrawFeature(
+                	addon.vectorLayer, OpenLayers.Handler.Point);
+            }
+
+            addon.map.addControl(layerFeature);
+            layerFeature.activate();
+
+            addon.vectorLayer.events.register('featureadded', layerFeature, onAdded);
+
+        }
+
+        function onAdded(evt) {
+            layerFeature.deactivate();
+
+            //transformer les points en projection EPSG : 4326
+            var sourceSRS = addon.map.getProjection();
+            var destSRS = new OpenLayers.Projection("EPSG:4326")
+            var vector = evt.feature.geometry.transform(sourceSRS, destSRS);
+
+            var list = vector.getVertices();
+            var listLocalisation = [];
+            for (var i = 0; i < list.length; i++) {
+                listLocalisation.push({'x': list[i].x, 'y': list[i].y});
+            }
+            addon.noteStore.updateLocalisation(listLocalisation);
+            Ext.getCmp('createButton').setDisabled(false);
+
+        }
+
+    	return new Ext.FormPanel({
+            id: 'form-panel',
+            labelWidth: 100,
+            frame: true,
+            bodyStyle: 'padding:5px 5px 0',
+            width: 600,
+            items: [
+                {
+                    xtype: 'fieldset',
+                    title: this.tr('signalement.user'),
+                    collapsible: false,
+                    width: 500,
+                    store: 'type',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: this.tr('signalement.login'),
+                            name: 'login',
+                            id: 'login',
+                            readOnly: true
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: this.tr('signalement.organization'),
+                            name: 'organization',
+                            id: 'organization',
+                            readOnly: true
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: this.tr('signalement.email'),
+                            name: 'email',
+                            vtype: 'email',
+                            id: 'email',
+                            readOnly: true
+
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldset',
+                    title:titleCombo,
+                    collapsible: false,
+                    width: 500,
+                    items: [{
+                        xtype: 'compositefield',
+                        anchor: '-20',
+                        msgTarget: 'side',
+                        items: [
+                            {
+                                xtype: 'combo',
+                                id: 'combo',
+                                width: 200,
+                                queryMode: 'local',
+                                forceSelection: true,
+                                displayField: 'label',
+                                valueField: 'name',
+                                store: storeCombo,
+                                value: valueCombo,
+                                listeners: {
+                                    select: function (combo, record) {
+                                        addon.noteStore.getTask().asset.contextDescription = record.data;
+                                        addon.noteStore.getTask().asset.geographicType = record.data.geographicType;
+                                        //changer l'icon pour dessiner une feature en fonction de la geometrie
+                                        Ext.getCmp('drawBtn').setIconClass(record.data.geographicType);
+
+                                        if (addon.vectorLayer != undefined) {
+                                            addon.vectorLayer.destroyFeatures();
+                                        }
+                                        Ext.getCmp('createButton').setDisabled(true);
+                                    }
+                                }
+                            }
+                        ]
+                    }]
+                },
+                {
+                    xtype: 'fieldset',
+                    title: this.tr("signalement.description"),
+                    id: "object",
+                    collapsible: false,
+                    width: 500,
+                    items: [
+                        {
+                            xtype: 'textarea',
+                            id: 'objet',
+                            height: 100,
+                            width: 300
+                    }]
+                },
+                {
+                    xtype: 'fieldset',
+                    title: this.tr('signalement.attachment.files'),
+                    collapsible: false,
+                    width: 500,
+                    items: [
+                    	{
+                            xtype: 'fileuploadfield',
+                            id: 'form-file-field',
+                            emptyText: this.tr('signalement.attachment.select'),
+                            fieldLabel: this.tr('signalement.attachment.add'),
+                            name: 'file',
+                            buttonText: '',
+                            buttonCfg: {
+                                iconCls: 'upload-icon'
+                            },
+                            listeners: {
+                            	"fileselected": {
+                                    fn: function (fileuploadfield, v) {
+                                    	this.uploadAttachment(fileuploadfield, v);
+                                    },
+                                    scope: this
+                                }
+                            }
+                        },
+                        this.buildAttachmentPanel()
+                    ]
+                },
+                {
+                    xtype: 'fieldset',
+                    title: this.tr('signalement.localization'),
+                    collapsible: false,
+                    width: 500,
+                    layout: {
+                        type: 'hbox',
+                        align: 'middle'
+                    },
+                    items: [
+                        {
+                            xtype: 'button',
+                            id: 'drawBtn',
+                            iconCls: iconGeom,
+                            scope: this,
+                            handler: function () {
+                                if (addon.vectorLayer != undefined) {
+                                    addon.vectorLayer.destroyFeatures();
+                                    addon.map.removeLayer(addon.vectorLayer);
+                                }
+                                drawActionControl(this.noteStore.getTask().asset.geographicType);
+                                Ext.getCmp('createButton').setDisabled(true);
+
+                            }
+                        },
+                        {
+                            xtype: 'displayfield',
+                            value: this.tr('signalement.localization.tips'),
+                            style : 'font-size: 12px',
+                        }
+                   ]
+                }
+            ]
+        });
+    },
+
+    buildSignalementWindow: function () {
+
+        var form = this.buildForm();
+        //Dans le cas d'un signalement d'une couche le button est grisé
+        if(this.reportThema == false){
+            Ext.getCmp('combo').setDisabled(true);
+        }
+
+
+        this.signalementWindow = new Ext.Window({
+            title: this.getText(this.initRecord),
+            width: 600,
+            autoScroll: false,
+            items: [form],
+            buttons: [
+            	{
+	                id: 'createButton',
+	                text: this.tr('signalement.create'),
+	                disabled: true,
+	                handler: function () {
+	                    this.createTask();
+	                },
+	                scope: this
+            	},
+                {
+                    id: 'closeButton',
+                    text: this.tr("signalement.close"),
+                    handler: function () {
+                        var addon =this;
+                        // message d'alert pour confirmer la fermeture de la fenetre
+                        Ext.MessageBox.confirm(this.tr("signalement.msgBox.title"), this.tr("signalement.msgBox.info"), function (btn) {
+                            if(btn =='yes'){
+                                if (addon.vectorLayer != undefined) {
+                                    addon.vectorLayer.destroyFeatures();
+                                    addon.map.removeLayer(addon.vectorLayer);
+                                }
+                                addon.closeSignalementWindow();
+                            }
+                        });
+
+                    },
+                    scope: this
+                }
+            ],
+            listeners: {
+                hide: function () {
+                    this.item && this.item.setChecked(false);
+                    this.components && this.components.toggle(false);
+                },
+                scope: this
+            }
+        });
+
+        this.fillForm();
+
+    },
+
+    checkRemainingXHRs: function () {
+        this.remainingXHRs -= 1;
+        if (this.remainingXHRs == 0) {
+            //this.mask.hide();
+        }
+    },
+
+    fillForm: function () {
+        if (Ext.ComponentMgr.get('login') != null) {
+            Ext.ComponentMgr.get('login').setValue(this.noteStore.getAt(0).get("user").login);
+            Ext.ComponentMgr.get('organization').setValue(this.noteStore.getAt(0).get("user").organization);
+            Ext.ComponentMgr.get('email').setValue(this.noteStore.getAt(0).get("user").email);
+        }
+    },
+
+    showSignalementWindow: function (layer) {
+        this.userStore.load();
+        this.remainingXHRs += 1;
+        var params;
+        // parametre pour signalement par couche ou par theme
+        if (layer == undefined) {
+            var themas = this.noteStore.getThemas();
+            params= {
+                "description": "",
+                "contextDescription": themas[0]
+            };
+        }else{
+            //var layers = this.noteStore.getLayers();
+            params= {
+                "description": "",
+                "contextDescription": layer
+            };
+        }
+        this.createDraftTask(params);
+
+
+    },
+
+    closeSignalementWindow: function () {
+        if (this.signalementWindow != null) {
+            Ext.getCmp('closeButton').setDisabled(true);
+            Ext.getCmp('createButton').setDisabled(true);
+            this.deleteDraftTask();
+        }
+    },
+
+    closeWindow: function () {
+        if (this.signalementWindow != null) {
+            Ext.getCmp('closeButton').setDisabled(true);
+            Ext.getCmp('createButton').setDisabled(true);
+            this.noteStore.updateTask({});
+            this.signalementWindow.hide();
+            this.signalementWindow.destroy();
+            this.signalementWindow = null;
+        }
+    },
+
+    createTask: function () {
+        var task = this.noteStore.getTask();
+        task.asset.description = Ext.getCmp('objet').getValue();
+
+        Ext.Ajax.request({
+            url: this.options.signalementURL + "task/start",
+            method: 'POST',
+            jsonData: task,
+            headers: {
+                "Content-Type": "application/json; charset=" + this.encoding
+            },
+            success: function (response) {
+                this.log("response: ", response);
+                if (this.vectorLayer != undefined) {
+                    this.vectorLayer.destroyFeatures();
+                    this.map.removeLayer(this.vectorLayer);
+                }
+                this.closeWindow();
+                Ext.Msg.show({
+                    msg: this.tr('signalement.task.create')
+                });
+            },
+            failure: function (response) {
+                Ext.Msg.show({
+                    msg: this.tr('signalement.task.error')
+                });
+                this.log("response: ", response);
+            },
+            scope: this
+        });
+    },
+
+    createDraftTask: function (params) {
+
+        Ext.Ajax.request({
+            url: this.options.signalementURL + "task/draft",
+            method: 'POST',
+            jsonData: params,
+            headers: {
+                "Content-Type": "application/json; charset=" + this.encoding
+            },
+            success: function (response) {
+                this.log("task: ", response);
+
+                var task = Ext.util.JSON.decode(response.responseText)
+                this.noteStore.updateTask(task);
+
+                // build window
+                this.buildSignalementWindow();
+
+                // display window
+                this.signalementWindow.show();
+
+            },
+            failure: function (response) {
+                this.log("task bad-response: ", response);
+            },
+            scope: this
+        });
+    },
+
+    deleteDraftTask: function () {
+        var task = this.noteStore.getTask();
+        Ext.Ajax.request({
+            url: this.options.signalementURL + "task/cancel/" + task.asset.uuid,
+            method: 'DELETE',
+            jsonData: task,
+            headers: {
+                "Content-Type": "application/json; charset=" + this.encoding
+            },
+            success: function (response) {
+                var task = Ext.util.JSON.decode(response.responseText)
+                this.noteStore.updateTask({});
+                this.signalementWindow.hide();
+                this.signalementWindow.destroy();
+                this.signalementWindow = null;
+            },
+            failure: function (response) {
+                this.log("task bad-response: ", response);
+            },
+            scope: this
+        });
+    },
+
+    deleteAttachment: function (attachment,index) {
+        var task = this.noteStore.getTask();
+        Ext.Ajax.request({
+            url: this.options.signalementURL + "reporting/" + task.asset.uuid + "/delete/" + attachment.id,
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json; charset=" + this.encoding
+            },
+            success: function (response) {
+                //supprimer l'element de attachements
+                task.asset.attachments.splice(index,1);
+                Ext.getCmp('attachmentPanel').getStore().loadData(task.asset.attachments);
+                },
+            failure: function (response) {
+                this.log("task bad-response: ", response);
+            },
+            scope: this
+        });
+    },
+
+    uploadAttachment: function(fileField, value,data) {
+    	var task = this.noteStore.getTask();
+    	if( !task.asset.attachments){
+    		task.asset.attachments = [];
+    	}
+    	var file = fileField.fileInput.dom.files[0];
+
+    	if (file === undefined || !(file instanceof File)) {
+    		return;
+    	}
+    	if( file.size > this.noteStore.getAttachmentConfiguration().maxSize){
+            Ext.Msg.show({
+                title:this.tr('signalement.attachment.file'),
+                msg: this.tr('signalement.attachment.size') + this.noteStore.getAttachmentConfiguration().maxSize
+            });
+    		return;
+    	}
+    	if( task.asset.attachments.length+1 > this.noteStore.getAttachmentConfiguration().maxCount){
+            Ext.Msg.show({
+                title:this.tr('signalement.attachment.file'),
+                msg: this.tr('signalement.attachment.length')
+            });
+    		return;
+    	}
+    	if( this.noteStore.getAttachmentConfiguration().mimeTypes.includes(file.type) == false){
+            Ext.Msg.show({
+                title:this.tr('signalement.attachment.file'),
+                msg: this.tr('signalement.attachment.typeFile')
+            });
+    		return;
+    	}
+
+    	var form = document.getElementById('signalement-form-id');
+
+    	var formData = new FormData();
+    	var addon = this;
+    	formData.set("file", file , file.name);
+    	
+    	var request = new XMLHttpRequest();
+    	request.onload = function(response, a) {
+    		if (request.status == 200) {
+    			var attachment = Ext.util.JSON.decode(request.responseText)
+    			task.asset.attachments.push(attachment);
+    			Ext.getCmp('attachmentPanel').getStore().loadData(task.asset.attachments);
+
+            }else {
+                console.log("upload file", request.status);
+    		}
+
+    	}
+    	request.onerror = function(response, b) {
+            Ext.Msg.show({
+                msg: this.tr('signalement.attachment.error')
+            });
+            console.log(response, b);
+    	}
+    	
+    	var originalUrl = this.options.signalementURL + "reporting/" + task.asset.uuid + "/upload"; 
+    	var url = encodeURIComponent(originalUrl);
+    	var proxyHost = OpenLayers.ProxyHost;
+    	if( proxyHost !== "") {
+    		var i = document.URL.indexOf(document.domain);
+    		var j = document.URL.indexOf("/",i);
+    		var prefix = document.URL.substring(0,j);
+    		request.open('POST', prefix + proxyHost + url);
+    	} else {
+    		request.open('POST', originalUrl);
+    	}
+        request.send(formData);
+        
+    },
+
+    /**
+     * @function layerTreeHandler
+     *
+     * Handler for the layer tree Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
+     * @param event - event which trigger the action
+     * @param layerRecord - layerRecord on which operate
+     */
+    layerTreeHandler: function(menuitem, event, layerRecord) {
+        if (this.active) {
+            return;
+        }
+        // set layer record:
+        this.layerRecord = layerRecord;
+
+        // on cherche si le layer est associé à une couche
+        var layerReport;
+        this.noteStore.getLayers().forEach(function (layer) {
+            if(layer.name == layerRecord.data.name){
+                layerReport=layer;
+            }
+        })
+
+        // si la layer est associé à un contexte signalement on ouvre la fenêtre pour cette couche
+        // dans le cas contraire  on affiche un message indiquant que la couche ne supporte pas le signalement
+        if(layerReport) {
+            this.reportThema = false;
+            this.showSignalementWindow(layerReport);
+        }else{
+            Ext.Msg.show({
+                msg: this.tr('signalement.localization.layer')
+            });
+        }
+    },
+
+    /**
+     * @function initActionMenuDate
+     *
+     * Initialize fields used by tree Actions menu to create MenuItem
+     */
+    initActionMenuDate: function() {
+    	this.iconCls ='addon-signalement';
+        this.title =  this.getText(this.initRecord);
+        this.qtip = this.getTooltip(this.initRecord);
+    },
+
+    destroy: function () {
+        this.map.removeLayer(this.vectorLayer);
+        this.userStore.destroy();
+        this.noteStore.destroy();
+        this.listThemaStore.destroy();
+>>>>>>> branch 'feature/CDCRM-469' of https://gitlab.boost.open.global/rennes-metropole/signalement/signalement-backend.git
         GEOR.Addons.Base.prototype.destroy.call(this);
     },
 

@@ -12,6 +12,7 @@
 .delete-icon{
     background-image: url(../img/delete-icon-16x16.png) !important;
 }
+<<<<<<< HEAD
 
 .help-icon{
     background-image: url(../img/question-white.png) !important;
@@ -48,3 +49,21 @@
     margin-right: 330px;
 }
 
+=======
+.x-action-col-cell img {
+    height: 16px;
+    width: 16px;
+}
+
+.POINT{
+    background-image: url(../img/point.png) !important;
+}
+
+.POLYGON{
+    background-image: url(../img/polygon.png) !important;
+}
+
+.LINE{
+    background-image: url(../img/line.png) !important;
+}
+>>>>>>> branch 'feature/CDCRM-469' of https://gitlab.boost.open.global/rennes-metropole/signalement/signalement-backend.git
