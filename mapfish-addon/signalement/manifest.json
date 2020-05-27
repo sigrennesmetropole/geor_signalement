@@ -142,6 +142,7 @@
             "signalement.tooltip.point": "Draw a Point",
 			"signalement.tooltip.polygon": "Draw a Polygon",
 			"signalement.tooltip.line": "Draw a Line"
+			
 		}
 	}
 }

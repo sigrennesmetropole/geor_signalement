@@ -8,7 +8,7 @@ server_expose_port: 8082
 
 admin_password: 4dM1nApp!
 
-smtp_host: 10.50.1.113
+smtp_host: mailhog
 smtp_port: 1025
 smtp_username:
 smtp_password:
