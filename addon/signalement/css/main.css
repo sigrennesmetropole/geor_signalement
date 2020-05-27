@@ -12,6 +12,11 @@
 .delete-icon{
     background-image: url(../img/delete-icon-16x16.png) !important;
 }
+
+.help-icon{
+    background-image: url(../img/question-white.png) !important;
+}
+
 .x-action-col-cell img {
     height: 16px;
     width: 16px;
@@ -38,3 +43,8 @@
 .labelButtonGeom{
     font-size: 12px;
 }
+
+.helpButton{
+    margin-right: 330px;
+}
+

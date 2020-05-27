@@ -426,8 +426,20 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 listLocalisation.push({'x': list[i].x, 'y': list[i].y});
             }
             addon.noteStore.updateLocalisation(listLocalisation);
-            Ext.getCmp('createButton').setDisabled(false);
+            disableButtonCreate();
 
+        }
+
+        var disableButtonCreate = function () {
+            if( Ext.getCmp('objet').getValue().length > 0 &&
+                Ext.getCmp('objet').getValue().length <= nbrCharLimit  &&
+                addon.noteStore.getTask().asset.localisation != undefined){
+
+                Ext.getCmp('createButton').setDisabled(false);
+
+            }else{
+                Ext.getCmp('createButton').setDisabled(true);
+            }
         }
 
     	return new Ext.FormPanel({
@@ -495,6 +507,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                                         addon.noteStore.getTask().asset.geographicType = record.data.geographicType;
                                         //changer l'icon pour dessiner une feature en fonction de la geometrie
                                         Ext.getCmp('drawBtn').setIconClass(record.data.geographicType);
+                                        Ext.getCmp('drawBtn').setTooltip(addon.changeTooltipMsg(record.data.geographicType));
 
                                         if (addon.vectorLayer != undefined) {
                                             addon.vectorLayer.destroyFeatures();
@@ -523,7 +536,11 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             listeners: {
                                 keyup: function(){
                                     var nbrChar = nbrCharLimit - Ext.getCmp('objet').getValue().length;
-                                    Ext.get('numChar').update(nbrChar);
+                                    if(nbrChar < 0){
+                                        Ext.getCmp('objet').setValue( Ext.getCmp('objet').getValue().substr(0, nbrCharLimit))
+                                    }
+                                    Ext.get('numChar').update(''+nbrChar);
+                                    disableButtonCreate();
                                 }
                             }
                         },
@@ -586,6 +603,13 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             id: 'drawBtn',
                             iconCls: iconGeom,
                             scope: this,
+                            listeners: {
+                                "mouseover": function () {
+                                    var geographicType =  this.noteStore.getTask().asset.geographicType;
+                                    Ext.getCmp('drawBtn').setTooltip(this.changeTooltipMsg(geographicType));
+                                },
+                                scope: this
+                            },
                             handler: function () {
                                 this.removeLayer(addon);
                                 drawActionControl(this.noteStore.getTask().asset.geographicType);
@@ -619,6 +643,16 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             autoScroll: false,
             items: [form],
             buttons: [
+                {
+                    text: 'aide',
+                    iconCls: 'help-icon',
+                    iconAlign: "left",
+                    cls : 'helpButton',
+                    handler: function () {
+                        window.open(this.options.helpURL)
+                    },
+                    scope: this
+                },
             	{
 	                id: 'createButton',
 	                text: this.tr('signalement.create'),
@@ -731,7 +765,8 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 this.removeLayer(this);
                 this.closeWindow();
                 Ext.Msg.show({
-                    msg: this.tr('signalement.task.create')
+                    msg: this.tr('signalement.task.create'),
+                    buttons: Ext.Msg.OK
                 });
             },
             failure: function (response) {
@@ -924,6 +959,25 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 msg: this.tr('signalement.localization.layer')
             });
         }
+    },
+
+    changeTooltipMsg(geographicType){
+        let tooltip;
+        switch (geographicType) {
+            case 'POINT':
+                tooltip = this.tr('signalement.tooltip.point');
+                break;
+            case 'POLYGON':
+                tooltip = this.tr('signalement.tooltip.polygon');
+                break;
+            case 'LINE':
+                tooltip = this.tr('signalement.tooltip.line');
+                break;
+            default:
+                tooltip='';
+        }
+
+        return tooltip;
     },
 
     /**
