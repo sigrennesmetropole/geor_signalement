@@ -35,7 +35,7 @@ services:
       - ldap_config:/etc/ldap
       - ./resources/MAPSTORE_ADMIN.ldif:/tmp/MAPSTORE_ADMIN.ldif
     command:
-	  /bin/sh -c "/usr/bin/ldapadd -x -w secret -f /tmp/MAPSTORE_ADMIN.ldif -D \"cn=admin,dc=georchestra,dc=org\""
+      /bin/sh -c "/usr/bin/ldapadd -x -w secret -f /tmp/MAPSTORE_ADMIN.ldif -D \"cn=admin,dc=georchestra,dc=org\""
     ports:
       - "30389:389"
 
