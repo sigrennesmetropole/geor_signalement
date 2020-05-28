@@ -457,27 +457,23 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     store: 'type',
                     items: [
                         {
-                            xtype: 'textfield',
+                            xtype: 'displayfield',
                             fieldLabel: this.tr('signalement.login'),
                             name: 'login',
                             id: 'login',
-                            readOnly: true
                         },
                         {
-                            xtype: 'textfield',
+                            xtype: 'displayfield',
                             fieldLabel: this.tr('signalement.organization'),
                             name: 'organization',
                             id: 'organization',
-                            readOnly: true
                         },
                         {
-                            xtype: 'textfield',
+                            xtype: 'displayfield',
                             fieldLabel: this.tr('signalement.email'),
                             name: 'email',
                             vtype: 'email',
                             id: 'email',
-                            readOnly: true
-
                         }
                     ]
                 },
@@ -494,7 +490,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             {
                                 xtype: 'combo',
                                 id: 'combo',
-                                width: 200,
+                                width: 300,
                                 queryMode: 'local',
                                 forceSelection: true,
                                 displayField: 'label',
@@ -561,6 +557,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     	{
                             xtype: 'fileuploadfield',
                             id: 'form-file-field',
+                            width:327,
                             emptyText: this.tr('signalement.attachment.select'),
                             fieldLabel: this.tr('signalement.attachment.add'),
                             name: 'file',
