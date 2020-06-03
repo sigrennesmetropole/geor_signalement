@@ -1,8 +1,7 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
-import assign from 'object-assign';
 //const axios = require('../../../MapStore2/web/client/libs/ajax');
-import {actions, loadedAttachmentConfiguration, loadedLayers, loadedThemas, gotMe, loadError} from '../actions/signalement-action';
+import {actions, loadedAttachmentConfiguration, loadedLayers, loadedThemas, gotMe, draftCreated, draftCanceled, taskCreated, loadInitError, loadActionError} from '../actions/signalement-action';
 
 export const loadAttachmentConfigurationEpic = (action$) =>
     action$.ofType(actions.ATTACHMENT_CONFIGURATION_LOAD)
@@ -14,7 +13,7 @@ export const loadAttachmentConfigurationEpic = (action$) =>
             const url = "http://localhost:8082/reporting/attachment/configuration";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedAttachmentConfiguration(response.data)))
-                .catch(e => Rx.Observable.of(loadError("Failed to load attachment configuration", e)));
+                .catch(e => Rx.Observable.of(loadInitError("signalement.init.attattachmentConfiguration.error", e)));
         });
 
 export const loadThemasEpic = (action$, store) =>
@@ -27,10 +26,10 @@ export const loadThemasEpic = (action$, store) =>
             const url = "http://localhost:8082/reporting/contextDescription/search?contextType=THEMA";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedThemas(response.data)))
-                .catch(e => Rx.Observable.of(loadError("Failed to load themas", e)));
+                .catch(e => Rx.Observable.of(loadInitError("signalement.init.themas.error", e)));
         }); 
         
-export const loadLayersEpic = (action$, store) =>
+export const loadLayersEpic = (action$) =>
     action$.ofType(actions.LAYERS_LOAD)
         .switchMap((action) => {
             console.log("sig epics layers");
@@ -40,10 +39,10 @@ export const loadLayersEpic = (action$, store) =>
             const url = "http://localhost:8082/reporting/contextDescription/search?contextType=LAYER";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedLayers(response.data)))
-                .catch(e => Rx.Observable.of(loadError("Failed to load layers", e)));
+                .catch(e => Rx.Observable.of(loadInitError("signalement.init.layers.error", e)));
         });  
         
-export const loadMeEpic = (action$, store) =>
+export const loadMeEpic = (action$) =>
     action$.ofType(actions.USER_ME_GET)
         .switchMap((action) => {
             console.log("sig epics me");
@@ -53,5 +52,48 @@ export const loadMeEpic = (action$, store) =>
             const url = "http://localhost:8082/user/me";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(gotMe(response.data)))
-                .catch(e => Rx.Observable.of(loadError("Failed to load me", e)));
+                .catch(e => Rx.Observable.of(loadInitError("signalement.init.me.error", e)));
+        });  
+        
+export const createDraftEpic = (action$) =>
+    action$.ofType(actions.SIGNALEMENT_DRAFT_CREATE)
+        .switchMap((action) => {
+            console.log("sig epics draft");
+            const url = "http://localhost:8082/task/draft";
+            const task = { contextDescription: action.context, description: ""};
+            const params = {
+                timeout: 30000,
+                headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+            };
+
+            return Rx.Observable.defer(() => axios.post(url, task, params))
+                .switchMap((response) => Rx.Observable.of(draftCreated(response.data)))
+                .catch(e => Rx.Observable.of(loadActionError("signalement.draf.error", e)));
+        });
+
+export const createTaskEpic = (action$) =>
+    action$.ofType(actions.SIGNALEMENT_TASK_CREATE)
+        .switchMap((action) => {
+            console.log("sig epics draft");
+            const url = "http://localhost:8082/task/start";
+            const task = action.task;
+            const params = {
+                timeout: 30000,
+                headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+            };
+
+            return Rx.Observable.defer(() => axios.post(url, task, params))
+                .switchMap((response) => Rx.Observable.of(taskCreated(response.data)))
+                .catch(e => Rx.Observable.of(loadActionError("signalement.task.error", e)));
+        });
+        
+export const cancelDraftEpic = (action$) =>
+    action$.ofType(actions.SIGNALEMENT_DRAFT_CANCEL)
+        .switchMap((action) => {
+            console.log("sig epics draft");
+            const url = "http://localhost:8082/task/cancel/" + action.uuid;
+            
+            return Rx.Observable.defer(() => axios.delete(url))
+                .switchMap((response) => Rx.Observable.of(draftCanceled()))
+                .catch(e => Rx.Observable.of(loadActionError("signalement.generic.error", e)));
         });          

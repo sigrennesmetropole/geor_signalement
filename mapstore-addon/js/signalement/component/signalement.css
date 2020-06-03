@@ -19,3 +19,11 @@
     display: inline-block;
 }
 
+span .error {
+    color: red;
+}
+
+span .info {
+    color: orange;
+}
+

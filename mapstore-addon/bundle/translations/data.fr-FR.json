@@ -27,7 +27,16 @@
 			"task.error": "La tâche de signalement n'a pas été créée",
 			"localization.layer": "La couche n'est pas signalable",
 			"msgBox.title": "Signalement",
-			"msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?"
+			"msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
+			"msgBox.ok": "Oui",
+			"msgBox.cancel": "Non",
+			"loading": "En cours d'initialisation...",
+			"init.themas.error": "Impossible de charger les thèmes",
+			"init.layers.error": "Impossible de charger les couches",
+			"init.attachmentConfiguration.error": "Impossible de charger la configuration",
+			"init.me.error": "Impossible de charger les données de l'utilisateur",
+			"draft.error": "Impossible de créer le brouillon du signalement",
+			"generic.error": "Une erreur s'est produite" 
         }
     }
 }
