@@ -5,6 +5,7 @@ package org.georchestra.signalement.api.security;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
