@@ -38,6 +38,12 @@ public class PreAuthenticationFilter implements Filter {
 			throws IOException, ServletException {
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+			if( LOGGER.isInfoEnabled()) {
+				Enumeration<String> names = httpServletRequest.getHeaderNames();
+				while(names.hasMoreElements()) {
+					LOGGER.info("header:{}", names.nextElement());
+				}
+			}
 			final String username = httpServletRequest.getHeader(SEC_USERNAME);
 			if (username != null) {
 				SecurityContextHolder.getContext().setAuthentication(createAuthentication(httpServletRequest));
