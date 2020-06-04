@@ -39,9 +39,9 @@
 			"signalement.msgBox.info": "Are you sure you want to cancel this report ?",
 			"signalement.layer.name": "Reporting",
 			"signalement.fileUpload.info": "max. 10 Mo by file. Authorized formats : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
-			"signalement.tooltip.point": "Draw a Point",
-			"signalement.tooltip.polygon": "Draw a Polygon",
-			"signalement.tooltip.line": "Draw a Line"
+			"signalement.tooltip.point": "Draw a point",
+			"signalement.tooltip.polygon": "Draw a polygon",
+			"signalement.tooltip.line": "Draw a line"
 
 		},
 		"es": {
@@ -72,9 +72,9 @@
 			"signalement.msgBox.info": "Are you sure you want to cancel this report ?",
 			"signalement.layer.name": "Reporting",
 			"signalement.fileUpload.info": "max. 10 Mo by file. Authorized formats : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
-			"signalement.tooltip.point": "Draw a Point",
-			"signalement.tooltip.polygon": "Draw a Polygon",
-			"signalement.tooltip.line": "Draw a Line"
+			"signalement.tooltip.point": "Draw a point",
+			"signalement.tooltip.polygon": "Draw a polygon",
+			"signalement.tooltip.line": "Draw a line"
 
 		},
 		"fr": {
@@ -106,9 +106,9 @@
 			"signalement.msgBox.info": "Êtes-vous sûr de vouloir annuler ce signalement ?",
 			"signalement.layer.name": "Signalement",
 			"signalement.fileUpload.info": "max. 10 Mo par fichier. Formats autorisés : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
-			"signalement.tooltip.point": "Dessiner un Point",
-			"signalement.tooltip.polygon": "Dessiner un Polygone",
-			"signalement.tooltip.line": "Dessiner une Ligne"
+			"signalement.tooltip.point": "Dessiner un point",
+			"signalement.tooltip.polygon": "Dessiner un polygone",
+			"signalement.tooltip.line": "Dessiner une ligne"
 
 		},
 		"de": {
@@ -139,9 +139,10 @@
 			"signalement.msgBox.info": "Are you sure you want to cancel this report ?",
 			"signalement.layer.name": "Reporting",
 			"signalement.fileUpload.info": "max. 10 Mo by file. Authorized formats : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
-            "signalement.tooltip.point": "Draw a Point",
-			"signalement.tooltip.polygon": "Draw a Polygon",
-			"signalement.tooltip.line": "Draw a Line"
+            "signalement.tooltip.point": "Draw a point",
+			"signalement.tooltip.polygon": "Draw a polygon",
+			"signalement.tooltip.line": "Draw a line"
+			
 		}
 	}
 }

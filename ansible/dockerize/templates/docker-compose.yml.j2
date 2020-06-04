@@ -27,14 +27,17 @@ services:
   ldap:
     image: georchestra/ldap:19.04
     environment:
-        - SLAPD_ORGANISATION=georchestra
-        - SLAPD_DOMAIN=georchestra.org
-        - SLAPD_PASSWORD=secret
+      - SLAPD_ORGANISATION=georchestra
+      - SLAPD_DOMAIN=georchestra.org
+      - SLAPD_PASSWORD=secret
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
+      - ./resources/MAPSTORE_ADMIN.ldif:/tmp/MAPSTORE_ADMIN.ldif
     ports:
       - "30389:389"
+#   command: /bin/sh -c "/usr/bin/ldapadd -x -w secret -f /tmp/MAPSTORE_ADMIN.ldif -D \"cn=admin,dc=georchestra,dc=org\""
+         
 
   proxy:
     image: georchestra/security-proxy:19.04
