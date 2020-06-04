@@ -97,7 +97,7 @@ signalementapi:deploy:
   stage: deploy
   tags: 
    - cdp-rennes
-  image: ansible/ansible-runner
+  image: ansible/ansible-runner:1.4.4
   dependencies:
     - signalementapi:build
   only:
@@ -115,7 +115,7 @@ signalementapi:deploy:master:
   stage: deploy
   tags: 
    - cdp-rennes  
-  image: ansible/ansible-runner
+  image: ansible/ansible-runner:1.4.4
   dependencies:
     - signalementapi:build:master
   only:
