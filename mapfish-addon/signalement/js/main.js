@@ -908,10 +908,11 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     	var originalUrl = this.options.signalementURL + "reporting/" + task.asset.uuid + "/upload"; 
     	var url = encodeURIComponent(originalUrl);
     	var proxyHost = OpenLayers.ProxyHost;
-    	if( proxyHost !== "" && !originalUrl.startsWith(proxyHost) ) {
-    		var i = document.URL.indexOf(document.domain);
-    		var j = document.URL.indexOf("/",i);
-    		var prefix = document.URL.substring(0,j);
+    	var i = document.URL.indexOf(document.domain);
+        var j = document.URL.indexOf("/",i);
+        var prefix = document.URL.substring(0,j);
+        console.log(proxyHost + " " + prefix);
+        if( proxyHost !== "" && !originalUrl.startsWith(prefix)) {
     		request.open('POST', prefix + proxyHost + url);
     	} else {
     		request.open('POST', originalUrl);
