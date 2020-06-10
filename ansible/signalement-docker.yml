@@ -22,4 +22,5 @@
       signalement_ldap_port: '{{ldap_port}}',
       signalement_ldap_username: '{{ldap_username}}',
       signalement_ldap_password: '{{ldap_password}}',
+      signalement_backend_url: '{{backend_url}}',
       }

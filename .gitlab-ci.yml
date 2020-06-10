@@ -126,6 +126,6 @@ signalementapi:deploy:master:
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api-addon.zip
     - cd $CI_PROJECT_DIR/ansible  
     - chmod og-rw key/id_rsa
-    - cp signalement_dev_var.yml $HOME/signalement_var.yml
+    - cp signalement_rct_var.yml $HOME/signalement_var.yml
     - ansible-playbook signalement-docker.yml -v -i "194.2.68.134," -u root --private-key=key/id_rsa --ssh-common-args=-oStrictHostKeyChecking=no
     

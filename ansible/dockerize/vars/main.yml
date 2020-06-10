@@ -17,7 +17,7 @@ signalement_config_directory: '{{signalement_docker_directory}}/config/'
 signalement_addon_directory: '{{signalement_docker_directory}}/config/mapfishapp/addons'
 signalement_server_port: 8080
 signalement_server_expose_port: 8082
-signalement_backend_url: http://signalement:{{signalement_server_port}}/signalement/
+#signalement_backend_url: http://signalement:{{signalement_server_port}}/signalement/
 
 signalement_admin_password: 4dM1nApp!
 
