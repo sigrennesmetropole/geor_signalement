@@ -908,7 +908,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     	var originalUrl = this.options.signalementURL + "reporting/" + task.asset.uuid + "/upload"; 
     	var url = encodeURIComponent(originalUrl);
     	var proxyHost = OpenLayers.ProxyHost;
-    	if( proxyHost !== "") {
+    	if( proxyHost !== "" && !originalUrl.startsWith(proxyHost) ) {
     		var i = document.URL.indexOf(document.domain);
     		var j = document.URL.indexOf("/",i);
     		var prefix = document.URL.substring(0,j);
