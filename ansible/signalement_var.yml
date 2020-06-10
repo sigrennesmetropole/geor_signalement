@@ -18,5 +18,7 @@ ldap_port: 389
 ldap_username: cn=admin,dc=georchestra,dc=org
 ldap_password: secret
 
+backend_url: https://portail.sig.rennesmetropole.fr
+
 
 

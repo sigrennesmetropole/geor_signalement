@@ -7,6 +7,7 @@ EXPOSE {{signalement_server_port}}
 RUN mkdir -p /opt/signalement/data/models
 
 ADD signalement.war /var/lib/jetty/webapps/signalement.war
+#ADD jetty-logging.properties /usr/local/jetty/resources/jetty-logging.properties
 
 CMD [ "sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
       ${ADD_JAVA_OPTS}                                   \

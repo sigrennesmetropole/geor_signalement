@@ -512,6 +512,9 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		if (reportingEntity != null) {
 			variables.put("meId", reportingEntity.getId());
 			variables.put("meUuid", reportingEntity.getUuid());
+			variables.put("contextName", reportingEntity.getContextDescription().getName());
+			variables.put("contextType", reportingEntity.getContextDescription().getContextType().name());
+			variables.put("geographicType", reportingEntity.getContextDescription().getGeographicType().name());
 			Map<String, Object> datas = reportingHelper.hydrateData(reportingEntity.getDatas());
 			if (MapUtils.isNotEmpty(datas)) {
 				for (Map.Entry<String, Object> data : datas.entrySet()) {
