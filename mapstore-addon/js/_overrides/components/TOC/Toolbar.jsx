@@ -7,15 +7,30 @@
  */
 
 const React = require('react');
+const {connect} = require('react-redux');
 const PropTypes = require('prop-types');
+const Proj4js = require('proj4').default;
 const {ButtonGroup, Button, Glyphicon, Tooltip} = require('react-bootstrap');
-const OverlayTrigger = require('../../../../MapStore2/web/client/components/misc/OverlayTrigger');
 const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 const {head} = require('lodash');
+
+const OverlayTrigger = require('../../../../MapStore2/web/client/components/misc/OverlayTrigger');
 const ConfirmModal = require('../../../../MapStore2/web/client/components/maps/modals/ConfirmModal');
 const LayerMetadataModal = require('../../../../MapStore2/web/client/components/TOC/fragments/LayerMetadataModal');
-const Proj4js = require('proj4').default;
 const Message = require('../../../../MapStore2/web/client/components/I18N/Message');
+
+const {signalementsLayersSelector,isOpen} = require('../../../signalement/selectors/signalement-selector');
+const {openPanel} = require('../../../signalement/actions/signalement-action');
+const {SignalementLayerToolButton} = require('../../../signalement/components/SignalementLayerToolButton');
+
+const SignalementLayerToolButtonConnected = connect((state) => ({
+    contextLayers: signalementsLayersSelector(state),
+    isOpen: isOpen(state),
+    //
+    state: state
+    }), {
+    onClick: openPanel
+})(SignalementLayerToolButton);
 
 class Toolbar extends React.Component {
 
@@ -316,14 +331,7 @@ class Toolbar extends React.Component {
                         </OverlayTrigger>
                         : null}
 					{ (status === 'LAYER') && this.props.selectedLayers.length === 1 ?
-						<OverlayTrigger
-                            key="signalement"
-                            placement="top"
-                            overlay={<Tooltip id="legend-tooltip-signalement">{this.props.text.signalementTooltip}</Tooltip>}>
-                            <Button key="layer-metadata" bsStyle={this.props.layerMetadata.expanded ? 'success' : 'primary'} className="square-button-md" onClick={() => this.showMetadata()}>
-                                <Glyphicon glyph="info-sign" />
-                            </Button>
-                        </OverlayTrigger>
+						<SignalementLayerToolButtonConnected selectedLayer={this.props.selectedLayers[0]}/>
 					:null}
                 </ReactCSSTransitionGroup>
                 <ConfirmModal

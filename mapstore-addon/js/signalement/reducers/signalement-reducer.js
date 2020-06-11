@@ -19,7 +19,13 @@ export default (state = initialState, action) => {
         }
         case actions.ACTION_ERORR: {
             return assign({}, state, {error: action.error});
-        }                
+        }
+        case actions.SIGNALEMENT_OPEN_PANEL: {
+            return assign({}, state, {currentLayer: action.currentLayer, open: true});
+        }
+        case actions.SIGNALEMENT_CLOSE_PANEL: {
+            return assign({}, state, {currentLayer: null, open: false});
+        }
         case actions.ATTACHMENT_CONFIGURATION_LOADED: {
            // return set('attachmentConfiguration', action.attachmentConfiguration, state);
            return assign({}, state, {attachmentConfiguration: action.attachmentConfiguration});

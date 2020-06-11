@@ -6,20 +6,22 @@ import {get} from 'lodash';
 import {createControlEnabledSelector} from '../../MapStore2/web/client/selectors/controls';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { setControlProperty } from '../../MapStore2/web/client/actions/controls';
-import {SignalementPanelComponent} from '../signalement/component/SignalementPanelComponent';
+import {SignalementPanelComponent} from '../signalement/components/SignalementPanelComponent';
 import * as epics from '../signalement/epics/signalement-epic';
 import signalementReducer from '../signalement/reducers/signalement-reducer';
 import {loadAttachmentConfiguration, loadLayers, loadThemas, getMe, createDraft, cancelDraft, 
-    createTask, requestClosing, cancelClosing, confirmClosing } from '../signalement/actions/signalement-action';
+    createTask, requestClosing, cancelClosing, confirmClosing, openPanel, closePanel } from '../signalement/actions/signalement-action';
+import {isOpen, getSignalement} from '../signalement/selectors/signalement-selector';
 
 const isEnabled = createControlEnabledSelector('signalement');
 
 const Connected = connect((state) => ({
-    active: isEnabled(state) ? true : false,
+    active: /*isEnabled(state) ||*/ isOpen(state) ? true : false,
     attachmentConfiguration: state.signalement.attachmentConfiguration,
     contextLayers: state.signalement.contextLayers,
     contextThemas: state.signalement.contextThemas,
     user: state.signalement.user,
+    currentLayer: state.signalement.currentLayer,
     task: state.signalement.task,
     status: state.signalement.status,
     closing: state.signalement.closing,
@@ -37,7 +39,7 @@ const Connected = connect((state) => ({
     requestClosing: requestClosing,
     cancelClosing: cancelClosing,
     confirmClosing: confirmClosing,
-    toggleControl: () => setControlProperty("signalement", "enabled", false)
+    toggleControl: () => /*setControlProperty("signalement", "enabled", false)*/closePanel()
 })(SignalementPanelComponent);
 
 export default createPlugin("Signalement", {
@@ -54,7 +56,7 @@ export default createPlugin("Signalement", {
             tooltip: "signalement.reporting.thema",
             text: <Message msgId="signalement.msgBox.title" />,
             icon: <Glyphicon glyph="exclamation-sign" />,
-            action: () => setControlProperty("signalement", "enabled", true)
+            action: () => /*setControlProperty("signalement", "enabled", true)*/openPanel(null)
         }
     }
 });
