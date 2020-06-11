@@ -45,7 +45,7 @@ export class SignalementLayerToolButton extends React.Component {
                             placement="top"
                             overlay={<Tooltip id="legend-tooltip-signalement"><Message msgId="signalement.reporting.layer"/></Tooltip>}>            
                     <Button key="signalement-layer" bsStyle={this.props.isOpen ? 'success' : 'primary'} className="square-button-md" onClick={() => this.props.onClick(selectableLayers[0])}>
-                        <Glyphicon glyph="info-sign" />
+                        <Glyphicon glyph="exclamation-sign" />
                     </Button>
                 </OverlayTrigger>
             );

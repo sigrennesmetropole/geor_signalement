@@ -1,0 +1,12 @@
+{
+    "locale": "fr-FR",
+    "messages": {
+        "signalement-management": {
+           "loading": "En cours d'initialisation...",
+           "title": "Gestion des signalement",
+           "init.me.error": "Impossible de récupérer l'utilisation courant",
+           "init.contexts.error": "Impossible de récupérer l'utilisation courant",
+           "generic.error": "Une erreur s'est produite" 
+        }
+    }
+}

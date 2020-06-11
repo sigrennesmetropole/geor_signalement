@@ -11,16 +11,17 @@ import * as epics from '../signalement/epics/signalement-epic';
 import signalementReducer from '../signalement/reducers/signalement-reducer';
 import {loadAttachmentConfiguration, loadLayers, loadThemas, getMe, createDraft, cancelDraft, 
     createTask, requestClosing, cancelClosing, confirmClosing, openPanel, closePanel } from '../signalement/actions/signalement-action';
-import {isOpen, getSignalement} from '../signalement/selectors/signalement-selector';
+import {isOpen, signalementLayersSelector, signalementThemasSelector, signalementMeSelector,
+    signalementAttachmentConfigurationSelector} from '../signalement/selectors/signalement-selector';
 
 const isEnabled = createControlEnabledSelector('signalement');
 
 const Connected = connect((state) => ({
     active: /*isEnabled(state) ||*/ isOpen(state) ? true : false,
-    attachmentConfiguration: state.signalement.attachmentConfiguration,
-    contextLayers: state.signalement.contextLayers,
-    contextThemas: state.signalement.contextThemas,
-    user: state.signalement.user,
+    attachmentConfiguration: signalementAttachmentConfigurationSelector(state),
+    contextLayers: signalementLayersSelector(state),
+    contextThemas: signalementThemasSelector(state),
+    user: signalementMeSelector(state),
     currentLayer: state.signalement.currentLayer,
     task: state.signalement.task,
     status: state.signalement.status,

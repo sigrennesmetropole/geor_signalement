@@ -4,15 +4,24 @@
 package org.georchestra.signalement.service.st.ldap.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
+import org.georchestra.signalement.core.dao.acl.UserDao;
+import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.dto.User;
+import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
+import org.georchestra.signalement.core.entity.acl.UserEntity;
+import org.georchestra.signalement.core.entity.acl.UserRoleContextEntity;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
+import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;
 import org.georchestra.signalement.service.st.ldap.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +38,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserServiceImpl implements UserService {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Value("${ldap.attribute.login}")
@@ -59,6 +68,15 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private LdapTemplate ldapTemplate;
 
+	@Autowired
+	private UserDao userDao;
+
+	@Autowired
+	private ContextDescriptionDao contextDescriptionDao;
+	
+	@Autowired
+	private ContextDescriptionMapper contextDescriptionMapper;
+
 	private String[] attributes;
 
 	private Map<String, String> attributeMappings;
@@ -70,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByLogin(String username) {
-		LOGGER.info("Search user by login {}",username);
+		LOGGER.info("Search user by login {}", username);
 		User result = null;
 		LdapQueryBuilder queryBuilder = LdapQueryBuilder.query().searchScope(SearchScope.SUBTREE).countLimit(5)
 				.attributes(attributes);
@@ -85,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
 		List<User> users = ldapTemplate.search(queryBuilder, new UserAttributeMapper(attributeMappings));
 		if (CollectionUtils.isNotEmpty(users)) {
-			LOGGER.info("Search user by login {} found {}",username, users);
+			LOGGER.info("Search user by login {} found {}", username, users);
 			result = users.get(0);
 		}
 		return result;
@@ -101,6 +119,35 @@ public class UserServiceImpl implements UserService {
 		attributeMappings.put(UserAttributeMapper.LASTNAME_FIELD, lastNameAttribute);
 		attributeMappings.put(UserAttributeMapper.ORGANIZATION_FIELD, organizationAttribute);
 		attributeMappings.put(UserAttributeMapper.EMAIL_FIELD, emailAttribute);
+	}
+
+	@Override
+	public List<ContextDescription> getVisibleContexts() {
+		return getVisibleContexts(authentificationHelper.getUsername());
+	}
+
+	@Override
+	public List<ContextDescription> getVisibleContexts(String login) {
+		Set<ContextDescriptionEntity> contexts = null;
+		User user = getUserByLogin(login);
+		UserEntity userEntity = userDao.findByLogin(login);
+		if (user != null && userEntity != null) {
+			contexts = new HashSet<>();
+			if (CollectionUtils.isNotEmpty(userEntity.getUserRoles())) {
+				for (UserRoleContextEntity userRoleContextEntity : userEntity.getUserRoles()) {
+					if (userRoleContextEntity.getContextDescription() != null) {
+						// le contexte n'est pas encore dans la liste on l'ajoute
+						contexts.add(userRoleContextEntity.getContextDescription());
+					} else if (userRoleContextEntity.getContextDescription() == null) {
+						// si le contexte est vide, on considère que l'on peut avoir un rôle sur tous
+						// les contextes
+						contexts.addAll(contextDescriptionDao.findAll());
+					}
+				}
+			}
+		}
+		
+		return contextDescriptionMapper.entitiesToDtos(contexts);
 	}
 
 }

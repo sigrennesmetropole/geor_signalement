@@ -3,7 +3,10 @@
  */
 package org.georchestra.signalement.api.controller;
 
+import java.util.List;
+
 import org.georchestra.signalement.api.UserApi;
+import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.service.st.ldap.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,11 @@ public class UserController implements UserApi {
 	@Override
 	public ResponseEntity<User> getMe() throws Exception {
 		return ResponseEntity.ok(userService.getMe());
+	}
+
+	@Override
+	public ResponseEntity<List<ContextDescription>> getVisibleContexts() throws Exception {
+		return ResponseEntity.ok(userService.getVisibleContexts());
 	}
 
 }

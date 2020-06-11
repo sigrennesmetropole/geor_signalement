@@ -1,6 +1,6 @@
 package org.georchestra.signalement.service.mapper.acl;
 
-
+import java.util.Collection;
 import java.util.List;
 
 import org.georchestra.signalement.core.dto.ContextDescription;
@@ -14,20 +14,19 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ContextDescriptionMapper extends AbstractMapper<ContextDescriptionEntity, ContextDescription> {
 
-    @Override
-    @InheritInverseConfiguration
-    ContextDescriptionEntity dtoToEntity(ContextDescription dto);
+	@Override
+	@InheritInverseConfiguration
+	ContextDescriptionEntity dtoToEntity(ContextDescription dto);
 
-    /**
-     * Converti un dossier en DossierDto.
-     *
-     * @param entity entity to transform to dto
-     * @return DossierDto
-     */
-    @Override
-    ContextDescription entityToDto(ContextDescriptionEntity entity);
-    
-    @IterableMapping(qualifiedByName = "entityToDto")
-    List<ContextDescription> entitiesToDtos(List<ContextDescriptionEntity> entities);
+	/**
+	 * Converti un dossier en DossierDto.
+	 *
+	 * @param entity entity to transform to dto
+	 * @return DossierDto
+	 */
+	@Override
+	ContextDescription entityToDto(ContextDescriptionEntity entity);
+
+	@IterableMapping(qualifiedByName = "entityToDto")
+	List<ContextDescription> entitiesToDtos(Collection<ContextDescriptionEntity> entities);
 }
-

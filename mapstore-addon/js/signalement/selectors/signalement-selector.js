@@ -10,4 +10,10 @@ export const getSignalementState = createSelector(
 
 export const isOpen = (state) => get(state, "signalement.open");
 
-export const signalementsLayersSelector = (state) => get(state, "signalement.contextLayers");
+export const signalementAttachmentConfigurationSelector = (state) => get(state, "signalement.attachmentConfiguration");
+
+export const signalementLayersSelector = (state) => get(state, "signalement.contextLayers");
+
+export const signalementThemasSelector = (state) => get(state, "signalement.contextThemas");
+
+export const signalementMeSelector = (state) => get(state, "signalement.user");

@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
-//const axios = require('../../../MapStore2/web/client/libs/ajax');
-import {actions, loadedAttachmentConfiguration, loadedLayers, loadedThemas, gotMe, draftCreated, draftCanceled, taskCreated, loadInitError, loadActionError} from '../actions/signalement-action';
+import {actions, loadedAttachmentConfiguration, loadedLayers, loadedThemas, gotMe, draftCreated, 
+    draftCanceled, taskCreated, loadInitError, loadActionError} from '../actions/signalement-action';
 
 export const loadAttachmentConfigurationEpic = (action$) =>
     action$.ofType(actions.ATTACHMENT_CONFIGURATION_LOAD)

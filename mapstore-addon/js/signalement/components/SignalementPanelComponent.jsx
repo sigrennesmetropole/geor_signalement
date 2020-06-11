@@ -119,7 +119,7 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("didUpdate...");
+        console.log("sig didUpdate...");
         console.log(this.props);
         // Tout est-il initialisé ?
         this.state.initialized = this.props.contextLayers !== null && this.props.contextThemas !== null && 

@@ -1,6 +1,4 @@
 import assign from 'object-assign';
-import {find, get} from 'lodash';
-import {set, arrayUpdate} from '../../../MapStore2/web/client/utils/ImmutableUtils';
 import {actions, status} from '../actions/signalement-action';
 
 const initialState = {
@@ -14,10 +12,10 @@ const initialState = {
 export default (state = initialState, action) => {
     console.log("sig reduce:" + action.type);
     switch (action.type) {
-        case actions.INIT_ERORR: {
+        case actions.INIT_ERROR: {
             return assign({}, state, {error: action.error});
         }
-        case actions.ACTION_ERORR: {
+        case actions.ACTION_ERROR: {
             return assign({}, state, {error: action.error});
         }
         case actions.SIGNALEMENT_OPEN_PANEL: {

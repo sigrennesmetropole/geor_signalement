@@ -19,12 +19,12 @@ const ConfirmModal = require('../../../../MapStore2/web/client/components/maps/m
 const LayerMetadataModal = require('../../../../MapStore2/web/client/components/TOC/fragments/LayerMetadataModal');
 const Message = require('../../../../MapStore2/web/client/components/I18N/Message');
 
-const {signalementsLayersSelector,isOpen} = require('../../../signalement/selectors/signalement-selector');
+const {signalementLayersSelector,isOpen} = require('../../../signalement/selectors/signalement-selector');
 const {openPanel} = require('../../../signalement/actions/signalement-action');
 const {SignalementLayerToolButton} = require('../../../signalement/components/SignalementLayerToolButton');
 
 const SignalementLayerToolButtonConnected = connect((state) => ({
-    contextLayers: signalementsLayersSelector(state),
+    contextLayers: signalementLayersSelector(state),
     isOpen: isOpen(state),
     //
     state: state

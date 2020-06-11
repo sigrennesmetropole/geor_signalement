@@ -201,6 +201,38 @@
 				}
 			}
 		},
+		"user/contexts":{
+			"get": {
+				"tags": [
+					"user"
+				],
+				"summary": "Récupération des contexts sur lesquels l'utilisateur connecté peut avoir des actions",
+				"description": "",
+				"operationId": "getVisibleContexts",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ContextDescription"
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
 		"/task/draft": {
 			"post": {
 				"tags": [
