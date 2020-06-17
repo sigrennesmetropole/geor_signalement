@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.AttachmentConfiguration;
+import org.georchestra.signalement.core.dto.FeatureCollection;
 import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
@@ -72,6 +73,13 @@ public interface TaskService {
 	List<Task> searchTasks();
 
 	/**
+	 * Recherche des tâches affectées à l'utilisateur courant
+	 * 
+	 * @return un flux GeoJSon
+	 */
+	FeatureCollection searchGeoJSonTasks();
+
+	/**
 	 * Retourne une tâche par son id
 	 * 
 	 * @param taskId
@@ -114,7 +122,7 @@ public interface TaskService {
 	Attachment addAttachment(UUID reportingUuid, DocumentContent content) throws DocumentRepositoryException;
 
 	/**
-	 * Retourne  la description d'un attachment pour un signalement et un id
+	 * Retourne la description d'un attachment pour un signalement et un id
 	 * 
 	 * @param reportingUuid
 	 * @param attachmentId
@@ -122,7 +130,7 @@ public interface TaskService {
 	 * @throws DocumentRepositoryException
 	 */
 	Attachment getAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
-	
+
 	/**
 	 * Retourne le document pour un signalement et un id
 	 * 
@@ -141,9 +149,10 @@ public interface TaskService {
 	 * @throws DocumentRepositoryException
 	 */
 	void removeAttachment(UUID reportingUuid, Long attachmentId) throws DocumentRepositoryException;
-	
+
 	/**
 	 * Retourne la liste des attachements d'un signalement
+	 * 
 	 * @param reportingUuid
 	 * @return
 	 */

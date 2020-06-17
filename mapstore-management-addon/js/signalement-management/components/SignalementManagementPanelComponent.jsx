@@ -11,6 +11,7 @@ import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import './signalement-management.css';
 import { status, viewType } from '../actions/signalement-management-action';
 import { NullLiteralTypeAnnotation } from 'babel-standalone';
+//import {configureBackendUrl} from '../epics/signalement-management-epic';
 
 export class SignalementManagementPanelComponent extends React.Component {
 	 static propTypes = {
@@ -69,6 +70,7 @@ export class SignalementManagementPanelComponent extends React.Component {
     constructor(props) {
         super(props);
         this.handleContextChange = this.handleContextChange.bind(this);
+        //configureBackendUrl(this.props.backendurl);
     }
 
     componentWillMount() {

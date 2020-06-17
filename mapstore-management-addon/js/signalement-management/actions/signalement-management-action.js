@@ -66,9 +66,11 @@ export function changeTypeView(viewType) {
 	}
 };
 
-export function typeViewChanged() {
+export function typeViewChanged(viewType, data) {
 	return {
 		type: actions.TYPE_VIEW_CHANGED,
+		viewType: viewType,
+		data: data
 	}
 };
 

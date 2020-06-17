@@ -11,7 +11,7 @@ export class SignalementLayerToolButton extends React.Component {
     static propTypes = {
         contextLayers : PropTypes.array,
         selectedLayer: PropTypes.object,
-        isOpen: PropTypes.boolean,
+        isOpen: PropTypes.bool,
         onClick: PropTypes.func,
     };
 

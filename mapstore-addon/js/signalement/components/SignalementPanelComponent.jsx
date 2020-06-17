@@ -12,6 +12,7 @@ import {setControlProperty} from '../../../MapStore2/web/client/actions/controls
 import ConfirmDialog from '../../../MapStore2/web/client/components/misc/ConfirmDialog';
 import './signalement.css';
 import { actions, status } from '../actions/signalement-action';
+//import {configureBackendUrl} from '../epics/signalement-epic';
 
 export class SignalementPanelComponent extends React.Component {
 	 static propTypes = {
@@ -106,6 +107,7 @@ export class SignalementPanelComponent extends React.Component {
         super(props);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleContextChange = this.handleContextChange.bind(this);
+        //configureBackendUrl(this.props.backendurl);
         //console.log(this.state);
         //console.log(this.props);
     }
