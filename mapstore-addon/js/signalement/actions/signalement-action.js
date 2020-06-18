@@ -7,6 +7,8 @@ export const actions = {
 	LAYERS_LOADED: 'SIGNALEMENT:LAYERS:LOADED',
 	USER_ME_GET: 'SIGNALEMENT:USER:GET',
 	USER_ME_GOT: 'SIGNALEMENT:USER:GOT',
+	SIGNALEMENT_OPEN_PANEL: 'SIGNALEMENT:PANEL:OPEN',
+	SIGNALEMENT_CLOSE_PANEL: 'SIGNALEMENT:PANEL:CLOSE',
 	SIGNALEMENT_DRAFT_CREATE: 'SIGNALEMENT:DRAFT:CREATE',
 	SIGNALEMENT_DRAFT_CREATED: 'SIGNALEMENT:DRAFT:CREATED',
 	SIGNALEMENT_TASK_CREATE: 'SIGNALEMENT:TASK:CREATE',
@@ -20,8 +22,8 @@ export const actions = {
 	SIGNALEMENT_CONFIRM_CLOSING: 'SIGNALEMENT:CONFIRM:CLOSING',
 	SIGNALEMENT_DRAFT_CANCEL: 'SIGNALEMENT:DRAFT:CANCEL',
 	SIGNALEMENT_DRAFT_CANCELED: 'SIGNALEMENT:DRAFT:CANCELED',
-	INIT_ERORR: 'SIGNALEMENT:INIT:ERROR',
-	ACTION_ERORR: 'SIGNALEMENT:ACTION:ERROR'
+	INIT_ERROR: 'SIGNALEMENT:INIT:ERROR',
+	ACTION_ERROR: 'SIGNALEMENT:ACTION:ERROR'
 };
 
 export const status = {
@@ -118,7 +120,7 @@ export function createTask(task) {
 		status: status.CREATE_TASK,
 		task: task
 	}
-}
+};
 
 export function taskCreated(task) {
 	return {
@@ -127,7 +129,7 @@ export function taskCreated(task) {
 		task: task,
 		error: null,
 	}
-}
+};
 
 export function draftCanceled() {
 	return {
@@ -143,19 +145,19 @@ export function requestClosing() {
 		type: actions.SIGNALEMENT_CLOSING,
 		status: status.REQUEST_UNLOAD_TASK
 	}
-}
+};
 
 export function cancelClosing() {
 	return {
 		type: actions.SIGNALEMENT_CANCEL_CLOSING,
 	}
-}
+};
 
 export function confirmClosing() {
 	return {
 		type: actions.SIGNALEMENT_CONFIRM_CLOSING,
 	}
-}
+};
 
 function loadError(type, message, e){
 	console.log("message:" + message);
@@ -170,9 +172,22 @@ function loadError(type, message, e){
 };
 
 export function loadActionError(message, e) {
-	return loadError(actions.ACTION_ERORR, message, e);
+	return loadError(actions.ACTION_ERROR, message, e);
 };
 
 export function loadInitError(message, e) {
-	return loadError(actions.INIT_ERORR, message, e);
+	return loadError(actions.INIT_ERROR, message, e);
+};
+
+export function openPanel(currentLayer) {
+	return {
+		type: actions.SIGNALEMENT_OPEN_PANEL,
+		currentLayer: currentLayer
+	}
+};
+
+export function closePanel(){
+	return {
+		type: actions.SIGNALEMENT_CLOSE_PANEL
+	}
 };

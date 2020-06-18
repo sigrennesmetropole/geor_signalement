@@ -28,7 +28,15 @@ import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.acl.RoleCustomDao;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
-import org.georchestra.signalement.core.dto.*;
+import org.georchestra.signalement.core.dto.Attachment;
+import org.georchestra.signalement.core.dto.AttachmentConfiguration;
+import org.georchestra.signalement.core.dto.Feature;
+import org.georchestra.signalement.core.dto.FeatureCollection;
+import org.georchestra.signalement.core.dto.Form;
+import org.georchestra.signalement.core.dto.ReportingDescription;
+import org.georchestra.signalement.core.dto.RoleSearchCriteria;
+import org.georchestra.signalement.core.dto.Status;
+import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
@@ -38,6 +46,7 @@ import org.georchestra.signalement.service.exception.FormConvertException;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
 import org.georchestra.signalement.service.helper.form.FormHelper;
+import org.georchestra.signalement.service.helper.geojson.GeoJSonHelper;
 import org.georchestra.signalement.service.helper.reporting.AttachmentHelper;
 import org.georchestra.signalement.service.helper.reporting.ReportingHelper;
 import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
@@ -100,6 +109,9 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	private ReportingMapper reportingMapper;
 
 	@Autowired
+	private GeoJSonHelper geoJSonHelper;
+
+	@Autowired
 	private TaskService me;
 
 	@Override
@@ -127,8 +139,8 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 				authentificationHelper.getUsername());
 
 		// set geometry
-		reportingHelper.updateLocalization(reportingEntity, reportingDescription.getLocalisation());		
-		
+		reportingHelper.updateLocalization(reportingEntity, reportingDescription.getLocalisation());
+
 		// mise à jour de l'entité
 		reportingMapper.updateEntityFromDto(reportingDescription, reportingEntity);
 
@@ -285,6 +297,24 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	}
 
 	@Override
+	public FeatureCollection searchGeoJSonTasks() {
+		FeatureCollection result = geoJSonHelper.createFeatureCollection();
+		List<Task> tasks = searchTasks();
+		if (CollectionUtils.isNotEmpty(tasks)) {
+			for (Task task : tasks) {
+				Feature feature = geoJSonHelper.createFeature();
+				geoJSonHelper.setGeometry(feature, task.getAsset().getGeographicType(),
+						task.getAsset().getLocalisation());
+				feature.setId(task.getAsset().getUuid());
+				geoJSonHelper.setProperties(feature, task);
+				geoJSonHelper.setStyle(feature, task);
+				geoJSonHelper.addFeature(result, feature);
+			}
+		}
+		return result;
+	}
+
+	@Override
 	@Transactional(readOnly = false)
 	public Attachment addAttachment(UUID reportingUuid, DocumentContent documentContent)
 			throws DocumentRepositoryException {
@@ -426,7 +456,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		// mise à jour dernière date de modification
 		targetReportingEntity.setUpdatedDate(new Date());
 
-		//set geometry
+		// set geometry
 		reportingHelper.updateLocalization(targetReportingEntity, reporting.getLocalisation());
 
 		// mise à jour de l'entité
@@ -588,7 +618,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			}
 		}
 	}
-	
+
 	private List<String> collectRoleNames(String username) {
 		List<String> roleNames = new ArrayList<>();
 		RoleSearchCriteria searchCriteria = new RoleSearchCriteria();
@@ -601,4 +631,5 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		}
 		return roleNames;
 	}
+
 }

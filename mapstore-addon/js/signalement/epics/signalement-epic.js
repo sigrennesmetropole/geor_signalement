@@ -1,7 +1,14 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
-//const axios = require('../../../MapStore2/web/client/libs/ajax');
-import {actions, loadedAttachmentConfiguration, loadedLayers, loadedThemas, gotMe, draftCreated, draftCanceled, taskCreated, loadInitError, loadActionError} from '../actions/signalement-action';
+import {actions, loadedAttachmentConfiguration, loadedLayers, loadedThemas, gotMe, draftCreated, 
+    draftCanceled, taskCreated, loadInitError, loadActionError} from '../actions/signalement-action';
+    
+let backendURLPrefix = "http://localhost:8082";
+
+/*export function configureBackendUrl(value){
+    console.log("sig configure backend url:" + value);
+    //backendURLPrefix = value;
+};*/
 
 export const loadAttachmentConfigurationEpic = (action$) =>
     action$.ofType(actions.ATTACHMENT_CONFIGURATION_LOAD)
@@ -10,7 +17,8 @@ export const loadAttachmentConfigurationEpic = (action$) =>
             if (action.attachmentConfiguration) {
                 return Rx.Observable.of(loadedAttachmentConfiguration(action.attachmentConfiguration)).delay(0);
             }
-            const url = "http://localhost:8082/reporting/attachment/configuration";
+            console.log("sig back " + backendURLPrefix);
+            const url = backendURLPrefix + "/reporting/attachment/configuration";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedAttachmentConfiguration(response.data)))
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.attattachmentConfiguration.error", e)));
@@ -23,7 +31,7 @@ export const loadThemasEpic = (action$, store) =>
             if (action.themas) {
                 return Rx.Observable.of(loadedThemas(action.themas)).delay(0);
             }
-            const url = "http://localhost:8082/reporting/contextDescription/search?contextType=THEMA";
+            const url = backendURLPrefix + "/reporting/contextDescription/search?contextType=THEMA";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedThemas(response.data)))
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.themas.error", e)));
@@ -36,7 +44,7 @@ export const loadLayersEpic = (action$) =>
             if (action.layers) {
                 return Rx.Observable.of(loadedLayers(action.layers)).delay(0);
             }
-            const url = "http://localhost:8082/reporting/contextDescription/search?contextType=LAYER";
+            const url = backendURLPrefix + "/reporting/contextDescription/search?contextType=LAYER";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedLayers(response.data)))
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.layers.error", e)));
@@ -49,7 +57,7 @@ export const loadMeEpic = (action$) =>
             if (action.user) {
                 return Rx.Observable.of(gotMe(action.user)).delay(0);
             }
-            const url = "http://localhost:8082/user/me";
+            const url = backendURLPrefix + "/user/me";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(gotMe(response.data)))
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.me.error", e)));
@@ -59,7 +67,7 @@ export const createDraftEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_DRAFT_CREATE)
         .switchMap((action) => {
             console.log("sig epics draft");
-            const url = "http://localhost:8082/task/draft";
+            const url = backendURLPrefix + "/task/draft";
             const task = { contextDescription: action.context, description: ""};
             const params = {
                 timeout: 30000,
@@ -75,7 +83,7 @@ export const createTaskEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_TASK_CREATE)
         .switchMap((action) => {
             console.log("sig epics draft");
-            const url = "http://localhost:8082/task/start";
+            const url = backendURLPrefix + "/task/start";
             const task = action.task;
             const params = {
                 timeout: 30000,
@@ -91,7 +99,7 @@ export const cancelDraftEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_DRAFT_CANCEL)
         .switchMap((action) => {
             console.log("sig epics draft");
-            const url = "http://localhost:8082/task/cancel/" + action.uuid;
+            const url = backendURLPrefix + "/task/cancel/" + action.uuid;
             
             return Rx.Observable.defer(() => axios.delete(url))
                 .switchMap((response) => Rx.Observable.of(draftCanceled()))

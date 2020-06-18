@@ -12,6 +12,7 @@ import {setControlProperty} from '../../../MapStore2/web/client/actions/controls
 import ConfirmDialog from '../../../MapStore2/web/client/components/misc/ConfirmDialog';
 import './signalement.css';
 import { actions, status } from '../actions/signalement-action';
+//import {configureBackendUrl} from '../epics/signalement-epic';
 
 export class SignalementPanelComponent extends React.Component {
 	 static propTypes = {
@@ -35,6 +36,7 @@ export class SignalementPanelComponent extends React.Component {
         contextLayers: PropTypes.array,
         contextThemas: PropTypes.array,
         user: PropTypes.object,
+        currentLayer: PropTypes.object,
         task: PropTypes.object,
         error: PropTypes.object,
         // redux
@@ -77,12 +79,15 @@ export class SignalementPanelComponent extends React.Component {
             position: "right",
             zIndex: 1030
         },
-        dockStyle: {},
+        dockStyle: {
+            zIndex: 100,
+        },
         // data
         attachmentConfiguration: null,
         contextLayers: null,
         contextThemas: null,
         user: null,
+        currentLayer: null,
         task: null,
         // misc
         loadAttachmentConfiguration: ()=>{},
@@ -102,6 +107,7 @@ export class SignalementPanelComponent extends React.Component {
         super(props);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleContextChange = this.handleContextChange.bind(this);
+        //configureBackendUrl(this.props.backendurl);
         //console.log(this.state);
         //console.log(this.props);
     }
@@ -115,12 +121,14 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("didUpdate...");
+        console.log("sig didUpdate...");
         console.log(this.props);
         // Tout est-il initialisé ?
         this.state.initialized = this.props.contextLayers !== null && this.props.contextThemas !== null && 
             this.props.attachmentConfiguration !== null && this.props.user !== null; 
-        
+        // on récupère la current layer si elle existe
+        this.state.currentLayer = this.props.currentLayer;
+
         if( this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED ){
             // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"
             console.log("sig draft created");
@@ -152,6 +160,7 @@ export class SignalementPanelComponent extends React.Component {
             this.setState(this.state);
             this.props.toggleControl();
         }
+        console.log(this.state);
     }
 
     /**
@@ -346,14 +355,15 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderContext() {
         if( this.state.currentLayer !== null) {
-            <div id={this.props.id}>
+            return (<div id={this.props.id}>
                 <fieldset>
                     <legend><Message msgId="signalement.reporting.layer"/></legend>
                     <FormGroup controlId="signalement.layer">
+                        <ControlLabel>&nbsp;</ControlLabel>
                         <FormControl type="text" readOnly value={this.state.currentLayer.label}/>
                     </FormGroup>
                 </fieldset>
-            </div>
+            </div>);
         } else {
             return (
                 <div id={this.props.id}>

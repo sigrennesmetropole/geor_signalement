@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import org.georchestra.signalement.api.TaskApi;
+import org.georchestra.signalement.core.dto.FeatureCollection;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.service.sm.TaskService;
@@ -50,6 +51,11 @@ public class TaskController implements TaskApi {
 	public ResponseEntity<List<Task>> searchTasks() throws Exception {
 		return ResponseEntity.ok(taskService.searchTasks());
 	}
+	
+	@Override
+	public ResponseEntity<FeatureCollection> searchGeoJSonTasks() throws Exception {
+		return ResponseEntity.ok(taskService.searchGeoJSonTasks());
+	}
 
 	@Override
 	public ResponseEntity<Task> startTask(@Valid Task task) throws Exception {
@@ -71,5 +77,6 @@ public class TaskController implements TaskApi {
 	public ResponseEntity<Task> updateTask(@Valid Task task) throws Exception {
 		return ResponseEntity.ok(taskService.updateTask(task));
 	}
+
 
 }

@@ -64,8 +64,7 @@
 		<!-- sonar properties -->
 		<sonar.projectKey>${env.SONAR_KEY}${project.artifactId}</sonar.projectKey>
 		<sonar.projectName>${project.artifactId}</sonar.projectName>
-		<sonar.exclusions>**/config/*.java, **/exception/**/*.java,
-			**/test/*.java</sonar.exclusions>
+		<sonar.exclusions>**/config/*.java, **/exception/**/*.java,**/test/*.java</sonar.exclusions>
 		<sonar.global.test.exclusions>**/*Test.java</sonar.global.test.exclusions>
 
 	</properties>
