@@ -9,7 +9,7 @@ import { setControlProperty } from '../../MapStore2/web/client/actions/controls'
 import {SignalementPanelComponent} from '../signalement/components/SignalementPanelComponent';
 import * as epics from '../signalement/epics/signalement-epic';
 import signalementReducer from '../signalement/reducers/signalement-reducer';
-import {loadAttachmentConfiguration, loadLayers, loadThemas, getMe, createDraft, cancelDraft, 
+import {loadAttachmentConfiguration,addAttachment, removeAttachment, loadLayers, loadThemas, getMe, createDraft, cancelDraft,
     createTask, requestClosing, cancelClosing, confirmClosing, openPanel, closePanel } from '../signalement/actions/signalement-action';
 import {isOpen, signalementLayersSelector, signalementThemasSelector, signalementMeSelector,
     signalementAttachmentConfigurationSelector} from '../signalement/selectors/signalement-selector';
@@ -24,6 +24,7 @@ const Connected = connect((state) => ({
     user: signalementMeSelector(state),
     currentLayer: state.signalement.currentLayer,
     task: state.signalement.task,
+    attachments: state.signalement.attachments,
     status: state.signalement.status,
     closing: state.signalement.closing,
     error: state.signalement.error,
@@ -31,6 +32,8 @@ const Connected = connect((state) => ({
     state : state
 }), {
     loadAttachmentConfiguration: loadAttachmentConfiguration,
+    addAttachment: addAttachment,
+    removeAttachment: removeAttachment,
     loadLayers: loadLayers,
     loadThemas: loadThemas,
     getMe: getMe,
