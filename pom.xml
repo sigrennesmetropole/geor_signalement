@@ -94,8 +94,8 @@
 		<profile>
 			<id>dev-yri</id>
 			<properties>
-				<georchestra.mapfish-addon.deployDir>C:\Program Files (x86)\Apache\Tomcat9.0\georchestra\mapfishapp\addons</georchestra.mapfish-addon.deployDir>
-				<georchestra.mapstore-addon.deployDir>C:\Program Files (x86)\Apache\Tomcat9.0\georchestra\mapstore\dist</georchestra.mapstore-addon.deployDir>
+				<georchestra.mapfish-addon.deployDir>C:\Program Files (x86)\Apache\Tomcat 9.0\georchestra\mapfishapp\addons</georchestra.mapfish-addon.deployDir>
+				<georchestra.mapstore-addon.deployDir>C:\Program Files (x86)\Apache\Tomcat 9.0\georchestra\mapstore\dist</georchestra.mapstore-addon.deployDir>
 			</properties>
 		</profile>
 	</profiles>
