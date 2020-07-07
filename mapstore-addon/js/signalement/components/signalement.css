@@ -27,3 +27,6 @@ span .info {
     color: orange;
 }
 
+fieldset{
+    margin: 0 25px 0 30px;
+}
