@@ -5,6 +5,7 @@ const initialState = {
     user: null,
     contextLayers: [],
     contextThemas: [],
+    attachments: [],
     attachmentConfiguration: {},
     status: status.NO_TASK
 }
@@ -27,6 +28,16 @@ export default (state = initialState, action) => {
         case actions.ATTACHMENT_CONFIGURATION_LOADED: {
            // return set('attachmentConfiguration', action.attachmentConfiguration, state);
            return assign({}, state, {attachmentConfiguration: action.attachmentConfiguration});
+        }
+        case actions.ATTACHMENT_ADDED: {
+            var attachments = [...state.attachments];
+            attachments.push(action.attachment);
+            return assign({}, state, {attachments: attachments });
+        }
+        case actions.ATTACHMENT_REMOVED: {
+            var attachments = [...state.attachments];
+            attachments.splice(action.attachmentIndex, 1)
+            return assign({}, state, {attachments: attachments });
         }
         case actions.LAYERS_LOADED: {
             return assign({}, state, {contextLayers: action.layers});

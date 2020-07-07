@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
-import {actions, loadedAttachmentConfiguration, loadedLayers, loadedThemas, gotMe, draftCreated, 
+import {actions, loadedAttachmentConfiguration, addedAttachment, removedAttachment, loadedLayers, loadedThemas, gotMe, draftCreated,
     draftCanceled, taskCreated, loadInitError, loadActionError} from '../actions/signalement-action';
     
 let backendURLPrefix = "http://localhost:8082";
@@ -22,6 +22,30 @@ export const loadAttachmentConfigurationEpic = (action$) =>
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedAttachmentConfiguration(response.data)))
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.attattachmentConfiguration.error", e)));
+        });
+
+export const addAttachmentEpic = (action$) =>
+    action$.ofType(actions.ADD_ATTACHMENT)
+        .switchMap((action) => {
+            console.log("sig epics add attachement");
+            const url = backendURLPrefix + "/reporting/" + action.attachment.uuid + "/upload";
+            const formData = new FormData();
+            formData.append('file',action.attachment.file);
+
+            return Rx.Observable.defer(() => axios.post(url, formData))
+                .switchMap((response) => Rx.Observable.of(addedAttachment(response.data)))
+                .catch(e => Rx.Observable.of(loadActionError("signalement.attachment.error", e)));
+        });
+
+export const removeAttachmentEpic = (action$) =>
+    action$.ofType(actions.REMOVE_ATTACHMENT)
+        .switchMap((action) => {
+            console.log("sig epics remove attachement");
+            const url = backendURLPrefix + "/reporting/" + action.attachment.uuid + "/delete/" + action.attachment.id;
+
+            return Rx.Observable.defer(() => axios.delete(url))
+                .switchMap((response) => Rx.Observable.of(removedAttachment(action.attachment.index)))
+                .catch(e => Rx.Observable.of(loadActionError("signalement.attachment.delete.error", e)));
         });
 
 export const loadThemasEpic = (action$, store) =>
