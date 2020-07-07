@@ -4,8 +4,8 @@ import { get } from "lodash";
 export const getSignalement = state => get(state, "signalement");
 
 export const getSignalementState = createSelector(
-  [ getSignalement ],
-  (selector) => selector
+    [ getSignalement ],
+    (selector) => selector
 );
 
 export const isOpen = (state) => get(state, "signalement.open");
