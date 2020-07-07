@@ -5,11 +5,11 @@ import {PropTypes} from 'prop-types';
 import {Grid, Col, Row, Glyphicon, Button, Form, FormControl,ControlLabel, FormGroup} from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import ConfirmDialog from '../../../MapStore2/web/client/components/misc/ConfirmDialog';
+import ResizableModal from '../../../MapStore2/web/client/components/misc/ResizableModal';
 import './signalement.css';
 import {status} from '../actions/signalement-action';
 import {GeometryType} from '../constants/signalement-constants';
 
-//import {configureBackendUrl} from '../epics/signalement-epic';
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -117,8 +117,9 @@ export class SignalementPanelComponent extends React.Component {
         requestClosing: ()=>{},
         cancelClosing: ()=>{},
         confirmClosing: ()=>{},
-        toggleControl: () => {},
+        toggleControl: () => {}
     };
+
 
     constructor(props) {
         super(props);
@@ -150,7 +151,7 @@ export class SignalementPanelComponent extends React.Component {
         // on récupère la current layer si elle existe
         this.state.currentLayer = this.props.currentLayer;
 
-        if( this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED ){
+        if (this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED) {
             // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"
             console.log("sig draft created");
             this.state.task = this.props.task;
@@ -171,8 +172,9 @@ export class SignalementPanelComponent extends React.Component {
             console.log("sig draft cancel");
             this.props.cancelDraft(this.state.task.asset.uuid);
         }
-        if( (this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) &&
-            this.props.active===true && this.state.loaded === true){
+
+        if ((this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) &&
+            this.props.active === true && this.state.loaded === true) {
             // on a demandé l'annulation et on l'a obtenue => on ferme le panel
             console.log("sig draft canceled");
             this.state.task = null;
@@ -181,8 +183,9 @@ export class SignalementPanelComponent extends React.Component {
             this.props.stopDrawingSupport();
             this.props.toggleControl();
         }
-        if( this.props.status === status.TASK_CREATED &&
-            this.props.active===true && this.state.loaded === true){
+
+        if (this.props.status === status.TASK_CREATED &&
+            this.props.active === true && this.state.loaded === true) {
             // on a demandé la création et on l'a obtenue => on ferme le panel
             console.log("sig task created");
             this.state.task = null;
@@ -218,9 +221,9 @@ export class SignalementPanelComponent extends React.Component {
 
     render() {
         console.log("sig render");
-        if( this.props.active ){
+        if (this.props.active) {
             // si le panel est ouvert
-            if( this.state.initialized && this.props.contextThemas.length > 0 ){
+            if (this.state.initialized && this.props.contextThemas.length > 0) {
                 // si on est initialisé avec au moins un context
                 if( (!this.props.task || this.props.task === null) &&
                     (this.props.status === status.NO_TASK || this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED)){
@@ -231,17 +234,17 @@ export class SignalementPanelComponent extends React.Component {
                 }
             }
         }
-        if( this.props.active ){
+        if (this.props.active) {
             // le panel est ouvert
             return (
                 <ContainerDimensions>
-                    { ({ width }) =>
+                    {({width}) =>
                         <span>
                             <span className="ms-signalement-panel react-dock-no-resize ms-absolute-dock ms-side-panel">
                                 <Dock
                                     dockStyle={this.props.dockStyle} {...this.props.dockProps}
                                     isVisible={this.props.active}
-                                    size={this.props.width / width > 1 ? 1 : this.props.width / width} >
+                                    size={this.props.width / width > 1 ? 1 : this.props.width / width}>
                                     <div className={this.props.panelClassName}>
                                         {this.renderHeader()}
                                         {
@@ -265,8 +268,8 @@ export class SignalementPanelComponent extends React.Component {
     /**
      * La rendition de la fenêtre modal de confirmation d'abandon
      */
-    renderModelClosing(){
-        if (this.props.closing ) {
+    renderModelClosing() {
+        if (this.props.closing) {
             // si closing == true on demande l'abandon
             console.log("sig closing");
             return (<ConfirmDialog
@@ -276,8 +279,8 @@ export class SignalementPanelComponent extends React.Component {
                 onConfirm={this.props.confirmClosing}
                 confirmButtonBSStyle="default"
                 closeGlyph="1-close"
-                confirmButtonContent={<Message msgId="signalement.msgBox.ok" />}
-                closeText={<Message msgId="signalement.msgBox.cancel" />}>
+                confirmButtonContent={<Message msgId="signalement.msgBox.ok"/>}
+                closeText={<Message msgId="signalement.msgBox.cancel"/>}>
                 <Message msgId="signalement.msgBox.info"/>
             </ConfirmDialog>);
         } else {
@@ -315,7 +318,10 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderHeader() {
         return (
-            <Grid fluid className="ms-header" style={this.props.styling || this.props.mode !== "list" ? { width: '100%', boxShadow: 'none'} : { width: '100%' }}>
+            <Grid fluid className="ms-header" style={this.props.styling || this.props.mode !== "list" ? {
+                width: '100%',
+                boxShadow: 'none'
+            } : {width: '100%'}}>
                 <Row>
                     <Col xs={2}>
                         <Button className="square-button no-events">
@@ -327,10 +333,10 @@ export class SignalementPanelComponent extends React.Component {
                         {this.renderMessage()}
                     </Col>
                     <Col xs={2}>
-                        <Button className="square-button no-border" onClick={() => this.create()} >
+                        <Button className="square-button no-border" onClick={() => this.create()}>
                             <Glyphicon glyph={this.props.createGlyph}/>
                         </Button>
-                        <Button className="square-button no-border" onClick={() => this.cancel()} >
+                        <Button className="square-button no-border" onClick={() => this.cancel()}>
                             <Glyphicon glyph={this.props.closeGlyph}/>
                         </Button>
                     </Col>
@@ -342,12 +348,12 @@ export class SignalementPanelComponent extends React.Component {
     /**
      * La rendition d'un message d'erreur
      */
-    renderMessage(){
-        if( this.props.error ){
+    renderMessage() {
+        if (this.props.error) {
             return (
                 <span className="error"><Message msgId={this.props.error.message}/></span>
             );
-        } else if( this.props.message ){
+        } else if (this.props.message) {
             return (
                 <span className="info"><Message msgId={this.props.message}/></span>
             );
@@ -366,15 +372,18 @@ export class SignalementPanelComponent extends React.Component {
                     <legend><Message msgId="signalement.user"/></legend>
                     <FormGroup controlId="signalement.user.login">
                         <ControlLabel><Message msgId="signalement.login"/></ControlLabel>
-                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.login : ''}/>
+                        <FormControl type="text" readOnly
+                                     value={this.props.user !== null ? this.props.user.login : ''}/>
                     </FormGroup>
                     <FormGroup controlId="signalement.user.organization">
                         <ControlLabel><Message msgId="signalement.organization"/></ControlLabel>
-                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.organization : ''}/>
+                        <FormControl type="text" readOnly
+                                     value={this.props.user !== null ? this.props.user.organization : ''}/>
                     </FormGroup>
                     <FormGroup controlId="signalement.user.email">
                         <ControlLabel><Message msgId="signalement.email"/></ControlLabel>
-                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.email : ''}/>
+                        <FormControl type="text" readOnly
+                                     value={this.props.user !== null ? this.props.user.email : ''}/>
                     </FormGroup>
                 </fieldset>
             </div>
@@ -385,7 +394,7 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition du contexte
      */
     renderContext() {
-        if( this.state.currentLayer !== null) {
+        if (this.state.currentLayer !== null) {
             return (<div id={this.props.id}>
                 <fieldset>
                     <legend><Message msgId="signalement.reporting.layer"/></legend>
@@ -593,16 +602,13 @@ export class SignalementPanelComponent extends React.Component {
     fileAddedHandler(e) {
 
         //les differents test avant d'uploader le fichier (type, taille)
-
         console.log('add attachement: ' + e.target.files[0]);
         const attachment = {file: e.target.files[0], uuid: this.state.task.asset.uuid};
-
         const isValid = this.validateAttachment(attachment);
         if (isValid) {
             this.setState({errorAttachment: ""});
             this.props.addAttachment(attachment);
         }
-
 
     }
 
@@ -617,8 +623,8 @@ export class SignalementPanelComponent extends React.Component {
      * L'action d'abandon
      */
     cancel() {
-        if(  this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
-            console.log("Cancel and close:"+this.state.task.asset.uuid);
+        if (this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
+            console.log("Cancel and close:" + this.state.task.asset.uuid);
             this.props.requestClosing();
         } else {
             this.props.toggleControl();
@@ -629,9 +635,8 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
-        console.log('save state create', this.state);
-        if( this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
-            console.log("Create and close:"+this.state.task.asset.uuid);
+        if (this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
+            console.log("Create and close:" + this.state.task.asset.uuid);
             this.props.createTask(this.state.task);
         }
     }

@@ -39,6 +39,16 @@ export default (state = initialState, action) => {
             attachments.splice(action.attachmentIndex, 1)
             return assign({}, state, {attachments: attachments });
         }
+        case actions.ATTACHMENT_ADDED: {
+            var attachments = [...state.attachments];
+            attachments.push(action.attachment);
+            return assign({}, state, {attachments: attachments });
+        }
+        case actions.ATTACHMENT_REMOVED: {
+            var attachments = [...state.attachments];
+            attachments.splice(action.attachmentIndex, 1)
+            return assign({}, state, {attachments: attachments });
+        }
         case actions.LAYERS_LOADED: {
             return assign({}, state, {contextLayers: action.layers});
         }

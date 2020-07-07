@@ -89,6 +89,38 @@ export function removedAttachment(attachmentIndex) {
 	}
 }
 
+export function addAttachment(attachment) {
+    console.log('add file action: ' + attachment)
+    return {
+        type: actions.ADD_ATTACHMENT,
+        attachment : attachment
+    }
+}
+
+export function addedAttachment(attachment) {
+    console.log('added file action: ' + attachment)
+    return {
+        type: actions.ATTACHMENT_ADDED,
+        attachment : attachment
+    }
+}
+
+export function removeAttachment(attachment) {
+    console.log('add file action: ' + attachment)
+    return {
+        type: actions.REMOVE_ATTACHMENT,
+        attachment : attachment
+    }
+}
+
+export function removedAttachment(attachmentIndex) {
+    console.log('remove file action: ' + attachmentIndex)
+    return {
+        type: actions.ATTACHMENT_REMOVED,
+        attachmentIndex : attachmentIndex
+    }
+}
+
 export function loadThemas() {
 	return {
 		type: actions.THEMAS_LOAD
