@@ -52,11 +52,6 @@ export default (state = initialState, action) => {
             return assign({}, state, {task: null, status: status.LOAD_TASK, loadingDraft: true});
         }
         case actions.SIGNALEMENT_DRAFT_CREATED: {
-            action.task.form.sections[0].fields[0].values = ["toto"];
-            action.task.form.sections[0].fields[1].values = [true];
-            action.task.form.sections[0].fields[2].values = [12];
-            action.task.form.sections[0].fields[3].values = [-2.1];
-            action.task.form.sections[0].fields[4].values = [{"code":"a"}];
             return assign({}, state, {task: action.task, status: status.TASK_INITIALIZED, loadingDraft: false});
         }
         case actions.SIGNALEMENT_CLOSING: {
