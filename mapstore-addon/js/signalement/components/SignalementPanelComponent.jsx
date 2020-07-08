@@ -1,20 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import Dock from 'react-dock';
-import {pick} from 'lodash';
-import assign from 'object-assign';
 import ContainerDimensions from 'react-container-dimensions';
-import {connect} from 'react-redux';
 import {PropTypes} from 'prop-types';
-import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, ControlLabel, FormGroup, HelpBlock} from 'react-bootstrap';
+import {Button, Grid, Col, ControlLabel, Row, Glyphicon, Button, Form, FormControl, ControlLabel, FormGroup, HelpBlock} from 'react-bootstrap';
 import Select from 'react-select';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
-import {setControlProperty} from '../../../MapStore2/web/client/actions/controls';
 import ConfirmDialog from '../../../MapStore2/web/client/components/misc/ConfirmDialog';
-import ResizableModal from '../../../MapStore2/web/client/components/misc/ResizableModal';
 import './signalement.css';
-import {actions, status} from '../actions/signalement-action';
+import {status} from '../actions/signalement-action';
+import {GeometryType} from '../constants/signalement-constants';
 
-//import {configureBackendUrl} from '../epics/signalement-epic'
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -22,6 +17,7 @@ export class SignalementPanelComponent extends React.Component {
         active: PropTypes.bool,
         status: PropTypes.string,
         closing: PropTypes.bool,
+        drawing: PropTypes.bool,
         // config
         wrap: PropTypes.bool,
         wrapWithPanel: PropTypes.bool,
@@ -44,6 +40,11 @@ export class SignalementPanelComponent extends React.Component {
         attachements: PropTypes.array,
         error: PropTypes.object,
         // redux
+        initDrawingSupport: PropTypes.func,
+        stopDrawingSupport: PropTypes.func,
+        startDrawing: PropTypes.func,
+        stopDrawing: PropTypes.func,
+        clearDrawn: PropTypes.func,
         loadAttachmentConfiguration: PropTypes.func,
         addAttachment: PropTypes.func,
         removeAttachment: PropTypes.func,
@@ -64,6 +65,7 @@ export class SignalementPanelComponent extends React.Component {
         active: false,
         status: status.NO_TASK,
         closing: false,
+        drawing: false,
         // config
         wrap: false,
         modal: true,
@@ -98,32 +100,24 @@ export class SignalementPanelComponent extends React.Component {
         task: null,
         attachements: [],
         // misc
-        loadAttachmentConfiguration: () => {
-        },
-        addAttachment: () => {
-        },
-        removeAttachment: () => {
-        },
-        loadThemas: () => {
-        },
-        loadLayers: () => {
-        },
-        getMe: () => {
-        },
-        createDraft: () => {
-        },
-        cancelDraft: () => {
-        },
-        createTask: () => {
-        },
-        requestClosing: () => {
-        },
-        cancelClosing: () => {
-        },
-        confirmClosing: () => {
-        },
-        toggleControl: () => {
-        },
+        initDrawingSupport: ()=>{},
+        stopDrawingSupport: ()=>{},
+        startDrawing: ()=>{},
+        stopDrawing: ()=>{},
+        clearDrawn: ()=>{},
+        loadAttachmentConfiguration: ()=>{},
+        addAttachment: () => {},
+        removeAttachment: () => {},
+        loadThemas: ()=>{},
+        loadLayers: ()=>{},
+        getMe: ()=>{},
+        createDraft: ()=>{},
+        cancelDraft: ()=>{},
+        createTask: ()=>{},
+        requestClosing: ()=>{},
+        cancelClosing: ()=>{},
+        confirmClosing: ()=>{},
+        toggleControl: () => {}
     };
 
 
@@ -146,6 +140,7 @@ export class SignalementPanelComponent extends React.Component {
         this.props.loadAttachmentConfiguration();
         this.props.loadThemas();
         this.props.loadLayers();
+        this.props.initDrawingSupport();
         this.props.getMe();
     }
 
@@ -166,16 +161,20 @@ export class SignalementPanelComponent extends React.Component {
             this.setState(this.state);
         }
 
-        if (this.state.task !== null) {
+        if (this.state.task !== null && this.state.task.asset !== null) {
             this.state.task.asset.attachments = this.props.attachments
+            if (this.props.task && this.props.task.asset) {
+                this.state.task.asset.localisation = this.props.task.asset.localisation;
+            }
         }
 
-        if (this.state.task !== null && this.state.task.asset !== null && this.state.task.asset.uuid &&
-            this.props.status === status.REQUEST_UNLOAD_TASK) {
+        if( this.state.task !== null && this.state.task.asset !== null && this.state.task.asset.uuid &&
+            this.props.status === status.REQUEST_UNLOAD_TASK){
             // on a une tâche et on demande son annulation => on lancer l'annulation
             console.log("sig draft cancel");
             this.props.cancelDraft(this.state.task.asset.uuid);
         }
+
         if ((this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) &&
             this.props.active === true && this.state.loaded === true) {
             // on a demandé l'annulation et on l'a obtenue => on ferme le panel
@@ -183,8 +182,10 @@ export class SignalementPanelComponent extends React.Component {
             this.state.task = null;
             this.state.loaded = false;
             this.setState(this.state);
+            this.props.stopDrawingSupport();
             this.props.toggleControl();
         }
+
         if (this.props.status === status.TASK_CREATED &&
             this.props.active === true && this.state.loaded === true) {
             // on a demandé la création et on l'a obtenue => on ferme le panel
@@ -213,8 +214,9 @@ export class SignalementPanelComponent extends React.Component {
      */
     handleContextChange(e) {
         const contextDescriptions = this.props.contextThemas.filter(thema => thema.name === e.target.value);
-        if (contextDescriptions != null && contextDescriptions.length > 0) {
+        if( contextDescriptions != null && contextDescriptions.length > 0) {
             this.state.task.asset.contextDescription = contextDescriptions[0];
+            this.props.clearDrawn();
         }
         this.setState(this.state);
     }
@@ -225,8 +227,8 @@ export class SignalementPanelComponent extends React.Component {
             // si le panel est ouvert
             if (this.state.initialized && this.props.contextThemas.length > 0) {
                 // si on est initialisé avec au moins un context
-                if ((!this.props.task || this.props.task === null) &&
-                    (this.props.status === status.NO_TASK || this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED)) {
+                if( (!this.props.task || this.props.task === null) &&
+                    (this.props.status === status.NO_TASK || this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED)){
                     // il n'y a pas de tâche dans les props et on a rien fait ou a vient de créer un tâche avec succès
                     // on lance la création d'une tâche draft avec le context par défaut
                     console.log("sig create draft");
@@ -515,10 +517,53 @@ export class SignalementPanelComponent extends React.Component {
             <div>
                 <fieldset>
                     <legend><Message msgId="signalement.localization"/></legend>
-                    <div></div>
+                    <div>
+                        { this.renderGeometryDrawButton() }
+                        { this.renderGeometryDrawMessage() }
+                    </div>
                 </fieldset>
             </div>
         )
+    }
+
+    /**
+     * Affichage du bouton permettant de définir la géométrie d'un signalement
+     */
+    renderGeometryDrawButton = ()=> {
+        return (
+            <Button className="square-button" bsStyle={this.props.drawing ? 'primary' : 'default'} onClick={this.onDraw}>
+                <Glyphicon glyph={this.state.task.asset.contextDescription.geographicType.toLowerCase()}/>
+            </Button>
+        );
+    }
+
+    /**
+     * Action sur le bouton permettant de définir la géométrie d'un signalement (start ou stop du dessin)
+     */
+    onDraw = ()=> {
+        const geometryType = GeometryType[this.state.task.asset.contextDescription.geographicType];
+        if (this.props.drawing) {
+            this.props.stopDrawing(geometryType);
+        }
+        else {
+            this.props.startDrawing(geometryType, this.props.task.asset.localisation);
+        }
+    }
+
+    /**
+     * Affichage du message sur le dessin de la geometrie du signalement
+     */
+    renderGeometryDrawMessage = ()=> {
+        if (this.state.task && this.state.task.asset && this.state.task.asset.localisation && this.state.task.asset.localisation.length > 0) {
+            return (
+                <Message msgId="signalement.localization.drawn"/>
+            );
+        }
+        else {
+            return (
+                <Message msgId="signalement.localization.tips"/>
+            );
+        }
     }
 
     /**
@@ -838,8 +883,8 @@ export class SignalementPanelComponent extends React.Component {
      */
     validateAttachment(attachment) {
         let errorAttachment = "";
-        if (attachment.file === undefined || !(attachment.file instanceof File) || this.props.attachmentConfiguration.mimeTypes.includes(attachment.file.type) == false) {
-            errorAttachment = 'signalement.attachment.typeFile'
+        if (attachment.file === undefined || !(attachment.file instanceof File) || this.props.attachmentConfiguration.mimeTypes.includes(attachment.file.type) === false) {
+            errorAttachment = 'signalement.attachment.typeFile';
         }
 
         if (attachment.file.size > this.props.attachmentConfiguration.maxSize) {
@@ -851,8 +896,8 @@ export class SignalementPanelComponent extends React.Component {
         }
 
         if (errorAttachment) {
-            this.setState({errorAttachment})
-            return false
+            this.setState({errorAttachment});
+            return false;
         }
         return true;
     }
@@ -874,7 +919,6 @@ export class SignalementPanelComponent extends React.Component {
             this.props.addAttachment(attachment);
         }
 
-
     }
 
 
@@ -884,7 +928,7 @@ export class SignalementPanelComponent extends React.Component {
      * @param {*} e l'événement
      */
     fileDeleteHandler(id, index) {
-        var attachment = {id: id, uuid: this.state.task.asset.uuid, index: index}
+        const attachment = {id: id, uuid: this.state.task.asset.uuid, index: index};
         this.props.removeAttachment(attachment);
     }
 

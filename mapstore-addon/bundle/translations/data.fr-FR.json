@@ -23,6 +23,7 @@
 			"attachment.delete": "Supprimer un document",
 			"localization": "Géolocation de l'anomalie",
 			"localization.tips": "Cliquer sur le bouton pour géolocaliser le signalement sur la carte",
+			"localization.drawn": "Signalement géolocalisé",
 			"task.create": "La tâche de signalement a été créée",
 			"task.error": "La tâche de signalement n'a pas été créée",
 			"localization.layer": "La couche n'est pas signalable",
