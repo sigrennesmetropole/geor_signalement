@@ -26,16 +26,16 @@ export default (state = initialState, action) => {
             return assign({}, state, {currentLayer: null, open: false});
         }
         case actions.ATTACHMENT_CONFIGURATION_LOADED: {
-           // return set('attachmentConfiguration', action.attachmentConfiguration, state);
-           return assign({}, state, {attachmentConfiguration: action.attachmentConfiguration});
+            // return set('attachmentConfiguration', action.attachmentConfiguration, state);
+            return assign({}, state, {attachmentConfiguration: action.attachmentConfiguration});
         }
         case actions.ATTACHMENT_ADDED: {
-            var attachments = [...state.attachments];
+            let attachments = [...state.attachments];
             attachments.push(action.attachment);
             return assign({}, state, {attachments: attachments });
         }
         case actions.ATTACHMENT_REMOVED: {
-            var attachments = [...state.attachments];
+            let attachments = [...state.attachments];
             attachments.splice(action.attachmentIndex, 1)
             return assign({}, state, {attachments: attachments });
         }
@@ -65,7 +65,7 @@ export default (state = initialState, action) => {
         }
         case actions.SIGNALEMENT_DRAFT_CANCEL: {
             return assign({}, state, {status: status.UNLOAD_TASK});
-        }        
+        }
         case actions.SIGNALEMENT_DRAFT_CANCELED: {
             return assign({}, state, {task: null, status: status.TASK_UNLOADED});
         }
@@ -74,6 +74,24 @@ export default (state = initialState, action) => {
         }
         case actions.SIGNALEMENT_TASK_CREATED: {
             return assign({}, state, {task: null, status: status.TASK_CREATED});
+        }
+        case actions.SIGNALEMENT_UPDATE_LOCALISATION: {
+            return {
+                ...state,
+                task: {
+                    ...state.task,
+                    asset: {
+                        ...state.task.asset,
+                        localisation: action.localisation
+                    }
+                }
+            };
+        }
+        /*case actions.SIGNALEMENT_UPDATE_LOCALISATION: {
+            return return assign({}, state, {task: {asset: {localisation: action.localisation}}});
+        }*/
+        case actions.SIGNALEMENT_SET_DRAWING: {
+            return assign({}, state, {drawing: action.drawing});
         }
         default: {
             return state;
