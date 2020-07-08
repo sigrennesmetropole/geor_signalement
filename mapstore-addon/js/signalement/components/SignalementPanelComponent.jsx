@@ -2,7 +2,8 @@ import React from 'react';
 import Dock from 'react-dock';
 import ContainerDimensions from 'react-container-dimensions';
 import {PropTypes} from 'prop-types';
-import {Button, Col, ControlLabel, Form, FormControl, FormGroup, Glyphicon, Grid, Row} from 'react-bootstrap';
+import {Button, Grid, Col, ControlLabel, Row, Glyphicon, Button, Form, FormControl, ControlLabel, FormGroup, HelpBlock} from 'react-bootstrap';
+import Select from 'react-select';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import ConfirmDialog from '../../../MapStore2/web/client/components/misc/ConfirmDialog';
 import './signalement.css';
@@ -124,8 +125,10 @@ export class SignalementPanelComponent extends React.Component {
         super(props);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleContextChange = this.handleContextChange.bind(this);
+        this.handleFieldChange = this.handleFieldChange.bind(this);
         this.state = {
-            errorAttachment: ""
+            errorAttachment: "",
+            errorFields: {}
         }
         //configureBackendUrl(this.props.backendurl);
         //console.log(this.state);
@@ -438,8 +441,9 @@ export class SignalementPanelComponent extends React.Component {
                         <FormControl componentClass="textarea"
                                      defaultValue={this.state.task.asset.description}
                                      onChange={this.handleDescriptionChange}
+                                     maxLength={1000}
                         />
-                        <ControlLabel></ControlLabel>
+                        <HelpBlock>nombre de caractères restants: {1000 - this.state.task.asset.description.length}</HelpBlock>
                     </FormGroup>
                 </fieldset>
             </div>
@@ -455,43 +459,39 @@ export class SignalementPanelComponent extends React.Component {
             <div>
                 <fieldset>
                     <legend><Message msgId="signalement.attachment.files"/></legend>
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-md-6">
-                                <div className="form-group files color">
-                                    <span className="btn btn-primary btn-file">
-                                       <Message msgId="signalement.attachment.add"/><input type="file" name="file"
-                                                                                           onChange={(e) => this.fileAddedHandler(e)}/>
-                                    </span>
-                                    <Message msgId="signalement.fileUpload.info"/>
-                                    <div>
-                                        {
-                                            this.state.errorAttachment ? (
-                                                <legend><Message msgId={this.state.errorAttachment}/></legend>
-                                            ) : null
-                                        }
-                                    </div>
-                                    <table className="table">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {this.renderTable(this.props.attachments)}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                    <FormGroup controlId="formControlsFile">
+                        <FormControl type="file" name="file"
+                                     onChange={(e) => this.fileAddedHandler(e)} />
+                        <HelpBlock><Message msgId="signalement.fileUpload.info"/></HelpBlock>
+                    </FormGroup>
+                    <div className="col-sm-12">
+                        <div id="passwordHelp" className="text-danger">
+                            {
+                                this.state.errorAttachment ? (
+                                    <Message msgId={this.state.errorAttachment}/>
+                                ) : null
+                            }
                         </div>
                     </div>
+                    <table className="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {this.renderTable(this.props.attachments)}
+                        </tbody>
+                    </table>
                 </fieldset>
             </div>
         )
     }
 
-
+    /**
+     * La rendition du panel des pièces jointes
+     */
     renderTable(attachments) {
 
         if (attachments) {
@@ -572,11 +572,315 @@ export class SignalementPanelComponent extends React.Component {
     renderCustomForm() {
         return (
             <div>
+                <fieldset>
+                    <div>
+                        {this.props.task.form.sections.map((section, index) => {
+                            return (
+                                <fieldset key={index}>
+                                    <legend>{section.label} </legend>
+                                    {this.renderSection(section, index)}
+                                </fieldset>
+                            )
+                        })}
+                    </div>
+                </fieldset>
             </div>
         )
     }
 
+    /**
+     * La rendition d'une section du formulaire associé à la task
+     */
+    renderSection(section, index) {
+        return (
+            <div key={`section.${index}`}> {section.fields.map((field, indexField) => {
+                return (
+                    this.renderField(field, indexField, index)
+                )
+            })}</div>
+        )
+    }
 
+    /**
+     * La rendition de chaque field associe à une section
+     */
+    renderField(field,indexField, index) {
+
+        switch (field.definition.type) {
+
+            case 'LONG':
+                return (
+                    <div key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                        <FormGroup controlId={`section.${index}.field.${indexField}`} >
+                            <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}
+                            </ControlLabel>
+                            <div className="col-sm-5">
+                                <FormControl type="number"
+                                             readOnly={field.definition.readOnly}
+                                             required={field.definition.required}
+                                             name={field.definition.name}
+                                             defaultValue={field.values[0]}
+                                             onChange={this.handleFieldChange}
+                                />
+                            </div>
+                            <div>
+                                <div className="col-sm-12">
+                                    <div id="passwordHelp" className="text-danger">
+                                        {
+                                            this.state.errorFields[`section.${index}.field.${indexField}`] ? (
+                                                <Message msgId={this.state.errorFields[`section.${index}.field.${indexField}`]}/>
+                                            ) : null
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </FormGroup>
+                    </div>
+                )
+                break;
+
+            case 'DOUBLE':
+                return (
+                    <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                        <FormGroup controlId={`section.${index}.field.${indexField}`}>
+                            <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
+                            <div className="col-sm-5">
+                                <FormControl type="number"
+                                             step={0.1}
+                                             readOnly={field.definition.readOnly}
+                                             required={field.definition.required}
+                                             name={field.definition.name}
+                                             defaultValue={field.values[0]}
+                                             max={0}
+                                             onChange={this.handleFieldChange}
+                                             />
+                            </div>
+                        </FormGroup>
+                        <div className="col-sm-12">
+                            <div id="passwordHelp" className="text-danger">
+                                {
+                                    this.state.errorFields[`section.${index}.field.${indexField}`] ? (
+                                        <Message msgId={this.state.errorFields[`section.${index}.field.${indexField}`]}/>
+                                    ) : null
+                                }
+                            </div>
+                        </div>
+                    </div>
+                )
+                break;
+
+            case 'STRING':
+                return (this.renderFieldString(field, index, indexField))
+                break;
+
+            case 'DATE':
+                return (
+                    <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                        <FormGroup controlId={`section.${index}.field.${indexField}`}>
+                            <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
+                            <div className="col-sm-5">
+                                <FormControl type="date"
+                                             readOnly={field.definition.readOnly}
+                                             required={field.definition.required}
+                                             name={field.definition.name}
+                                             defaultValue={field.values[0]}
+                                             onChange={this.handleFieldChange}
+                                />
+                            </div>
+                        </FormGroup>
+                    </div>
+                )
+                break;
+
+            case 'BOOLEAN':
+                return (
+                    <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                        <FormGroup controlId={`section.${index}.field.${indexField}`}>
+                            <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
+                            <div className="col-sm-5">
+                                <FormControl type="checkbox"
+                                             readOnly={field.definition.readOnly}
+                                             required={field.definition.required}
+                                             name={field.definition.name}
+                                             defaultChecked={field.values[0]}
+                                             onChange={this.handleFieldChange}
+                                />
+                            </div>
+                        </FormGroup>
+                    </div>
+                )
+                break;
+
+            case 'LIST':
+                return (
+                    <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                        <FormGroup controlId={`section.${index}.field.${indexField}`}>
+                            <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
+                            <div className="col-sm-5">
+                                <FormControl componentClass="select"
+                                             readOnly={field.definition.readOnly}
+                                             required={field.definition.required}
+                                             name={field.definition.name}
+                                             defaultValue={field.values[0].code}
+                                             //multiple={field.definition.multiple}
+                                             onChange={this.handleFieldChange}
+                                >
+                                    {
+                                        (JSON.parse(field.definition.extendedType) || []).map((option) => {
+                                            return <option key={option.code} value={option.code}>{option.label}</option>
+                                        })
+                                    }
+                                </FormControl>
+                            </div>
+                        </FormGroup>
+                    </div>
+
+                )
+                break;
+            default:
+                console.log("Type of definition undefined");
+        }
+    }
+
+    /**
+     * La rendition du field de type String
+     */
+    renderFieldString(field, index, indexField) {
+
+        if (field.definition.extendedType == "textarea") {
+            return (
+                <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                    <FormGroup controlId={`section.${index}.field.${indexField}`}>
+                        <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
+                        <div className="col-sm-7">
+                            <FormControl type="textarea"
+                                         readOnly={field.definition.readOnly}
+                                         required={field.definition.required}
+                                         name={field.definition.name}
+                                         maxLength={field.definition.validators[0].attribute}
+                                         defaultValue={field.values[0]}
+                                         onChange={this.handleFieldChange}
+                            />
+                        </div>
+                        <div className="col-sm-12">
+                            <div id="passwordHelp" className="text-danger">
+                                {
+                                    this.state.errorFields[`section.${index}.field.${indexField}`] ? (
+                                        <Message msgId={this.state.errorFields[`section.${index}.field.${indexField}`]}/>
+                                    ) : null
+                                }
+                            </div>
+                        </div>
+                    </FormGroup>
+                </div>
+            )
+        } else {
+            return (
+                <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                    <FormGroup controlId={`section.${index}.field.${indexField}`}>
+                        <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
+                        <div className="col-sm-5">
+                            <FormControl type="text"
+                                         readOnly={field.definition.readOnly}
+                                         required={field.definition.required}
+                                         name={field.definition.name}
+                                         maxLength={field.definition.validators[0].attribute}
+                                         defaultValue={field.values[0]}
+                                         onChange={this.handleFieldChange}
+                            />
+                        </div>
+                        <div className="col-sm-12">
+                            <div id="passwordHelp" className="text-danger">
+                                {
+                                    this.state.errorFields[`section.${index}.field.${indexField}`] ? (
+                                        <Message msgId={this.state.errorFields[`section.${index}.field.${indexField}`]}/>
+                                    ) : null
+                                }
+                            </div>
+                        </div>
+                    </FormGroup>
+                </div>
+            )
+        }
+    }
+
+    /**
+     * Changement d'un champs du formulaire associé à la task
+     *
+     * @param {*} e l'événement
+     */
+    handleFieldChange(e){
+
+        const idSection= e.target.id.split(".")[1];
+        const idField= e.target.id.split(".")[3];
+
+        let field = this.state.task.form.sections[idSection].fields[idField];
+
+        // valider le changement après modification du champs
+        // pour s'assurer qu'il est en format correct avec le validateur de chaque champs
+        let errorFields = this.getErrorFields(e.target.value , field.definition.validators[0], e.target.id);
+
+        // verifier si la liste des erreurs est vide sinon on affecte le changement des valeurs
+        if (Object.keys(errorFields).length === 0 && errorFields.constructor === Object) {
+
+            if(field.definition.type
+                == "BOOLEAN"){
+                field.values = e.target.checked ;
+            }else{
+                field.values = e.target.value ;
+            }
+
+        }
+
+        this.state.errorFields = errorFields;
+        this.setState(this.state);
+
+    }
+
+    /**
+     * Récupération des erreurs en fonction de la valeur et le validateur
+     *
+     * @param {*} value valeur du champs
+     * @param {*} validator type du validateur (positive, negative, maxlength)
+     * @param {*} id du champs
+     */
+
+    getErrorFields(value, validator, id){
+        let errorFields= {};
+
+        switch (validator.type) {
+
+            case 'POSITIVE':
+                if(value < 0){
+                    errorFields[id] = 'signalement.field.error.positive';
+                    this.setState({errorFields});
+                }
+                break;
+            case 'NEGATIVE':
+                if(value > 0) {
+                    errorFields[id] = 'signalement.field.error.negative';
+                    this.setState({errorFields});
+                }
+                break;
+            case 'MAXLENGTH':
+                if(value.length > parseInt(validator.attribute, 10)) {
+                    errorFields[id] = `maximum de caractères : ${validator.attribute}`;
+                    this.setState({errorFields});
+                }
+                break;
+
+        }
+        return errorFields;
+
+
+    }
+
+
+    /**
+     * Validation de la pièce de jointe (type, taille...) avant l'uploader
+     *
+     * @param {*} attachment
+     */
     validateAttachment(attachment) {
         let errorAttachment = "";
         if (attachment.file === undefined || !(attachment.file instanceof File) || this.props.attachmentConfiguration.mimeTypes.includes(attachment.file.type) === false) {
@@ -584,11 +888,11 @@ export class SignalementPanelComponent extends React.Component {
         }
 
         if (attachment.file.size > this.props.attachmentConfiguration.maxSize) {
-            errorAttachment = 'signalement.attachment.size';
+            errorAttachment = `la taille du fichier est supérieur à : ${this.props.attachmentConfiguration.maxSize}`
         }
 
         if (this.props.attachments.length + 1 > this.props.attachmentConfiguration.maxCount) {
-            errorAttachment = 'signalement.attachment.length';
+            errorAttachment = `Vous ne pouvez pas ajouter plus de " : ${this.props.attachmentConfiguration.maxCount} fichiers`
         }
 
         if (errorAttachment) {
@@ -598,24 +902,34 @@ export class SignalementPanelComponent extends React.Component {
         return true;
     }
 
+    /**
+     * Action pour ajouter une pièce jointe
+     *
+     * @param {*} e l'événement
+     */
     fileAddedHandler(e) {
-
         //les differents test avant d'uploader le fichier (type, taille)
-        console.log('add attachement: ' + e.target.files[0]);
-        const attachment = {file: e.target.files[0], uuid: this.state.task.asset.uuid};
+        var attachment = {file: e.target.files[0], uuid: this.state.task.asset.uuid}
+
         const isValid = this.validateAttachment(attachment);
+
         if (isValid) {
             this.setState({errorAttachment: ""});
+            // uploader le fichier
             this.props.addAttachment(attachment);
         }
 
     }
 
 
+    /**
+     * Action pour supprimer une pièce jointe
+     *
+     * @param {*} e l'événement
+     */
     fileDeleteHandler(id, index) {
         const attachment = {id: id, uuid: this.state.task.asset.uuid, index: index};
         this.props.removeAttachment(attachment);
-
     }
 
     /**
