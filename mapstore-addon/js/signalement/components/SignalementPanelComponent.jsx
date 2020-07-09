@@ -2,8 +2,18 @@ import React from 'react';
 import Dock from 'react-dock';
 import ContainerDimensions from 'react-container-dimensions';
 import {PropTypes} from 'prop-types';
-import {Button, Grid, Col, ControlLabel, Row, Glyphicon, Button, Form, FormControl, ControlLabel, FormGroup, HelpBlock} from 'react-bootstrap';
-import Select from 'react-select';
+import {
+    Button,
+    Col,
+    ControlLabel,
+    Form,
+    FormControl,
+    FormGroup,
+    Glyphicon,
+    Grid,
+    HelpBlock,
+    Row
+} from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import ConfirmDialog from '../../../MapStore2/web/client/components/misc/ConfirmDialog';
 import './signalement.css';
@@ -120,12 +130,8 @@ export class SignalementPanelComponent extends React.Component {
         toggleControl: () => {}
     };
 
-
     constructor(props) {
         super(props);
-        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-        this.handleContextChange = this.handleContextChange.bind(this);
-        this.handleFieldChange = this.handleFieldChange.bind(this);
         this.state = {
             errorAttachment: "",
             errorFields: {}
@@ -146,14 +152,13 @@ export class SignalementPanelComponent extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         console.log("sig didUpdate...");
-        console.log(this.props);
         // Tout est-il initialisé ?
         this.state.initialized = this.props.contextLayers !== null && this.props.contextThemas !== null &&
             this.props.attachmentConfiguration !== null && this.props.user !== null;
         // on récupère la current layer si elle existe
         this.state.currentLayer = this.props.currentLayer;
 
-        if (this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED) {
+        if( this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED ){
             // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"
             console.log("sig draft created");
             this.state.task = this.props.task;
@@ -175,24 +180,13 @@ export class SignalementPanelComponent extends React.Component {
             this.props.cancelDraft(this.state.task.asset.uuid);
         }
 
-        if ((this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) &&
-            this.props.active === true && this.state.loaded === true) {
+        if( (this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) && this.state.loaded === true){
             // on a demandé l'annulation et on l'a obtenue => on ferme le panel
-            console.log("sig draft canceled");
+            console.log("sig draft canceled or task created");
             this.state.task = null;
             this.state.loaded = false;
             this.setState(this.state);
             this.props.stopDrawingSupport();
-            this.props.toggleControl();
-        }
-
-        if (this.props.status === status.TASK_CREATED &&
-            this.props.active === true && this.state.loaded === true) {
-            // on a demandé la création et on l'a obtenue => on ferme le panel
-            console.log("sig task created");
-            this.state.task = null;
-            this.state.loaded = false;
-            this.setState(this.state);
             this.props.toggleControl();
         }
         console.log(this.state);
@@ -203,7 +197,7 @@ export class SignalementPanelComponent extends React.Component {
      *
      * @param {*} e l'événement
      */
-    handleDescriptionChange(e) {
+    handleDescriptionChange = (e) => {
         this.state.task.asset.description = e.target.value;
         this.setState(this.state);
     }
@@ -212,10 +206,11 @@ export class SignalementPanelComponent extends React.Component {
      * Changement du contexte
      * @param {*} e l'événement
      */
-    handleContextChange(e) {
+    handleContextChange = (e) => {
         const contextDescriptions = this.props.contextThemas.filter(thema => thema.name === e.target.value);
         if( contextDescriptions != null && contextDescriptions.length > 0) {
             this.state.task.asset.contextDescription = contextDescriptions[0];
+            this.state.task.asset.geographicType = contextDescriptions[0].geographicType;
             this.props.clearDrawn();
         }
         this.setState(this.state);
@@ -223,30 +218,33 @@ export class SignalementPanelComponent extends React.Component {
 
     render() {
         console.log("sig render");
-        if (this.props.active) {
+        if( this.props.active ){
             // si le panel est ouvert
-            if (this.state.initialized && this.props.contextThemas.length > 0) {
+            if( this.state.initialized && (this.props.contextThemas.length > 0 || this.props.currentLayer) ){
                 // si on est initialisé avec au moins un context
-                if( (!this.props.task || this.props.task === null) &&
-                    (this.props.status === status.NO_TASK || this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED)){
+                if( !this.props.task &&
+                    (this.props.status === status.NO_TASK
+                        || this.props.status === status.TASK_UNLOADED
+                        || this.props.status === status.TASK_CREATED)) {
                     // il n'y a pas de tâche dans les props et on a rien fait ou a vient de créer un tâche avec succès
                     // on lance la création d'une tâche draft avec le context par défaut
                     console.log("sig create draft");
-                    this.props.createDraft(this.props.contextThemas[0]);
+                    const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
+                    this.props.createDraft(initContext);
                 }
             }
         }
-        if (this.props.active) {
+        if( this.props.active ){
             // le panel est ouvert
             return (
                 <ContainerDimensions>
-                    {({width}) =>
+                    { ({ width }) =>
                         <span>
                             <span className="ms-signalement-panel react-dock-no-resize ms-absolute-dock ms-side-panel">
                                 <Dock
                                     dockStyle={this.props.dockStyle} {...this.props.dockProps}
                                     isVisible={this.props.active}
-                                    size={this.props.width / width > 1 ? 1 : this.props.width / width}>
+                                    size={this.props.width / width > 1 ? 1 : this.props.width / width} >
                                     <div className={this.props.panelClassName}>
                                         {this.renderHeader()}
                                         {
@@ -270,8 +268,8 @@ export class SignalementPanelComponent extends React.Component {
     /**
      * La rendition de la fenêtre modal de confirmation d'abandon
      */
-    renderModelClosing() {
-        if (this.props.closing) {
+    renderModelClosing(){
+        if (this.props.closing ) {
             // si closing == true on demande l'abandon
             console.log("sig closing");
             return (<ConfirmDialog
@@ -281,8 +279,8 @@ export class SignalementPanelComponent extends React.Component {
                 onConfirm={this.props.confirmClosing}
                 confirmButtonBSStyle="default"
                 closeGlyph="1-close"
-                confirmButtonContent={<Message msgId="signalement.msgBox.ok"/>}
-                closeText={<Message msgId="signalement.msgBox.cancel"/>}>
+                confirmButtonContent={<Message msgId="signalement.msgBox.ok" />}
+                closeText={<Message msgId="signalement.msgBox.cancel" />}>
                 <Message msgId="signalement.msgBox.info"/>
             </ConfirmDialog>);
         } else {
@@ -320,10 +318,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderHeader() {
         return (
-            <Grid fluid className="ms-header" style={this.props.styling || this.props.mode !== "list" ? {
-                width: '100%',
-                boxShadow: 'none'
-            } : {width: '100%'}}>
+            <Grid fluid className="ms-header" style={this.props.styling || this.props.mode !== "list" ? { width: '100%', boxShadow: 'none'} : { width: '100%' }}>
                 <Row>
                     <Col xs={2}>
                         <Button className="square-button no-events">
@@ -335,10 +330,10 @@ export class SignalementPanelComponent extends React.Component {
                         {this.renderMessage()}
                     </Col>
                     <Col xs={2}>
-                        <Button className="square-button no-border" onClick={() => this.create()}>
+                        <Button className="square-button no-border" onClick={() => this.create()} >
                             <Glyphicon glyph={this.props.createGlyph}/>
                         </Button>
-                        <Button className="square-button no-border" onClick={() => this.cancel()}>
+                        <Button className="square-button no-border" onClick={() => this.cancel()} >
                             <Glyphicon glyph={this.props.closeGlyph}/>
                         </Button>
                     </Col>
@@ -350,12 +345,12 @@ export class SignalementPanelComponent extends React.Component {
     /**
      * La rendition d'un message d'erreur
      */
-    renderMessage() {
-        if (this.props.error) {
+    renderMessage(){
+        if( this.props.error ){
             return (
                 <span className="error"><Message msgId={this.props.error.message}/></span>
             );
-        } else if (this.props.message) {
+        } else if( this.props.message ){
             return (
                 <span className="info"><Message msgId={this.props.message}/></span>
             );
@@ -374,18 +369,15 @@ export class SignalementPanelComponent extends React.Component {
                     <legend><Message msgId="signalement.user"/></legend>
                     <FormGroup controlId="signalement.user.login">
                         <ControlLabel><Message msgId="signalement.login"/></ControlLabel>
-                        <FormControl type="text" readOnly
-                                     value={this.props.user !== null ? this.props.user.login : ''}/>
+                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.login : ''}/>
                     </FormGroup>
                     <FormGroup controlId="signalement.user.organization">
                         <ControlLabel><Message msgId="signalement.organization"/></ControlLabel>
-                        <FormControl type="text" readOnly
-                                     value={this.props.user !== null ? this.props.user.organization : ''}/>
+                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.organization : ''}/>
                     </FormGroup>
                     <FormGroup controlId="signalement.user.email">
                         <ControlLabel><Message msgId="signalement.email"/></ControlLabel>
-                        <FormControl type="text" readOnly
-                                     value={this.props.user !== null ? this.props.user.email : ''}/>
+                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.email : ''}/>
                     </FormGroup>
                 </fieldset>
             </div>
@@ -396,7 +388,7 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition du contexte
      */
     renderContext() {
-        if (this.state.currentLayer !== null) {
+        if( this.state.currentLayer !== null) {
             return (<div id={this.props.id}>
                 <fieldset>
                     <legend><Message msgId="signalement.reporting.layer"/></legend>
@@ -517,10 +509,13 @@ export class SignalementPanelComponent extends React.Component {
             <div>
                 <fieldset>
                     <legend><Message msgId="signalement.localization"/></legend>
-                    <div>
+                    <FormGroup controlId="localisation">
                         { this.renderGeometryDrawButton() }
-                        { this.renderGeometryDrawMessage() }
-                    </div>
+                        <label className="col-sm-offset-1">{ this.renderGeometryDrawMessage() }</label>
+                        <HelpBlock>
+                            <Message msgId="signalement.localization.tips"/>
+                        </HelpBlock>
+                    </FormGroup>
                 </fieldset>
             </div>
         )
@@ -532,7 +527,7 @@ export class SignalementPanelComponent extends React.Component {
     renderGeometryDrawButton = ()=> {
         return (
             <Button className="square-button" bsStyle={this.props.drawing ? 'primary' : 'default'} onClick={this.onDraw}>
-                <Glyphicon glyph={this.state.task.asset.contextDescription.geographicType.toLowerCase()}/>
+                <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
             </Button>
         );
     }
@@ -541,7 +536,7 @@ export class SignalementPanelComponent extends React.Component {
      * Action sur le bouton permettant de définir la géométrie d'un signalement (start ou stop du dessin)
      */
     onDraw = ()=> {
-        const geometryType = GeometryType[this.state.task.asset.contextDescription.geographicType];
+        const geometryType = GeometryType[this.state.task.asset.geographicType];
         if (this.props.drawing) {
             this.props.stopDrawing(geometryType);
         }
@@ -554,15 +549,12 @@ export class SignalementPanelComponent extends React.Component {
      * Affichage du message sur le dessin de la geometrie du signalement
      */
     renderGeometryDrawMessage = ()=> {
-        if (this.state.task && this.state.task.asset && this.state.task.asset.localisation && this.state.task.asset.localisation.length > 0) {
+        if (this.state.task && this.props.task.asset && this.props.task.asset.localisation && this.props.task.asset.localisation.length > 0) {
             return (
                 <Message msgId="signalement.localization.drawn"/>
             );
-        }
-        else {
-            return (
-                <Message msgId="signalement.localization.tips"/>
-            );
+        } else {
+            return null;
         }
     }
 
@@ -574,18 +566,24 @@ export class SignalementPanelComponent extends React.Component {
             <div>
                 <fieldset>
                     <div>
-                        {this.props.task.form.sections.map((section, index) => {
-                            return (
-                                <fieldset key={index}>
-                                    <legend>{section.label} </legend>
-                                    {this.renderSection(section, index)}
-                                </fieldset>
-                            )
-                        })}
+                        {this.renderSections()}
                     </div>
                 </fieldset>
             </div>
         )
+    }
+
+    renderSections = () => {
+        if (this.props.task && this.props.task.form && this.props.task.form.sections) {
+            return this.props.task.form.sections.map((section, index) => {
+                return (
+                    <fieldset key={index}>
+                        <legend>{section.label} </legend>
+                        {this.renderSection(section, index)}
+                    </fieldset>
+                );
+            })
+        }
     }
 
     /**
@@ -593,12 +591,20 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderSection(section, index) {
         return (
-            <div key={`section.${index}`}> {section.fields.map((field, indexField) => {
+            <div key={`section.${index}`}>
+                {this.renderFields(section, index)}
+            </div>
+        )
+    }
+
+    renderFields = (section, index)=> {
+        if (section && section.fields) {
+            return section.fields.map((field, indexField) => {
                 return (
                     this.renderField(field, indexField, index)
-                )
-            })}</div>
-        )
+                );
+            });
+        }
     }
 
     /**
@@ -636,9 +642,7 @@ export class SignalementPanelComponent extends React.Component {
                             </div>
                         </FormGroup>
                     </div>
-                )
-                break;
-
+                );
             case 'DOUBLE':
                 return (
                     <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
@@ -653,7 +657,7 @@ export class SignalementPanelComponent extends React.Component {
                                              defaultValue={field.values[0]}
                                              max={0}
                                              onChange={this.handleFieldChange}
-                                             />
+                                />
                             </div>
                         </FormGroup>
                         <div className="col-sm-12">
@@ -666,13 +670,9 @@ export class SignalementPanelComponent extends React.Component {
                             </div>
                         </div>
                     </div>
-                )
-                break;
-
+                );
             case 'STRING':
                 return (this.renderFieldString(field, index, indexField))
-                break;
-
             case 'DATE':
                 return (
                     <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
@@ -689,9 +689,7 @@ export class SignalementPanelComponent extends React.Component {
                             </div>
                         </FormGroup>
                     </div>
-                )
-                break;
-
+                );
             case 'BOOLEAN':
                 return (
                     <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
@@ -708,9 +706,7 @@ export class SignalementPanelComponent extends React.Component {
                             </div>
                         </FormGroup>
                     </div>
-                )
-                break;
-
+                );
             case 'LIST':
                 return (
                     <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
@@ -722,7 +718,7 @@ export class SignalementPanelComponent extends React.Component {
                                              required={field.definition.required}
                                              name={field.definition.name}
                                              defaultValue={field.values[0].code}
-                                             //multiple={field.definition.multiple}
+                                    //multiple={field.definition.multiple}
                                              onChange={this.handleFieldChange}
                                 >
                                     {
@@ -735,8 +731,7 @@ export class SignalementPanelComponent extends React.Component {
                         </FormGroup>
                     </div>
 
-                )
-                break;
+                );
             default:
                 console.log("Type of definition undefined");
         }
@@ -747,7 +742,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderFieldString(field, index, indexField) {
 
-        if (field.definition.extendedType == "textarea") {
+        if (field.definition.extendedType === "textarea") {
             return (
                 <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
                     <FormGroup controlId={`section.${index}.field.${indexField}`}>
@@ -809,7 +804,7 @@ export class SignalementPanelComponent extends React.Component {
      *
      * @param {*} e l'événement
      */
-    handleFieldChange(e){
+    handleFieldChange = (e)=>{
 
         const idSection= e.target.id.split(".")[1];
         const idField= e.target.id.split(".")[3];
@@ -823,8 +818,7 @@ export class SignalementPanelComponent extends React.Component {
         // verifier si la liste des erreurs est vide sinon on affecte le changement des valeurs
         if (Object.keys(errorFields).length === 0 && errorFields.constructor === Object) {
 
-            if(field.definition.type
-                == "BOOLEAN"){
+            if(field.definition.type === "BOOLEAN"){
                 field.values = e.target.checked ;
             }else{
                 field.values = e.target.value ;
@@ -936,8 +930,8 @@ export class SignalementPanelComponent extends React.Component {
      * L'action d'abandon
      */
     cancel() {
-        if (this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
-            console.log("Cancel and close:" + this.state.task.asset.uuid);
+        if(  this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
+            console.log("Cancel and close:"+this.state.task.asset.uuid);
             this.props.requestClosing();
         } else {
             this.props.toggleControl();
@@ -948,8 +942,8 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
-        if (this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
-            console.log("Create and close:" + this.state.task.asset.uuid);
+        if( this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
+            console.log("Create and close:"+this.state.task.asset.uuid);
             this.props.createTask(this.state.task);
         }
     }

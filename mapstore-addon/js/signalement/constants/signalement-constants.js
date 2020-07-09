@@ -1,7 +1,3 @@
-export const GeographicType = {
-
-}
-
 export const GeometryType = {
     POINT: "Point",
     LINE: "LineString",
