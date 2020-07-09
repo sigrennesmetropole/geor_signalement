@@ -67,13 +67,13 @@ export default (state = initialState, action) => {
             return assign({}, state, {status: status.UNLOAD_TASK});
         }
         case actions.SIGNALEMENT_DRAFT_CANCELED: {
-            return assign({}, state, {task: null, status: status.TASK_UNLOADED});
+            return assign({}, state, {task: null, status: status.TASK_UNLOADED, open: false});
         }
         case actions.SIGNALEMENT_TASK_CREATE: {
             return assign({}, state, {task: action.task, status: status.CREATE_TASK });
         }
         case actions.SIGNALEMENT_TASK_CREATED: {
-            return assign({}, state, {task: null, status: status.TASK_CREATED});
+            return assign({}, state, {task: null, status: status.TASK_CREATED, open: false});
         }
         case actions.SIGNALEMENT_UPDATE_LOCALISATION: {
             return {
@@ -87,9 +87,6 @@ export default (state = initialState, action) => {
                 }
             };
         }
-        /*case actions.SIGNALEMENT_UPDATE_LOCALISATION: {
-            return return assign({}, state, {task: {asset: {localisation: action.localisation}}});
-        }*/
         case actions.SIGNALEMENT_SET_DRAWING: {
             return assign({}, state, {drawing: action.drawing});
         }
