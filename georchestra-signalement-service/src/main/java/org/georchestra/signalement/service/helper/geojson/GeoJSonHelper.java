@@ -59,7 +59,9 @@ public class GeoJSonHelper {
 		if (type == GeographicType.POLYGON) {
 			geometry = new Polygon();
 			geometry.setType(GeometryType.POLYGON);
-			((Polygon) geometry).setCoordinates(convertPoints(type, points));
+			List<List<Point2D>> polygons = new ArrayList<>();
+			polygons.add(convertPoints(type, points));
+			((Polygon) geometry).setCoordinates(new ArrayList<>());
 		} else if (type == GeographicType.LINE) {
 			geometry = new LineString();
 			geometry.setType(GeometryType.LINESTRING);

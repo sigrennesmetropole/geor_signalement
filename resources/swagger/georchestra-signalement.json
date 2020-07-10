@@ -1350,7 +1350,10 @@
 						"coordinates": {
 							"type": "array",
 							"items" : {
-								"$ref": "#/definitions/Point2D"
+								"type": "array",
+								"items":{
+									"$ref": "#/definitions/Point2D"
+								}
 							}
 						}
 					}
