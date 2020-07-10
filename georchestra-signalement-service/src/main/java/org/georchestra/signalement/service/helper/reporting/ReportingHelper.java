@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.vividsolutions.jts.geom.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.Action;
 import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.GeographicType;
-import org.georchestra.signalement.core.dto.Point;
+import org.georchestra.signalement.core.dto.PointG;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
@@ -40,6 +39,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 
 import net.minidev.json.parser.ParseException;
 
@@ -234,7 +238,7 @@ public class ReportingHelper {
 		return task;
 	}
 
-	public void updateLocalization(AbstractReportingEntity reportingEntity, List<Point> localisation) {
+	public void updateLocalization(AbstractReportingEntity reportingEntity, List<PointG> localisation) {
 		if (!CollectionUtils.isEmpty(localisation)) {
 			// get geometry from coordinate XY
 			Geometry geometry = convertCoordinateToGeometry(localisation, reportingEntity.getGeographicType());
@@ -261,7 +265,7 @@ public class ReportingHelper {
 	 *
 	 * @return
 	 */
-	public Geometry convertCoordinateToGeometry(List<Point> localisation, GeographicType geographicType) {
+	public Geometry convertCoordinateToGeometry(List<PointG> localisation, GeographicType geographicType) {
 		Geometry geometry = null;
 		Coordinate[] coordinates;
 
@@ -285,8 +289,8 @@ public class ReportingHelper {
 		return geometry;
 	}
 
-	public List<Point> convertGeometryToCoordinate(Geometry geometry, GeographicType geographicType) {
-		List<Point> result = null;
+	public List<PointG> convertGeometryToCoordinate(Geometry geometry, GeographicType geographicType) {
+		List<PointG> result = null;
 		if (geometry != null) {
 			result = new ArrayList<>();
 			Coordinate[] coordinates = geometry.getCoordinates();
@@ -296,7 +300,7 @@ public class ReportingHelper {
 						break;
 					}
 					Coordinate coordinate = coordinates[i];
-					Point point = new Point();
+					PointG point = new PointG();
 					point.setX(Double.toString(coordinate.x));
 					point.setY(Double.toString(coordinate.y));
 					result.add(point);
@@ -314,7 +318,7 @@ public class ReportingHelper {
 	 *                     coordonne qui est la meme que le premiere)
 	 * @return
 	 */
-	public Coordinate[] getCoordinate(List<Point> localisation, boolean isClosed) {
+	public Coordinate[] getCoordinate(List<PointG> localisation, boolean isClosed) {
 		int size = localisation.size();
 		Coordinate[] coordinates;
 		if (isClosed == false) {
@@ -334,7 +338,7 @@ public class ReportingHelper {
 		return coordinates;
 	}
 
-	private void addCoordinate(List<Point> localisation, Coordinate[] coordinates, int i) {
+	private void addCoordinate(List<PointG> localisation, Coordinate[] coordinates, int i) {
 		Double coordinateX = Double.valueOf(localisation.get(i).getX());
 		Double coordinateY = Double.valueOf(localisation.get(i).getY());
 		coordinates[i] = new Coordinate(coordinateX, coordinateY);

@@ -907,7 +907,7 @@
 				}
 			}
 		},
-		"Point": {
+		"PointG": {
 			"type": "object",
 			"properties": {
 				"x": {
@@ -1190,7 +1190,7 @@
 				"localisation": {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/Point"
+						"$ref": "#/definitions/PointG"
 					}
 				},
 				"attachments": {
@@ -1306,7 +1306,7 @@
     			"type": "number"
     		}
 		},
-		"PointG": {
+		"Point": {
 			"type": "object",
 			"description": "GeoJSon geometry",
 			"allOf": [

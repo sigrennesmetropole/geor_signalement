@@ -54,7 +54,7 @@ public class GeoJSonHelper {
 		}
 	}
 
-	public void setGeometry(Feature feature, GeographicType type, List<Point> points) {
+	public void setGeometry(Feature feature, GeographicType type, List<PointG> points) {
 		Geometry geometry = null;
 		if (type == GeographicType.POLYGON) {
 			geometry = new Polygon();
@@ -66,11 +66,11 @@ public class GeoJSonHelper {
 			geometry.setType(GeometryType.LINESTRING);
 			((LineString) geometry).setCoordinates(convertPoints(type, points));
 		} else {
-			geometry = new PointG();
+			geometry = new Point();
 			geometry.setType(GeometryType.POINT);
 			List<Point2D> points2D = convertPoints(type, points);
 			if (CollectionUtils.isNotEmpty(points2D)) {
-				((PointG) geometry).setCoordinates(points2D.get(0));
+				((Point) geometry).setCoordinates(points2D.get(0));
 			}
 		}
 		feature.setGeometry(geometry);
@@ -141,11 +141,11 @@ public class GeoJSonHelper {
 		return style;
 	}
 
-	protected List<Point2D> convertPoints(GeographicType type, List<Point> points) {
+	protected List<Point2D> convertPoints(GeographicType type, List<PointG> points) {
 		List<Point2D> result = null;
 		if (CollectionUtils.isNotEmpty(points)) {
 			result = new ArrayList<>();
-			for (Point point : points) {
+			for (PointG point : points) {
 				Point2D point2D = new Point2D();
 				point2D.add(new BigDecimal(point.getX()));
 				point2D.add(new BigDecimal(point.getY()));
