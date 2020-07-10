@@ -130,7 +130,7 @@ public class GeoJSonHelper {
 	protected Style createLineStyle() {
 		Style style = new Style();
 		style.setColor("#ffcc33");
-		style.setOpcacity(1.0);
+		style.setOpacity(1.0);
 		return style;
 	}
 

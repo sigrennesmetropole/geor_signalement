@@ -1453,7 +1453,7 @@
 					"type": "number",
 					"format": "double"
 				},
-				"opcacity": {
+				"opacity": {
 					"type": "number",
 					"format": "double"
 				},
