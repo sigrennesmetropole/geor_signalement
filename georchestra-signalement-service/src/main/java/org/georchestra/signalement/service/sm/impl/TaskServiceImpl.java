@@ -24,6 +24,7 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.acl.RoleCustomDao;
@@ -40,6 +41,7 @@ import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
+import org.georchestra.signalement.service.dto.TaskSearchCriteria;
 import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 import org.georchestra.signalement.service.exception.FormConvertException;
@@ -66,6 +68,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional(readOnly = true)
 public class TaskServiceImpl implements TaskService, ActivitiEventListener {
+
+	public static final String GEOGRAPHIC_TYPE = "geographicType";
+
+	public static final String CONTEXT_TYPE = "contextType";
+
+	public static final String ME_UUID = "meUuid";
+
+	public static final String ME_ID = "meId";
+
+	public static final String CONTEXT_NAME = "contextName";
 
 	private static final String INVALID_REPORTING_UUID_MESSAGE = "Invalid reporting Uuid";
 
@@ -271,16 +283,30 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	}
 
 	@Override
-	public List<Task> searchTasks() {
+	public List<Task> searchTasks(TaskSearchCriteria taskSearchCriteria) {
 		List<Task> results = null;
 		String username = authentificationHelper.getUsername();
+		boolean isAdmin = authentificationHelper.isAdmin();
 		List<String> roleNames = collectRoleNames(username);
 		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
 		TaskQuery taskQuery = taskService.createTaskQuery();
-		if (CollectionUtils.isNotEmpty(roleNames)) {
-			taskQuery.or().taskCandidateOrAssigned(username).taskCandidateGroupIn(roleNames).endOr();
-		} else {
-			taskQuery.taskCandidateOrAssigned(username);
+		if (taskSearchCriteria != null) {
+			if (StringUtils.isNotEmpty(taskSearchCriteria.getContextName())) {
+				taskQuery.processVariableValueEquals(CONTEXT_NAME, taskSearchCriteria.getContextName());
+			}
+			if (taskSearchCriteria.getContextType() != null) {
+				taskQuery.processVariableValueEquals(CONTEXT_TYPE, taskSearchCriteria.getContextType().name());
+			}
+			if (taskSearchCriteria.getGeographicType() != null) {
+				taskQuery.processVariableValueEquals(GEOGRAPHIC_TYPE, taskSearchCriteria.getGeographicType().name());
+			}
+		}
+		if (!isAdmin || (taskSearchCriteria != null && !taskSearchCriteria.isAsAdmin())) {
+			if (CollectionUtils.isNotEmpty(roleNames)) {
+				taskQuery.or().taskCandidateOrAssigned(username).taskCandidateGroupIn(roleNames).endOr();
+			} else {
+				taskQuery.taskCandidateOrAssigned(username);
+			}
 		}
 		List<org.activiti.engine.task.Task> tasks = taskQuery.orderByTaskPriority().asc().orderByTaskCreateTime().desc()
 				.list();
@@ -297,9 +323,9 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	}
 
 	@Override
-	public FeatureCollection searchGeoJSonTasks() {
+	public FeatureCollection searchGeoJSonTasks(TaskSearchCriteria taskSearchCriteria) {
 		FeatureCollection result = geoJSonHelper.createFeatureCollection();
-		List<Task> tasks = searchTasks();
+		List<Task> tasks = searchTasks(taskSearchCriteria);
 		if (CollectionUtils.isNotEmpty(tasks)) {
 			for (Task task : tasks) {
 				Feature feature = geoJSonHelper.createFeature();
@@ -540,11 +566,11 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			variables = new HashMap<>();
 		}
 		if (reportingEntity != null) {
-			variables.put("meId", reportingEntity.getId());
-			variables.put("meUuid", reportingEntity.getUuid());
-			variables.put("contextName", reportingEntity.getContextDescription().getName());
-			variables.put("contextType", reportingEntity.getContextDescription().getContextType().name());
-			variables.put("geographicType", reportingEntity.getContextDescription().getGeographicType().name());
+			variables.put(ME_ID, reportingEntity.getId());
+			variables.put(ME_UUID, reportingEntity.getUuid());
+			variables.put(CONTEXT_NAME, reportingEntity.getContextDescription().getName());
+			variables.put(CONTEXT_TYPE, reportingEntity.getContextDescription().getContextType().name());
+			variables.put(GEOGRAPHIC_TYPE, reportingEntity.getContextDescription().getGeographicType().name());
 			Map<String, Object> datas = reportingHelper.hydrateData(reportingEntity.getDatas());
 			if (MapUtils.isNotEmpty(datas)) {
 				for (Map.Entry<String, Object> data : datas.entrySet()) {

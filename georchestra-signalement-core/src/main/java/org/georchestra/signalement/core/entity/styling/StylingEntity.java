@@ -1,18 +1,13 @@
 /**
  * 
  */
-package org.georchestra.signalement.core.entity.form;
-
-import java.util.Set;
+package org.georchestra.signalement.core.entity.styling;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.georchestra.signalement.core.common.LongId;
@@ -22,8 +17,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Décrit un formulaire composé de sections
- * 
  * @author FNI18300
  *
  */
@@ -31,8 +24,8 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "form_definition")
-public class FormDefinitionEntity implements LongId {
+@Table(name = "styling")
+public class StylingEntity implements LongId {
 
 	@Id
 	@Column(name = "id")
@@ -41,11 +34,12 @@ public class FormDefinitionEntity implements LongId {
 
 	@Column(name = "name", nullable = false, length = 100)
 	private String name;
-
-	@OneToMany
-	@JoinColumn(name = "form_definition_id")
-	@OrderBy("order_ ASC")
-	private Set<FormSectionDefinitionEntity> formSectionDefinitions;
+	
+	/**
+	 * Contient un flux json constitué par une liste de FieldDefinition
+	 */
+	@Column(name = "definition", nullable = false, columnDefinition = "text", length = 4086)
+	private String definition;
 
 	@Override
 	public int hashCode() {
@@ -61,11 +55,11 @@ public class FormDefinitionEntity implements LongId {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof FormDefinitionEntity)) {
+		if (!(obj instanceof StylingEntity)) {
 			return false;
 		}
-		FormDefinitionEntity other = (FormDefinitionEntity) obj;
-		if (getId() != null && getId().equals(other.getId())) {
+		StylingEntity other = (StylingEntity) obj;
+		if (getId() == null && getId().equals(other.id)) {
 			return true;
 		}
 		if (getName() == null) {
@@ -77,4 +71,5 @@ public class FormDefinitionEntity implements LongId {
 		}
 		return true;
 	}
+
 }

@@ -13,6 +13,7 @@ import org.georchestra.signalement.core.dto.FeatureCollection;
 import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
+import org.georchestra.signalement.service.dto.TaskSearchCriteria;
 import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 import org.georchestra.signalement.service.exception.FormConvertException;
@@ -68,16 +69,18 @@ public interface TaskService {
 	/**
 	 * Recherche des tâches affectées à l'utilisateur courant
 	 * 
+	 * @param taskSearchCriteria
 	 * @return
 	 */
-	List<Task> searchTasks();
+	List<Task> searchTasks(TaskSearchCriteria taskSearchCriteria);
 
 	/**
 	 * Recherche des tâches affectées à l'utilisateur courant
 	 * 
+	 * @param taskSearchCriteria
 	 * @return un flux GeoJSon
 	 */
-	FeatureCollection searchGeoJSonTasks();
+	FeatureCollection searchGeoJSonTasks(TaskSearchCriteria taskSearchCriteria);
 
 	/**
 	 * Retourne une tâche par son id

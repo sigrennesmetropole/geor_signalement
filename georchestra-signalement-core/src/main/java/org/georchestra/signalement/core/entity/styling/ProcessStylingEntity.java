@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.georchestra.signalement.core.entity.form;
+package org.georchestra.signalement.core.entity.styling;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,8 +26,8 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "process_form_definition")
-public class ProcessFormDefinitionEntity implements LongId {
+@Table(name = "process_styling")
+public class ProcessStylingEntity implements LongId {
 
 	@Id
 	@Column(name = "id")
@@ -44,8 +44,8 @@ public class ProcessFormDefinitionEntity implements LongId {
 	private String userTaskId;
 
 	@ManyToOne
-	@JoinColumn(name = "form_definition_id")
-	private FormDefinitionEntity formDefinition;
+	@JoinColumn(name = "styling_id")
+	private StylingEntity styling;
 
 	@Override
 	public int hashCode() {
@@ -63,10 +63,10 @@ public class ProcessFormDefinitionEntity implements LongId {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof ProcessFormDefinitionEntity)) {
+		if (!(obj instanceof ProcessStylingEntity)) {
 			return false;
 		}
-		ProcessFormDefinitionEntity other = (ProcessFormDefinitionEntity) obj;
+		ProcessStylingEntity other = (ProcessStylingEntity) obj;
 		if (getId() != null && getId().equals(other.getId())) {
 			return true;
 		}
@@ -93,5 +93,6 @@ public class ProcessFormDefinitionEntity implements LongId {
 		}
 		return true;
 	}
-
+	
+	
 }
