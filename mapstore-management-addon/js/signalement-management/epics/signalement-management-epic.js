@@ -51,37 +51,37 @@ export const loadViewDataEpic = (action$) =>
                     .catch(e => Rx.Observable.of(loadActionError("signalement-management.load.searchTask.error", e)));
             });         
 
-export const updateViewDataEpic = (action$, store) => 
-    action$.ofType(actions.TYPE_VIEW_CHANGED)
-        .switchMap((action) => {
-            console.log("sigm epics type view changed");
-            const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === 'signalements'));
-            const featureCollection = action.geometry;
-            return Rx.Observable.from((signalementsLayer ? [updateNode('signalements', 'layer', {
-                features : [createNewFeature(action)]
-                //features : signalementLayerSelector(store.getState()).features.concat([createNewFeature(action)])
-                //features: signalementLayerSelector(store.getState()).features.map(f => assign({}, f, {
-                //    properties: f.properties.id === action.id ? assign({}, f.properties, action.properties, action.fields) : f.properties,
-                //    features: f.properties.id === action.id ? featureCollection : f.features,
-                //    style: f.properties.id === action.id ? action.style : f.style
-                //}))//.concat(action.newFeature ? [createNewFeature(action)] : [])
-            })] : [
-                addLayer({
-                    type: 'vector',
-                    visibility: true,
-                    id: 'signalements',
-                    name: "Signalements",
-                    rowViewer: viewer,
-                    hideLoading: true,
-                    style: action.style,
-                    features: [createNewFeature(action)],
-                    handleClickOnLayer: true
-                })
-            ]).concat([
-                //changeDrawingStatus("clean", store.getState().signalements.featureType || '', "signalements", [], {}),
-                changeLayerProperties('signalements', {visibility: true})
-            ]));
-        });     
+        export const updateViewDataEpic = (action$, store) => 
+        action$.ofType(actions.TYPE_VIEW_CHANGED)
+            .switchMap((action) => {
+                console.log("sigm epics type view changed");
+                const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === 'signalements'));
+                const featureCollection = action.geometry;
+                if( signalementsLayer) {
+                    return Rx.Observable.from(([updateNode('signalements', 'layer', {
+                        features : [createNewFeature(action)]
+                    })]).concat([
+                        changeLayerProperties('signalements', {visibility: true})
+                    ]));
+                } else {
+                    return Rx.Observable.from((
+                        [
+                        addLayer({
+                            type: 'vector',
+                            visibility: true,
+                            id: 'signalements',
+                            name: "Signalements",
+                            rowViewer: viewer,
+                            hideLoading: true,
+                            style: action.style,
+                            handleClickOnLayer: true
+                        })]
+                        ).concat([
+                            updateNode('signalements', 'layer', {features : [createNewFeature(action)]}),
+                            changeLayerProperties('signalements', {visibility: true})
+                    ]));
+                }
+            });     
         
 const createNewFeature = (action) => {
     console.log("sigm createNewFeature");
@@ -94,3 +94,42 @@ const createNewFeature = (action) => {
         style: assign({}, action.style, {highlight: false})
     };*/
 };
+
+export const openTabularViewEpic = (action$, store) => 
+    action$.ofType(actions.OPEN_TABULAR_VIEW)
+        .switchMap((action) => {
+            console.log("sigm epics open");
+            const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === 'signalements'));
+            if( signalementsLayer) {
+                return Rx.Observable.from(([setLayer('signalements')] ).concat([openFeatureGrid()
+                ]));
+            } else {
+                return Rx.Observable.from(
+                    [addLayer({
+                        type: 'vector',
+                        visibility: true,
+                        id: 'signalements',
+                        name: "Signalements",
+                        rowViewer: viewer,
+                        hideLoading: true,
+                        style: action.style,
+                        handleClickOnLayer: true
+                        })]
+                    ).concat(
+                        [
+                        setLayer('signalements'),
+                        openFeatureGrid()
+                        ]);
+            }
+        });
+
+export const closeTabularViewEpic = (action$, store) => 
+        action$.ofType(actions.CLOSE_TABULAR_VIEW)
+            .switchMap((action) => {
+                console.log("sigm epics close");
+                const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === 'signalements'));
+                return Rx.Observable.from((signalementsLayer ? 
+                [
+                    closeFeatureGrid()
+                ] : null));
+            }); 

@@ -87,6 +87,7 @@ export class SignalementManagementPanelComponent extends React.Component {
 
         if( this.state.initialized && this.state.currentContext === null ) {
             this.state.currentContext = this.props.contexts[0];
+            this.props.changeTypeView(viewType.MY);
         }
     }
 
