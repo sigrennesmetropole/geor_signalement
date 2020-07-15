@@ -562,27 +562,23 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition du formulaire associé à la task
      */
     renderCustomForm() {
-        return (
-            <div>
-                <fieldset>
-                    <div>
-                        {this.renderSections()}
-                    </div>
-                </fieldset>
-            </div>
-        )
-    }
-
-    renderSections = () => {
-        if (this.props.task && this.props.task.form && this.props.task.form.sections) {
-            return this.props.task.form.sections.map((section, index) => {
-                return (
-                    <fieldset key={index}>
-                        <legend>{section.label} </legend>
-                        {this.renderSection(section, index)}
+        if(this.props.task && this.props.task.form && this.props.task.form.sections) {
+            return (
+                <div>
+                    <fieldset>
+                        <div>
+                            {this.props.task.form.sections.map((section, index) => {
+                                return (
+                                    <fieldset key={index}>
+                                        <legend>{section.label} </legend>
+                                        {this.renderSection(section, index)}
+                                    </fieldset>
+                                )
+                            })}
+                        </div>
                     </fieldset>
-                );
-            })
+                </div>
+            )
         }
     }
 
@@ -590,20 +586,14 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition d'une section du formulaire associé à la task
      */
     renderSection(section, index) {
-        return (
-            <div key={`section.${index}`}>
-                {this.renderFields(section, index)}
-            </div>
-        )
-    }
-
-    renderFields = (section, index)=> {
-        if (section && section.fields) {
-            return section.fields.map((field, indexField) => {
-                return (
-                    this.renderField(field, indexField, index)
-                );
-            });
+        if(section && section.fields) {
+            return (
+                <div key={`section.${index}`}> {section.fields.map((field, indexField) => {
+                    return (
+                        this.renderField(field, indexField, index)
+                    )
+                })}</div>
+            )
         }
     }
 
@@ -625,7 +615,7 @@ export class SignalementPanelComponent extends React.Component {
                                              readOnly={field.definition.readOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
-                                             defaultValue={field.values[0]}
+                                             defaultValue={field.values ? field.values[0] : null}
                                              onChange={this.handleFieldChange}
                                 />
                             </div>
@@ -654,8 +644,7 @@ export class SignalementPanelComponent extends React.Component {
                                              readOnly={field.definition.readOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
-                                             defaultValue={field.values[0]}
-                                             max={0}
+                                             defaultValue={field.values  ? field.values[0] : null}
                                              onChange={this.handleFieldChange}
                                 />
                             </div>
@@ -683,7 +672,7 @@ export class SignalementPanelComponent extends React.Component {
                                              readOnly={field.definition.readOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
-                                             defaultValue={field.values[0]}
+                                             defaultValue={field.values  ? field.values[0] : null}
                                              onChange={this.handleFieldChange}
                                 />
                             </div>
@@ -700,7 +689,7 @@ export class SignalementPanelComponent extends React.Component {
                                              readOnly={field.definition.readOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
-                                             defaultChecked={field.values[0]}
+                                             defaultChecked={field.values ? field.values[0] : null}
                                              onChange={this.handleFieldChange}
                                 />
                             </div>
@@ -717,7 +706,7 @@ export class SignalementPanelComponent extends React.Component {
                                              readOnly={field.definition.readOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
-                                             defaultValue={field.values[0].code}
+                                             defaultValue={field.values ? field.values[0].code : null}
                                     //multiple={field.definition.multiple}
                                              onChange={this.handleFieldChange}
                                 >
@@ -753,7 +742,7 @@ export class SignalementPanelComponent extends React.Component {
                                          required={field.definition.required}
                                          name={field.definition.name}
                                          maxLength={field.definition.validators[0].attribute}
-                                         defaultValue={field.values[0]}
+                                         defaultValue={field.values ? field.values[0] : null}
                                          onChange={this.handleFieldChange}
                             />
                         </div>
@@ -780,7 +769,7 @@ export class SignalementPanelComponent extends React.Component {
                                          required={field.definition.required}
                                          name={field.definition.name}
                                          maxLength={field.definition.validators[0].attribute}
-                                         defaultValue={field.values[0]}
+                                         defaultValue={field.values ? field.values[0] : null}
                                          onChange={this.handleFieldChange}
                             />
                         </div>
