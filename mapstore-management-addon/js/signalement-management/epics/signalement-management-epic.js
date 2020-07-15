@@ -4,8 +4,9 @@ import {head} from 'lodash';
 import assign from 'object-assign';
 import {addLayer, updateNode, changeLayerProperties, removeLayer} from '../../../MapStore2/web/client/actions/layers';
 import {changeDrawingStatus} from '../../../../MapStore2/web/client/actions/draw';
-import {actions, loadedContexts, gotMe, loadInitError, typeViewChanged, loadActionError} from '../actions/signalement-management-action';
+import {actions, loadedContexts, gotMe, loadInitError, typeViewChanged, loadActionError, viewType} from '../actions/signalement-management-action';
 import {signalementLayerSelector} from '../selectors/signalement-management-selector';
+import {setLayer, openFeatureGrid, closeFeatureGrid} from '../../../../MapStore2/web/client/actions/featuregrid';
 
 let backendURLPrefix = "http://localhost:8082";
 
@@ -45,43 +46,45 @@ export const loadViewDataEpic = (action$) =>
         action$.ofType(actions.CHANGE_TYPE_VIEW)
             .switchMap((action) => {
                 console.log("sigm epics change type view");
-                const url = backendURLPrefix + "/task/search/geojson";
+                const url = backendURLPrefix + "/task/search/geojson?contextName=" + action.context.name +
+                    "&asAdmin=" + (action.viewType == viewType.MY ? "false":"true");
+
                 return Rx.Observable.defer(() => axios.get(url))
                     .switchMap((response) => Rx.Observable.of(typeViewChanged(action.viewType, response.data)))
                     .catch(e => Rx.Observable.of(loadActionError("signalement-management.load.searchTask.error", e)));
             });         
 
-        export const updateViewDataEpic = (action$, store) => 
-        action$.ofType(actions.TYPE_VIEW_CHANGED)
-            .switchMap((action) => {
-                console.log("sigm epics type view changed");
-                const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === 'signalements'));
-                const featureCollection = action.geometry;
-                if( signalementsLayer) {
-                    return Rx.Observable.from(([updateNode('signalements', 'layer', {
-                        features : [createNewFeature(action)]
-                    })]).concat([
+export const updateViewDataEpic = (action$, store) => 
+    action$.ofType(actions.TYPE_VIEW_CHANGED)
+        .switchMap((action) => {
+            console.log("sigm epics type view changed");
+            const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === 'signalements'));
+            const featureCollection = action.geometry;
+            if( signalementsLayer) {
+                return Rx.Observable.from(([updateNode('signalements', 'layer', {
+                    features : [createNewFeature(action)]
+                })]).concat([
+                    changeLayerProperties('signalements', {visibility: true})
+                ]));
+            } else {
+                return Rx.Observable.from((
+                    [
+                    addLayer({
+                        type: 'vector',
+                        visibility: true,
+                        id: 'signalements',
+                        name: "Signalements",
+                        rowViewer: viewer,
+                        hideLoading: true,
+                        style: action.style,
+                        handleClickOnLayer: true
+                    })]
+                    ).concat([
+                        updateNode('signalements', 'layer', {features : [createNewFeature(action)]}),
                         changeLayerProperties('signalements', {visibility: true})
-                    ]));
-                } else {
-                    return Rx.Observable.from((
-                        [
-                        addLayer({
-                            type: 'vector',
-                            visibility: true,
-                            id: 'signalements',
-                            name: "Signalements",
-                            rowViewer: viewer,
-                            hideLoading: true,
-                            style: action.style,
-                            handleClickOnLayer: true
-                        })]
-                        ).concat([
-                            updateNode('signalements', 'layer', {features : [createNewFeature(action)]}),
-                            changeLayerProperties('signalements', {visibility: true})
-                    ]));
-                }
-            });     
+                ]));
+            }
+        });     
         
 const createNewFeature = (action) => {
     console.log("sigm createNewFeature");
@@ -132,4 +135,4 @@ export const closeTabularViewEpic = (action$, store) =>
                 [
                     closeFeatureGrid()
                 ] : null));
-            }); 
+            });        

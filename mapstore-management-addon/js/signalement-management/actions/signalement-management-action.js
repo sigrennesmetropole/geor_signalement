@@ -59,10 +59,11 @@ export function closeTabularView() {
 	}
 };
 
-export function changeTypeView(viewType) {
+export function changeTypeView(viewType, context) {
 	return {
 		type: actions.CHANGE_TYPE_VIEW,
-		viewType: viewType
+		viewType: viewType,
+		context: context
 	}
 };
 

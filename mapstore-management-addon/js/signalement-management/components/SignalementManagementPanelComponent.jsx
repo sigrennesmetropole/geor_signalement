@@ -87,7 +87,7 @@ export class SignalementManagementPanelComponent extends React.Component {
 
         if( this.state.initialized && this.state.currentContext === null ) {
             this.state.currentContext = this.props.contexts[0];
-            this.props.changeTypeView(viewType.MY);
+            this.props.changeTypeView(viewType.MY,this.state.currentContext);
         }
     }
 
@@ -98,7 +98,10 @@ export class SignalementManagementPanelComponent extends React.Component {
     handleContextChange(e) {
         const contextDescriptions = this.props.contexts.filter(context => context.name === e.target.value);
         if( contextDescriptions != null && contextDescriptions.length >0){
-            this.state.currentContext = contextDescriptions[0];
+            if( this.state.currentContext !== contextDescriptions[0] ) {
+                this.state.currentContext = contextDescriptions[0];
+                this.props.changeTypeView(this.state.viewType,this.state.currentContext);
+            }
         }
         this.setState(this.state);
     }
@@ -227,10 +230,10 @@ export class SignalementManagementPanelComponent extends React.Component {
     }
 
     displayMyView(){
-        this.props.changeTypeView(viewType.MY);
+        this.props.changeTypeView(viewType.MY, this.state.currentContext);
     }
 
     displayAdminView(){
-        this.props.changeTypeView(viewType.ADMIN);
+        this.props.changeTypeView(viewType.ADMIN, this.state.currentContext);
     }
 };
