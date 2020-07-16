@@ -6,6 +6,7 @@ package org.georchestra.signalement.service.helper.geojson;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +79,7 @@ public class GeoJSonHelper {
 
 	public void setProperties(Feature feature, Task task) {
 		Map<String, Object> properties = new HashMap<>();
+		properties.put("id", feature.getId().toString());
 		properties.put("assignee", task.getAssignee());
 		properties.put("initiator", task.getInitiator());
 		properties.put("creationDate", task.getCreationDate());
@@ -106,16 +108,26 @@ public class GeoJSonHelper {
 		feature.setStyle(styles);
 	}
 
+	public void setStyle(FeatureCollection featureCollection) {
+		if (featureCollection != null) {
+			featureCollection.setStyle(Collections.singletonList(new Style()));
+		}
+	}
+
 	protected Style createPointStyle() {
 		Style style = new Style();
-		style.setIconGlyph("comment");
+		style.setIconGlyph("exclamation");
 		style.setIconShape("square");
-		style.setIconColor("#ffcc33");
+		style.setIconColor("orange");
 		return style;
 	}
 
 	protected Style createTerminalPointStyle(boolean start) {
-		Style style = createPointStyle();
+		Style style = new Style();
+		style.setFiltering(true);
+		style.setIconColor("blue");
+		style.setIconGlyph("times");
+		style.setIconShape("square");
 		style.setIconAnchor(Arrays.asList(0.5, 0.5));
 		style.setType("Point");
 		if (start) {
@@ -124,20 +136,25 @@ public class GeoJSonHelper {
 			style.setGeometry("endPoint");
 		}
 		return style;
-
 	}
 
 	protected Style createLineStyle() {
 		Style style = new Style();
 		style.setColor("#ffcc33");
 		style.setOpacity(1.0);
+		style.setWeight(3.0);
+		style.setIconAnchor(Arrays.asList(0.5, 0.5));
 		return style;
 	}
 
 	protected Style createPolygonStyle() {
 		Style style = createLineStyle();
-		style.setFillColor("#ffffff");
-		style.setFillOpacity(0.2);
+		style.setColor("#e29c10");
+		style.setOpacity(1.0);
+		style.setFillColor("#f6e5c1");
+		style.setFillOpacity(0.5);
+		style.setWeight(3.0);
+		style.setDashArray(Arrays.asList(6.0, 6.0));
 		return style;
 	}
 

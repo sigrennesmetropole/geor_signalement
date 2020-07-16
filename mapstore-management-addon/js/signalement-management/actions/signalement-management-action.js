@@ -9,6 +9,8 @@ export const actions = {
 	CLOSE_TABULAR_VIEW: 'SIGNALEMENT:MANAGEMENT:TABULAR_VIEW:CLOSE',
 	CHANGE_TYPE_VIEW: 'SIGNALEMENT:MANAGEMENT:VIEW:CHANGE',
 	TYPE_VIEW_CHANGED: 'SIGNALEMENT:MANAGEMENT:VIEW:CHANGED',
+	DISPLAY_MAP_VIEW: 'SIGNALEMENT:MANAGEMENT:VIEW:MAP',
+	DISPLAY_ADMIN_VIEW: 'SIGNALEMENT:MANAGEMENT:VIEW:ADMIN',
 };
 
 export const status = {
@@ -22,42 +24,42 @@ export const viewType = {
 };
 
 export function loadContexts() {
-    return {
-    	type: actions.CONTEXTS_LOAD
-    }
-};
+	return {
+		type: actions.CONTEXTS_LOAD
+	}
+}
 
 export function loadedContexts(contexts) {
-    return {
-    	type: actions.CONTEXTS_LOADED,
-    	contexts: contexts
-    }
-};
+	return {
+		type: actions.CONTEXTS_LOADED,
+		contexts: contexts
+	}
+}
 
 export function getMe() {
 	return {
 		type: actions.USER_ME_GET
 	}
-};
+}
 
 export function gotMe(me) {
 	return {
 		type: actions.USER_ME_GOT,
 		user: me
 	}
-};
+}
 
 export function openTabularView() {
 	return {
 		type: actions.OPEN_TABULAR_VIEW,
 	}
-};
+}
 
 export function closeTabularView() {
 	return {
 		type: actions.CLOSE_TABULAR_VIEW,
 	}
-};
+}
 
 export function changeTypeView(viewType, context) {
 	return {
@@ -65,7 +67,7 @@ export function changeTypeView(viewType, context) {
 		viewType: viewType,
 		context: context
 	}
-};
+}
 
 export function typeViewChanged(viewType, data) {
 	return {
@@ -73,7 +75,20 @@ export function typeViewChanged(viewType, data) {
 		viewType: viewType,
 		data: data
 	}
-};
+}
+
+export function displayMapView(data) {
+	return {
+		type: actions.DISPLAY_MAP_VIEW,
+		featureCollection: data
+	}
+}
+
+export function displayAdminView() {
+	return {
+		type: actions.DISPLAY_ADMIN_VIEW
+	}
+}
 
 function loadError(type, message, e){
 	console.log("message:" + message);
@@ -85,12 +100,12 @@ function loadError(type, message, e){
 			e: e
 		}
 	}
-};
+}
 
 export function loadActionError(message, e) {
 	return loadError(actions.ACTION_ERROR, message, e);
-};
+}
 
 export function loadInitError(message, e) {
 	return loadError(actions.INIT_ERROR, message, e);
-};
+}

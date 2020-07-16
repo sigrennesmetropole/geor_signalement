@@ -1524,6 +1524,10 @@
 				"iconShape": {
 					"type": "string"
 				},
+				"weight": {
+					"type": "number",
+					"format": "double"
+				},
 				"geometry": {
 					"type": "string"
 				},
@@ -1536,6 +1540,16 @@
 						"type": "number",
 						"format": "double"
 					}
+				},
+				"dashArray": {
+					"type": "array",
+					"items":{
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"filtering": {
+					"type": "boolean"
 				}
 			}
     	},
@@ -1577,6 +1591,12 @@
 					"type": "array",
 					"items":{
 						"$ref": "#/definitions/Feature"
+					}
+				},
+				"style": {
+					"type": "array",
+					"items":{
+						"$ref": "#/definitions/Style"
 					}
 				}
 			}
