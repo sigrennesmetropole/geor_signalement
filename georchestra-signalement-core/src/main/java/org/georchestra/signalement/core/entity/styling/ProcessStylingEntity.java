@@ -48,6 +48,7 @@ public class ProcessStylingEntity implements LongId {
 	private StylingEntity styling;
 
 	@Override
+	@SuppressWarnings({"common-java:DuplicatedBlocks"})
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -59,7 +60,7 @@ public class ProcessStylingEntity implements LongId {
 	}
 
 	@Override
-	@SuppressWarnings("squid:S3776")
+	@SuppressWarnings({"squid:S3776","common-java:DuplicatedBlocks"})
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
