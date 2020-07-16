@@ -788,7 +788,36 @@
 				"produces": [
 					"application/json"
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "contextName",
+						"description": "Nom du contexte pour filtrage. Pas de filtrage si null",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "contextType",
+						"description": "Type du contexte pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "geographicType",
+						"description": "Type géographique pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "asAdmin",
+						"description": "En tant qu'administrateur. Faux par défaut",
+						"required": false,
+						"type": "boolean"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -822,7 +851,36 @@
 				"produces": [
 					"application/json"
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "contextName",
+						"description": "Nom du contexte pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "contextType",
+						"description": "Type du contexte pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "geographicType",
+						"description": "Type géographique pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "asAdmin",
+						"description": "En tant qu'administrateur. Faux par défaut",
+						"required": false,
+						"type": "boolean"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "OK",
