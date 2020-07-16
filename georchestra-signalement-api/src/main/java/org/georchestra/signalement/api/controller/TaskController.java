@@ -98,7 +98,9 @@ public class TaskController implements TaskApi {
 		if (StringUtils.isNotEmpty(geographicType)) {
 			taskSearchCriteria.setGeographicType(GeographicType.valueOf(geographicType));
 		}
-		taskSearchCriteria.setAsAdmin(asAdmin != null ? asAdmin : false);
+		if (asAdmin != null) {
+			taskSearchCriteria.setAsAdmin(asAdmin);
+		}
 		return taskSearchCriteria;
 	}
 

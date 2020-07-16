@@ -15,7 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import org.georchestra.signalement.core.common.LongId;
+import org.georchestra.signalement.core.common.AbstractNamedLongId;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +32,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "form_definition")
-public class FormDefinitionEntity implements LongId {
+public class FormDefinitionEntity extends AbstractNamedLongId  {
 
 	@Id
 	@Column(name = "id")
@@ -47,34 +47,4 @@ public class FormDefinitionEntity implements LongId {
 	@OrderBy("order_ ASC")
 	private Set<FormSectionDefinitionEntity> formSectionDefinitions;
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof FormDefinitionEntity)) {
-			return false;
-		}
-		FormDefinitionEntity other = (FormDefinitionEntity) obj;
-		if (getId() != null && getId().equals(other.getId())) {
-			return true;
-		}
-		if (getName() == null) {
-			if (other.getName() != null) {
-				return false;
-			}
-		} else if (!getName().equals(other.getName())) {
-			return false;
-		}
-		return true;
-	}
 }

@@ -285,29 +285,10 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	@Override
 	public List<Task> searchTasks(TaskSearchCriteria taskSearchCriteria) {
 		List<Task> results = null;
-		String username = authentificationHelper.getUsername();
-		boolean isAdmin = authentificationHelper.isAdmin();
-		List<String> roleNames = collectRoleNames(username);
 		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
 		TaskQuery taskQuery = taskService.createTaskQuery();
-		if (taskSearchCriteria != null) {
-			if (StringUtils.isNotEmpty(taskSearchCriteria.getContextName())) {
-				taskQuery.processVariableValueEquals(CONTEXT_NAME, taskSearchCriteria.getContextName());
-			}
-			if (taskSearchCriteria.getContextType() != null) {
-				taskQuery.processVariableValueEquals(CONTEXT_TYPE, taskSearchCriteria.getContextType().name());
-			}
-			if (taskSearchCriteria.getGeographicType() != null) {
-				taskQuery.processVariableValueEquals(GEOGRAPHIC_TYPE, taskSearchCriteria.getGeographicType().name());
-			}
-		}
-		if (!isAdmin || (taskSearchCriteria != null && !taskSearchCriteria.isAsAdmin())) {
-			if (CollectionUtils.isNotEmpty(roleNames)) {
-				taskQuery.or().taskCandidateOrAssigned(username).taskCandidateGroupIn(roleNames).endOr();
-			} else {
-				taskQuery.taskCandidateOrAssigned(username);
-			}
-		}
+		applyCommonCriteria(taskQuery, taskSearchCriteria);
+		applyACLCriteria(taskQuery, taskSearchCriteria);
 		List<org.activiti.engine.task.Task> tasks = taskQuery.orderByTaskPriority().asc().orderByTaskCreateTime().desc()
 				.list();
 		if (CollectionUtils.isNotEmpty(tasks)) {
@@ -320,6 +301,34 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			}
 		}
 		return results;
+	}
+
+	private void applyACLCriteria(TaskQuery taskQuery, TaskSearchCriteria taskSearchCriteria) {
+		String username = authentificationHelper.getUsername();
+		boolean isAdmin = authentificationHelper.isAdmin();
+		List<String> roleNames = collectRoleNames(username);
+		
+		if (!isAdmin || (taskSearchCriteria != null && !taskSearchCriteria.isAsAdmin())) {
+			if (CollectionUtils.isNotEmpty(roleNames)) {
+				taskQuery.or().taskCandidateOrAssigned(username).taskCandidateGroupIn(roleNames).endOr();
+			} else {
+				taskQuery.taskCandidateOrAssigned(username);
+			}
+		}
+	}
+
+	private void applyCommonCriteria(TaskQuery taskQuery, TaskSearchCriteria taskSearchCriteria) {
+		if (taskSearchCriteria != null) {
+			if (StringUtils.isNotEmpty(taskSearchCriteria.getContextName())) {
+				taskQuery.processVariableValueEquals(CONTEXT_NAME, taskSearchCriteria.getContextName());
+			}
+			if (taskSearchCriteria.getContextType() != null) {
+				taskQuery.processVariableValueEquals(CONTEXT_TYPE, taskSearchCriteria.getContextType().name());
+			}
+			if (taskSearchCriteria.getGeographicType() != null) {
+				taskQuery.processVariableValueEquals(GEOGRAPHIC_TYPE, taskSearchCriteria.getGeographicType().name());
+			}
+		}
 	}
 
 	@Override

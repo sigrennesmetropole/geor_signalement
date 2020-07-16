@@ -59,6 +59,7 @@ public class ProcessFormDefinitionEntity implements LongId {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S3776")
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;

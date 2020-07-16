@@ -64,19 +64,42 @@ public class ProcessStylingCustomDaoImpl extends AbstractCustomDaoImpl implement
 			CriteriaQuery<ProcessStylingEntity> criteriaQuery, Root<ProcessStylingEntity> root, boolean flex) {
 		if (searchCriteria != null) {
 			List<Predicate> predicates = new ArrayList<>();
-			if (StringUtils.isNotEmpty(searchCriteria.getProcessDefinitionId())) {
-				predicates.add(builder.equal(root.get(PROCESS_DEFINITION_ID), searchCriteria.getProcessDefinitionId()));
-			}
-			if (searchCriteria.getRevision() != null) {
-				predicates.add(builder.or(builder.equal(root.get(REVISION), searchCriteria.getRevision()),
-						builder.isNull(root.get(REVISION))));
-			}
-			if (StringUtils.isNotEmpty(searchCriteria.getUserTaskId())) {
-				predicates.add(builder.or(builder.equal(root.get(USER_TASK_ID), searchCriteria.getUserTaskId()),
-						builder.isNull(root.get(USER_TASK_ID))));
-			}
+			buildProcessDefinitionIdCriteria(searchCriteria, builder, root, predicates);
+			buildRevisionCriteria(searchCriteria, builder, root, flex, predicates);
+			buildUserTaskIdCriteria(searchCriteria, builder, root, flex, predicates);
 			if (CollectionUtils.isNotEmpty(predicates)) {
 				criteriaQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
+			}
+		}
+	}
+
+	private void buildProcessDefinitionIdCriteria(ProcessStylingSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<ProcessStylingEntity> root, List<Predicate> predicates) {
+		if (StringUtils.isNotEmpty(searchCriteria.getProcessDefinitionId())) {
+			predicates.add(builder.equal(root.get(PROCESS_DEFINITION_ID), searchCriteria.getProcessDefinitionId()));
+		}
+	}
+
+	private void buildUserTaskIdCriteria(ProcessStylingSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<ProcessStylingEntity> root, boolean flex, List<Predicate> predicates) {
+		if (StringUtils.isNotEmpty(searchCriteria.getUserTaskId())) {
+			if (flex) {
+				predicates.add(builder.or(builder.equal(root.get(USER_TASK_ID), searchCriteria.getUserTaskId()),
+						builder.isNull(root.get(USER_TASK_ID))));
+			} else {
+				predicates.add(builder.equal(root.get(USER_TASK_ID), searchCriteria.getUserTaskId()));
+			}
+		}
+	}
+
+	private void buildRevisionCriteria(ProcessStylingSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<ProcessStylingEntity> root, boolean flex, List<Predicate> predicates) {
+		if (searchCriteria.getRevision() != null) {
+			if (flex) {
+				predicates.add(builder.or(builder.equal(root.get(REVISION), searchCriteria.getRevision()),
+						builder.isNull(root.get(REVISION))));
+			} else {
+				predicates.add(builder.equal(root.get(REVISION), searchCriteria.getRevision()));
 			}
 		}
 	}
