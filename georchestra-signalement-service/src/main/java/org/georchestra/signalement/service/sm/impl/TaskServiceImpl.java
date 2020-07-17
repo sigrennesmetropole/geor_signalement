@@ -346,6 +346,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 				geoJSonHelper.addFeature(result, feature);
 			}
 		}
+		geoJSonHelper.setStyle(result);
 		return result;
 	}
 
