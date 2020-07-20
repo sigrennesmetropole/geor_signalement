@@ -12,6 +12,9 @@
 
 	<artifactId>georchestra-signalement-api</artifactId>
 	<packaging>jar</packaging>
+	<properties>
+		<finalName>signalement.war</finalName>
+	</properties>
 	
 	<dependencies>
 
@@ -233,11 +236,91 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+		    	<artifactId>maven-antrun-plugin</artifactId>
+		    	<executions>
+		          <execution>
+		            <id>war</id>
+		            <phase>package</phase>
+					<goals>
+						<goal>run</goal>
+					</goals>
+	                <configuration>
+	           			<target name="copy war to final name">
+	               			<copy file="${project.build.directory}/${project.artifactId}-${project.version}.war" tofile="${project.build.directory}/${finalName}" />
+	                    </target>
+	                </configuration>                       
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 	</build>
 
 	<profiles>
+		<profile>
+			<id>docker</id>
+			<properties>
+				<packageDatadirScmVersion>master</packageDatadirScmVersion>
+				<dockerImageName>sigrennesmetropole/geor_signalement</dockerImageName>
+				<dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
+				<dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>1.2.2</version>
+						<dependencies>
+							<dependency>
+								<groupId>com.google.guava</groupId>
+								<artifactId>guava</artifactId>
+								<version>28.2-jre</version>
+							</dependency>
+						</dependencies>
+						<executions>
+						    <execution>
+						      <id>default</id>
+						      <phase>package</phase>
+						      <goals>
+						        <goal>build</goal>
+						        <goal>push</goal>
+						      </goals>
+						    </execution>
+				  		</executions>
+						<configuration>
+							<imageName>${dockerImageName}</imageName>
+							<imageTags>
+					           <imageTag>${project.version}</imageTag>
+					           <imageTag>latest</imageTag>
+					        </imageTags>
+							<!-- chemin relatif depuis le target du présent projet -->
+							<!-- dockerDirectory>./docker\signalement-backend</dockerDirectory-->
+							<dockerDirectory>${project.basedir}/../docker/signalement-backend</dockerDirectory>
+							<baseImage>jetty:9.3-jre8</baseImage>
+							<dockerMaintainer>tbrule@open-groupe.com</dockerMaintainer>
+							<entryPoint>[ "sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty ${ADD_JAVA_OPTS} -Xmx${XMX:-1G} -Xms${XMX:-1G} -jar /usr/local/jetty/start.jar" ]]</entryPoint>
+														
+        					<!-- copy the service's jar file from target into the root directory of the image --> 
+        					<resources>
+           						<resource>
+					            	<targetPath>/var/lib/jetty/webapps/</targetPath>
+					             	<directory>${project.build.directory}</directory>
+					            	<include>${finalName}</include>
+					           	</resource>
+					        </resources>
+							<!-- This will require to set up the docker-hub credentials correctly 
+								into your ~/.m2/settings.xml, see: https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries -->
+							<serverId>docker-hub</serverId>
+							<registryUrl>https://index.docker.io/v1/</registryUrl>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>dev</id>
 			<build>
