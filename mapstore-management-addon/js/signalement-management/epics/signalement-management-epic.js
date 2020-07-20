@@ -83,7 +83,7 @@ export const displayMapViewDataEpic = (action$, store) =>
         .switchMap((action) => {
             const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === SIGNALEMENT_MANAGEMENT_LAYER_ID));
             return Rx.Observable.from((signalementsLayer
-                    ? [updateNode(SIGNALEMENT_MANAGEMENT_LAYER_ID, 'layer', {features: [action.featureCollection]})]
+                    ? [updateNode(SIGNALEMENT_MANAGEMENT_LAYER_ID, 'layer', {features: createNewFeatures(action)})]
                     : [addLayer({
                         handleClickOnLayer: true,
                         hideLoading: true,
@@ -92,7 +92,7 @@ export const displayMapViewDataEpic = (action$, store) =>
                         style: undefined,
                         type: "vector",
                         visibility: true,
-                        features: [action.featureCollection],
+                        features: createNewFeatures(action),
                     })]
             ).concat(changeLayerProperties(SIGNALEMENT_MANAGEMENT_LAYER_ID, {visibility: true})));
         });
@@ -145,3 +145,9 @@ export const closeTabularViewEpic = (action$, store) =>
                     : null
             ));
         });
+
+const createNewFeatures = (action) => {
+    return action.featureCollection && action.featureCollection.features
+        ? action.featureCollection.features
+        : [];
+};
