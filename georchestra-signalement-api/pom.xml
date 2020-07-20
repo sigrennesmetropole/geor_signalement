@@ -24,12 +24,6 @@
 			<version>${project.version}</version>
 			<type>jar</type>
 		</dependency>
-
-		<!-- -dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>-->
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -298,11 +292,7 @@
 					           <imageTag>latest</imageTag>
 					        </imageTags>
 							<!-- chemin relatif depuis le target du présent projet -->
-							<!-- dockerDirectory>./docker\signalement-backend</dockerDirectory-->
 							<dockerDirectory>${project.basedir}/../docker/signalement-backend</dockerDirectory>
-							<baseImage>jetty:9.3-jre8</baseImage>
-							<dockerMaintainer>tbrule@open-groupe.com</dockerMaintainer>
-							<entryPoint>[ "sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty ${ADD_JAVA_OPTS} -Xmx${XMX:-1G} -Xms${XMX:-1G} -jar /usr/local/jetty/start.jar" ]]</entryPoint>
 														
         					<!-- copy the service's jar file from target into the root directory of the image --> 
         					<resources>

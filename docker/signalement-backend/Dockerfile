@@ -1,7 +1,8 @@
 FROM jetty:9.3-jre8
 MAINTAINER tbrule@open-groupe.com
 
-ADD etc/ /etc
+ADD /var/lib/jetty/webapps/signalement.war /var/lib/jetty/webapps/signalement.war
+#ADD etc/ /etc
 
 CMD [ "sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
       ${ADD_JAVA_OPTS}                                   \
