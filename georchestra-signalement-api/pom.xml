@@ -301,6 +301,11 @@
 					             	<directory>${project.build.directory}</directory>
 					            	<include>${finalName}</include>
 					           	</resource>
+								<!-- <resource>
+                  					<targetPath>/etc/georchestra</targetPath>
+                  					<directory>${project.build.directory}/datadir</directory>
+                  					<include>${project.artifactId}/**</include>
+                				</resource> -->
 					        </resources>
 							<!-- This will require to set up the docker-hub credentials correctly 
 								into your ~/.m2/settings.xml, see: https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries -->
