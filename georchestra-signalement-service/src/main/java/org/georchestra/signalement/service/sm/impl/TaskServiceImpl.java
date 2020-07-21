@@ -27,7 +27,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
-import org.georchestra.signalement.core.dao.acl.RoleCustomDao;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
 import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.AttachmentConfiguration;
@@ -35,11 +34,9 @@ import org.georchestra.signalement.core.dto.Feature;
 import org.georchestra.signalement.core.dto.FeatureCollection;
 import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.ReportingDescription;
-import org.georchestra.signalement.core.dto.RoleSearchCriteria;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
-import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.dto.TaskSearchCriteria;
 import org.georchestra.signalement.service.exception.DataException;
@@ -73,11 +70,13 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	public static final String CONTEXT_TYPE = "contextType";
 
+	public static final String CONTEXT_NAME = "contextName";
+
 	public static final String ME_UUID = "meUuid";
 
 	public static final String ME_ID = "meId";
 
-	public static final String CONTEXT_NAME = "contextName";
+	public static final String ASSET_ID = "assetId";
 
 	private static final String INVALID_REPORTING_UUID_MESSAGE = "Invalid reporting Uuid";
 
@@ -92,9 +91,6 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	@Autowired
 	private ReportingDao reportingDao;
-
-	@Autowired
-	private RoleCustomDao roleCustomDao;
 
 	@Autowired
 	private DocumentRepositoryService documentRepositoryService;
@@ -195,20 +191,30 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	public Task claimTask(String taskId) {
 		Task result = null;
 		LOGGER.debug("Claim on task {}", taskId);
-		org.activiti.engine.task.Task originalTask = bpmnHelper.queryTaskById(taskId);
+		org.activiti.engine.task.Task originalTask = bpmnHelper.queryTaskById(taskId, true);
 		if (originalTask != null) {
-			org.activiti.engine.TaskService taskService = processEngine.getTaskService();
 			String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(originalTask);
 			LOGGER.debug("Claim on reporting {}", processInstanceBusinessKey);
 			UUID uuid = UUID.fromString(processInstanceBusinessKey);
-			// TODO checker que l'on peut claimer...
-			AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
-			taskService.claim(taskId, authentificationHelper.getUsername());
+			boolean isAdmin = authentificationHelper.isAdmin();
+			// le claim ne peut être fait que par un admin ou si la tâche n'est pas affectée
+			if (isAdmin || StringUtils.isEmpty(originalTask.getAssignee())) {
+				AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+				
+				org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+				taskService.claim(taskId, authentificationHelper.getUsername());
 
-			originalTask = bpmnHelper.queryTaskById(taskId);
-			result = reportingHelper.createTaskFromWorkflow(originalTask, reportingMapper.entityToDto(reportingEntity));
+				// rechargement de la tâche après claim
+				originalTask = bpmnHelper.queryTaskById(taskId);
+				result = reportingHelper.createTaskFromWorkflow(originalTask,
+						reportingMapper.entityToDto(reportingEntity));
+			} else {
+				LOGGER.warn("Skip claim on task {} invalid assigneee {} vrs {}", taskId, originalTask.getAssignee(),
+						authentificationHelper.getUsername());
+				throw new IllegalArgumentException("Task is already assigned and you're not admin");
+			}
 		} else {
-			LOGGER.info("Skip claim on task {} invalid id", taskId);
+			throw new IllegalArgumentException("Task could not be claimed by you");
 		}
 		return result;
 	}
@@ -219,6 +225,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		LOGGER.debug("DoIt on task {}=>{}", taskId, actionName);
 		org.activiti.engine.task.Task task = bpmnHelper.queryTaskById(taskId);
 		if (task != null) {
+			// l'action n'est possible que si l'on est assigné à la tâche
 			if (authentificationHelper.getUsername().equalsIgnoreCase(task.getAssignee())) {
 				SequenceFlow sequenceFlow = bpmnHelper.lookupSequenceFlow(task, actionName);
 				if (sequenceFlow != null || BpmnHelper.DEFAULT_ACTION.equals(actionName)) {
@@ -232,16 +239,16 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 					taskService.complete(taskId, variables);
 					LOGGER.debug("Done on task {}=>{}", taskId, actionName);
 				} else {
-					LOGGER.info("Skip doIt on task {} invalid actionname {}", taskId, actionName);
+					LOGGER.warn("Skip doIt on task {} invalid actionname {}", taskId, actionName);
 					throw new IllegalArgumentException("Action name is invalid");
 				}
 			} else {
-				LOGGER.info("Skip doIt on task {} invalid assigneee {} vrs {}", taskId, task.getAssignee(),
+				LOGGER.warn("Skip doIt on task {} invalid assigneee {} vrs {}", taskId, task.getAssignee(),
 						authentificationHelper.getUsername());
 				throw new IllegalArgumentException("Task is not assigned to you");
 			}
 		} else {
-			LOGGER.info("Skip doIt on task {} invalid id", taskId);
+			LOGGER.warn("Skip doIt on task {} invalid id", taskId);
 		}
 	}
 
@@ -251,17 +258,20 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		if (task == null || task.getAsset() == null) {
 			throw new IllegalArgumentException("Task with asset is mandatory");
 		}
+
 		Task result = null;
 		if (task.getId() != null) {
 			result = updateRunningTask(task);
 		} else {
 			// récupération du signalement draft si on a pas trouvé de tâche associé
+			// dans ce cas pas de controle d'accès puisqu'il n'y a pas encore d'affectation.
 			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(task.getAsset().getUuid());
 			if (reportingEntity != null && reportingEntity.getStatus() == Status.DRAFT) {
 				result = reportingHelper.createTaskFromReporting(
 						reportingMapper.entityToDto(updateDraftReporting(task, reportingEntity)));
 			} else {
-				throw new IllegalArgumentException("Task does no exists or has a bad status");
+				LOGGER.warn("Skip updateTask. Task does not exist or has a bad status");
+				throw new IllegalArgumentException("Task does not exist or has a bad status");
 			}
 		}
 
@@ -271,12 +281,8 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	@Override
 	public Task getTask(String taskId) {
 		Task result = null;
-		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
-		List<org.activiti.engine.task.Task> tasks = taskService.createTaskQuery()
-				.taskAssignee(authentificationHelper.getUsername()).taskId(taskId).orderByTaskPriority().asc()
-				.orderByTaskCreateTime().desc().list();
-		if (CollectionUtils.isNotEmpty(tasks)) {
-			org.activiti.engine.task.Task task = tasks.get(0);
+		org.activiti.engine.task.Task task = bpmnHelper.queryTaskById(taskId, true);
+		if (task != null) {
 			result = convertTask(task);
 		}
 		return result;
@@ -289,8 +295,8 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		TaskQuery taskQuery = taskService.createTaskQuery();
 		applyCommonCriteria(taskQuery, taskSearchCriteria);
 		applyACLCriteria(taskQuery, taskSearchCriteria);
-		List<org.activiti.engine.task.Task> tasks = taskQuery.orderByTaskPriority().asc().orderByTaskCreateTime().desc()
-				.list();
+		bpmnHelper.applySortCriteria(taskQuery);
+		List<org.activiti.engine.task.Task> tasks = taskQuery.list();
 		if (CollectionUtils.isNotEmpty(tasks)) {
 			results = new ArrayList<>(tasks.size());
 			for (org.activiti.engine.task.Task originalTask : tasks) {
@@ -301,34 +307,6 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			}
 		}
 		return results;
-	}
-
-	private void applyACLCriteria(TaskQuery taskQuery, TaskSearchCriteria taskSearchCriteria) {
-		String username = authentificationHelper.getUsername();
-		boolean isAdmin = authentificationHelper.isAdmin();
-		List<String> roleNames = collectRoleNames(username);
-		
-		if (!isAdmin || (taskSearchCriteria != null && !taskSearchCriteria.isAsAdmin())) {
-			if (CollectionUtils.isNotEmpty(roleNames)) {
-				taskQuery.or().taskCandidateOrAssigned(username).taskCandidateGroupIn(roleNames).endOr();
-			} else {
-				taskQuery.taskCandidateOrAssigned(username);
-			}
-		}
-	}
-
-	private void applyCommonCriteria(TaskQuery taskQuery, TaskSearchCriteria taskSearchCriteria) {
-		if (taskSearchCriteria != null) {
-			if (StringUtils.isNotEmpty(taskSearchCriteria.getContextName())) {
-				taskQuery.processVariableValueEquals(CONTEXT_NAME, taskSearchCriteria.getContextName());
-			}
-			if (taskSearchCriteria.getContextType() != null) {
-				taskQuery.processVariableValueEquals(CONTEXT_TYPE, taskSearchCriteria.getContextType().name());
-			}
-			if (taskSearchCriteria.getGeographicType() != null) {
-				taskQuery.processVariableValueEquals(GEOGRAPHIC_TYPE, taskSearchCriteria.getGeographicType().name());
-			}
-		}
 	}
 
 	@Override
@@ -519,27 +497,34 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	}
 
 	private Task updateRunningTask(Task task) throws DataException, FormDefinitionException, FormConvertException {
-		Task result = task;
-		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
-		List<org.activiti.engine.task.Task> tasks = taskService.createTaskQuery()
-				.taskAssignee(authentificationHelper.getUsername()).taskId(task.getId()).orderByTaskPriority().asc()
-				.orderByTaskCreateTime().desc().list();
-		if (CollectionUtils.isNotEmpty(tasks)) {
-			// récupération de la tâche
-			org.activiti.engine.task.Task originalTask = tasks.get(0);
-			// récupération de l'entité associée
-			String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(originalTask);
-			UUID uuid = UUID.fromString(processInstanceBusinessKey);
-			AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+		Task result = null;
+		org.activiti.engine.task.Task originalTask = bpmnHelper.queryTaskById(task.getId());
+		if (originalTask != null) {
+			// l'action n'est possible que si l'on est assigné à la tâche
+			if (authentificationHelper.getUsername().equalsIgnoreCase(task.getAssignee())) {
 
-			// mise à jour de l'entité
-			reportingMapper.updateEntityFromDto(task.getAsset(), reportingEntity);
+				// récupération de l'entité associée
+				String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(originalTask);
+				UUID uuid = UUID.fromString(processInstanceBusinessKey);
+				AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
 
-			// mise à jour des datas de l'entité
-			updateReportingDatas(task, originalTask, reportingEntity);
+				// mise à jour de l'entité
+				reportingMapper.updateEntityFromDto(task.getAsset(), reportingEntity);
 
-			// conversion
-			result = reportingHelper.createTaskFromWorkflow(originalTask, reportingMapper.entityToDto(reportingEntity));
+				// mise à jour des datas de l'entité
+				updateReportingDatas(task, originalTask, reportingEntity);
+
+				// conversion
+				result = reportingHelper.createTaskFromWorkflow(originalTask,
+						reportingMapper.entityToDto(reportingEntity));
+			} else {
+				LOGGER.warn("Skip update on task {} invalid assigneee {} vrs {}", originalTask.getId(),
+						originalTask.getAssignee(), authentificationHelper.getUsername());
+				throw new IllegalArgumentException("Task does no exists or not accessible by you");
+			}
+		} else {
+			LOGGER.warn("Skip update on task {} unknown", task.getId());
+			throw new IllegalArgumentException("Task does no exists or not accessible by you");
 		}
 		return result;
 	}
@@ -617,6 +602,24 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		return true;
 	}
 
+	private void applyACLCriteria(TaskQuery taskQuery, TaskSearchCriteria taskSearchCriteria) {
+		bpmnHelper.applyACLCriteria(taskQuery, taskSearchCriteria != null && taskSearchCriteria.isAsAdmin());
+	}
+
+	private void applyCommonCriteria(TaskQuery taskQuery, TaskSearchCriteria taskSearchCriteria) {
+		if (taskSearchCriteria != null) {
+			if (StringUtils.isNotEmpty(taskSearchCriteria.getContextName())) {
+				taskQuery.processVariableValueEquals(CONTEXT_NAME, taskSearchCriteria.getContextName());
+			}
+			if (taskSearchCriteria.getContextType() != null) {
+				taskQuery.processVariableValueEquals(CONTEXT_TYPE, taskSearchCriteria.getContextType().name());
+			}
+			if (taskSearchCriteria.getGeographicType() != null) {
+				taskQuery.processVariableValueEquals(GEOGRAPHIC_TYPE, taskSearchCriteria.getGeographicType().name());
+			}
+		}
+	}
+
 	protected void cacheEntiy(ActivitiEvent event) {
 		ActivitiEntityEvent ea = (ActivitiEntityEvent) event;
 		if (ea.getEntity() instanceof ExecutionEntity) {
@@ -654,18 +657,4 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			}
 		}
 	}
-
-	private List<String> collectRoleNames(String username) {
-		List<String> roleNames = new ArrayList<>();
-		RoleSearchCriteria searchCriteria = new RoleSearchCriteria();
-		searchCriteria.setUserNames(Arrays.asList(username));
-		List<RoleEntity> roles = roleCustomDao.searchRoles(searchCriteria, null);
-		if (CollectionUtils.isNotEmpty(roles)) {
-			for (RoleEntity role : roles) {
-				roleNames.add(role.getName());
-			}
-		}
-		return roleNames;
-	}
-
 }

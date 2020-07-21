@@ -4,6 +4,7 @@
 package org.georchestra.signalement.service.helper.workflow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.activiti.bpmn.model.BpmnModel;
@@ -17,9 +18,14 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.collections4.CollectionUtils;
+import org.georchestra.signalement.core.dao.acl.RoleCustomDao;
 import org.georchestra.signalement.core.dto.Action;
+import org.georchestra.signalement.core.dto.RoleSearchCriteria;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
+import org.georchestra.signalement.core.entity.acl.RoleEntity;
+import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +41,12 @@ public class BpmnHelper {
 	@Autowired
 	private ProcessEngine processEngine;
 
+	@Autowired
+	private RoleCustomDao roleCustomDao;
+
+	@Autowired
+	private AuthentificationHelper authentificationHelper;
+
 	/**
 	 * Retourne la tâche activiti par son id
 	 * 
@@ -49,6 +61,65 @@ public class BpmnHelper {
 		} else {
 			return null;
 		}
+	}
+	
+	/**
+	 * @param taskId
+	 * @param isAdmin
+	 * @return
+	 */
+	public org.activiti.engine.task.Task queryTaskById(String taskId, boolean asAdmin) {
+		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+		TaskQuery taskQuery = taskService.createTaskQuery();
+		applyACLCriteria(taskQuery, asAdmin);
+		applyTaskIdCriteria(taskQuery, taskId);
+		applySortCriteria(taskQuery);
+		
+		List<org.activiti.engine.task.Task> tasks = taskQuery.list();
+		if (CollectionUtils.isNotEmpty(tasks)) {
+			return tasks.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Applique les critères de filtrage d'assignation
+	 * 
+	 * @param taskQuery
+	 * @param asAdmin
+	 */
+	public void applyACLCriteria(TaskQuery taskQuery, boolean asAdmin) {
+		String username = authentificationHelper.getUsername();
+		boolean userIsAdmin = authentificationHelper.isAdmin();
+		List<String> roleNames = collectRoleNames(username);
+
+		if (!(userIsAdmin && asAdmin)) {
+			if (CollectionUtils.isNotEmpty(roleNames)) {
+				taskQuery.or().taskCandidateOrAssigned(username).taskCandidateGroupIn(roleNames).endOr();
+			} else {
+				taskQuery.taskCandidateOrAssigned(username);
+			}
+		}
+	}
+
+	/**
+	 * Applique le critère de tri pas défaut
+	 * 
+	 * @param taskQuery
+	 */
+	public void applySortCriteria(TaskQuery taskQuery) {
+		taskQuery.orderByTaskPriority().asc().orderByTaskCreateTime().desc();
+	}
+
+	/**
+	 * Applique le critère taskId
+	 * 
+	 * @param taskQuery
+	 * @param taskId
+	 */
+	public void applyTaskIdCriteria(TaskQuery taskQuery, String taskId) {
+		taskQuery.taskId(taskId);
 	}
 
 	/**
@@ -229,6 +300,19 @@ public class BpmnHelper {
 		action.setLabel(sequenceFlow.getDocumentation());
 		action.setName(sequenceFlow.getName());
 		return action;
+	}
+
+	private List<String> collectRoleNames(String username) {
+		List<String> roleNames = new ArrayList<>();
+		RoleSearchCriteria searchCriteria = new RoleSearchCriteria();
+		searchCriteria.setUserNames(Arrays.asList(username));
+		List<RoleEntity> roles = roleCustomDao.searchRoles(searchCriteria, null);
+		if (CollectionUtils.isNotEmpty(roles)) {
+			for (RoleEntity role : roles) {
+				roleNames.add(role.getName());
+			}
+		}
+		return roleNames;
 	}
 
 }
