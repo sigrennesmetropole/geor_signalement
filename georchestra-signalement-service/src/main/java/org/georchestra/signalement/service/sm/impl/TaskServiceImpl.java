@@ -200,7 +200,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			// le claim ne peut être fait que par un admin ou si la tâche n'est pas affectée
 			if (isAdmin || StringUtils.isEmpty(originalTask.getAssignee())) {
 				AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
-				
+
 				org.activiti.engine.TaskService taskService = processEngine.getTaskService();
 				taskService.claim(taskId, authentificationHelper.getUsername());
 

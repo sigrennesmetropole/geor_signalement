@@ -79,7 +79,8 @@ public class GeoJSonHelper {
 
 	public void setProperties(Feature feature, Task task) {
 		Map<String, Object> properties = new HashMap<>();
-		properties.put("id", feature.getId().toString());
+		properties.put("uuid", feature.getId().toString());
+		properties.put("id", task.getId());
 		properties.put("assignee", task.getAssignee());
 		properties.put("initiator", task.getInitiator());
 		properties.put("creationDate", task.getCreationDate());
