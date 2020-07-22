@@ -201,6 +201,38 @@
 				}
 			}
 		},
+		"user/contexts":{
+			"get": {
+				"tags": [
+					"user"
+				],
+				"summary": "Récupération des contexts sur lesquels l'utilisateur connecté peut avoir des actions",
+				"description": "",
+				"operationId": "getVisibleContexts",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ContextDescription"
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
 		"/task/draft": {
 			"post": {
 				"tags": [
@@ -751,12 +783,41 @@
 					"tasks"
 				],
 				"summary": "Liste les tâche du user courant",
-				"description": "Retourne la liste des tâches de l'utilisateur connecté'",
+				"description": "Retourne la liste des tâches de l'utilisateur connecté",
 				"operationId": "searchTasks",
 				"produces": [
 					"application/json"
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "contextName",
+						"description": "Nom du contexte pour filtrage. Pas de filtrage si null",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "contextType",
+						"description": "Type du contexte pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "geographicType",
+						"description": "Type géographique pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "asAdmin",
+						"description": "En tant qu'administrateur. Faux par défaut",
+						"required": false,
+						"type": "boolean"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -765,6 +826,67 @@
 							"items": {
 								"$ref": "#/definitions/Task"
 							}
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/search/geojson": {
+			"get": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Liste les tâche du user courant au format GeoJSon",
+				"description": "Retourne la liste des tâches de l'utilisateur connecté au format GeoJSon",
+				"operationId": "searchGeoJSonTasks",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "contextName",
+						"description": "Nom du contexte pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "contextType",
+						"description": "Type du contexte pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "geographicType",
+						"description": "Type géographique pour filtrage",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "asAdmin",
+						"description": "En tant qu'administrateur. Faux par défaut",
+						"required": false,
+						"type": "boolean"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/FeatureCollection"
 						}
 					},
 					"400": {
@@ -843,7 +965,7 @@
 				}
 			}
 		},
-		"Point": {
+		"PointG": {
 			"type": "object",
 			"properties": {
 				"x": {
@@ -1126,7 +1248,7 @@
 				"localisation": {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/Point"
+						"$ref": "#/definitions/PointG"
 					}
 				},
 				"attachments": {
@@ -1210,6 +1332,274 @@
 					"$ref": "#/definitions/ReportingDescription"
 				}
 			}
-		}
+		},
+		"GeometryType": {
+			"type": "string",
+			"description": "the geometry type",
+			"enum": [
+				"Point",
+				"LineString",
+				"Polygon",
+				"MultiPoint",
+				"MultiLineString",
+				"MultiPolygon"
+			]
+		},
+		"Geometry": {
+			"type": "object",
+			"description": "GeoJSon geometry",
+			"discriminator": "type",
+			"properties": {
+				"type": {
+					"type": "object",
+					"$ref": "#/definitions/GeometryType"
+				}
+			}
+		},
+		"Point2D":{
+			"type": "array",
+			"maxItems": 2,
+    		"minItems": 2,
+    		"items":{
+    			"type": "number"
+    		}
+		},
+		"Point": {
+			"type": "object",
+			"description": "GeoJSon geometry",
+			"allOf": [
+				{"$ref": "#/definitions/Geometry"},
+				{
+					"type": "object",
+					"properties": {
+						"coordinates": {
+							"$ref": "#/definitions/Point2D"
+						}
+					}
+				}
+			]
+		},
+		"LineString":{
+			"type": "object",
+			"description": "GeoJSon geometry",
+			"allOf": [
+				{"$ref": "#/definitions/Geometry"},
+				{
+					"type":"object",
+					"properties": {
+						"coordinates": {
+							"type": "array",
+							"items" : {
+								"$ref": "#/definitions/Point2D"
+							}
+						}
+					}
+				}
+			]
+		},
+		"Polygon":{
+			"type": "object",
+			"description": "GeoJSon geometry",
+			"allOf": [
+				{"$ref": "#/definitions/Geometry"},
+				{
+					"type":"object",
+					"properties": {
+						"coordinates": {
+							"type": "array",
+							"items" : {
+								"type": "array",
+								"items":{
+									"$ref": "#/definitions/Point2D"
+								}
+							}
+						}
+					}
+				}
+			]
+		},
+		"MultiPoint":{
+			"type": "object",
+			"description": "GeoJSon geometry",
+			"allOf": [
+				{"$ref": "#/definitions/Geometry"},
+				{
+					"type":"object",
+					"properties": {
+						"coordinates": {
+							"type": "array",
+							"items" : {
+								"$ref": "#/definitions/Point2D"
+							}
+						}
+					}
+				}
+			]
+		},
+		"MultiLineString":{
+			"type": "object",
+			"description": "GeoJSon geometry",
+			"allOf": [
+				{"$ref": "#/definitions/Geometry"},
+				{
+					"type":"object",
+					"properties": {
+						"coordinates": {
+							"type": "array",
+							"items" : {
+								"type": "array",
+								"items":{
+									"$ref": "#/definitions/Point2D"
+								}
+							}
+						}
+					}
+				}
+			]
+		},
+		"MultiPolygon":{
+			"type": "object",
+			"description": "GeoJSon geometry",
+			"allOf": [
+				{"$ref": "#/definitions/Geometry"},
+				{
+					"type":"object",
+					"properties": {
+						"coordinates": {
+							"type": "array",
+							"items" : {
+								"type": "array",
+								"items":{
+									"type": "array",
+									"items":{
+										"$ref": "#/definitions/Point2D"
+									}
+								}
+							}
+						}
+					}
+				}
+			]
+		},
+		"GeometryCollection":{
+    		"type": "object",
+			"description": "GeoJSon geometry collection",
+			"properties": {
+				"type": {
+					"type": "string",
+					"enum" : [ "GeometryCollection"]
+				},
+				"geometries":{
+					"type": "array",
+					"items":{
+						"$ref": "#/definitions/Geometry"
+					}
+				}
+			}
+    	},
+    	"Style": {
+    		"type": "object",
+			"description": "GeoJSon feature style",
+			"properties": {
+				"color": {
+					"type": "string"
+				},
+				"fillColor": {
+					"type": "string"
+				},
+				"fillOpacity": {
+					"type": "number",
+					"format": "double"
+				},
+				"opacity": {
+					"type": "number",
+					"format": "double"
+				},
+				"iconColor": {
+					"type": "string"
+				},
+				"iconGlyph": {
+					"type": "string"
+				},
+				"iconShape": {
+					"type": "string"
+				},
+				"weight": {
+					"type": "number",
+					"format": "double"
+				},
+				"geometry": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string"
+				},
+				"iconAnchor": {
+					"type": "array",
+					"items":{
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"dashArray": {
+					"type": "array",
+					"items":{
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"filtering": {
+					"type": "boolean"
+				}
+			}
+    	},
+    	"Feature":{
+    		"type": "object",
+			"description": "GeoJSon feature",
+			"properties": {
+				"type": {
+					"type": "string",
+					"enum" : [ "Feature"]
+				},
+				"id":{
+					"type": "string",
+					"format": "uuid"
+				},
+				"geometry":{
+					"$ref": "#/definitions/Geometry"
+				},
+				"style": {
+					"type": "array",
+					"items":{
+						"$ref": "#/definitions/Style"
+					}
+				},
+				"properties":{
+					"type": "object"
+				}
+			}
+    	},
+    	"FeatureCollection":{
+    		"type": "object",
+			"description": "GeoJSon feature collection",
+			"properties": {
+				"type": {
+					"type": "string",
+					"enum" : [ "FeatureCollection"]
+				},
+				"features":{
+					"type": "array",
+					"items":{
+						"$ref": "#/definitions/Feature"
+					}
+				},
+				"style": {
+					"type": "array",
+					"items":{
+						"$ref": "#/definitions/Style"
+					}
+				}
+			}
+    	}
 	}
 }

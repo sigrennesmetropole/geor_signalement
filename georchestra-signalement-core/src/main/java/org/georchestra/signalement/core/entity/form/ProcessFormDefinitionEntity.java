@@ -12,18 +12,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.georchestra.signalement.core.common.LongId;
+import org.georchestra.signalement.core.common.AbstractProcessLinkEntity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author FNI18300
  *
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "process_form_definition")
-public class ProcessFormDefinitionEntity implements LongId {
+public class ProcessFormDefinitionEntity extends AbstractProcessLinkEntity {
 
 	@Id
 	@Column(name = "id")
@@ -43,4 +47,5 @@ public class ProcessFormDefinitionEntity implements LongId {
 	@JoinColumn(name = "form_definition_id")
 	private FormDefinitionEntity formDefinition;
 
+	
 }

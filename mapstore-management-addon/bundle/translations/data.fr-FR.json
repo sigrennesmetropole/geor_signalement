@@ -1,0 +1,13 @@
+{
+    "locale": "fr-FR",
+    "messages": {
+        "signalement-management": {
+           "loading": "En cours d'initialisation...",
+           "title": "Gestion des signalement",
+           "init.me.error": "Impossible de récupérer l'utilisation courant",
+           "init.contexts.error": "Impossible de récupérer les contexts de l'utilisateur courant",
+           "load.searchTask.error": "Impossible de récupérer les tâches",
+           "generic.error": "Une erreur s'est produite" 
+        }
+    }
+}

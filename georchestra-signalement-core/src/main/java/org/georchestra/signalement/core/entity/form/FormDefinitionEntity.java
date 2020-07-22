@@ -15,9 +15,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import org.georchestra.signalement.core.common.LongId;
+import org.georchestra.signalement.core.common.AbstractNamedLongId;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Décrit un formulaire composé de sections
@@ -25,10 +27,12 @@ import lombok.Data;
  * @author FNI18300
  *
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "form_definition")
-public class FormDefinitionEntity implements LongId {
+public class FormDefinitionEntity extends AbstractNamedLongId  {
 
 	@Id
 	@Column(name = "id")
@@ -42,4 +46,5 @@ public class FormDefinitionEntity implements LongId {
 	@JoinColumn(name = "form_definition_id")
 	@OrderBy("order_ ASC")
 	private Set<FormSectionDefinitionEntity> formSectionDefinitions;
+
 }

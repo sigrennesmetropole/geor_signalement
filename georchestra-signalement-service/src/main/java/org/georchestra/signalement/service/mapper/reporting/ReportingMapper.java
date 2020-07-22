@@ -58,6 +58,7 @@ public abstract class ReportingMapper {
 				LOGGER.warn("Failed to parse data:" + abstractReportingEntity.getDatas(), e);
 			}
 		}
+		reportingDescription.setLocalisation(reportingHelper.convertGeometryToCoordinate(abstractReportingEntity.getGeometry(), abstractReportingEntity.getGeographicType()));
 	}
 
 	@Mappings({ @Mapping(source = "description", target = "description"), @Mapping(ignore = true, target = "id"),

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthentificationHelper {
 
+	public static final String ADMINISTRATOR_ROLE = "ADMINISTRATOR";
+
 	/**
 	 * 
 	 * @return l'username de la personne authentifiée
@@ -25,5 +27,28 @@ public class AuthentificationHelper {
 			username = authentication.getPrincipal().toString();
 		}
 		return username;
+	}
+
+	/**
+	 * 
+	 * @return vrai si l'utilisateur connecté est administrateur
+	 */
+	public boolean isAdmin() {
+		return hasRole(ADMINISTRATOR_ROLE);
+	}
+	
+	/**
+	 * 
+	 * @param roleName
+	 * @return
+	 */
+	public boolean hasRole(String roleName) {
+		boolean result = false;
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			result = authentication.getAuthorities().stream()
+					.filter(authority -> authority.getAuthority().equalsIgnoreCase(roleName)).count() > 0;
+		}
+		return result;
 	}
 }
