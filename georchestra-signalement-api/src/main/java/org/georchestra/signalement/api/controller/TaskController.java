@@ -8,9 +8,14 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.api.TaskApi;
+import org.georchestra.signalement.core.dto.ContextType;
+import org.georchestra.signalement.core.dto.FeatureCollection;
+import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
+import org.georchestra.signalement.service.dto.TaskSearchCriteria;
 import org.georchestra.signalement.service.sm.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,8 +52,17 @@ public class TaskController implements TaskApi {
 	}
 
 	@Override
-	public ResponseEntity<List<Task>> searchTasks() throws Exception {
-		return ResponseEntity.ok(taskService.searchTasks());
+	public ResponseEntity<List<Task>> searchTasks(@Valid String contextName, @Valid String contextType,
+			@Valid String geographicType, @Valid Boolean asAdmin) throws Exception {
+		return ResponseEntity
+				.ok(taskService.searchTasks(computeSearchCriteria(contextName, contextType, geographicType, asAdmin)));
+	}
+
+	@Override
+	public ResponseEntity<FeatureCollection> searchGeoJSonTasks(@Valid String contextName, @Valid String contextType,
+			@Valid String geographicType, @Valid Boolean asAdmin) throws Exception {
+		return ResponseEntity.ok(taskService
+				.searchGeoJSonTasks(computeSearchCriteria(contextName, contextType, geographicType, asAdmin)));
 	}
 
 	@Override
@@ -70,6 +84,24 @@ public class TaskController implements TaskApi {
 	@Override
 	public ResponseEntity<Task> updateTask(@Valid Task task) throws Exception {
 		return ResponseEntity.ok(taskService.updateTask(task));
+	}
+
+	private TaskSearchCriteria computeSearchCriteria(String contextName, String contextType, String geographicType,
+			Boolean asAdmin) {
+		TaskSearchCriteria taskSearchCriteria = new TaskSearchCriteria();
+		if (contextName != null) {
+			taskSearchCriteria.setContextName(contextName);
+		}
+		if (StringUtils.isNotEmpty(contextType)) {
+			taskSearchCriteria.setContextType(ContextType.valueOf(contextType));
+		}
+		if (StringUtils.isNotEmpty(geographicType)) {
+			taskSearchCriteria.setGeographicType(GeographicType.valueOf(geographicType));
+		}
+		if (asAdmin != null) {
+			taskSearchCriteria.setAsAdmin(asAdmin);
+		}
+		return taskSearchCriteria;
 	}
 
 }
