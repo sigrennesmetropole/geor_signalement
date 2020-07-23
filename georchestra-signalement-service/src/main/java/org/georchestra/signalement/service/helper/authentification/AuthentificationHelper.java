@@ -3,6 +3,9 @@
  */
 package org.georchestra.signalement.service.helper.authentification;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -36,7 +39,20 @@ public class AuthentificationHelper {
 	public boolean isAdmin() {
 		return hasRole(ADMINISTRATOR_ROLE);
 	}
-	
+
+	/**
+	 * @return la liste des rôles
+	 */
+	public List<String> getRoles() {
+		List<String> result = null;
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			result = authentication.getAuthorities().stream().map(authority -> authority.getAuthority())
+					.collect(Collectors.toList());
+		}
+		return result;
+	}
+
 	/**
 	 * 
 	 * @param roleName

@@ -83,7 +83,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getMe() {
-		return getUserByLogin(authentificationHelper.getUsername());
+		User result = getUserByLogin(authentificationHelper.getUsername());
+		result.setRoles(authentificationHelper.getRoles());
+		return result;
 	}
 
 	@Override
