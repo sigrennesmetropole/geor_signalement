@@ -34,6 +34,7 @@ import org.georchestra.signalement.core.dto.Feature;
 import org.georchestra.signalement.core.dto.FeatureCollection;
 import org.georchestra.signalement.core.dto.FeatureTypeDescription;
 import org.georchestra.signalement.core.dto.Form;
+import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
@@ -328,10 +329,17 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		geoJSonHelper.setStyle(result);
 		return result;
 	}
-	
+
 	@Override
-	public FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription() {
-		return geoJSonHelper.getGeoJSonTaskFeatureTypeDescription();
+	public FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription(String contextName) {
+		GeographicType geographicType = null;
+		if (StringUtils.isNotEmpty(contextName)) {
+			ContextDescriptionEntity contextDescription = contextDescriptionDao.findByName(contextName);
+			if (contextDescription != null) {
+				geographicType = contextDescription.getGeographicType();
+			}
+		}
+		return geoJSonHelper.getGeoJSonTaskFeatureTypeDescription(geographicType);
 	}
 
 	@Override

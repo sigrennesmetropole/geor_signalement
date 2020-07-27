@@ -85,9 +85,12 @@ public interface TaskService {
 
 	/**
 	 * 
+	 * @param contextName le nom d'un contexte connu du système. Si ce paramètre est
+	 *                    null, le flux sortant ne contient pas de propriété
+	 *                    geometry
 	 * @return un flux GeoJSon avec la description des propriétés
 	 */
-	FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription();
+	FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription(String contextName);
 
 	/**
 	 * Retourne une tâche par son id

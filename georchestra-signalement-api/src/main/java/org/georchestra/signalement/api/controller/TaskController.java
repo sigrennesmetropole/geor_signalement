@@ -65,11 +65,10 @@ public class TaskController implements TaskApi {
 		return ResponseEntity.ok(taskService
 				.searchGeoJSonTasks(computeSearchCriteria(contextName, contextType, geographicType, asAdmin)));
 	}
-	
+
 	@Override
-	public ResponseEntity<FeatureTypeDescription> getGeoJSonTaskProperties() throws Exception {
-		return ResponseEntity.ok(taskService
-				.getGeoJSonTaskFeatureTypeDescription());
+	public ResponseEntity<FeatureTypeDescription> getGeoJSonTaskProperties(@Valid String contextName) throws Exception {
+		return ResponseEntity.ok(taskService.getGeoJSonTaskFeatureTypeDescription(contextName));
 	}
 
 	@Override

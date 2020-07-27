@@ -187,13 +187,13 @@ public class GeoJSonHelper {
 		return result;
 	}
 
-	public FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription() {
+	public FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription(GeographicType geographicType) {
 		FeatureTypeDescription result = createFeatureTypeDescription();
-		result.addFeatureTypesItem(createMainFeatureType());
+		result.addFeatureTypesItem(createMainFeatureType(geographicType));
 		return result;
 	}
 
-	private FeatureType createMainFeatureType() {
+	private FeatureType createMainFeatureType(GeographicType geographicType) {
 		FeatureType result = new FeatureType();
 		result.setTypeName(environment.getProperty(
 				GeoJSonConstants.FEATURE_TYPE_DESCRIPTION_PREFIX + "." + GeoJSonConstants.TYPE_NAME_PROPERTY));
@@ -210,6 +210,26 @@ public class GeoJSonHelper {
 				createOneRequiredStringPropertyDescription(GeoJSonConstants.CONTEXT_DESCRIPTION_LABEL));
 		result.addPropertiesItem(createOneRequiredStringPropertyDescription(GeoJSonConstants.CONTEXT_DESCRIPTION_TYPE));
 		result.addPropertiesItem(createOneRequiredStringPropertyDescription(GeoJSonConstants.GEOGRAPHIC_TYPE));
+
+		if (geographicType != null) {
+			result.addPropertiesItem(createGeometryProperty(geographicType));
+		}
+
+		return result;
+	}
+
+	private FeatureProperty createGeometryProperty(GeographicType geographicType) {
+		FeatureProperty result = null;
+		if (geographicType == GeographicType.POLYGON) {
+			result = createPropertyDescription(GeoJSonConstants.GEOMETRY, 0, 1, true, GeoJSonConstants.GML_POLYGON_TYPE,
+					GeoJSonConstants.POLYGON_TYPE);
+		} else if (geographicType == GeographicType.LINE) {
+			result = createPropertyDescription(GeoJSonConstants.GEOMETRY, 0, 1, true, GeoJSonConstants.GML_LINE_TYPE,
+					GeoJSonConstants.LINE_TYPE);
+		} else {
+			result = createPropertyDescription(GeoJSonConstants.GEOMETRY, 0, 1, true, GeoJSonConstants.GML_POINT_TYPE,
+					GeoJSonConstants.POINT_TYPE);
+		}
 		return result;
 	}
 
