@@ -32,6 +32,7 @@ import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.AttachmentConfiguration;
 import org.georchestra.signalement.core.dto.Feature;
 import org.georchestra.signalement.core.dto.FeatureCollection;
+import org.georchestra.signalement.core.dto.FeatureTypeDescription;
 import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
@@ -326,6 +327,11 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		}
 		geoJSonHelper.setStyle(result);
 		return result;
+	}
+	
+	@Override
+	public FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription() {
+		return geoJSonHelper.getGeoJSonTaskFeatureTypeDescription();
 	}
 
 	@Override
@@ -657,4 +663,5 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			}
 		}
 	}
+
 }

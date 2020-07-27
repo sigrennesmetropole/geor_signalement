@@ -15,6 +15,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.core.dto.Feature;
 import org.georchestra.signalement.core.dto.FeatureCollection;
 import org.georchestra.signalement.core.dto.FeatureCollection.TypeEnum;
+import org.georchestra.signalement.core.dto.FeatureProperty;
+import org.georchestra.signalement.core.dto.FeatureType;
+import org.georchestra.signalement.core.dto.FeatureTypeDescription;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.Geometry;
 import org.georchestra.signalement.core.dto.GeometryType;
@@ -25,6 +28,8 @@ import org.georchestra.signalement.core.dto.PointG;
 import org.georchestra.signalement.core.dto.Polygon;
 import org.georchestra.signalement.core.dto.Style;
 import org.georchestra.signalement.core.dto.Task;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,6 +38,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class GeoJSonHelper {
+
+	@Autowired
+	private Environment environment;
 
 	public FeatureCollection createFeatureCollection() {
 		FeatureCollection result = new FeatureCollection();
@@ -79,17 +87,20 @@ public class GeoJSonHelper {
 
 	public void setProperties(Feature feature, Task task) {
 		Map<String, Object> properties = new HashMap<>();
-		properties.put("uuid", feature.getId().toString());
-		properties.put("id", task.getId());
-		properties.put("assignee", task.getAssignee());
-		properties.put("initiator", task.getInitiator());
-		properties.put("creationDate", task.getCreationDate());
-		properties.put("updatedDate", task.getUpdatedDate());
-		properties.put("status", task.getStatus());
-		properties.put("description", task.getAsset().getDescription());
-		properties.put("contextDescription", task.getAsset().getContextDescription());
-		properties.put("geographicType", task.getAsset().getGeographicType());
-		properties.put("data", task.getAsset().getDatas());
+		properties.put(GeoJSonConstants.UUID, feature.getId().toString());
+		properties.put(GeoJSonConstants.ID, task.getId());
+		properties.put(GeoJSonConstants.ASSIGNEE, task.getAssignee());
+		properties.put(GeoJSonConstants.INITIATOR, task.getInitiator());
+		properties.put(GeoJSonConstants.CREATION_DATE, task.getCreationDate());
+		properties.put(GeoJSonConstants.UPDATED_DATE, task.getUpdatedDate());
+		properties.put(GeoJSonConstants.STATUS, task.getStatus());
+		properties.put(GeoJSonConstants.DESCRIPTION, task.getAsset().getDescription());
+		properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_NAME, task.getAsset().getContextDescription().getName());
+		properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_LABEL, task.getAsset().getContextDescription().getLabel());
+		properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_TYPE,
+				task.getAsset().getContextDescription().getContextType());
+		properties.put(GeoJSonConstants.GEOGRAPHIC_TYPE, task.getAsset().getGeographicType());
+		properties.put(GeoJSonConstants.DATA, task.getAsset().getDatas());
 		feature.setProperties(properties);
 	}
 
@@ -175,4 +186,91 @@ public class GeoJSonHelper {
 		}
 		return result;
 	}
+
+	public FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription() {
+		FeatureTypeDescription result = createFeatureTypeDescription();
+		result.addFeatureTypesItem(createMainFeatureType());
+		return result;
+	}
+
+	private FeatureType createMainFeatureType() {
+		FeatureType result = new FeatureType();
+		result.setTypeName(environment.getProperty(
+				GeoJSonConstants.FEATURE_TYPE_DESCRIPTION_PREFIX + "." + GeoJSonConstants.TYPE_NAME_PROPERTY));
+		result.addPropertiesItem(createOneRequiredStringPropertyDescription(GeoJSonConstants.UUID));
+		result.addPropertiesItem(createOneRequiredNumberPropertyDescription(GeoJSonConstants.ID));
+		result.addPropertiesItem(createOneStringPropertyDescription(GeoJSonConstants.ASSIGNEE, true));
+		result.addPropertiesItem(createOneStringPropertyDescription(GeoJSonConstants.INITIATOR, true));
+		result.addPropertiesItem(createOneRequiredDatePropertyDescription(GeoJSonConstants.CREATION_DATE));
+		result.addPropertiesItem(createOneDatePropertyDescription(GeoJSonConstants.UPDATED_DATE, false));
+		result.addPropertiesItem(createOneRequiredStringPropertyDescription(GeoJSonConstants.STATUS));
+		result.addPropertiesItem(createOneStringPropertyDescription(GeoJSonConstants.DESCRIPTION, true));
+		result.addPropertiesItem(createOneRequiredStringPropertyDescription(GeoJSonConstants.CONTEXT_DESCRIPTION_NAME));
+		result.addPropertiesItem(
+				createOneRequiredStringPropertyDescription(GeoJSonConstants.CONTEXT_DESCRIPTION_LABEL));
+		result.addPropertiesItem(createOneRequiredStringPropertyDescription(GeoJSonConstants.CONTEXT_DESCRIPTION_TYPE));
+		result.addPropertiesItem(createOneRequiredStringPropertyDescription(GeoJSonConstants.GEOGRAPHIC_TYPE));
+		return result;
+	}
+
+	private FeatureProperty createOneDatePropertyDescription(String name, boolean nillale) {
+		return createOnePropertyDescription(name, nillale, GeoJSonConstants.XSD_DATE_TYPE, GeoJSonConstants.DATE_TYPE);
+	}
+
+	@SuppressWarnings("unused")
+	private FeatureProperty createOneNumberPropertyDescription(String name, boolean nillale) {
+		return createOnePropertyDescription(name, nillale, GeoJSonConstants.XSD_NUMBER_TYPE,
+				GeoJSonConstants.NUMBER_TYPE);
+	}
+
+	private FeatureProperty createOneStringPropertyDescription(String name, boolean nillale) {
+		return createOnePropertyDescription(name, nillale, GeoJSonConstants.XSD_STRING_TYPE,
+				GeoJSonConstants.STRING_TYPE);
+	}
+
+	private FeatureProperty createOneRequiredDatePropertyDescription(String name) {
+		return createOneRequiredPropertyDescription(name, GeoJSonConstants.XSD_DATE_TYPE, GeoJSonConstants.DATE_TYPE);
+	}
+
+	private FeatureProperty createOneRequiredNumberPropertyDescription(String name) {
+		return createOneRequiredPropertyDescription(name, GeoJSonConstants.XSD_NUMBER_TYPE,
+				GeoJSonConstants.NUMBER_TYPE);
+	}
+
+	private FeatureProperty createOneRequiredStringPropertyDescription(String name) {
+		return createOneRequiredPropertyDescription(name, GeoJSonConstants.XSD_STRING_TYPE,
+				GeoJSonConstants.STRING_TYPE);
+	}
+
+	private FeatureProperty createOneRequiredPropertyDescription(String name, String type, String localType) {
+		return createPropertyDescription(name, 1, 1, false, type, localType);
+	}
+
+	private FeatureProperty createOnePropertyDescription(String name, boolean nillale, String type, String localType) {
+		return createPropertyDescription(name, 0, 1, nillale, type, localType);
+	}
+
+	private FeatureProperty createPropertyDescription(String name, int minOccur, int maxOccur, boolean nillale,
+			String type, String localType) {
+		FeatureProperty featureProperty = new FeatureProperty();
+		featureProperty.setName(name);
+		featureProperty.setLocalType(localType);
+		featureProperty.setType(type);
+		featureProperty.setMinOccurs(minOccur);
+		featureProperty.setMaxOccurs(maxOccur);
+		featureProperty.setNillable(nillale);
+		return featureProperty;
+	}
+
+	private FeatureTypeDescription createFeatureTypeDescription() {
+		FeatureTypeDescription result = new FeatureTypeDescription();
+		result.setElementFormDefault(environment.getProperty(GeoJSonConstants.FEATURE_TYPE_DESCRIPTION_PREFIX + "."
+				+ GeoJSonConstants.ELEMENT_FORM_DEFAULT_PROPERTY));
+		result.setTargetNamespace(environment.getProperty(
+				GeoJSonConstants.FEATURE_TYPE_DESCRIPTION_PREFIX + "." + GeoJSonConstants.TARGET_NAME_SPACE_PROPERTY));
+		result.setTargetPrefix(environment.getProperty(
+				GeoJSonConstants.FEATURE_TYPE_DESCRIPTION_PREFIX + "." + GeoJSonConstants.TARGET_PREFIX_PROPERTY));
+		return result;
+	}
+
 }
