@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.api.TaskApi;
 import org.georchestra.signalement.core.dto.ContextType;
 import org.georchestra.signalement.core.dto.FeatureCollection;
+import org.georchestra.signalement.core.dto.FeatureTypeDescription;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
@@ -63,6 +64,12 @@ public class TaskController implements TaskApi {
 			@Valid String geographicType, @Valid Boolean asAdmin) throws Exception {
 		return ResponseEntity.ok(taskService
 				.searchGeoJSonTasks(computeSearchCriteria(contextName, contextType, geographicType, asAdmin)));
+	}
+	
+	@Override
+	public ResponseEntity<FeatureTypeDescription> getGeoJSonTaskProperties() throws Exception {
+		return ResponseEntity.ok(taskService
+				.getGeoJSonTaskFeatureTypeDescription());
 	}
 
 	@Override
