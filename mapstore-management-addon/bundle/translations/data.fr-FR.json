@@ -2,12 +2,23 @@
     "locale": "fr-FR",
     "messages": {
         "signalement-management": {
-           "loading": "En cours d'initialisation...",
-           "title": "Gestion des signalement",
-           "init.me.error": "Impossible de récupérer l'utilisation courant",
-           "init.contexts.error": "Impossible de récupérer les contexts de l'utilisateur courant",
-           "load.searchTask.error": "Impossible de récupérer les tâches",
-           "generic.error": "Une erreur s'est produite" 
+          "loading": "En cours d'initialisation...",
+          "title": "Gestion des signalement",
+          "init.me.error": "Impossible de récupérer l'utilisation courant",
+          "init.contexts.error": "Impossible de récupérer les contexts de l'utilisateur courant",
+          "load.searchTask.error": "Impossible de récupérer les tâches",
+          "get.task.error": "Impossible de charger les données de la tâche",
+          "claim.error": "Impossible de vous affecter la tâche",
+          "update.error": "La mise à jour de la tâche n'a pas été faite",
+          "updateAction.error": "L'action n'a pas été réalisée",
+          "generic.error": "Une erreur s'est produite",
+          "download.attachment.error": "Impossible de chargé la pièce jointe",
+          "date": "Date du signalement",
+          "statut": "Statut du signalement",
+          "layer": "Couche ou thématique",
+          "object": "Object",
+          "files": "Pièces jointes",
+          "affect": "Assigner"
         }
     }
 }

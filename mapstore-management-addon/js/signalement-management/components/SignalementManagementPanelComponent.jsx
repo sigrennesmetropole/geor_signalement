@@ -9,9 +9,27 @@ import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, ControlLabel, Tool
 import Select from 'react-select';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import './signalement-management.css';
-import { status, viewType } from '../actions/signalement-management-action';
-import { NullLiteralTypeAnnotation } from 'babel-standalone';
-//import {configureBackendUrl} from '../epics/signalement-management-epic';
+import {
+    changeTypeView,
+    closeTabularView,
+    getMe,
+    getTask,
+    loadContexts,
+    openTabularView,
+    downloadAttachment,
+    claimTask,
+    updateTask,
+    updateDoAction,
+    status,
+    viewType
+} from '../actions/signalement-management-action';
+import { SignalementTaskViewer } from './SignalementTaskViewer';
+import MapInfoUtils from '../../../MapStore2/web/client/utils/MapInfoUtils';
+import {
+    signalementManagementContextsSelector,
+    signalementManagementMeSelector, signalementManagementTaskSelector
+} from "@js/signalement-management/selectors/signalement-management-selector";
+
 
 export class SignalementManagementPanelComponent extends React.Component {
 	 static propTypes = {
@@ -70,6 +88,21 @@ export class SignalementManagementPanelComponent extends React.Component {
     constructor(props) {
         super(props);
         this.handleContextChange = this.handleContextChange.bind(this);
+        const Connected = connect((state) => ({
+            task: signalementManagementTaskSelector(state),
+            user: signalementManagementMeSelector(state),
+            viewType: state.signalementManagement.viewType,
+            errorTask: state.signalementManagement.errorTask,
+            // debug
+            state : state
+        }), {
+            getTask: getTask,
+            downloadAttachment: downloadAttachment,
+            claimTask: claimTask,
+            updateTask: updateTask,
+            updateDoAction: updateDoAction,
+        })(SignalementTaskViewer);
+        MapInfoUtils.setViewer("TaskViewer", Connected);
         //configureBackendUrl(this.props.backendurl);
     }
 
@@ -108,8 +141,7 @@ export class SignalementManagementPanelComponent extends React.Component {
 	
     render() {
         console.log("sigm render");
-        console.log(this.props);
-        console.log(this.state);
+
         if( this.state.initialized) {
             return (<ContainerDimensions>
                         { ({ width }) =>

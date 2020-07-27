@@ -43,3 +43,21 @@ span .info {
     color: orange;
 }
 
+.actionButton {
+    margin-right: 10px;
+}
+
+.updateButton {
+    margin-left: 45px;
+}
+
+.claimButton {
+    margin: auto;
+    display: block ;
+}
+
+.errorTask {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
