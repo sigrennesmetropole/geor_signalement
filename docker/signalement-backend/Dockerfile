@@ -1,5 +1,6 @@
 FROM jetty:9.3-jre8
 MAINTAINER tbrule@open-groupe.com
+ENV TZ=Europe/Paris
 
 ADD /var/lib/jetty/webapps/signalement.war /var/lib/jetty/webapps/signalement.war
 #ADD etc/ /etc
