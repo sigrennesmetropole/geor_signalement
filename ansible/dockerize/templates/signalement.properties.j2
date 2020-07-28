@@ -14,8 +14,8 @@ server.port={{signalement_server_port}}
 
 # BDD
 spring.datasource.url=jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?ApplicationName=signalement
-spring.datasource.username=${pgsqlUser}
-spring.datasource.password=${pgsqlPassword}
+spring.datasource.username={{signalement_db_user}}
+spring.datasource.password={{signalement_db_password}}
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.properties.hibernate.dialect = org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
 #spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true

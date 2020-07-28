@@ -2,6 +2,7 @@ import * as Rx from 'rxjs';
 import axios from 'axios';
 import {head} from 'lodash';
 import {addLayer, changeLayerProperties, updateNode} from '../../../MapStore2/web/client/actions/layers';
+import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 import {
     actions,
     displayAdminView,
@@ -161,7 +162,10 @@ export const displayMapViewDataEpic = (action$, store) =>
                         }
 
                     })]
-            ).concat(changeLayerProperties(SIGNALEMENT_MANAGEMENT_LAYER_ID, {visibility: true})));
+            ).concat([
+                changeLayerProperties(SIGNALEMENT_MANAGEMENT_LAYER_ID, {visibility: true}),
+                changeMapInfoState(true)
+            ]));
         });
 
 export const displayAdminViewDataEpic = (action$, store) =>

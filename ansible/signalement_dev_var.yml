@@ -1,7 +1,7 @@
 db_host: database
 db_name: georchestra
-db_user: georchestra
-db_password: georchestra
+db_user: signalement
+db_password: signalement
 db_port: 5432
 
 server_expose_port: 8082
