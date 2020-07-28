@@ -1,4 +1,6 @@
 export const actions = {
+	INIT_SIGNALEMENT: 'SIGNALEMENT:INIT',
+	INIT_SIGNALEMENT_DONE: 'SIGNALEMENT:INIT_DONE',
 	ATTACHMENT_CONFIGURATION_LOAD: 'SIGNALEMENT:ATTACHMENT_CONFIGURATION:LOAD',
 	ATTACHMENT_CONFIGURATION_LOADED: 'SIGNALEMENT:ATTACHMENT_CONFIGURATION:LOADED',
 	THEMAS_LOAD: 'SIGNALEMENT:THEMAS:LOAD',
@@ -43,6 +45,19 @@ export const status = {
 	UNLOAD_TASK: "unloadTask",
 	TASK_UNLOADED: "taskUnloaded"
 };
+
+export function initSignalement(url){
+	return {
+		type: actions.INIT_SIGNALEMENT,
+		url: url
+	}
+}
+
+export function initSignalementDone(){
+	return {
+		type: actions.INIT_SIGNALEMENT_DONE
+	}
+}
 
 export function loadAttachmentConfiguration() {
 	return {

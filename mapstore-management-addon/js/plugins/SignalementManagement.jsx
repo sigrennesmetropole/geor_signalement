@@ -7,7 +7,7 @@ import Message from '../../MapStore2/web/client/components/I18N/Message';
 import {SignalementManagementPanelComponent} from '../signalement-management/components/SignalementManagementPanelComponent';
 import * as epics from '../signalement-management/epics/signalement-management-epic';
 import signalementManagementReducer from '../signalement-management/reducers/signalement-management-reducer';
-import {loadContexts, getMe, openTabularView, closeTabularView, changeTypeView} from '../signalement-management/actions/signalement-management-action';
+import {initSignalementManagement, loadContexts, getMe, openTabularView, closeTabularView, changeTypeView} from '../signalement-management/actions/signalement-management-action';
 import {getSignalementManagement, signalementManagementContextsSelector, signalementManagementMeSelector} from '../signalement-management/selectors/signalement-management-selector';
 
 const Connected = connect((state) => ({
@@ -20,6 +20,7 @@ const Connected = connect((state) => ({
     // debug
     state : state
 }), {
+    initSignalementManagement: initSignalementManagement,
     loadContexts: loadContexts,
     getMe: getMe,
     openTabularView: openTabularView,

@@ -50,6 +50,7 @@ export class SignalementPanelComponent extends React.Component {
         attachements: PropTypes.array,
         error: PropTypes.object,
         // redux
+		initSignalement: PropTypes.func,
         initDrawingSupport: PropTypes.func,
         stopDrawingSupport: PropTypes.func,
         startDrawing: PropTypes.func,
@@ -110,6 +111,7 @@ export class SignalementPanelComponent extends React.Component {
         task: null,
         attachements: [],
         // misc
+		initSignalement: ()=>{},
         initDrawingSupport: ()=>{},
         stopDrawingSupport: ()=>{},
         startDrawing: ()=>{},
@@ -136,6 +138,7 @@ export class SignalementPanelComponent extends React.Component {
             errorAttachment: "",
             errorFields: {}
         }
+		this.props.initSignalement(this.props.backendurl);
         //configureBackendUrl(this.props.backendurl);
         //console.log(this.state);
         //console.log(this.props);

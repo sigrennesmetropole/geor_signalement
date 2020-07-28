@@ -8,6 +8,7 @@ import {SignalementPanelComponent} from '../signalement/components/SignalementPa
 import * as epics from '../signalement/epics/signalement-epic';
 import signalementReducer from '../signalement/reducers/signalement-reducer';
 import {
+	initSignalement,
     addAttachment,
     cancelClosing,
     cancelDraft,
@@ -54,6 +55,7 @@ const Connected = connect((state) => ({
     // debug
     state : state
 }), {
+	initSignalement: initSignalement,
     initDrawingSupport: initDrawingSupport,
     stopDrawingSupport: stopDrawingSupport,
     startDrawing: startDrawing,

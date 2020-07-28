@@ -1,4 +1,6 @@
 export const actions = {
+	INIT_SIGNALEMENT: 'SIGNALEMENT:MANAGEMENT:INIT',
+	INIT_SIGNALEMENT_DONE: 'SIGNALEMENT:MANAGEMENT:INIT_DONE',		
 	CONTEXTS_LOAD: 'SIGNALEMENT:MANAGEMENT:CONTEXTS:LOAD',
 	CONTEXTS_LOADED: 'SIGNALEMENT:MANAGEMENT:CONTEXTS:LOADED',
 	USER_ME_GET: 'SIGNALEMENT:MANAGEMENT:USER:GET',
@@ -29,6 +31,19 @@ export const viewType = {
 	MY: "MY",
 	ADMIN: "ADMIN"
 };
+
+export function initSignalementManagement(url){
+	return {
+		type: actions.INIT_SIGNALEMENT,
+		url: url
+	}
+}
+
+export function initSignalementManagementDone(){
+	return {
+		type: actions.INIT_SIGNALEMENT_DONE
+	}
+}
 
 export function loadContexts() {
 	return {

@@ -5,6 +5,7 @@ import {addLayer, changeLayerProperties, updateNode} from '../../../MapStore2/we
 import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 import {
     actions,
+    initSignalementManagementDone,
     displayAdminView,
     displayMapView,
     gotMe,
@@ -23,12 +24,15 @@ import {closeIdentify} from '../../../MapStore2/web/client/actions/mapInfo';
 const SIGNALEMENT_MANAGEMENT_LAYER_ID = 'signalements';
 const SIGNALEMENT_MANAGEMENT_LAYER_NAME = 'Signalements';
 
-let backendURLPrefix = "http://localhost:8082";
+let backendURLPrefix = "signalement";
 
-/*export const configureBackendUrl = (value) => {
-    console.log("sigm configure backend url:" + value);
-    backendURLPrefix = value;
-};*/
+export const initSignalementManagementEpic = (action$) =>
+action$.ofType(actions.INIT_SIGNALEMENT)
+    .switchMap((action) => {
+        console.log("sig epics init:"+ action.url);
+        backendURLPrefix = action.url;
+        return Rx.Observable.of(initSignalementManagementDone()).delay(0);
+    });
 
 export const loadContextsEpic = (action$) =>
     action$.ofType(actions.CONTEXTS_LOAD)

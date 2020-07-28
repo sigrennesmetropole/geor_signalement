@@ -46,6 +46,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         tabularViewOpen: PropTypes.bool,
         viewType: PropTypes.string,
         // redux
+		initSignalementManagement: PropTypes.func,
         loadContexts: PropTypes.func,
         getMe: PropTypes.func,
         openTabularView: PropTypes.func,
@@ -78,6 +79,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         tabularViewOpen: false,
         viewType: null,
         // misc
+		initSignalementManagement: ()=>{},
         loadContexts: ()=>{},
         getMe: ()=>{},
         openTabularView: ()=>{},
@@ -88,6 +90,7 @@ export class SignalementManagementPanelComponent extends React.Component {
     constructor(props) {
         super(props);
         this.handleContextChange = this.handleContextChange.bind(this);
+		this.props.initSignalementManagement(this.props.backendurl);
         const Connected = connect((state) => ({
             task: signalementManagementTaskSelector(state),
             user: signalementManagementMeSelector(state),
