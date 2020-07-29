@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const MapUtils = require('../MapUtils');
+const MapUtils = require('../../../../MapStore2/web/client/utils/MapUtils');
 
 module.exports = {
     buildRequest: (layer, props) => {
