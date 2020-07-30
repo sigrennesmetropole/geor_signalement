@@ -1,5 +1,8 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
+import {changedGeometriesSelector} from "../../../MapStore2/web/client/selectors/draw";
+import {changeDrawingStatus, END_DRAWING, GEOMETRY_CHANGED} from "../../../MapStore2/web/client/actions/draw";
+import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 import {
     actions,
     initSignalementDone,
@@ -18,9 +21,6 @@ import {
     updateLocalisation
 } from '../actions/signalement-action';
 import {FeatureProjection, GeometryType} from "../constants/signalement-constants";
-import {changedGeometriesSelector} from "../../../MapStore2/web/client/selectors/draw";
-import {changeDrawingStatus, END_DRAWING, GEOMETRY_CHANGED} from "../../../MapStore2/web/client/actions/draw";
-import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 
 let backendURLPrefix = "signalement";
 

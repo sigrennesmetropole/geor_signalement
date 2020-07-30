@@ -51,7 +51,7 @@
 		<maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 		<compiler.plugin.version>3.5.1</compiler.plugin.version>
 		<assemby.plugin.version>2.6</assemby.plugin.version>
-		<ant.plugin.version>1.7</ant.plugin.version>
+		<ant.plugin.version>3.0.0</ant.plugin.version>
 
 		<!-- java version -->
 		<java.source.version>11</java.source.version>
@@ -83,7 +83,7 @@
 		<profile>
 			<id>dev</id>
 			<properties>
-				<georchestra.mapfish-addon.deployDir>C:\Program	Files\Apache\apache-tomcat-9.0.26\georchestra\mapfishapp\addons</georchestra.mapfish-addon.deployDir>
+				<georchestra.mapfish-addon.deployDir>C:\Program Files\Apache\apache-tomcat-9.0.26\georchestra\mapfishapp\addons</georchestra.mapfish-addon.deployDir>
 				<georchestra.mapstore-addon.deployDir>C:\Program Files\Apache\apache-tomcat-9.0.26\georchestra\mapstore\dist</georchestra.mapstore-addon.deployDir>
 			</properties>
 		</profile>
@@ -297,13 +297,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-				</plugin>
-				
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
-				<plugin>
-				    <groupId>org.apache.maven.plugins</groupId>
-				    <artifactId>maven-antrun-plugin</artifactId>
-				    <version>3.0.0</version>
 				</plugin>
 				
 			</plugins>

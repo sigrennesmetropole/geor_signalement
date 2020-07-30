@@ -24,7 +24,7 @@ stages:
 # Build job with maven plugin execution policies define in parent pom
 signalementapi:build:
   script:
-    - sh ./mvnw $MAVEN_CLI_OPTS -U package
+    - sh ./mvnw $MAVEN_CLI_OPTS -U package -Pmapfishapp-signalement,mapstore-signalement,mapstore-signalement-management
   stage: build
   except:
     refs:
@@ -37,10 +37,11 @@ signalementapi:build:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/mapstore-signalement-*.zip
       
 signalementapi:build:master:
   script:
-    - sh ./mvnw $MAVEN_CLI_OPTS -U package -DskipTests
+    - sh ./mvnw $MAVEN_CLI_OPTS -U package -DskipTests -Pmapfishapp-signalement,mapstore-signalement,mapstore-signalement-management
   stage: build
   tags: 
    - cdp-rennes
@@ -52,7 +53,8 @@ signalementapi:build:master:
     paths:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
-      - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip      
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/mapstore-signalement-*.zip      
 
 # Sonar code quality analysis - note a full test coverage report through a jacoco.exec merged file in base project folder
 signalementapi:sonar:
