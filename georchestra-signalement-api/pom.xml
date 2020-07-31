@@ -430,21 +430,25 @@
 									<target name="copy-mapstore-signalement-plugin">
 										<echo message="${mapstore-georchestra}/build/extensions" />
 										<copy todir="${mapstore-georchestra}/build/extensions"
-											file="../mapstore-addon/js/plugins/SignalementExtension.jsx" />
+											file="../mapstore-addon/js/plugins/SignalementExtension.jsx"
+											overwrite="true" />
 										<copy todir="${mapstore-georchestra}/build/extensions"
-											file="../mapstore-addon/app.jsx" />
+											file="../mapstore-addon/app.jsx" overwrite="true" />
 										<copy todir="${mapstore-georchestra}/build/extensions"
-											file="../mapstore-addon/extensions.js" />
+											file="../mapstore-addon/extensions.js" overwrite="true" />
 										<copy todir="${mapstore-georchestra}/build/extensions"
-											file="../mapstore-addon/prod-webpack.config.js" />
-										<copy todir="${mapstore-georchestra}/build/signalement">
+											file="../mapstore-addon/prod-webpack.config.js"
+											overwrite="true" />
+										<copy todir="${mapstore-georchestra}/build/signalement"
+											overwrite="true">
 											<fileset dir="../mapstore-addon/js/signalement">
 												<include name="**/*.js*" />
 												<include name="**/*.cs*" />
 											</fileset>
 										</copy>
 										<copy
-											todir="${mapstore-georchestra}/build/extensions/bundle">
+											todir="${mapstore-georchestra}/build/extensions/bundle"
+											overwrite="true">
 											<fileset dir="../mapstore-addon/bundle">
 												<filename name="**/*.json" />
 											</fileset>
@@ -501,7 +505,8 @@
 									<target name="build-mapstore-signalement-plugin-zip">
 										<copy
 											todir="${mapstore-georchestra}/build/extensions/bundle"
-											file="${mapstore-georchestra}/build/extensions/dist/extensions/extension.js" />
+											file="${mapstore-georchestra}/build/extensions/dist/extensions/extension.js"
+											overwrite="true" />
 										<zip destfile="target/mapstore-signalement-plugin.zip"
 											basedir="${mapstore-georchestra}/build/extensions/bundle" />
 									</target>
