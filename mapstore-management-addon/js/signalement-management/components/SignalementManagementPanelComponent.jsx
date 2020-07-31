@@ -8,10 +8,28 @@ import {PropTypes} from 'prop-types';
 import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, ControlLabel, Tooltip, FormGroup} from 'react-bootstrap';
 import Select from 'react-select';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
+import MapInfoUtils from '../../../MapStore2/web/client/utils/MapInfoUtils';
+import { SignalementTaskViewer } from './SignalementTaskViewer';
 import './signalement-management.css';
-import { status, viewType } from '../actions/signalement-management-action';
-import { NullLiteralTypeAnnotation } from 'babel-standalone';
-//import {configureBackendUrl} from '../epics/signalement-management-epic';
+import {
+    changeTypeView,
+    closeTabularView,
+    getMe,
+    getTask,
+    loadContexts,
+    openTabularView,
+    downloadAttachment,
+    claimTask,
+    updateTask,
+    updateDoAction,
+    status,
+    viewType
+} from '../actions/signalement-management-action';
+import {
+    signalementManagementContextsSelector,
+    signalementManagementMeSelector, signalementManagementTaskSelector
+} from "../selectors/signalement-management-selector";
+
 
 export class SignalementManagementPanelComponent extends React.Component {
 	 static propTypes = {
@@ -28,6 +46,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         tabularViewOpen: PropTypes.bool,
         viewType: PropTypes.string,
         // redux
+		initSignalementManagement: PropTypes.func,
         loadContexts: PropTypes.func,
         getMe: PropTypes.func,
         openTabularView: PropTypes.func,
@@ -60,6 +79,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         tabularViewOpen: false,
         viewType: null,
         // misc
+		initSignalementManagement: ()=>{},
         loadContexts: ()=>{},
         getMe: ()=>{},
         openTabularView: ()=>{},
@@ -70,6 +90,22 @@ export class SignalementManagementPanelComponent extends React.Component {
     constructor(props) {
         super(props);
         this.handleContextChange = this.handleContextChange.bind(this);
+		this.props.initSignalementManagement(this.props.backendurl);
+        const Connected = connect((state) => ({
+            task: signalementManagementTaskSelector(state),
+            user: signalementManagementMeSelector(state),
+            viewType: state.signalementManagement.viewType,
+            errorTask: state.signalementManagement.errorTask,
+            // debug
+            state : state
+        }), {
+            getTask: getTask,
+            downloadAttachment: downloadAttachment,
+            claimTask: claimTask,
+            updateTask: updateTask,
+            updateDoAction: updateDoAction,
+        })(SignalementTaskViewer);
+        MapInfoUtils.setViewer("TaskViewer", Connected);
         //configureBackendUrl(this.props.backendurl);
     }
 
@@ -108,8 +144,7 @@ export class SignalementManagementPanelComponent extends React.Component {
 	
     render() {
         console.log("sigm render");
-        console.log(this.props);
-        console.log(this.state);
+
         if( this.state.initialized) {
             return (<ContainerDimensions>
                         { ({ width }) =>

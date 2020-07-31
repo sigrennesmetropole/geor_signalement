@@ -14,6 +14,8 @@ export const signalementManagementContextsSelector = (state) => get(state, "sign
 
 export const signalementManagementMeSelector = (state) => get(state, "signalementManagement.user");
 
+export const signalementManagementTaskSelector = (state) => get(state, "signalementManagement.task");
+
 export const signalementLayerSelector = createSelector([
   layersSelector
 ], (layers) => head(layers.filter(l => l.id === 'signalements'))

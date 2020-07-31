@@ -2,28 +2,37 @@ import * as Rx from 'rxjs';
 import axios from 'axios';
 import {head} from 'lodash';
 import {addLayer, changeLayerProperties, updateNode} from '../../../MapStore2/web/client/actions/layers';
+import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 import {
     actions,
+    initSignalementManagementDone,
     displayAdminView,
     displayMapView,
     gotMe,
+    gotTask,
     loadActionError,
     loadedContexts,
     loadInitError,
+    loadTaskActionError,
     typeViewChanged,
+    changeTypeView,
     viewType
 } from '../actions/signalement-management-action';
 import {closeFeatureGrid, openFeatureGrid, setLayer} from '../../../MapStore2/web/client/actions/featuregrid';
+import {closeIdentify} from '../../../MapStore2/web/client/actions/mapInfo';
 
 const SIGNALEMENT_MANAGEMENT_LAYER_ID = 'signalements';
 const SIGNALEMENT_MANAGEMENT_LAYER_NAME = 'Signalements';
 
-let backendURLPrefix = "http://localhost:8082";
+let backendURLPrefix = "signalement";
 
-/*export const configureBackendUrl = (value) => {
-    console.log("sigm configure backend url:" + value);
-    backendURLPrefix = value;
-};*/
+export const initSignalementManagementEpic = (action$) =>
+action$.ofType(actions.INIT_SIGNALEMENT)
+    .switchMap((action) => {
+        console.log("sig epics init:"+ action.url);
+        backendURLPrefix = action.url;
+        return Rx.Observable.of(initSignalementManagementDone()).delay(0);
+    });
 
 export const loadContextsEpic = (action$) =>
     action$.ofType(actions.CONTEXTS_LOAD)
@@ -50,6 +59,65 @@ export const loadManagementMeEpic = (action$) =>
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(gotMe(response.data)))
                 .catch(e => Rx.Observable.of(loadInitError("signalement-management.init.me.error", e)));
+        });
+
+export const loadTaskEpic = (action$) =>
+    action$.ofType(actions.TASK_GET)
+        .switchMap((action) => {
+            console.log("sigm epics task");
+
+            const url = backendURLPrefix + "/task/" + action.id ;
+            return Rx.Observable.defer(() => axios.get(url))
+                .switchMap((response) => Rx.Observable.of(gotTask(response.data)))
+                .catch(e => Rx.Observable.of(loadTaskActionError("signalement-management.get.task.error", e)));
+        });
+
+export const downloadAttachmentEpic = (action$) =>
+    action$.ofType(actions.DOWNLOAD_ATTACHMENT)
+        .switchMap((action) => {
+            console.log("sigm epics download attachment");
+            const url = backendURLPrefix + "/reporting/" + action.attachment.uuid + "/download/" + action.attachment.id ;
+            window.open(url);
+           return Rx.Observable.empty();
+        });
+
+export const claimTaskEpic = (action$) =>
+    action$.ofType(actions.CLAIM_TASK)
+        .switchMap((action) => {
+            console.log("sigm epics claim");
+
+            const url = backendURLPrefix + "/task/claim/" + action.id ;
+            return Rx.Observable.defer(() => axios.put(url))
+                .switchMap((response) => Rx.Observable.of(gotTask(response.data)))
+                .catch(e => Rx.Observable.of(loadTaskActionError("signalement-management.claim.error", e)));
+        });
+
+export const updateAndDoActionEpic = (action$) =>
+    action$.ofType(actions.UPDATE_DO_ACTION)
+        .switchMap((action) => {
+
+            console.log("sigm epics update & do action");
+
+            const urlUpdate = backendURLPrefix + "/task/update" ;
+            const urlDoAction = backendURLPrefix + "/task/do/" + action.task.id + "/" + action.actionName;
+
+           return Rx.Observable.fromPromise(axios.put(urlUpdate, action.task)
+               .then(() => axios.put(urlDoAction)))
+               .switchMap(() =>  {
+                   return  Rx.Observable.of( changeTypeView(action.viewType, action.task.asset.contextDescription), closeIdentify())})
+               .catch(e => Rx.Observable.of(loadTaskActionError("signalement-management.doIt.error", e)));;
+
+        });
+
+export const updateTaskEpic = (action$) =>
+    action$.ofType(actions.UPDATE_TASK)
+        .switchMap((action) => {
+            console.log("sigm epics update task");
+
+            const url = backendURLPrefix + "/task/update" ;
+            return Rx.Observable.defer(() => axios.put(url, action.task))
+                .switchMap((response) => Rx.Observable.of(gotTask(response.data)))
+                .catch(e => Rx.Observable.of(loadTaskActionError("signalement-management.update.error", e)));
         });
 
 export const loadViewDataEpic = (action$) =>
@@ -93,8 +161,15 @@ export const displayMapViewDataEpic = (action$, store) =>
                         type: "vector",
                         visibility: true,
                         features: createNewFeatures(action),
+                        viewer: {
+                            type: 'TaskViewer'
+                        }
+
                     })]
-            ).concat(changeLayerProperties(SIGNALEMENT_MANAGEMENT_LAYER_ID, {visibility: true})));
+            ).concat([
+                changeLayerProperties(SIGNALEMENT_MANAGEMENT_LAYER_ID, {visibility: true}),
+                changeMapInfoState(true)
+            ]));
         });
 
 export const displayAdminViewDataEpic = (action$, store) =>

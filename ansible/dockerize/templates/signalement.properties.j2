@@ -13,7 +13,7 @@ server.port={{signalement_server_port}}
 #spring.main.web-application-type=none
 
 # BDD
-spring.datasource.url=jdbc:postgresql://{{signalement_db_host}}:{{signalement_db_port}}/{{signalement_db_name}}?ApplicationName=signalement
+spring.datasource.url=jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?ApplicationName=signalement
 spring.datasource.username={{signalement_db_user}}
 spring.datasource.password={{signalement_db_password}}
 spring.datasource.driver-class-name=org.postgresql.Driver
@@ -48,22 +48,22 @@ attachment.mime-types=image/png,image/jpeg,image/tiff,application/pdf,text/plain
 
 # EMAIL
 mail.transport.protocol=smtp
-mail.smtp.host={{signalement_smtp_host}}
+mail.smtp.host=${smtpHost}
 mail.smtp.auth=false
-mail.smtp.port={{signalement_smtp_port}}
-mail.smtp.user={{signalement_smtp_username}}
-mail.smtp.password={{signalement_smtp_password}}
+mail.smtp.port=${smtpPort}
+mail.smtp.user=
+mail.smtp.password=
 mail.smtp.starttls.enable=true
 mail.debug=false
-mail.from=signalement@rennesmetropole.fr
+mail.from=${administratorEmail}
 
 #LDAP
-spring.ldap.urls=ldap://{{signalement_ldap_host}}:{{signalement_ldap_port}}
-spring.ldap.base=dc=georchestra,dc=org
-spring.ldap.username={{signalement_ldap_username}}
-spring.ldap.password={{signalement_ldap_password}}
+spring.ldap.urls=${ldapScheme}://${ldapHost}:${ldapPort}
+spring.ldap.base=${ldapBaseDn}
+spring.ldap.username=${ldapAdminDn}
+spring.ldap.password=${ldapAdminPassword}
 
-ldap.user.searchBase=ou=users
+ldap.user.searchBase=${ldapUsersRdn}
 ldap.objectClass=person
 ldap.attribute.login=cn
 ldap.attribute.firstName=givenname

@@ -50,6 +50,7 @@ export class SignalementPanelComponent extends React.Component {
         attachements: PropTypes.array,
         error: PropTypes.object,
         // redux
+		initSignalement: PropTypes.func,
         initDrawingSupport: PropTypes.func,
         stopDrawingSupport: PropTypes.func,
         startDrawing: PropTypes.func,
@@ -110,6 +111,7 @@ export class SignalementPanelComponent extends React.Component {
         task: null,
         attachements: [],
         // misc
+		initSignalement: ()=>{},
         initDrawingSupport: ()=>{},
         stopDrawingSupport: ()=>{},
         startDrawing: ()=>{},
@@ -136,6 +138,7 @@ export class SignalementPanelComponent extends React.Component {
             errorAttachment: "",
             errorFields: {}
         }
+		this.props.initSignalement(this.props.backendurl);
         //configureBackendUrl(this.props.backendurl);
         //console.log(this.state);
         //console.log(this.props);
@@ -590,7 +593,7 @@ export class SignalementPanelComponent extends React.Component {
             return (
                 <div key={`section.${index}`}> {section.fields.map((field, indexField) => {
                     return (
-                        this.renderField(field, indexField, index)
+                        this.renderField(field, indexField, index, section.readOnly)
                     )
                 })}</div>
             )
@@ -600,7 +603,7 @@ export class SignalementPanelComponent extends React.Component {
     /**
      * La rendition de chaque field associe à une section
      */
-    renderField(field,indexField, index) {
+    renderField(field,indexField, index, sectionReadOnly) {
 
         switch (field.definition.type) {
 
@@ -612,7 +615,7 @@ export class SignalementPanelComponent extends React.Component {
                             </ControlLabel>
                             <div className="col-sm-5">
                                 <FormControl type="number"
-                                             readOnly={field.definition.readOnly}
+                                             readOnly={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
                                              defaultValue={field.values ? field.values[0] : null}
@@ -641,7 +644,7 @@ export class SignalementPanelComponent extends React.Component {
                             <div className="col-sm-5">
                                 <FormControl type="number"
                                              step={0.1}
-                                             readOnly={field.definition.readOnly}
+                                             readOnly={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
                                              defaultValue={field.values  ? field.values[0] : null}
@@ -661,7 +664,7 @@ export class SignalementPanelComponent extends React.Component {
                     </div>
                 );
             case 'STRING':
-                return (this.renderFieldString(field, index, indexField))
+                return (this.renderFieldString(field, index, indexField, sectionReadOnly))
             case 'DATE':
                 return (
                     <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
@@ -669,7 +672,7 @@ export class SignalementPanelComponent extends React.Component {
                             <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                             <div className="col-sm-5">
                                 <FormControl type="date"
-                                             readOnly={field.definition.readOnly}
+                                             readOnly={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
                                              defaultValue={field.values  ? field.values[0] : null}
@@ -686,7 +689,7 @@ export class SignalementPanelComponent extends React.Component {
                             <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                             <div className="col-sm-5">
                                 <FormControl type="checkbox"
-                                             readOnly={field.definition.readOnly}
+                                             disabled={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
                                              defaultChecked={field.values ? field.values[0] : null}
@@ -703,11 +706,10 @@ export class SignalementPanelComponent extends React.Component {
                             <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                             <div className="col-sm-5">
                                 <FormControl componentClass="select"
-                                             readOnly={field.definition.readOnly}
+                                             readOnly={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
-                                             defaultValue={field.values ? field.values[0].code : null}
-                                    //multiple={field.definition.multiple}
+                                             multiple={field.definition.multiple}
                                              onChange={this.handleFieldChange}
                                 >
                                     {
@@ -729,7 +731,7 @@ export class SignalementPanelComponent extends React.Component {
     /**
      * La rendition du field de type String
      */
-    renderFieldString(field, index, indexField) {
+    renderFieldString(field, index, indexField, sectionReadOnly) {
 
         if (field.definition.extendedType === "textarea") {
             return (
@@ -737,8 +739,8 @@ export class SignalementPanelComponent extends React.Component {
                     <FormGroup controlId={`section.${index}.field.${indexField}`}>
                         <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                         <div className="col-sm-7">
-                            <FormControl type="textarea"
-                                         readOnly={field.definition.readOnly}
+                            <FormControl componentClass="textarea"
+                                         readOnly={field.definition.readOnly  || sectionReadOnly}
                                          required={field.definition.required}
                                          name={field.definition.name}
                                          maxLength={field.definition.validators[0].attribute}
@@ -765,7 +767,7 @@ export class SignalementPanelComponent extends React.Component {
                         <ControlLabel className="col-sm-2">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                         <div className="col-sm-5">
                             <FormControl type="text"
-                                         readOnly={field.definition.readOnly}
+                                         readOnly={field.definition.readOnly  || sectionReadOnly}
                                          required={field.definition.required}
                                          name={field.definition.name}
                                          maxLength={field.definition.validators[0].attribute}
@@ -802,15 +804,18 @@ export class SignalementPanelComponent extends React.Component {
 
         // valider le changement après modification du champs
         // pour s'assurer qu'il est en format correct avec le validateur de chaque champs
-        let errorFields = this.getErrorFields(e.target.value , field.definition.validators[0], e.target.id);
+        let errorFields = {};
+        if(field.definition.validators[0]){
+            errorFields = this.getErrorFields(e.target.value , field.definition.validators[0], e.target.id);
+        }
 
         // verifier si la liste des erreurs est vide sinon on affecte le changement des valeurs
-        if (Object.keys(errorFields).length === 0 && errorFields.constructor === Object) {
+        if (errorFields && Object.keys(errorFields).length === 0 && errorFields.constructor === Object) {
 
             if(field.definition.type === "BOOLEAN"){
-                field.values = e.target.checked ;
+                field.values = [e.target.checked] ;
             }else{
-                field.values = e.target.value ;
+                field.values = [e.target.value] ;
             }
 
         }

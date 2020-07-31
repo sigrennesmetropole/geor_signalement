@@ -1,0 +1,10 @@
+{
+	"plugins": [
+		{
+			"name": "Signalement",
+			"dependencies": [
+				"BurgerMenu"
+			]
+		}
+	]
+}
