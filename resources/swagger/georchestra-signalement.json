@@ -177,7 +177,7 @@
 				"tags": [
 					"user"
 				],
-				"summary": "Récupération des données de l'utilisateur connecté'",
+				"summary": "Récupération des données de l'utilisateur connecté",
 				"description": "",
 				"operationId": "getMe",
 				"produces": [
@@ -238,7 +238,7 @@
 				"tags": [
 					"tasks"
 				],
-				"summary": "Création d'un signalement brouillon'",
+				"summary": "Création d'un signalement brouillon",
 				"description": "",
 				"operationId": "createDraft",
 				"produces": [
@@ -279,7 +279,7 @@
 				"tags": [
 					"tasks"
 				],
-				"summary": "Abandon d'un signalement brouillon'",
+				"summary": "Abandon d'un signalement brouillon",
 				"description": "",
 				"operationId": "cancelDraft",
 				"produces": [
@@ -435,7 +435,7 @@
 				"tags": [
 					"reporting"
 				],
-				"summary": "Téléversement d'une pièce jointe sur un signalement'",
+				"summary": "Téléversement d'une pièce jointe sur un signalement",
 				"description": "",
 				"operationId": "uploadDocument",
 				"produces": [
@@ -531,7 +531,7 @@
 				"tags": [
 					"reporting"
 				],
-				"summary": "Téléchargement d'un pièce attachée à un signalement'",
+				"summary": "Téléchargement d'un pièce attachée à un signalement",
 				"description": "",
 				"operationId": "downloadDocument",
 				"produces": [
@@ -620,7 +620,7 @@
 				"tags": [
 					"tasks"
 				],
-				"summary": "Demande d'affectation'",
+				"summary": "Demande d'affectation",
 				"description": "",
 				"operationId": "claimTask",
 				"produces": [
@@ -782,7 +782,7 @@
 				"tags": [
 					"tasks"
 				],
-				"summary": "Liste les tâche du user courant",
+				"summary": "Liste les tâches du user courant",
 				"description": "Retourne la liste des tâches de l'utilisateur connecté",
 				"operationId": "searchTasks",
 				"produces": [
@@ -845,7 +845,7 @@
 				"tags": [
 					"tasks"
 				],
-				"summary": "Liste les tâche du user courant au format GeoJSon",
+				"summary": "Liste les tâches du user courant au format GeoJSon",
 				"description": "Retourne la liste des tâches de l'utilisateur connecté au format GeoJSon",
 				"operationId": "searchGeoJSonTasks",
 				"produces": [
@@ -887,6 +887,46 @@
 						"schema": {
 							"type": "object",
 							"$ref": "#/definitions/FeatureCollection"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/task/geojson/properties": {
+			"get": {
+				"tags": [
+					"tasks"
+				],
+				"summary": "Liste les description des propriétés disponibles dans le GeoJson",
+				"description": "Retourne la description des propriétés disponibles dans une feature GeoJson. Si le contexte géographique n'est pas précisé, aucune propriété geometry n'est présente",
+				"operationId": "getGeoJSonTaskProperties",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{	
+						"in": "query",
+						"name": "contextName",
+						"description": "Nom du contexte géographique",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/FeatureTypeDescription"
 						}
 					},
 					"400": {
@@ -1290,6 +1330,12 @@
 				},
 				"organization": {
 					"type": "string"
+				},
+				"roles":{
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				}
 			}
 		},
@@ -1600,6 +1646,68 @@
 					}
 				}
 			}
+    	},
+    	"FeatureProperty":{
+    		"type": "object",
+    		"description": "GeoJSon feature property description",
+    		"properties": {
+    			"name":{
+    				"type": "string"
+    			},
+    			"maxOccurs": {
+    				"type": "integer",
+    				"format": "int32"
+    			},
+    			"minOccurs": {
+    				"type": "integer",
+    				"format": "int32"
+    			},
+    			"nillable": {
+    				"type": "boolean"
+    			},
+    			"type": {
+    				"type": "string"
+    			},
+    			"localType": {
+    				"type": "string"
+    			}
+    		}
+    	},
+    	"FeatureType": {
+    		"type": "object",
+    		"description": "GeoJSon feature type",
+    		"properties": {
+    			"typeName":{
+    				"type": "string"
+    			},
+    			"properties":{
+    				"type": "array",
+    				"items": {
+    					"$ref": "#/definitions/FeatureProperty"
+    				}
+    			}
+    		}
+    	},
+    	"FeatureTypeDescription": {	
+    		"type": "object",
+    		"description": "GeoJSon feature type description",
+    		"properties": {
+    			"elementFormDefault":{
+    				"type": "string"
+    			},
+    			"targetNamespace": {
+    				"type": "string"
+    			},
+    			"targetPrefix": {
+    				"type": "string"
+    			},
+				"featureTypes": {
+					"type": "array",
+					"items": {
+    					"$ref": "#/definitions/FeatureType"
+    				}
+				}
+    		}
     	}
 	}
 }

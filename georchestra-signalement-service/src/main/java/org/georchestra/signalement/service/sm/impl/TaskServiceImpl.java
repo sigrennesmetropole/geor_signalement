@@ -32,7 +32,9 @@ import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.AttachmentConfiguration;
 import org.georchestra.signalement.core.dto.Feature;
 import org.georchestra.signalement.core.dto.FeatureCollection;
+import org.georchestra.signalement.core.dto.FeatureTypeDescription;
 import org.georchestra.signalement.core.dto.Form;
+import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.Task;
@@ -200,7 +202,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			// le claim ne peut être fait que par un admin ou si la tâche n'est pas affectée
 			if (isAdmin || StringUtils.isEmpty(originalTask.getAssignee())) {
 				AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
-				
+
 				org.activiti.engine.TaskService taskService = processEngine.getTaskService();
 				taskService.claim(taskId, authentificationHelper.getUsername());
 
@@ -326,6 +328,18 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		}
 		geoJSonHelper.setStyle(result);
 		return result;
+	}
+
+	@Override
+	public FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription(String contextName) {
+		GeographicType geographicType = null;
+		if (StringUtils.isNotEmpty(contextName)) {
+			ContextDescriptionEntity contextDescription = contextDescriptionDao.findByName(contextName);
+			if (contextDescription != null) {
+				geographicType = contextDescription.getGeographicType();
+			}
+		}
+		return geoJSonHelper.getGeoJSonTaskFeatureTypeDescription(geographicType);
 	}
 
 	@Override
@@ -657,4 +671,5 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			}
 		}
 	}
+
 }

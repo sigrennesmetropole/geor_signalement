@@ -1,7 +1,11 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
+import {changedGeometriesSelector} from "../../../MapStore2/web/client/selectors/draw";
+import {changeDrawingStatus, END_DRAWING, GEOMETRY_CHANGED} from "../../../MapStore2/web/client/actions/draw";
+import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 import {
     actions,
+    initSignalementDone,
     loadedAttachmentConfiguration,
     addedAttachment,
     removedAttachment,
@@ -17,16 +21,16 @@ import {
     updateLocalisation
 } from '../actions/signalement-action';
 import {FeatureProjection, GeometryType} from "../constants/signalement-constants";
-import {changedGeometriesSelector} from "../../../MapStore2/web/client/selectors/draw";
-import {changeDrawingStatus, END_DRAWING, GEOMETRY_CHANGED} from "../../../MapStore2/web/client/actions/draw";
-import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 
-let backendURLPrefix = "http://localhost:8082";
+let backendURLPrefix = "signalement";
 
-/*export function configureBackendUrl(value){
-    console.log("sig configure backend url:" + value);
-    //backendURLPrefix = value;
-};*/
+export const initSignalementEpic = (action$) =>
+	action$.ofType(actions.INIT_SIGNALEMENT)
+	    .switchMap((action) => {
+	        console.log("sig epics init:"+ action.url);
+	        backendURLPrefix = action.url;
+	        return Rx.Observable.of(initSignalementDone()).delay(0);
+	    });
 
 export const loadAttachmentConfigurationEpic = (action$) =>
     action$.ofType(actions.ATTACHMENT_CONFIGURATION_LOAD)

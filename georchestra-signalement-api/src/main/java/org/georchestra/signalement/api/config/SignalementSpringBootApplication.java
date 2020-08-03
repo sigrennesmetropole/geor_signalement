@@ -17,7 +17,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		"org.georchestra.signalement.core" })
 @EntityScan(basePackages = "org.georchestra.signalement.core.entity")
 @EnableJpaRepositories(basePackages = "org.georchestra.signalement.core.dao")
-@PropertySource(value = { "classpath:signalement.properties" }, ignoreResourceNotFound = false)
+@PropertySource(value = { "file:${georchestra.datadir}/default.properties" }, ignoreResourceNotFound = false)
+@PropertySource(value = { "file:${georchestra.datadir}/signalement/signalement.properties" }, ignoreResourceNotFound = false)
 @PropertySource(value = { "classpath:signalement-common.properties" }, ignoreResourceNotFound = false)
 public class SignalementSpringBootApplication extends SpringBootServletInitializer {
 

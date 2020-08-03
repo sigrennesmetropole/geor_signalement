@@ -8,6 +8,7 @@
   with_items:
     - "{{signalement_image_directory}}/"
     - "{{signalement_image_directory}}/signalement"
+    - "{{signalement_config_directory}}/signalement"
         
 # copy addon
 - name: Copy addon to mapfishapp
@@ -41,39 +42,26 @@
 - name: Copy signalement war
   copy:
     src: "{{ signalement_war_name }}"
-    dest: "{{ signalement_image_directory }}/signalement.origin.war"
+    dest: "{{ signalement_image_directory }}/signalement.war"
     mode: 0770 
-
-- name: Delete previous war explosion
-  shell:
-    cmd: "rm -rf {{signalement_image_directory}}/signalement/*"
-    chdir: "{{signalement_image_directory}}"
-       
-- name: Unarchive war
-  unarchive:
-    src: "{{ signalement_image_directory }}/signalement.origin.war"
-    dest: "{{signalement_image_directory}}/signalement"
-    remote_src: yes
-    mode: 0775
    
 - name: Copy signalement api properties file
   template:
     src: signalement.properties.j2
-    dest: "{{ signalement_image_directory }}/signalement/WEB-INF/classes/signalement.properties"
+    dest: "{{ signalement_config_directory }}/signalement/signalement.properties"
     mode: 0770
 
+- name: Copy default api properties file
+  template:
+    src: default.properties.j2
+    dest: "{{ signalement_config_directory }}/default.properties"
+    mode: 0770
+        
 #- name: Copy tomcat lib jar
 #  copy:
 #    src: "tomcat-juli.jar"
 #    dest: "{{ signalement_image_directory }}/signalement/WEB-INF/lib/tomcat-juli.jar"
-#    mode: 0770     
-
-- name: Archive war
-  archive:
-    path: "{{ signalement_image_directory }}/signalement/*"
-    dest: "{{signalement_image_directory}}/signalement.war"
-    format: zip
-    mode: 0644
+#    mode: 0770
   
 - name: Build signalement api image
   shell: 

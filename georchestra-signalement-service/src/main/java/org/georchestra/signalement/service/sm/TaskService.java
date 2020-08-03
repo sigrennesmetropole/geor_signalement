@@ -10,6 +10,7 @@ import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dto.Attachment;
 import org.georchestra.signalement.core.dto.AttachmentConfiguration;
 import org.georchestra.signalement.core.dto.FeatureCollection;
+import org.georchestra.signalement.core.dto.FeatureTypeDescription;
 import org.georchestra.signalement.core.dto.Form;
 import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
@@ -81,6 +82,15 @@ public interface TaskService {
 	 * @return un flux GeoJSon
 	 */
 	FeatureCollection searchGeoJSonTasks(TaskSearchCriteria taskSearchCriteria);
+
+	/**
+	 * 
+	 * @param contextName le nom d'un contexte connu du système. Si ce paramètre est
+	 *                    null, le flux sortant ne contient pas de propriété
+	 *                    geometry
+	 * @return un flux GeoJSon avec la description des propriétés
+	 */
+	FeatureTypeDescription getGeoJSonTaskFeatureTypeDescription(String contextName);
 
 	/**
 	 * Retourne une tâche par son id
