@@ -115,9 +115,10 @@ export function updateDoAction(actionName, task, viewType) {
     }
 }
 
-export function openTabularView() {
+export function openTabularView(context) {
 	return {
 		type: actions.OPEN_TABULAR_VIEW,
+		context : context
 	}
 }
 
