@@ -121,7 +121,7 @@ public class ProcessStylingCustomDaoImpl extends AbstractCustomDaoImpl implement
 		buildQuery(searchCriteria, builder, searchQuery, searchRoot, true);
 
 		SortCriteria sortCriteria = new SortCriteria();
-		sortCriteria.addElementsItem(new SortCriterion().property(PROCESS_DEFINITION_ID));
+		sortCriteria.addElementsItem(new SortCriterion().property(PROCESS_DEFINITION_ID).asc(true));
 		sortCriteria.addElementsItem(new SortCriterion().property(REVISION).asc(true));
 		sortCriteria.addElementsItem(new SortCriterion().property(USER_TASK_ID).asc(true));
 		applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
