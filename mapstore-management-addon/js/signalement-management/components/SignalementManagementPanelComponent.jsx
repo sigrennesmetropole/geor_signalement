@@ -261,7 +261,7 @@ export class SignalementManagementPanelComponent extends React.Component {
     }
 
     toggleTabularView(){
-        !this.props.tabularViewOpen ? this.props.openTabularView() : this.props.closeTabularView();
+        !this.props.tabularViewOpen ? this.props.openTabularView(this.state.currentContext) : this.props.closeTabularView();
     }
 
     displayMyView(){

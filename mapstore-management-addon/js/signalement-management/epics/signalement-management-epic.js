@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
 import {head} from 'lodash';
-import {addLayer, changeLayerProperties, updateNode} from '../../../MapStore2/web/client/actions/layers';
+import {addLayer, changeLayerProperties, updateNode, browseData} from '../../../MapStore2/web/client/actions/layers';
 import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 import {
     actions,
@@ -186,10 +186,10 @@ export const openTabularViewEpic = (action$, store) =>
     action$.ofType(actions.OPEN_TABULAR_VIEW)
         .switchMap((action) => {
             console.log("sigm epics open");
+            const url = backendURLPrefix + "/task/geojson/properties?contextName=" + action.context.name;
             const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === SIGNALEMENT_MANAGEMENT_LAYER_ID));
             if( signalementsLayer) {
-                return Rx.Observable.from(([setLayer(SIGNALEMENT_MANAGEMENT_LAYER_ID)] ).concat([openFeatureGrid()
-                ]));
+                return Rx.Observable.of(browseData({...signalementsLayer, url: url}));
             } else {
                 return Rx.Observable.from(
                     [addLayer({
