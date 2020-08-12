@@ -1,12 +1,11 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
 import {head} from 'lodash';
-import {addLayer, changeLayerProperties, updateNode, browseData} from '../../../MapStore2/web/client/actions/layers';
+import {addLayer, changeLayerProperties, updateNode, browseData,selectNode} from '../../../MapStore2/web/client/actions/layers';
 import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
 import {
     actions,
     initSignalementManagementDone,
-    displayAdminView,
     displayMapView,
     gotMe,
     gotTask,
@@ -137,13 +136,7 @@ export const updateViewDataEpic = (action$, store) =>
         .switchMap((action) => {
             console.log("sigm epics type view changed");
             // Affichage de la carte
-            if (action.viewType === viewType.MY) {
-                return Rx.Observable.of(displayMapView(action.data));
-            }
-            // Affichage de la vue admin
-            else {
-                return Rx.Observable.of(displayAdminView());
-            }
+            return Rx.Observable.of(displayMapView(action.data));
         });
 
 export const displayMapViewDataEpic = (action$, store) =>
@@ -165,22 +158,13 @@ export const displayMapViewDataEpic = (action$, store) =>
                             type: 'TaskViewer'
                         }
 
-                    })]
+                    }),selectNode(SIGNALEMENT_MANAGEMENT_LAYER_ID,"layer",false)]
             ).concat([
                 changeLayerProperties(SIGNALEMENT_MANAGEMENT_LAYER_ID, {visibility: true}),
                 changeMapInfoState(true)
             ]));
         });
 
-export const displayAdminViewDataEpic = (action$, store) =>
-    action$.ofType(actions.DISPLAY_ADMIN_VIEW)
-        .switchMap((action) => {
-            const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === SIGNALEMENT_MANAGEMENT_LAYER_ID));
-            return Rx.Observable.from((signalementsLayer
-                    ? [changeLayerProperties(SIGNALEMENT_MANAGEMENT_LAYER_ID, {visibility: false})]
-                    : []
-            ).concat([/* display admin view*/]));
-        });
 
 export const openTabularViewEpic = (action$, store) =>
     action$.ofType(actions.OPEN_TABULAR_VIEW)
