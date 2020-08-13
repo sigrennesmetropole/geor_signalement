@@ -9,6 +9,7 @@ import * as epics from '../signalement-management/epics/signalement-management-e
 import signalementManagementReducer from '../signalement-management/reducers/signalement-management-reducer';
 import {initSignalementManagement, loadContexts, getMe, openTabularView, closeTabularView, changeTypeView} from '../signalement-management/actions/signalement-management-action';
 import {getSignalementManagement, signalementManagementContextsSelector, signalementManagementMeSelector} from '../signalement-management/selectors/signalement-management-selector';
+import {selectNode} from '../../MapStore2/web/client/actions/layers';
 
 const Connected = connect((state) => ({
     contexts: signalementManagementContextsSelector(state),
@@ -25,7 +26,8 @@ const Connected = connect((state) => ({
     getMe: getMe,
     openTabularView: openTabularView,
     closeTabularView: closeTabularView,
-    changeTypeView: changeTypeView
+    changeTypeView: changeTypeView,
+    selectNode: selectNode
 })(SignalementManagementPanelComponent);
 
 export default {
