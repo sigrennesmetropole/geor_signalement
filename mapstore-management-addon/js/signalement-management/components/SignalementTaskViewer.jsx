@@ -39,12 +39,14 @@ export class SignalementTaskViewer extends React.Component {
     constructor(props) {
         super(props);
         this.state= {
-            errorFields: {}
+            errorFields: {},
+            index: 0
         }
     }
 
     componentWillMount() {
-        let id = this.props.response.features[0].properties.id;
+        let index = this.state.index;
+        let id = this.props.response.features[index].properties.id;
         if(id){
             console.log("sigm task  get");
             this.props.getTask(id);
@@ -71,6 +73,7 @@ export class SignalementTaskViewer extends React.Component {
         if (this.state.task) {
             return (
                 <Form model={this.state.task}>
+                    {this.renderSignalementNavigation()}
                     {this.renderMessage()}
                     {this.renderSignalementManagementInfo()}
                     {this.renderSignalementManagementForm()}
@@ -80,6 +83,23 @@ export class SignalementTaskViewer extends React.Component {
             )
         } else {
             return null;
+        }
+    }
+
+    renderSignalementNavigation(){
+        if(this.props.response.features.length > 1){
+            return(
+                <div className="button-navigation">
+                    <button  className="square-button-md btn btn-primary" onClick={() => this.handleClickButtonDisplayTaskBefore()}>
+                        <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
+                    </button>
+                    <button className="square-button-md btn btn-primary" onClick={() => this.handleClickButtonDisplayTaskAfter()}>
+                        <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
+                    </button>
+
+                </div>
+
+            )
         }
     }
 
@@ -542,5 +562,29 @@ export class SignalementTaskViewer extends React.Component {
      */
     handleClickButtonAction(actionName){
         this.props.updateDoAction(actionName, this.state.task, this.props.viewType);
+    }
+
+    handleClickButtonDisplayTaskAfter(){
+        let index = this.state.index;
+        if(index < this.props.response.features.length -1){
+            let id = this.props.response.features[index+1].properties.id;
+            if(id){
+                console.log("sigm task  get");
+                this.props.getTask(id);
+                this.setState({task: null, index : (index+1)});
+            }
+        }
+    }
+
+    handleClickButtonDisplayTaskBefore(){
+        let index = this.state.index;
+        if(index > 0){
+            let id = this.props.response.features[index-1].properties.id;
+            if(id){
+                console.log("sigm task  get");
+                this.props.getTask(id);
+                this.setState({task: null, index : (index-1)});
+            }
+        }
     }
 }
