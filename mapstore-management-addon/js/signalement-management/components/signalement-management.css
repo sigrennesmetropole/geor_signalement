@@ -43,13 +43,16 @@ span .info {
     color: orange;
 }
 
-.actionButton {
-    margin-right: 10px;
+.cancelButton {
+    margin: 40px 0px 0 0px;
+    float: right;
 }
 
 .updateButton {
-    margin-left: 45px;
+    margin: 40px 0px 0 0px;
+    float: right;
 }
+
 
 .claimButton {
     margin: auto;
@@ -68,4 +71,8 @@ span .info {
 
 .button-navigation button{
     margin-right: 10px;
+}
+
+.actionsList{
+    margin-left: 30px;
 }

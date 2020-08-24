@@ -29,6 +29,7 @@ import {
     signalementManagementContextsSelector,
     signalementManagementMeSelector, signalementManagementTaskSelector
 } from "../selectors/signalement-management-selector";
+import {closeIdentify} from '../../../MapStore2/web/client/actions/mapInfo';
 
 
 export class SignalementManagementPanelComponent extends React.Component {
@@ -106,6 +107,7 @@ export class SignalementManagementPanelComponent extends React.Component {
             claimTask: claimTask,
             updateTask: updateTask,
             updateDoAction: updateDoAction,
+            closeIdentify: closeIdentify
         })(SignalementTaskViewer);
         MapInfoUtils.setViewer("TaskViewer", Connected);
         this.state = {

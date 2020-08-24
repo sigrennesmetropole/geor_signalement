@@ -40,7 +40,8 @@ export class SignalementTaskViewer extends React.Component {
         super(props);
         this.state= {
             errorFields: {},
-            index: 0
+            index: 0,
+            action: null
         }
     }
 
@@ -79,6 +80,7 @@ export class SignalementTaskViewer extends React.Component {
                     {this.renderSignalementManagementForm()}
                     {this.renderSignalementManagementClaim()}
                     {this.renderSignalementManagementActions()}
+                    {this.renderSignalementManagementValidate()}
                 </Form>
             )
         } else {
@@ -200,33 +202,59 @@ export class SignalementTaskViewer extends React.Component {
     }
 
     /**
-     * La rendition des buttons d'actions
+     * La rendition d'etape suivante pour faire une action
      */
     renderSignalementManagementActions() {
-        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login ){
+        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
             return (
-                <div>
-                    <Col md={2}>
-                        <FormGroup controlId="signalement-management.info.update">
-                            <Button className="updateButton" bsStyle="info" onClick={() => this.handleClickButtonUpdateTask()} >
-                                <Glyphicon glyph="glyphicon glyphicon-edit" />
-                            </Button>
-                        </FormGroup>
-                    </Col>
-                    <Col md={10}>
+                <div className ="actionsList">
+                    <Col md={12}>
                         <FormGroup controlId="signalement-management.info.actions">
-                            {this.state.task.actions.map(action=>
-                                        <Button className="actionButton" key={action.name} bsStyle="info" onClick={() => this.handleClickButtonAction(action.name)}>
-                                            {action.label}
-                                        </Button>
-                                )}
+                            <ControlLabel className="col-sm-4"><Message msgId="signalement-management.actions"/></ControlLabel>
+                            <div className="col-sm-5">
+                                <FormControl componentClass="select"
+                                             onChange={this.handleChangeSelectAction}
+                                >
+                                    <option></option>
+                                    {
+                                        this.state.task.actions.map((option) => {
+                                            return <option key={option.label} value={option.name}>{option.label}</option>
+                                        })
+                                    }
+                                </FormControl>
+                            </div>
                         </FormGroup>
-
                     </Col>
                 </div>
             )
         }
     }
+
+    /**
+     * La rendition des buttons d'actions
+     */
+    renderSignalementManagementValidate() {
+        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
+            return (
+                <div>
+                    <FormGroup controlId="signalement-management.info.cancel">
+                        <Button className="cancelButton" bsStyle="default"
+                                onClick={() => this.handleClickButtonCancelTask()}>
+                            <Message msgId="signalement-management.cancel"/>
+                        </Button>
+                    </FormGroup>
+
+                    <FormGroup controlId="signalement-management.info.update">
+                        <Button className="updateButton" bsStyle="info"
+                                onClick={() => this.handleClickButtonUpdateTask()}>
+                            <Message msgId="signalement-management.validate"/>
+                        </Button>
+                    </FormGroup>
+                </div>
+            )
+        }
+    }
+
 
 
     /**
@@ -553,16 +581,30 @@ export class SignalementTaskViewer extends React.Component {
     /**
      * L'action pour faire la mise à jour d'une tâche
      */
-    handleClickButtonUpdateTask(){
+    handleClickButtonUpdateTask() {
+        if(this.state.action && this.state.action !== "" ){
+            this.props.updateDoAction(this.state.action, this.state.task, this.props.viewType);
+
+        }else if(this.state.action === "" || this.state.action === null){
             this.props.updateTask(this.state.task);
+        }
     }
 
     /**
-     * Envoyer une action
+     * L'action pour fermer la view
      */
-    handleClickButtonAction(actionName){
-        this.props.updateDoAction(actionName, this.state.task, this.props.viewType);
+    handleClickButtonCancelTask() {
+        this.props.closeIdentify();
     }
+
+    /**
+     * changement de la select pour l'etape suivante
+     */
+    handleChangeSelectAction= (e) => {
+        this.setState({action: e.target.value})
+    }
+
+
 
     handleClickButtonDisplayTaskAfter(){
         let index = this.state.index;
