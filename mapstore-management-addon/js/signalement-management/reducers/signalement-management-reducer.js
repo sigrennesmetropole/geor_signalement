@@ -3,7 +3,7 @@ import {actions, status, viewType} from '../actions/signalement-management-actio
 
 const {
     CLOSE_FEATURE_GRID
-} = require('../../../MapStore2/web/client/actions/featuregrid');
+} = require('@mapstore/actions/featuregrid');
 
 const initialState = {
     user: null,

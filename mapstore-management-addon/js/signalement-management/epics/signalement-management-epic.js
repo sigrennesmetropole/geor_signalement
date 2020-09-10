@@ -1,8 +1,8 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
 import {head} from 'lodash';
-import {addLayer, changeLayerProperties, updateNode, browseData,selectNode} from '../../../MapStore2/web/client/actions/layers';
-import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
+import {addLayer, changeLayerProperties, updateNode, browseData,selectNode} from '@mapstore/actions/layers';
+import {changeMapInfoState} from "@mapstore/actions/mapInfo";
 import {
     actions,
     initSignalementManagementDone,
@@ -17,8 +17,8 @@ import {
     changeTypeView,
     viewType
 } from '../actions/signalement-management-action';
-import {closeFeatureGrid, openFeatureGrid, setLayer} from '../../../MapStore2/web/client/actions/featuregrid';
-import {closeIdentify} from '../../../MapStore2/web/client/actions/mapInfo';
+import {closeFeatureGrid, openFeatureGrid, setLayer} from '@mapstore/actions/featuregrid';
+import {closeIdentify} from '@mapstore/actions/mapInfo';
 
 const SIGNALEMENT_MANAGEMENT_LAYER_ID = 'signalements';
 const SIGNALEMENT_MANAGEMENT_LAYER_NAME = 'Signalements';

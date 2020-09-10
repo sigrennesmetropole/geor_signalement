@@ -266,52 +266,6 @@
 				</executions>
 			</plugin>
 
-			<!-- modify package.json for windows system -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>windowsify-package-json</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target name="replace">
-								<taskdef
-									resource="net/sf/antcontrib/antcontrib.properties" />
-								<if>
-									<os family="unix" />
-									<then>
-										<echo message="windowsify package.json not needed" />
-									</then>
-									<else>
-										<echo message="windowsify package.json needed" />
-										<replaceregexp
-											file="${mapstore-georchestra}/package.json"
-											match="&amp;&amp; cp -r .*" replace="&quot;," byline="true" />
-									</else>
-								</if>
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>ant-contrib</groupId>
-						<artifactId>ant-contrib</artifactId>
-						<version>1.0b3</version>
-						<exclusions>
-							<exclusion>
-								<groupId>ant</groupId>
-								<artifactId>ant</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-				</dependencies>
-			</plugin>
-
 			<!-- JAR executable Spring Boot -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -429,7 +383,7 @@
 									</target>
 									<target name="copy-mapstore-signalement-plugin">
 										<echo message="${mapstore-georchestra}/build/extensions" />
-										<copy todir="${mapstore-georchestra}/build/extensions"
+										<copy todir="${mapstore-georchestra}/build/extensions/plugins"
 											file="../mapstore-addon/js/plugins/SignalementExtension.jsx"
 											overwrite="true" />
 										<copy todir="${mapstore-georchestra}/build/extensions"
@@ -439,7 +393,7 @@
 										<copy todir="${mapstore-georchestra}/build/extensions"
 											file="../mapstore-addon/prod-webpack.config.js"
 											overwrite="true" />
-										<copy todir="${mapstore-georchestra}/build/signalement"
+										<copy todir="${mapstore-georchestra}/build/extensions/signalement"
 											overwrite="true">
 											<fileset dir="../mapstore-addon/js/signalement">
 												<include name="**/*.js*" />
@@ -544,7 +498,7 @@
 									<target
 										name="copy-mapstore-signalement-management-plugin">
 										<echo message="${mapstore-georchestra}/build/extensions" />
-										<copy todir="${mapstore-georchestra}/build/extensions"
+										<copy todir="${mapstore-georchestra}/build/extensions/plugins"
 											file="../mapstore-management-addon/js/plugins/SignalementManagementExtension.jsx"
 											overwrite="true" />
 										<copy todir="${mapstore-georchestra}/build/extensions"
@@ -556,7 +510,7 @@
 											file="../mapstore-management-addon/prod-webpack.config.js"
 											overwrite="true" />
 										<copy
-											todir="${mapstore-georchestra}/build/signalement-management"
+											todir="${mapstore-georchestra}/build/extensions/signalement-management"
 											overwrite="true">
 											<fileset
 												dir="../mapstore-management-addon/js/signalement-management">

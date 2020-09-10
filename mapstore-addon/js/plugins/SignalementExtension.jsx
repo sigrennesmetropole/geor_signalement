@@ -1,9 +1,9 @@
 import React from 'react';
 import {Glyphicon} from 'react-bootstrap';
 import {connect} from 'react-redux';
-import {createPlugin} from '../../MapStore2/web/client/utils/PluginsUtils';
-import {createControlEnabledSelector} from '../../MapStore2/web/client/selectors/controls';
-import Message from '../../MapStore2/web/client/components/I18N/Message';
+import {createPlugin} from '@mapstore/utils/PluginsUtils';
+import {createControlEnabledSelector} from '@mapstore/selectors/controls';
+import Message from '@mapstore/components/I18N/Message';
 import {SignalementPanelComponent} from '../signalement/components/SignalementPanelComponent';
 import * as epics from '../signalement/epics/signalement-epic';
 import signalementReducer from '../signalement/reducers/signalement-reducer';

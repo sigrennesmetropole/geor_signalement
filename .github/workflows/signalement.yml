@@ -31,7 +31,7 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Build a docker image"
-      run: mvn -B clean package -Pdocker -DskipTests -DdockerImageName=sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }}
+      run: mvn -B clean package -Pdocker -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1

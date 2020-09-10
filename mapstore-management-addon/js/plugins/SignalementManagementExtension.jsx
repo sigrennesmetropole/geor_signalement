@@ -1,15 +1,15 @@
 import React from 'react';
-import {createPlugin} from '../../MapStore2/web/client/utils/PluginsUtils';
+import {createPlugin} from '@mapstore/utils/PluginsUtils';
 import {Glyphicon} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import {get} from 'lodash';
-import Message from '../../MapStore2/web/client/components/I18N/Message';
+import Message from '@mapstore/components/I18N/Message';
 import {SignalementManagementPanelComponent} from '../signalement-management/components/SignalementManagementPanelComponent';
 import * as epics from '../signalement-management/epics/signalement-management-epic';
 import signalementManagementReducer from '../signalement-management/reducers/signalement-management-reducer';
 import {initSignalementManagement, loadContexts, getMe, openTabularView, closeTabularView, changeTypeView} from '../signalement-management/actions/signalement-management-action';
 import {getSignalementManagement, signalementManagementContextsSelector, signalementManagementMeSelector} from '../signalement-management/selectors/signalement-management-selector';
-import {selectNode} from '../../MapStore2/web/client/actions/layers';
+import {selectNode} from '@mapstore/actions/layers';
 
 const Connected = connect((state) => ({
     contexts: signalementManagementContextsSelector(state),

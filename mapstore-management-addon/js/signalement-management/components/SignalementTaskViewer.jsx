@@ -1,7 +1,7 @@
 import React from 'react';
 import {PropTypes} from 'prop-types';
 import {ControlLabel, Form, FormControl, FormGroup, Button, Col, Glyphicon} from "react-bootstrap";
-import Message from '../../../MapStore2/web/client/components/I18N/Message';
+import Message from '@mapstore/components/I18N/Message';
 
 
 export const TASKVIEWER = "TaskViewer";

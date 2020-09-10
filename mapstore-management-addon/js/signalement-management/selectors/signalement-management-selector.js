@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { get, head } from "lodash";
-import {layersSelector} from '../../../MapStore2/web/client/selectors/layers';
+import {layersSelector} from '@mapstore/selectors/layers';
 
 export const getSignalementManagement = state => get(state, "signalementManagement");
 
