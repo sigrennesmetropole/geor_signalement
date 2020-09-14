@@ -342,7 +342,7 @@
 						<artifactId>maven-assembly-plugin</artifactId>
 						<configuration>
 							<descriptors>
-								<descriptor>mapfish-addon/addon-assembly.xml</descriptor>
+								<descriptor>mapfishapp-addon/addon-assembly.xml</descriptor>
 							</descriptors>
 						</configuration>
 						<executions>
@@ -662,12 +662,12 @@
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>deploy-mapfish-addon</id>
+								<id>deploy-mapfishapp-addon</id>
 								<phase>package</phase>
 								<configuration>
-									<target name="copy mapfish-addon to georchestra">
-										<copy todir="${georchestra.mapfish-addon.deployDir}">
-											<fileset dir="../mapfish-addon/">
+									<target name="copy mapfishapp-addon to georchestra">
+										<copy todir="${georchestra.mapfishapp-addon.deployDir}">
+											<fileset dir="../mapfishapp-addon/">
 												<exclude name="**/addon-assembly.xml" />
 											</fileset>
 										</copy>
@@ -691,12 +691,12 @@
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>deploy-mapfish-addon</id>
+								<id>deploy-mapfishapp-addon</id>
 								<phase>package</phase>
 								<configuration>
-									<target name="copy mapfish-addon to georchestra">
-										<copy todir="${georchestra.mapfish-addon.deployDir}">
-											<fileset dir="../mapfish-addon/">
+									<target name="copy mapfishapp-addon to georchestra">
+										<copy todir="${georchestra.mapfishapp-addon.deployDir}">
+											<fileset dir="../mapfishapp-addon/">
 												<exclude name="**/addon-assembly.xml" />
 											</fileset>
 										</copy>
