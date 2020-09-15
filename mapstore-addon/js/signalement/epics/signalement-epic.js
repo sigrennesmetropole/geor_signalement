@@ -1,8 +1,8 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
-import {changedGeometriesSelector} from "../../../MapStore2/web/client/selectors/draw";
-import {changeDrawingStatus, END_DRAWING, GEOMETRY_CHANGED} from "../../../MapStore2/web/client/actions/draw";
-import {changeMapInfoState} from "../../../MapStore2/web/client/actions/mapInfo";
+import {changedGeometriesSelector} from "@mapstore/selectors/draw";
+import {changeDrawingStatus, END_DRAWING, GEOMETRY_CHANGED} from "@mapstore/actions/draw";
+import {changeMapInfoState} from "@mapstore/actions/mapInfo";
 import {
     actions,
     initSignalementDone,

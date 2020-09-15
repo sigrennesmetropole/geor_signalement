@@ -8,7 +8,7 @@ const paths = {
     base: path.join(__dirname, "..", ".."),
     dist: path.join(__dirname, "dist"),
     framework: path.join(__dirname, "..", "..", "MapStore2", "web", "client"),
-    code: [path.join(__dirname), path.join(__dirname, "..", "signalement-management"), path.join(__dirname, "plugins"), path.join(__dirname, "..", "..", "MapStore2", "web", "client"), path.join(__dirname, "..", "..", "js")]
+    code: [path.join(__dirname), path.join(__dirname, "plugins"), path.join(__dirname, "..", "..", "MapStore2", "web", "client"), path.join(__dirname, "..", "..", "js")]
 };
 
 const baseConfig = buildConfig(
@@ -23,7 +23,7 @@ const baseConfig = buildConfig(
     false,
     [],
     {
-        "@mapstore": path.resolve(__dirname, "MapStore2", "web", "client"),
+        "@mapstore": path.resolve(__dirname, "..", "..", "MapStore2", "web", "client"),
         "@js": path.resolve(__dirname, "js"),
         // next libs are added because of this issue https://github.com/geosolutions-it/MapStore2/issues/4569
         jsonix: "@boundlessgeo/jsonix",

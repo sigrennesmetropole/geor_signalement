@@ -7,7 +7,7 @@
   <baseDirectory>/</baseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${basedir}/../mapfish-addon</directory>
+      <directory>${basedir}/../mapfishapp-addon</directory>
       <outputDirectory>../</outputDirectory>
       <excludes>
         <exclude>**/addon-assembly.xml</exclude>

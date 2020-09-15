@@ -14,8 +14,8 @@ import {
     HelpBlock,
     Row
 } from 'react-bootstrap';
-import Message from '../../../MapStore2/web/client/components/I18N/Message';
-import ConfirmDialog from '../../../MapStore2/web/client/components/misc/ConfirmDialog';
+import Message from '@mapstore/components/I18N/Message';
+import ConfirmDialog from '@mapstore/components/misc/ConfirmDialog';
 import './signalement.css';
 import {status} from '../actions/signalement-action';
 import {GeometryType} from '../constants/signalement-constants';

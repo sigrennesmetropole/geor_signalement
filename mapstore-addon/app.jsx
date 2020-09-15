@@ -14,7 +14,7 @@ import rootTranslations from "../../MapStore2/web/client/translations/data.en-US
 import bundleTranslations from "./bundle/translations/data.fr-FR.json";
 
 const pluginsConfig = ["Map", "BurgerMenu", "Signalement"];
-const LOCALE = "fr-FR";
+const LOCALE = "en-US";
 
 const startApp = (messages) => {
     const initialState = {
