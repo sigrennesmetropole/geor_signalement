@@ -26,12 +26,18 @@
     backup: yes  
 
 # update security proxy
-- name: Update security proxy
-  template:
-    src: targets-mapping.properties
-    dest: "{{ signalement_config_directory }}/security-proxy"
-    mode: 0644
- 
+- name: Check whether targets-mapping.properties contains signalement
+  command: grep -Fcq "signalement" "{{ signalement_config_directory }}/security-proxy/targets-mapping.properties"
+  register: checksecuritysignalement
+  check_mode: no
+  ignore_errors: yes
+  changed_when: no
+
+- name: Update targets-mapping.properties if needed
+  when: checksecuritysignalement.rc == 1
+  shell:
+    cmd: echo "signalement=http://signalement:{{signalement_server_port}}/signalement" >> "{{ signalement_config_directory }}/security-proxy/targets-mapping.properties"    
+
 # copy images 
 - name: Copy signalement api Dockerfile
   template:
@@ -68,11 +74,41 @@
     cmd: docker build -t signalement-image {{signalement_image_directory}}
     chdir: "{{signalement_image_directory}}"  
     
-- name: Copy docker compose file
+# install yaml-merge
+- name: Clone yaml-merge
+  shell: 
+    chdir: /tmp
+    cmd: rm -rf /tmp/yaml-merge; git clone https://github.com/OndraZizka/yaml-merge.git 
+    
+- name: Override yaml-merge
+  copy: 
+    src: "YmlMerger.java"
+    dest: "/tmp/yaml-merge/src/main/java/org/cobbzilla/util/yml"
+    mode: 0664    
+    
+- name: Build yaml-merge
+  shell:
+    chdir: /tmp
+    cmd: cd yaml-merge ;  mvn -Drelease package
+
+# update docker compose file
+- name: Copy signalement docker compose file
   template:
     src: docker-compose.yml.j2
-    dest: "{{signalement_docker_directory}}/docker-compose.yml"
+    dest: "/tmp/yaml-merge/docker-signalement.yml"
     mode: 0664
+    
+- name: Copy original docker compose file
+  copy:
+    src: "{{signalement_docker_directory}}/docker-compose.yml"
+    dest: "/tmp/yaml-merge/docker-compose.yml"
+    remote_src: true
+    mode: 0664    
+    
+- name: Merge docker compose file
+  shell:
+    chdir: "/tmp/yaml-merge"
+    cmd: bin/yaml-merge.sh "docker-compose.yml" "docker-signalement.yml" > "{{signalement_docker_directory}}/docker-compose.yml"
     
 #- name: Stop docker compose
 #  shell:

@@ -18,7 +18,10 @@
           "layer": "Couche ou thématique",
           "object": "Object",
           "files": "Pièces jointes",
-          "affect": "Assigner"
+          "affect": "Assigner",
+          "actions": "Etape suivante",
+          "validate": "Valider",
+          "cancel": "Annuler"
         }
     }
 }

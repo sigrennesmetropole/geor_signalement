@@ -2,8 +2,8 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {PropTypes} from 'prop-types';
 import {Button, Glyphicon, Tooltip} from 'react-bootstrap';
-import Message from '../../../MapStore2/web/client/components/I18N/Message';
-import OverlayTrigger from '../../../MapStore2/web/client/components/misc/OverlayTrigger';
+import Message from '@mapstore/components/I18N/Message';
+import OverlayTrigger from '@mapstore/components/misc/OverlayTrigger';
 import './signalement.css';
 
 export class SignalementLayerToolButton extends React.Component {

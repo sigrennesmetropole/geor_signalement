@@ -1,7 +1,7 @@
 import React from 'react';
 import {PropTypes} from 'prop-types';
 import {ControlLabel, Form, FormControl, FormGroup, Button, Col, Glyphicon} from "react-bootstrap";
-import Message from '../../../MapStore2/web/client/components/I18N/Message';
+import Message from '@mapstore/components/I18N/Message';
 
 
 export const TASKVIEWER = "TaskViewer";
@@ -39,12 +39,15 @@ export class SignalementTaskViewer extends React.Component {
     constructor(props) {
         super(props);
         this.state= {
-            errorFields: {}
+            errorFields: {},
+            index: 0,
+            action: null
         }
     }
 
     componentWillMount() {
-        let id = this.props.response.features[0].properties.id;
+        let index = this.state.index;
+        let id = this.props.response.features[index].properties.id;
         if(id){
             console.log("sigm task  get");
             this.props.getTask(id);
@@ -71,15 +74,34 @@ export class SignalementTaskViewer extends React.Component {
         if (this.state.task) {
             return (
                 <Form model={this.state.task}>
+                    {this.renderSignalementNavigation()}
                     {this.renderMessage()}
                     {this.renderSignalementManagementInfo()}
                     {this.renderSignalementManagementForm()}
                     {this.renderSignalementManagementClaim()}
                     {this.renderSignalementManagementActions()}
+                    {this.renderSignalementManagementValidate()}
                 </Form>
             )
         } else {
             return null;
+        }
+    }
+
+    renderSignalementNavigation(){
+        if(this.props.response.features.length > 1){
+            return(
+                <div className="button-navigation">
+                    <button  className="square-button-md btn btn-primary" onClick={() => this.handleClickButtonDisplayTaskBefore()}>
+                        <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
+                    </button>
+                    <button className="square-button-md btn btn-primary" onClick={() => this.handleClickButtonDisplayTaskAfter()}>
+                        <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
+                    </button>
+
+                </div>
+
+            )
         }
     }
 
@@ -180,33 +202,59 @@ export class SignalementTaskViewer extends React.Component {
     }
 
     /**
-     * La rendition des buttons d'actions
+     * La rendition d'etape suivante pour faire une action
      */
     renderSignalementManagementActions() {
-        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login ){
+        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
             return (
-                <div>
-                    <Col md={2}>
-                        <FormGroup controlId="signalement-management.info.update">
-                            <Button className="updateButton" bsStyle="info" onClick={() => this.handleClickButtonUpdateTask()} >
-                                <Glyphicon glyph="glyphicon glyphicon-edit" />
-                            </Button>
-                        </FormGroup>
-                    </Col>
-                    <Col md={10}>
+                <div className ="actionsList">
+                    <Col md={12}>
                         <FormGroup controlId="signalement-management.info.actions">
-                            {this.state.task.actions.map(action=>
-                                        <Button className="actionButton" key={action.name} bsStyle="info" onClick={() => this.handleClickButtonAction(action.name)}>
-                                            {action.label}
-                                        </Button>
-                                )}
+                            <ControlLabel className="col-sm-4"><Message msgId="signalement-management.actions"/></ControlLabel>
+                            <div className="col-sm-5">
+                                <FormControl componentClass="select"
+                                             onChange={this.handleChangeSelectAction}
+                                >
+                                    <option></option>
+                                    {
+                                        this.state.task.actions.map((option) => {
+                                            return <option key={option.label} value={option.name}>{option.label}</option>
+                                        })
+                                    }
+                                </FormControl>
+                            </div>
                         </FormGroup>
-
                     </Col>
                 </div>
             )
         }
     }
+
+    /**
+     * La rendition des buttons d'actions
+     */
+    renderSignalementManagementValidate() {
+        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
+            return (
+                <div>
+                    <FormGroup controlId="signalement-management.info.cancel">
+                        <Button className="cancelButton" bsStyle="default"
+                                onClick={() => this.handleClickButtonCancelTask()}>
+                            <Message msgId="signalement-management.cancel"/>
+                        </Button>
+                    </FormGroup>
+
+                    <FormGroup controlId="signalement-management.info.update">
+                        <Button className="updateButton" bsStyle="info"
+                                onClick={() => this.handleClickButtonUpdateTask()}>
+                            <Message msgId="signalement-management.validate"/>
+                        </Button>
+                    </FormGroup>
+                </div>
+            )
+        }
+    }
+
 
 
     /**
@@ -533,14 +581,52 @@ export class SignalementTaskViewer extends React.Component {
     /**
      * L'action pour faire la mise à jour d'une tâche
      */
-    handleClickButtonUpdateTask(){
+    handleClickButtonUpdateTask() {
+        if(this.state.action && this.state.action !== "" ){
+            this.props.updateDoAction(this.state.action, this.state.task, this.props.viewType);
+
+        }else if(this.state.action === "" || this.state.action === null){
             this.props.updateTask(this.state.task);
+        }
     }
 
     /**
-     * Envoyer une action
+     * L'action pour fermer la view
      */
-    handleClickButtonAction(actionName){
-        this.props.updateDoAction(actionName, this.state.task, this.props.viewType);
+    handleClickButtonCancelTask() {
+        this.props.closeIdentify();
+    }
+
+    /**
+     * changement de la select pour l'etape suivante
+     */
+    handleChangeSelectAction= (e) => {
+        this.setState({action: e.target.value})
+    }
+
+
+
+    handleClickButtonDisplayTaskAfter(){
+        let index = this.state.index;
+        if(index < this.props.response.features.length -1){
+            let id = this.props.response.features[index+1].properties.id;
+            if(id){
+                console.log("sigm task  get");
+                this.props.getTask(id);
+                this.setState({task: null, index : (index+1)});
+            }
+        }
+    }
+
+    handleClickButtonDisplayTaskBefore(){
+        let index = this.state.index;
+        if(index > 0){
+            let id = this.props.response.features[index-1].properties.id;
+            if(id){
+                console.log("sigm task  get");
+                this.props.getTask(id);
+                this.setState({task: null, index : (index-1)});
+            }
+        }
     }
 }

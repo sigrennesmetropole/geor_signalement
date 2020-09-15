@@ -7,8 +7,8 @@ import {connect} from 'react-redux';
 import {PropTypes} from 'prop-types';
 import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, ControlLabel, Tooltip, FormGroup} from 'react-bootstrap';
 import Select from 'react-select';
-import Message from '../../../MapStore2/web/client/components/I18N/Message';
-import MapInfoUtils from '../../../MapStore2/web/client/utils/MapInfoUtils';
+import Message from '@mapstore/components/I18N/Message';
+import MapInfoUtils from '@mapstore/utils/MapInfoUtils';
 import { SignalementTaskViewer } from './SignalementTaskViewer';
 import './signalement-management.css';
 import {
@@ -29,6 +29,7 @@ import {
     signalementManagementContextsSelector,
     signalementManagementMeSelector, signalementManagementTaskSelector
 } from "../selectors/signalement-management-selector";
+import {closeIdentify} from '@mapstore/actions/mapInfo';
 
 
 export class SignalementManagementPanelComponent extends React.Component {
@@ -51,7 +52,8 @@ export class SignalementManagementPanelComponent extends React.Component {
         getMe: PropTypes.func,
         openTabularView: PropTypes.func,
         closeTabularView: PropTypes.func,
-        changeTypeView: PropTypes.func
+        changeTypeView: PropTypes.func,
+        selectNode: PropTypes.func
     };
 
     static defaultProps = {
@@ -85,6 +87,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         openTabularView: ()=>{},
         closeTabularView: ()=>{},
         changeTypeView: ()=>{},
+        selectNode: ()=>{}
     };
 
     constructor(props) {
@@ -104,8 +107,12 @@ export class SignalementManagementPanelComponent extends React.Component {
             claimTask: claimTask,
             updateTask: updateTask,
             updateDoAction: updateDoAction,
+            closeIdentify: closeIdentify
         })(SignalementTaskViewer);
         MapInfoUtils.setViewer("TaskViewer", Connected);
+        this.state = {
+            viewAdmin : false
+        }
         //configureBackendUrl(this.props.backendurl);
     }
 
@@ -136,7 +143,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         if( contextDescriptions != null && contextDescriptions.length >0){
             if( this.state.currentContext !== contextDescriptions[0] ) {
                 this.state.currentContext = contextDescriptions[0];
-                this.props.changeTypeView(this.state.viewType,this.state.currentContext);
+                this.props.changeTypeView(this.props.viewType,this.state.currentContext);
             }
         }
         this.setState(this.state);
@@ -204,22 +211,35 @@ export class SignalementManagementPanelComponent extends React.Component {
                                 </Button>
                             </Col>
                             <Col xs={4}>
-                                <Button key="signalement-my-view" bsStyle={this.props.viewType == viewType.MY ? 'success' : 'primary'}  className="square-button-md" 
-                                    onClick={ () => this.displayMyView()}>
+                                <Button key="signalement-my-view" bsStyle={(this.props.state.layers.selected && this.props.state.layers.selected.includes("signalements")) ? 'success' : 'primary'}  className="square-button-md"
+                                        onClick={ () => this.selectLayerSign()}>
                                     <Glyphicon glyph="exclamation-sign" />
                                 </Button>
                             </Col>
-                            <Col xs={4}>
-                                <Button key="signalement-tabular-view" bsStyle={this.props.viewType == viewType.ADMIN ? 'success' : 'primary'} className="square-button-md" 
-                                    onClick={() => this.displayAdminView()}>
-                                    <Glyphicon glyph="cog" />
-                                </Button>
-                            </Col>
+                            {this.renderButtonAdmin()}
+
                         </Row>
                     </Grid>
                 </Form>
             </div>
         );
+    }
+
+    /**
+     * La rendition du button admin
+     */
+    renderButtonAdmin(){
+        if(this.props.user.roles.find(role => role === "ADMIN")){
+            return(
+                <Col xs={4}>
+                    <Button key="signalement-tabular-view" bsStyle={(this.state.viewAdmin === true) ? 'success' : 'primary'} className="square-button-md"
+                            onClick={() => this.displayAdminView()}>
+                        <Glyphicon glyph="cog" />
+                    </Button>
+                </Col>
+            )
+        }
+
     }
 
     /**
@@ -261,14 +281,20 @@ export class SignalementManagementPanelComponent extends React.Component {
     }
 
     toggleTabularView(){
-        !this.props.tabularViewOpen ? this.props.openTabularView() : this.props.closeTabularView();
-    }
-
-    displayMyView(){
-        this.props.changeTypeView(viewType.MY, this.state.currentContext);
+        !this.props.tabularViewOpen ? this.props.openTabularView(this.state.currentContext) : this.props.closeTabularView();
     }
 
     displayAdminView(){
-        this.props.changeTypeView(viewType.ADMIN, this.state.currentContext);
+        this.state.viewAdmin = !this.state.viewAdmin;
+        if(this.state.viewAdmin === true){
+            this.props.changeTypeView(viewType.ADMIN, this.state.currentContext);
+        }else{
+            this.props.changeTypeView(viewType.MY, this.state.currentContext);
+        }
+
+    }
+
+    selectLayerSign(){
+        this.props.selectNode('signalements','layer', false);
     }
 };

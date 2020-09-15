@@ -1,6 +1,10 @@
 import assign from 'object-assign';
 import {actions, status, viewType} from '../actions/signalement-management-action';
 
+const {
+    CLOSE_FEATURE_GRID
+} = require('@mapstore/actions/featuregrid');
+
 const initialState = {
     user: null,
     context: [],
@@ -36,6 +40,9 @@ export default (state = initialState, action) => {
             return assign({}, state, {tabularViewOpen: true});
         }
         case actions.CLOSE_TABULAR_VIEW: {
+            return assign({}, state, {tabularViewOpen: false});
+        }
+        case CLOSE_FEATURE_GRID: {
             return assign({}, state, {tabularViewOpen: false});
         }
         case actions.CHANGE_TYPE_VIEW: {
