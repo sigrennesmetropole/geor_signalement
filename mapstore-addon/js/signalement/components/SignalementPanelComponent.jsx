@@ -16,10 +16,10 @@ import {
 } from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
 import ConfirmDialog from '@mapstore/components/misc/ConfirmDialog';
-import './signalement.css';
 import {status} from '../actions/signalement-action';
 import {GeometryType} from '../constants/signalement-constants';
-
+//import './signalement.css';
+import {CSS} from './signalement-css';
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -139,13 +139,12 @@ export class SignalementPanelComponent extends React.Component {
             errorFields: {}
         }
 		this.props.initSignalement(this.props.backendurl);
-        //configureBackendUrl(this.props.backendurl);
         //console.log(this.state);
         //console.log(this.props);
     }
 
     componentWillMount() {
-        this.setState({initialized: false, loaded: false, task: null, currentLayer: null});
+        this.setState({initialized: false, cssInitialized: false, loaded: false, task: null, currentLayer: null});
         this.props.loadAttachmentConfiguration();
         this.props.loadThemas();
         this.props.loadLayers();
@@ -160,6 +159,15 @@ export class SignalementPanelComponent extends React.Component {
             this.props.attachmentConfiguration !== null && this.props.user !== null;
         // on récupère la current layer si elle existe
         this.state.currentLayer = this.props.currentLayer;
+
+		if( this.state.cssInitialized == false ){
+            var script = document.createElement('style');
+            script.innerHTML = CSS.join("\n");
+            var head = document.getElementsByTagName('head')[0];
+            head.appendChild(script);
+            this.state.cssInitialized = true;
+            console.log("sig css loaded");
+        }
 
         if( this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED ){
             // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"

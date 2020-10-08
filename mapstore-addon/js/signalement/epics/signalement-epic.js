@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
 import axios from 'axios';
-import {changedGeometriesSelector} from "@mapstore/selectors/draw";
+//import {changedGeometriesSelector} from "@mapstore/selectors/draw";
 import {changeDrawingStatus, END_DRAWING, GEOMETRY_CHANGED} from "@mapstore/actions/draw";
 import {changeMapInfoState} from "@mapstore/actions/mapInfo";
 import {
@@ -22,15 +22,17 @@ import {
 } from '../actions/signalement-action';
 import {FeatureProjection, GeometryType} from "../constants/signalement-constants";
 
-let backendURLPrefix = "signalement";
+let backendURLPrefix = "/signalement";
 
 export const initSignalementEpic = (action$) =>
 	action$.ofType(actions.INIT_SIGNALEMENT)
 	    .switchMap((action) => {
 	        console.log("sig epics init:"+ action.url);
-	        backendURLPrefix = action.url;
+	        if( action.url ) {	        	
+	        	backendURLPrefix = action.url;
+	        }
 	        return Rx.Observable.of(initSignalementDone()).delay(0);
-	    });
+	    });        
 
 export const loadAttachmentConfigurationEpic = (action$) =>
     action$.ofType(actions.ATTACHMENT_CONFIGURATION_LOAD)
@@ -266,7 +268,9 @@ export const stopDrawingEpic = (action$, store) =>
                 transformToFeatureCollection: false,
                 translateEnabled: false
             };
-            let actualFeatures = changedGeometriesSelector(state);
+            //let actualFeatures = changedGeometriesSelector(state);
+            //work around to avoid import of draw.js - see issues with geosolutions
+            let actualFeatures = state && state.draw && state.draw.tempFeatures; 
             if (!actualFeatures || actualFeatures.length === 0) {
                 actualFeatures = [
                     {

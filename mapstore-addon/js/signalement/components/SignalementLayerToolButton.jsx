@@ -4,7 +4,7 @@ import {PropTypes} from 'prop-types';
 import {Button, Glyphicon, Tooltip} from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
 import OverlayTrigger from '@mapstore/components/misc/OverlayTrigger';
-import './signalement.css';
+//import './signalement.css';
 
 export class SignalementLayerToolButton extends React.Component {
 

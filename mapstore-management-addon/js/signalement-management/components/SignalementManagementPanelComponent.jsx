@@ -9,8 +9,10 @@ import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, ControlLabel, Tool
 import Select from 'react-select';
 import Message from '@mapstore/components/I18N/Message';
 import MapInfoUtils from '@mapstore/utils/MapInfoUtils';
-import { SignalementTaskViewer } from './SignalementTaskViewer';
-import './signalement-management.css';
+import {closeIdentify} from '@mapstore/actions/mapInfo';
+import {SignalementTaskViewer} from './SignalementTaskViewer';
+//import './signalement-management.css';
+import {CSS} from './signalement-management-css.js';
 import {
     changeTypeView,
     closeTabularView,
@@ -29,8 +31,6 @@ import {
     signalementManagementContextsSelector,
     signalementManagementMeSelector, signalementManagementTaskSelector
 } from "../selectors/signalement-management-selector";
-import {closeIdentify} from '@mapstore/actions/mapInfo';
-
 
 export class SignalementManagementPanelComponent extends React.Component {
 	 static propTypes = {
@@ -117,7 +117,7 @@ export class SignalementManagementPanelComponent extends React.Component {
     }
 
     componentWillMount() {
-        this.setState({initialized: false, currentContext: null});
+        this.setState({initialized: false, cssInitialized: false, currentContext: null});
         this.props.loadContexts();
         this.props.getMe();
     }
@@ -127,6 +127,15 @@ export class SignalementManagementPanelComponent extends React.Component {
         console.log(this.props);
         this.state.initialized = this.props.contexts !== null && 
             this.props.contexts.length > 0 && this.props.user !== null; 
+
+	if( this.state.cssInitialized == false ){
+            var script = document.createElement('style');
+            script.innerHTML = CSS.join("\n");
+            var head = document.getElementsByTagName('head')[0];
+            head.appendChild(script);
+            this.state.cssInitialized = true;
+            console.log("sigm css loaded");
+        }
 
         if( this.state.initialized && this.state.currentContext === null ) {
             this.state.currentContext = this.props.contexts[0];
