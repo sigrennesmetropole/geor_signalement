@@ -10,6 +10,7 @@
 			"organization": "Collectivité",
 			"email": "Votre adresse mail",
 			"description": "Objet",			
+			"description.count":"nombre de caractères restants:",
 			"reporting.thema": "Signalement sur la thématique",
 			"reporting.layer": "Signalement sur la couche",
 			"attachment.add": "Ajouter",

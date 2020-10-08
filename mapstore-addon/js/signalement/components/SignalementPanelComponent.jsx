@@ -446,7 +446,7 @@ export class SignalementPanelComponent extends React.Component {
                                      onChange={this.handleDescriptionChange}
                                      maxLength={1000}
                         />
-                        <HelpBlock>nombre de caractères restants: {1000 - this.state.task.asset.description.length}</HelpBlock>
+                        <HelpBlock><Message msgId="signalement.description.count"/> {1000 - this.state.task.asset.description.length}</HelpBlock>
                     </FormGroup>
                 </fieldset>
             </div>
