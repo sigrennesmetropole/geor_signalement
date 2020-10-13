@@ -23,13 +23,15 @@ import {closeIdentify} from '@mapstore/actions/mapInfo';
 const SIGNALEMENT_MANAGEMENT_LAYER_ID = 'signalements';
 const SIGNALEMENT_MANAGEMENT_LAYER_NAME = 'Signalements';
 
-let backendURLPrefix = "signalement";
+let backendURLPrefix = "/signalement";
 
 export const initSignalementManagementEpic = (action$) =>
 action$.ofType(actions.INIT_SIGNALEMENT)
     .switchMap((action) => {
         console.log("sig epics init:"+ action.url);
-        backendURLPrefix = action.url;
+        if( action.url ) {	        	
+        	backendURLPrefix = action.url;
+        }
         return Rx.Observable.of(initSignalementManagementDone()).delay(0);
     });
 

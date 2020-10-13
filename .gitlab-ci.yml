@@ -38,6 +38,8 @@ signalementapi:build:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/mapstore-signalement-*.zip
+      - $CI_PROJECT_DIR/mapstore-addon/dist/signalement.zip
+      - $CI_PROJECT_DIR/mapstore-management-addon/dist/signalement-management.zip
       
 signalementapi:build:master:
   script:
@@ -54,7 +56,9 @@ signalementapi:build:master:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
-      - $CI_PROJECT_DIR/georchestra-signalement-api/target/mapstore-signalement-*.zip      
+      - $CI_PROJECT_DIR/georchestra-signalement-api/target/mapstore-signalement-*.zip
+      - $CI_PROJECT_DIR/mapstore-addon/dist/signalement.zip
+      - $CI_PROJECT_DIR/mapstore-management-addon/dist/signalement-management.zip  
 
 # Sonar code quality analysis - note a full test coverage report through a jacoco.exec merged file in base project folder
 signalementapi:sonar:
@@ -108,6 +112,8 @@ signalementapi:deploy:
   script:
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.war 
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api-addon.zip
+    - cp -f $CI_PROJECT_DIR/mapstore-addon/dist/signalement.zip $CI_PROJECT_DIR/ansible/dockerize/files/mapstore2-signalement.zip
+    - cp -f $CI_PROJECT_DIR/mapstore-management-addon/dist/signalement-management.zip $CI_PROJECT_DIR/ansible/dockerize/files/mapstore2-signalement-management.zip
     - cd $CI_PROJECT_DIR/ansible  
     - chmod og-rw key/id_rsa
     - cp signalement_dev_var.yml $HOME/signalement_var.yml
@@ -126,6 +132,8 @@ signalementapi:deploy:master:
   script:
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.war 
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api-addon.zip
+    - cp -f $CI_PROJECT_DIR/mapstore-addon/dist/signalement.zip $CI_PROJECT_DIR/ansible/dockerize/files/mapstore2-signalement.zip
+    - cp -f $CI_PROJECT_DIR/mapstore-management-addon/dist/signalement-management.zip $CI_PROJECT_DIR/ansible/dockerize/files/mapstore2-signalement-management.zip
     - cd $CI_PROJECT_DIR/ansible  
     - chmod og-rw key/id_rsa
     - cp signalement_rct_var.yml $HOME/signalement_var.yml

@@ -1,0 +1,12 @@
+[submodule "mapstore-addon/MapStore2"]
+	path = mapstore-addon/MapStore2
+	url = https://github.com/geosolutions-it/MapStore2.git
+[submodule "mapstore-addon/mapstore2-georchestra"]
+	path = mapstore-addon/mapstore2-georchestra
+	url = https://github.com/georchestra/mapstore2-georchestra.git
+[submodule "mapstore-management-addon/MapStore2"]
+	path = mapstore-management-addon/MapStore2
+	url = https://github.com/geosolutions-it/MapStore2.git
+[submodule "mapstore-management-addon/mapstore2-georchestra"]
+	path = mapstore-management-addon/mapstore2-georchestra
+	url = https://github.com/georchestra/mapstore2-georchestra.git

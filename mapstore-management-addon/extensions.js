@@ -1,8 +1,8 @@
 import { createPlugin } from "@mapstore/utils/PluginsUtils";
 
 export default {
-	Signalement: createPlugin('SignalementManagement', {
+	Signalement: createPlugin('Signalement', {
         lazy: true,
-        loader: () => import(/* webpackChunkName: "extensions/extension" */`./plugins/SignalementManagementExtension`)
+        loader: () => import(/* webpackChunkName: "extensions/extension" */`./plugins/SignalementExtension`)
     })
 };

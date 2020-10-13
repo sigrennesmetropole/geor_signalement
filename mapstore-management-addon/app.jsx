@@ -13,7 +13,7 @@ import rootTranslations from "../../MapStore2/web/client/translations/data.en-US
 // add a translation file for every extension
 import bundleTranslations from "./bundle/translations/data.fr-FR.json";
 
-const pluginsConfig = ["Map", "BurgerMenu", "SignalementManagement"];
+const pluginsConfig = ["Map", "BurgerMenu", "Signalement"];
 const LOCALE = "fr-FR";
 
 const startApp = (messages) => {
