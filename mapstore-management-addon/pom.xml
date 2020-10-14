@@ -60,7 +60,7 @@
 							<goal>npm</goal>
 						</goals>
 						<configuration>
-							<arguments>install</arguments>
+							<arguments>ci</arguments>
 							<workingDirectory>${addon.georchestra.location}</workingDirectory>
 						</configuration>
 					</execution>
@@ -73,7 +73,7 @@
 							<goal>npm</goal>
 						</goals>
 						<configuration>
-							<arguments>install</arguments>
+							<arguments>ci</arguments>
 						</configuration>
 					</execution>
 					
