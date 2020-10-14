@@ -12,7 +12,7 @@
 
 	<artifactId>mapstore-management-addon</artifactId>
 	<packaging>war</packaging>
-	
+
 	<properties>
 		<finalName>signalement-management</finalName>
 		<addon.project.location>${project.dir}</addon.project.location>
@@ -52,19 +52,6 @@
 						</configuration>
 					</execution>
 
-					<!-- It will execute command "npm install" in mapstore2-georchestra dir -->
-					<execution>
-						<phase>generate-resources</phase>
-						<id>npm install mapstore2-georchestra</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>ci</arguments>
-							<workingDirectory>${addon.georchestra.location}</workingDirectory>
-						</configuration>
-					</execution>
-					
 					<!-- It will execute command "npm install" in project dir -->
 					<execution>
 						<phase>generate-resources</phase>
@@ -76,7 +63,21 @@
 							<arguments>ci</arguments>
 						</configuration>
 					</execution>
-					
+
+					<!-- It will execute command "npm install" in mapstore2-georchestra 
+						dir -->
+					<execution>
+						<phase>generate-resources</phase>
+						<id>npm install mapstore2-georchestra</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+							<workingDirectory>${addon.georchestra.location}</workingDirectory>
+						</configuration>
+					</execution>
+
 				</executions>
 			</plugin>
 

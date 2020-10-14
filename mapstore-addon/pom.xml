@@ -51,19 +51,6 @@
 							<npmVersion>6.14.4</npmVersion>
 						</configuration>
 					</execution>
-
-					<!-- It will execute command "npm install" in mapstore2-georchestra dir -->
-					<execution>
-						<phase>generate-resources</phase>
-						<id>npm install mapstore2-georchestra</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>ci</arguments>
-							<workingDirectory>${addon.georchestra.location}</workingDirectory>
-						</configuration>
-					</execution>
 					
 					<!-- It will execute command "npm install" in project dir -->
 					<execution>
@@ -74,6 +61,19 @@
 						</goals>
 						<configuration>
 							<arguments>ci</arguments>
+						</configuration>
+					</execution>					
+
+					<!-- It will execute command "npm install" in mapstore2-georchestra dir -->
+					<execution>
+						<phase>generate-resources</phase>
+						<id>npm install mapstore2-georchestra</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+							<workingDirectory>${addon.georchestra.location}</workingDirectory>
 						</configuration>
 					</execution>
 					
