@@ -52,18 +52,6 @@
 						</configuration>
 					</execution>
 
-					<!-- It will execute command "npm install" in project dir -->
-					<execution>
-						<phase>generate-resources</phase>
-						<id>npm install</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					
 					<!-- It will execute command "npm install" in mapstore2-georchestra dir -->
 					<execution>
 						<phase>generate-resources</phase>
@@ -76,6 +64,19 @@
 							<workingDirectory>${addon.georchestra.location}</workingDirectory>
 						</configuration>
 					</execution>
+					
+					<!-- It will execute command "npm install" in project dir -->
+					<execution>
+						<phase>generate-resources</phase>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					
 				</executions>
 			</plugin>
 
