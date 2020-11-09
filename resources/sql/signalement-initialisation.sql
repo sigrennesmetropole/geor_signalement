@@ -1,13 +1,14 @@
-CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS postgis_topology;
-CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
-CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 CREATE SCHEMA IF NOT EXISTS signalement AUTHORIZATION signalement;
 
-ALTER ROLE signalement SET search_path TO signalement,public;
 -- SET search_path TO signalement;
+ALTER ROLE signalement SET search_path TO signalement,public;
+
+-- Ajout des extensions dans le schéma
+CREATE EXTENSION IF NOT EXISTS postgis SCHEMA signalement;
+CREATE EXTENSION IF NOT EXISTS postgis_topology SCHEMA signalement;
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch SCHEMA signalement;
+CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder SCHEMA signalement;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA signalement;
 
 -- DROP SEQUENCE signalement.context_description_id_seq;
 CREATE SEQUENCE signalement.context_description_id_seq;
