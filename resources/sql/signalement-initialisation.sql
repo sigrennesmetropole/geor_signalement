@@ -212,6 +212,8 @@ CREATE TABLE signalement.geographic_area
 (
     id bigint NOT NULL DEFAULT nextval('signalement.geographic_area_id_seq'::regclass),
     geometry geometry,
+    nom varchar(255),
+    codeinsee varchar(10),
     CONSTRAINT geographic_area_pkey PRIMARY KEY (id)
 )
 WITH (OIDS = FALSE);
