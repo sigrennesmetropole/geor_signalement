@@ -1,15 +1,11 @@
 /**
  * 
  */
-package org.georchestra.signalement.service.st.ldap.impl;
+package org.georchestra.signalement.service.sm.impl;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,15 +18,13 @@ import org.georchestra.signalement.core.entity.acl.UserEntity;
 import org.georchestra.signalement.core.entity.acl.UserRoleContextEntity;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
 import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;
-import org.georchestra.signalement.service.st.ldap.UserService;
+import org.georchestra.signalement.service.mapper.acl.UserMapper;
+import org.georchestra.signalement.service.sm.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.query.LdapQueryBuilder;
-import org.springframework.ldap.query.SearchScope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author FNI18300
@@ -41,94 +35,43 @@ public class UserServiceImpl implements UserService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	@Value("${ldap.attribute.login}")
-	private String loginAttribute;
-
-	@Value("${ldap.attribute.firstName}")
-	private String firstNameAttribute;
-
-	@Value("${ldap.attribute.lastName}")
-	private String lastNameAttribute;
-
-	@Value("${ldap.attribute.organization}")
-	private String organizationAttribute;
-
-	@Value("${ldap.attribute.email}")
-	private String emailAttribute;
-
-	@Value("${ldap.objectClass}")
-	private String objectClass;
-
-	@Value("${ldap.user.searchBase}")
-	private String userSearchBase;
-
 	@Autowired
 	private AuthentificationHelper authentificationHelper;
-
-	@Autowired
-	private LdapTemplate ldapTemplate;
 
 	@Autowired
 	private UserDao userDao;
 
 	@Autowired
 	private ContextDescriptionDao contextDescriptionDao;
-	
+
 	@Autowired
 	private ContextDescriptionMapper contextDescriptionMapper;
 
-	private String[] attributes;
-
-	private Map<String, String> attributeMappings;
+	@Autowired
+	private UserMapper userMapper;
 
 	@Override
+	@Transactional(readOnly = true)
 	public User getMe() {
-		User result = getUserByLogin(authentificationHelper.getUsername());
-		result.setRoles(authentificationHelper.getRoles());
-		return result;
+		return getUserByLogin(authentificationHelper.getUsername());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public User getUserByLogin(String username) {
 		LOGGER.info("Search user by login {}", username);
-		User result = null;
-		LdapQueryBuilder queryBuilder = LdapQueryBuilder.query().searchScope(SearchScope.SUBTREE).countLimit(5)
-				.attributes(attributes);
-		if (StringUtils.isNotEmpty(userSearchBase)) {
-			queryBuilder.base(userSearchBase);
-		}
-		if (StringUtils.isNotEmpty(objectClass)) {
-			queryBuilder.where("objectclass").is(objectClass).and(loginAttribute).is(username);
-		} else {
-			queryBuilder.where(loginAttribute).is(username);
-		}
-
-		List<User> users = ldapTemplate.search(queryBuilder, new UserAttributeMapper(attributeMappings));
-		if (CollectionUtils.isNotEmpty(users)) {
-			LOGGER.info("Search user by login {} found {}", username, users);
-			result = users.get(0);
-		}
-		return result;
-	}
-
-	@PostConstruct
-	public void initialize() {
-		attributes = new String[] { loginAttribute, firstNameAttribute, lastNameAttribute, organizationAttribute,
-				emailAttribute };
-		attributeMappings = new HashMap<>();
-		attributeMappings.put(UserAttributeMapper.LOGIN_FIELD, loginAttribute);
-		attributeMappings.put(UserAttributeMapper.FIRSTNAME_FIELD, firstNameAttribute);
-		attributeMappings.put(UserAttributeMapper.LASTNAME_FIELD, lastNameAttribute);
-		attributeMappings.put(UserAttributeMapper.ORGANIZATION_FIELD, organizationAttribute);
-		attributeMappings.put(UserAttributeMapper.EMAIL_FIELD, emailAttribute);
+		UserEntity userEntity = userDao.findByLogin(username);
+		return userMapper.entityToDto(userEntity);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ContextDescription> getVisibleContexts() {
 		return getVisibleContexts(authentificationHelper.getUsername());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ContextDescription> getVisibleContexts(String login) {
 		Set<ContextDescriptionEntity> contexts = null;
 		User user = getUserByLogin(login);
@@ -148,8 +91,31 @@ public class UserServiceImpl implements UserService {
 				}
 			}
 		}
-		
+
 		return contextDescriptionMapper.entitiesToDtos(contexts);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public User createUser(User user) {
+		if (user == null || StringUtils.isEmpty(user.getLogin())) {
+			throw new IllegalArgumentException("Invaluder user : " + user);
+		}
+		UserEntity userEntity = userMapper.dtoToEntity(user);
+		userDao.save(userEntity);
+		return userMapper.entityToDto(userEntity);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public User updateUser(User user) {
+		if (user == null || StringUtils.isEmpty(user.getLogin())) {
+			throw new IllegalArgumentException("Invaluder user : " + user);
+		}
+		UserEntity userEntity = userDao.findByLogin(user.getLogin());
+		userMapper.dtoToEntity(user, userEntity);
+		userDao.save(userEntity);
+		return userMapper.entityToDto(userEntity);
 	}
 
 }

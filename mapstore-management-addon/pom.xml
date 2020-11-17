@@ -10,7 +10,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>mapstore-management-addon</artifactId>
+	<artifactId>georchestra-signalement-mapstore-management-addon</artifactId>
 	<packaging>war</packaging>
 
 	<properties>
@@ -60,7 +60,7 @@
 							<goal>npm</goal>
 						</goals>
 						<configuration>
-							<arguments>ci</arguments>
+							<arguments>${npmicommand}</arguments>
 						</configuration>
 					</execution>
 
@@ -106,4 +106,29 @@
 		</plugins>
 
 	</build>
+	
+	<profiles>
+		<!-- Profil de développement local -->
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<npmicommand>install</npmicommand>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
+
+		<!-- Profil de production (utilisé sur la plateforme de DEV, QUALIF et 
+			PROD) -->
+		<profile>
+			<id>prod</id>
+			<properties>
+				<npmicommand>ci</npmicommand>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+		</profile>
+
+	</profiles>	
 </project>

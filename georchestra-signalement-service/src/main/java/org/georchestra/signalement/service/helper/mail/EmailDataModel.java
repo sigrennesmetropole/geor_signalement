@@ -9,11 +9,10 @@ import java.util.Map;
 
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.georchestra.signalement.core.dto.User;
-
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
+import org.georchestra.signalement.service.sm.UserService;
 import org.georchestra.signalement.service.st.generator.datamodel.DataModel;
 import org.georchestra.signalement.service.st.generator.datamodel.GenerationFormat;
-import org.georchestra.signalement.service.st.ldap.UserService;
 
 /**
  * @author FNI18300

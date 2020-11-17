@@ -12,7 +12,7 @@ import org.georchestra.signalement.core.dto.User;
  * @author FNI18300
  *
  */
-public interface UserService {
+public interface LdapService {
 
 	/**
 	 * Retourne l'utilisateur courant stocké dans le security context

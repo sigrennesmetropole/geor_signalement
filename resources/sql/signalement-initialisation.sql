@@ -248,6 +248,8 @@ CREATE TABLE signalement.user_
     email character varying(150)  NOT NULL,
     first_name character varying(150) ,
     last_name character varying(150) ,
+    organization character varying(150) ,
+    roles character varying(1024) ,
     CONSTRAINT user__pkey PRIMARY KEY (id)
 )
 WITH (OIDS = FALSE);
