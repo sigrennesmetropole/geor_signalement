@@ -25,7 +25,7 @@ stages:
 # Build job with maven plugin execution policies define in parent pom
 signalementapi:build:
   script:
-    - sh ./mvnw $MAVEN_CLI_OPTS -U package -Pmapfishapp-signalement,mapstore-signalement,mapstore-signalement-management
+    - sh ./mvnw $MAVEN_CLI_OPTS -U package -Pprod
   stage: build
   except:
     refs:
@@ -44,7 +44,7 @@ signalementapi:build:
       
 signalementapi:build:master:
   script:
-    - sh ./mvnw $MAVEN_CLI_OPTS -U package -DskipTests -Pmapfishapp-signalement,mapstore-signalement,mapstore-signalement-management
+    - sh ./mvnw $MAVEN_CLI_OPTS -U package -DskipTests -Pprod
   stage: build
   tags: 
    - cdp-rennes
