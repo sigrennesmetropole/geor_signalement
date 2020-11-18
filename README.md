@@ -30,6 +30,8 @@ L'addon signalement est conçu pour s'installer au sein d'une installation GeOrc
 
 #### II.1 - Base de données
 
+##### II.1.a Initialisation
+
 L'installation peut être réalisée soit :
 * Dans une base de données dédiée
 * Dans un schéma d'une base de données existantes
@@ -71,7 +73,11 @@ Ce script réalise les opérations suivantes :
 
 **Remarque 2**: il peut survenir au démarrage des erreurs "activity" (mention de l'absence de la colonne _version_ dans une table donnée par exemple). Ces erreurs proviennent en général des montées successives de schémas de la librairie. Il suffit donc de redémarrer l'application jusqu'à disparition de ces erreurs.
 
-#### II.2 - Déploiement de l'application _back-office_
+###### II.1.b Migration 1.3
+
+Si un version inférieure à la 1.3 est déjà installée, il est nécessaire de jouer le script `[projet]/resources/sql/signalemen
+t-1.3.sql` afin de mettre à jour le schéma.
+*### II.2 - Déploiement de l'application _back-office_
 
 Le back-office peut être démarrer :
 * Soit dans un container Tomcat 9.
