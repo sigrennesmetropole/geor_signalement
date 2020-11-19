@@ -38,7 +38,7 @@
 					<workingDirectory>${addon.project.location}</workingDirectory>
 					<installDirectory>${addon.project.nodeinstallation}</installDirectory>
 					<environmentVariables>
-						<NODE_ENV>--max-old-space-size=8192</NODE_ENV>
+						<NODE_OPTIONS>--max-old-space-size=8192</NODE_OPTIONS>
 					</environmentVariables>
 				</configuration>
 				<executions>
@@ -92,7 +92,7 @@
 					<workingDirectory>${addon.project.location}</workingDirectory>
 					<installDirectory>${addon.project.nodeinstallation}</installDirectory>
 					<environmentVariables>
-						<NODE_ENV>--max-old-space-size=8192</NODE_ENV>
+						<NODE_OPTIONS>--max-old-space-size=8192</NODE_OPTIONS>
 					</environmentVariables>
 				</configuration>
 				<executions>
@@ -132,7 +132,7 @@
 		<profile>
 			<id>prod</id>
 			<properties>
-				<npmicommand>ci</npmicommand>
+				<npmicommand>install</npmicommand>
 				<spring.profiles.active>prod</spring.profiles.active>
 			</properties>
 		</profile>

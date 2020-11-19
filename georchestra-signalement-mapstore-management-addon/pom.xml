@@ -38,7 +38,6 @@
 					<workingDirectory>${addon.project.location}</workingDirectory>
 					<installDirectory>${addon.project.nodeinstallation}</installDirectory>
 					<environmentVariables>
-						<NODE_ENV>--max-old-space-size=8192</NODE_ENV>
 						<NODE_OPTIONS>--max-old-space-size=8192</NODE_OPTIONS>
 					</environmentVariables>
 				</configuration>
@@ -93,7 +92,6 @@
 					<workingDirectory>${addon.project.location}</workingDirectory>
 					<installDirectory>${addon.project.nodeinstallation}</installDirectory>
 					<environmentVariables>
-						<NODE_ENV>--max-old-space-size=8192</NODE_ENV>
 						<NODE_OPTIONS>--max-old-space-size=8192</NODE_OPTIONS>
 					</environmentVariables>
 				</configuration>
