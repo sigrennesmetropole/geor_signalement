@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.User;
-
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
+import org.georchestra.signalement.service.sm.UserService;
 import org.georchestra.signalement.service.st.generator.datamodel.DataModel;
 import org.georchestra.signalement.service.st.generator.datamodel.GenerationFormat;
-import org.georchestra.signalement.service.st.ldap.UserService;
 
 /**
  * @author FNI18300
@@ -55,7 +55,19 @@ public class EmailDataModel extends DataModel {
 	}
 
 	public User getUser(String login) {
-		return userService.getUserByLogin(login);
+		User u = userService.getUserByLogin(login);
+		if( u != null) {
+			if( u.getFirstName() == null) {
+				u.setFirstName(StringUtils.EMPTY);
+			}
+			if( u.getLastName() == null){
+				u.setLastName(StringUtils.EMPTY);
+			}
+			if( u.getOrganization() == null) {
+				u.setOrganization(StringUtils.EMPTY);
+			}
+		}
+		return u;
 	}
 
 }
