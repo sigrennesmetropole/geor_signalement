@@ -1,13 +1,14 @@
-CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS postgis_topology;
-CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
-CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 CREATE SCHEMA IF NOT EXISTS signalement AUTHORIZATION signalement;
 
-ALTER ROLE signalement SET search_path TO signalement,public;
 -- SET search_path TO signalement;
+ALTER ROLE signalement SET search_path TO signalement,public;
+
+-- Ajout des extensions dans le schéma
+CREATE EXTENSION IF NOT EXISTS postgis SCHEMA gaspar_geo;
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch SCHEMA gaspar_geo;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA gaspar_geo;
+--CREATE EXTENSION IF NOT EXISTS postgis_topology SCHEMA signalement;
+--CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder SCHEMA signalement;
 
 -- DROP SEQUENCE signalement.context_description_id_seq;
 CREATE SEQUENCE signalement.context_description_id_seq;
@@ -211,6 +212,8 @@ CREATE TABLE signalement.geographic_area
 (
     id bigint NOT NULL DEFAULT nextval('signalement.geographic_area_id_seq'::regclass),
     geometry geometry,
+    nom varchar(255),
+    codeinsee varchar(10),
     CONSTRAINT geographic_area_pkey PRIMARY KEY (id)
 )
 WITH (OIDS = FALSE);
@@ -245,6 +248,8 @@ CREATE TABLE signalement.user_
     email character varying(150)  NOT NULL,
     first_name character varying(150) ,
     last_name character varying(150) ,
+    organization character varying(150) ,
+    roles character varying(1024) ,
     CONSTRAINT user__pkey PRIMARY KEY (id)
 )
 WITH (OIDS = FALSE);

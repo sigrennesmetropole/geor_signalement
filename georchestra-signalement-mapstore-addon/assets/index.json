@@ -1,0 +1,11 @@
+{
+    "plugins": [
+        {
+            "name": "Signalement",
+            "description": "Signalement Extension",
+            "dependencies": [
+                "BurgerMenu"
+            ]
+        }
+    ]
+}
