@@ -28,7 +28,9 @@ Le résultat de cette construction est :
 
 L'addon signalement est conçu pour s'installer au sein d'une installation GeOrchestra existante mais la partie "backend" est indépendante de GeOrchestra.
 
-#### Base de données
+#### II.1 - Base de données
+
+##### II.1.a Initialisation
 
 L'installation peut être réalisée soit :
 * Dans une base de données dédiée
@@ -62,14 +64,20 @@ CREATE DATABASE signalement
 Il faut ensuite exécuter le script `[projet]/resources/sql/signalement-initialisation.sql` en tant qu'administrateur postgres.
 
 Ce script réalise les opérations suivantes :
-* Création des extensions geospatiales nécessaires
 * Création d'un schéma _signalement_
-* Modification du user _signalement_ afin de lui affecter un _search_path_ à _signalement,public_
+* Modification du user _signalement_ afin de lui affecter un search_path à _signalement,public_
+* Création des extensions geospatiales nécessaires dans le schéma _signalement_
 * Création des tables, index, séquences dans le schéma
 
-**Remarque**: seules les tables propres aux modules sont créées. Les tables propres à Activiti (le moteur de workflow) sont créées automatiquement au démarrage du service.
+**Remarque 1**: seules les tables propres aux modules sont créées. Les tables propres à Activiti (le moteur de workflow) sont créées automatiquement au démarrage du service.
 
-#### Déploiement de l'application _back-office_
+**Remarque 2**: il peut survenir au démarrage des erreurs "activity" (mention de l'absence de la colonne _version_ dans une table donnée par exemple). Ces erreurs proviennent en général des montées successives de schémas de la librairie. Il suffit donc de redémarrer l'application jusqu'à disparition de ces erreurs.
+
+###### II.1.b Migration 1.3
+
+Si un version inférieure à la 1.3 est déjà installée, il est nécessaire de jouer le script `[projet]/resources/sql/signalemen
+t-1.3.sql` afin de mettre à jour le schéma.
+*### II.2 - Déploiement de l'application _back-office_
 
 Le back-office peut être démarrer :
 * Soit dans un container Tomcat 9.
@@ -93,6 +101,8 @@ java -Djava.io.tmpdir=/tmp/jetty \
 ```
 java -jar signalement.jar
 ```
+
+**Remarque**: attention comme indiqué plus haut, l'application utilise la librairie "activity" qui créé ses propres tables au démarrage de l'application. Faut d'une configuration adéquate, ces tables peuvent atterrir dans le mauvais schéma. Il est donc important de dérouler le chapitre **II.1** avant toute chose.
 
 La configuration du back-office de trouve dans le fichier `signalement.properties`. Les principales propriétés sont :
 
@@ -164,7 +174,7 @@ freemarker.fontsPath=fonts
 
 ```
 
-#### Déploiement de l'addon MapfishApp
+#### II.3 - Déploiement de l'addon MapfishApp
 
 Le déploiement de l'addon MapfishApp est réalisé en dézippant le fichier `georchestra-signalement-api-1.0-SNAPSHOT-extension.zip` dans le répertoire `[georchestra]/config/mapfishapp/addons`.
 
@@ -176,13 +186,13 @@ Il faut ensuite modifier la propriété `signalementURL` présente dans fichier 
 	},
 ```
 
-#### Déploiement de l'addon Mapstore`
+#### II.4 - Déploiement de l'addon Mapstore`
 
 *TODO*
 
 ## III - Configuration
 
-#### Gestion des droits 
+#### III.1 - Gestion des droits 
 
 ![Gestion des contextes et des droits](readme/UserRole.png)
 
@@ -198,7 +208,7 @@ Un utilisateur peut être associé par le biais de la classe _UserRoleContext_ :
 * A une liste de couples (rôle, context)
 * A une liste de triplets (rôle, context, aire géographique)
 
-#### Configuration des champs de formulaire d'une étape
+#### III.2 - Configuration des champs de formulaire d'une étape
 
 ![Gestion des formulaires](readme/FormDefinition.png)
 
@@ -239,9 +249,9 @@ Le flux json est constitué comme suit:
 }
 ```
 
-#### Design des processus
+#### III.3 - Design des processus
 
-### Créer un processus dans la base
+### III.3.1 - Créer un processus dans la base
 
 Le seul moyen de créer un nouveau processus ou une nouvelle version d'un processus est d'utiliser swagger et la méthode "admin" associée.
 
@@ -257,14 +267,14 @@ Pour lister les processus déclarés :
 curl -X GET "http://georchestra.open-dev.com:8082/signalement/administration/processDefinition/search" -H  "accept: application/json" -H  "authorization: Basic YWRtaW46NGRNMW5BcHAh"
 ```
 
-#### Bien modéliser
+#### III.3.2 - Bien modéliser
 
 Pour bien modéliser un processus, il est recommandé à chaque étape, de mettre à jour les données du signalement correspondant et notamment :
 * son état
 * la date de mise à jour
 Des méthodes utilitaires sont disponibles pour cela (Cf. ci-dessous)
 
-#### Interactions des processus avec le signalement
+#### III.3.3 - Interactions des processus avec le signalement
 
 La classe WorkflowContext propose un certain nombre de méthodes utilitaires :
 
