@@ -31,8 +31,11 @@ public class GeographicAreaEntity implements LongId {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Column(name = "nom")
+	@Column(name = "nom", length = 255)
 	private String nom;
+	
+	@Column(name = "codeinsee", length = 5)
+	private String codeInsee;
 
 	@Column(name = "geometry", columnDefinition = "Geometry")
 	private Geometry geometry;

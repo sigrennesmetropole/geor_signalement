@@ -4,7 +4,10 @@
 package org.georchestra.signalement.service.helper.workflow;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import javax.script.ScriptContext;
 
@@ -21,9 +24,9 @@ import org.georchestra.signalement.service.exception.DocumentGenerationException
 import org.georchestra.signalement.service.exception.DocumentModelNotFoundException;
 import org.georchestra.signalement.service.exception.EMailException;
 import org.georchestra.signalement.service.helper.mail.EmailDataModel;
+import org.georchestra.signalement.service.sm.UserService;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
 import org.georchestra.signalement.service.st.generator.GenerationConnectorConstants;
-import org.georchestra.signalement.service.st.ldap.UserService;
 import org.georchestra.signalement.service.st.mail.MailDescription;
 import org.georchestra.signalement.service.st.mail.MailService;
 import org.slf4j.Logger;

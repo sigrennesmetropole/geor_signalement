@@ -1,6 +1,9 @@
 # Pipeline variables
 variables:
   MAVEN_CLI_OPTS: "-s .m2/settings.xml -Dmaven.repo.local=.m2/repository --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  GIT_SUBMODULE_STRATEGY: recursive
+  NODE_OPTIONS: "--max-old-space-size=8192"
+  
 
 # Cache policy - Share target folders between jobs - Note that key is related to a commit and is purged automatically after pipeline execution
 cache:
@@ -11,8 +14,9 @@ cache:
 
 default:
   image: maven:3.6.0-jdk-11
+  
   before_script:
-    - apt update && apt install -y gettext-base
+    - apt update && apt install -y gettext-base build-essential
     - envsubst '${MVN_GROUP} ${MVN_RELEASE} ${MVN_SNAPSHOTS}' < pom.xml > pom.subst && mv -f pom.subst pom.xml
 
 # Stages definition
@@ -24,7 +28,7 @@ stages:
 # Build job with maven plugin execution policies define in parent pom
 signalementapi:build:
   script:
-    - sh ./mvnw $MAVEN_CLI_OPTS -U package -Pmapfishapp-signalement,mapstore-signalement,mapstore-signalement-management
+    - sh ./mvnw $MAVEN_CLI_OPTS -U package -Pprod,mapfishapp-signalement
   stage: build
   except:
     refs:
@@ -37,11 +41,12 @@ signalementapi:build:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
-      - $CI_PROJECT_DIR/georchestra-signalement-api/target/mapstore-signalement-*.zip
+      - $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/signalement.zip
+      - $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/signalement-management.zip
       
 signalementapi:build:master:
   script:
-    - sh ./mvnw $MAVEN_CLI_OPTS -U package -DskipTests -Pmapfishapp-signalement,mapstore-signalement,mapstore-signalement-management
+    - sh ./mvnw $MAVEN_CLI_OPTS -U package -DskipTests -Pprod,mapfishapp-signalement
   stage: build
   tags: 
    - cdp-rennes
@@ -54,7 +59,8 @@ signalementapi:build:master:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
-      - $CI_PROJECT_DIR/georchestra-signalement-api/target/mapstore-signalement-*.zip      
+      - $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/signalement.zip
+      - $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/signalement-management.zip  
 
 # Sonar code quality analysis - note a full test coverage report through a jacoco.exec merged file in base project folder
 signalementapi:sonar:
@@ -106,8 +112,13 @@ signalementapi:deploy:
     refs:
       - open/develop
   script:
-    - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.war 
+    - ls $CI_PROJECT_DIR/georchestra-signalement-api/target/
+    - ls $CI_PROJECT_DIR/georchestra-signalement-mapstore*
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.war
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.jar 
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api-addon.zip
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/signalement.zip $CI_PROJECT_DIR/ansible/dockerize/files/mapstore2-signalement.zip
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/signalement-management.zip $CI_PROJECT_DIR/ansible/dockerize/files/mapstore2-signalement-management.zip
     - cd $CI_PROJECT_DIR/ansible  
     - chmod og-rw key/id_rsa
     - cp signalement_dev_var.yml $HOME/signalement_var.yml
@@ -125,7 +136,10 @@ signalementapi:deploy:master:
       - open/master
   script:
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.war 
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.jar
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api-addon.zip
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/signalement.zip $CI_PROJECT_DIR/ansible/dockerize/files/mapstore2-signalement.zip
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/signalement-management.zip $CI_PROJECT_DIR/ansible/dockerize/files/mapstore2-signalement-management.zip
     - cd $CI_PROJECT_DIR/ansible  
     - chmod og-rw key/id_rsa
     - cp signalement_rct_var.yml $HOME/signalement_var.yml

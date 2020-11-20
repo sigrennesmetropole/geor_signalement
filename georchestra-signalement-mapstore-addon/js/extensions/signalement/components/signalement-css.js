@@ -1,0 +1,34 @@
+export const CSS = [
+	
+".signalement-panel {}",    
+
+".signalement-panel .form-group { \
+    margin-bottom: 8px; \
+}",
+
+".signalement-panel legend { \
+    font-size: 18px; \
+}",
+
+".signalement-panel label { \
+    width: 30%; \
+}",
+
+".signalement-panel input { \
+    width: 65%; \
+    display: inline-block; \
+}",
+
+"span .error { \
+    color: red; \
+}",
+
+"span .info { \
+    color: orange; \
+}",
+
+"fieldset { \
+    margin: 0 25px 0 30px; \
+}"
+
+];
