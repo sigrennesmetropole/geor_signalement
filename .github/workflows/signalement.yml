@@ -44,7 +44,7 @@ jobs:
     - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master'
       run: |
-        docker tag sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }} georchestra/cadastrapp:latest
+        docker tag sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }} georchestra/signalement:latest
         docker push sigrennesmetropole/geor_signalement:latest
 
     - name: "Pushing release tag to docker.io"
