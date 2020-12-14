@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: "Checking out"
       uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'      
 
     - name: "Setting up Java"
       uses: actions/setup-java@v1
@@ -31,7 +33,7 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Build a docker image"
-      run: mvn -B clean package -Pdocker -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }}
+      run: mvn -B clean package -Pdocker,prod -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
@@ -42,7 +44,7 @@ jobs:
     - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master'
       run: |
-        docker tag sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }} georchestra/cadastrapp:latest
+        docker tag sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }} sigrennesmetropole/geor_signalement:latest
         docker push sigrennesmetropole/geor_signalement:latest
 
     - name: "Pushing release tag to docker.io"

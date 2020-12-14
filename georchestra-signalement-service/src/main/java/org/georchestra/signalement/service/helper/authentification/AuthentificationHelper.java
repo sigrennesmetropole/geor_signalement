@@ -6,6 +6,7 @@ package org.georchestra.signalement.service.helper.authentification;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthentificationHelper {
 
-	public static final String ADMINISTRATOR_ROLE = "ADMINISTRATOR";
-
+	@Value("${georchestra.role.administrator}")
+	private String georchestraAdministrator;
+	
 	/**
 	 * 
 	 * @return l'username de la personne authentifiée
@@ -37,7 +39,7 @@ public class AuthentificationHelper {
 	 * @return vrai si l'utilisateur connecté est administrateur
 	 */
 	public boolean isAdmin() {
-		return hasRole(ADMINISTRATOR_ROLE);
+		return hasRole(georchestraAdministrator);
 	}
 
 	/**
