@@ -132,7 +132,7 @@
 		<profile>
 			<id>prod</id>
 			<properties>
-				<npmicommand>install</npmicommand>
+				<npmicommand>ci</npmicommand>
 				<spring.profiles.active>prod</spring.profiles.active>
 			</properties>
 		</profile>
