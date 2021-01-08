@@ -130,6 +130,8 @@ spring.security.user.name=admin
 spring.security.user.password={noop}<mot de passe admin>
 spring.security.user.roles=USER
 
+georchesta.role.administrator=ROLE_ADMINISTRATOR
+
 # UPLOAD
 # Taille maximum des fichiers à importer
 spring.servlet.multipart.max-file-size=10MB
