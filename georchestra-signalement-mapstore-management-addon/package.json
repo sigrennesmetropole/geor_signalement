@@ -1,7 +1,7 @@
 {
-    "name": "mapstore-signalement-management",
+    "name": "SignalementManagementExtension",
     "version": "1.0.0",
-    "description": "signalement Management Extension for GeOrchstra",
+    "description": "Signalement Management MapStore extensions",
     "main": "index.js",
     "eslintConfig": {
         "extends": [
@@ -32,14 +32,13 @@
         "@geosolutions/mocha": "6.2.1-3",
         "@mapstore/eslint-config-mapstore": "1.0.1",
         "axios-mock-adapter": "1.16.0",
-        "babel-eslint": "10.0.3",
         "babel-istanbul-loader": "0.1.0",
         "babel-loader": "8.0.5",
         "babel-plugin-add-module-exports": "0.1.4",
         "babel-plugin-object-assign": "1.2.1",
         "babel-plugin-react-transform": "2.0.2",
         "cesium": "1.17.0",
-        "copy-webpack-plugin": "5.0.2",
+        "copy-webpack-plugin": "^5.1.2",
         "css-loader": "0.19.0",
         "denodeify": "1.2.1",
         "docma": "1.5.1",
@@ -97,7 +96,7 @@
         "webpack-bundle-size-analyzer": "2.0.2",
         "webpack-cli": "4.2.0",
         "webpack-dev-server": "3.11.0",
-        "zip-webpack-plugin": "3.0.0"
+        "zip-webpack-plugin": "^3.0.0"
     },
     "dependencies": {
         "mapstore2": "file:MapStore2"
@@ -105,16 +104,18 @@
     "scripts": {
         "postinstall": "node MapStore2/utility/build/postInstall.js",
         "clean": "rimraf dist",
+        "compile": "npm run clean && mkdirp ./dist && node --max_old_space_size=2048 ./node_modules/webpack/bin/webpack.js --config prod-webpack.config.js --env.production",
         "start": "webpack serve --progress --color --port 8081 --hot --inline --content-base .",
         "ext:startapp": "webpack serve --progress --color --port 8081 --hot --inline --content-base . --config build/extension/module.app.webpack.config.js",
         "ext:start": "webpack serve --progress --color --port 8082 --hot --inline --config build/extension/webpack.config.js",
         "ext:build": "rimraf ./dist && mkdirp ./dist && webpack --progress  --color --config build/extension/prod-webpack.config.js",
         "test": "karma start ./karma.conf.single-run.js",
-        "continuoustest": "karma start  --browsers Chrome ./karma.conf.continuous-test.js",
+        "continuoustest": "karma start ./karma.conf.continuous-test.js",
+        "mvntest": "karma start ./karma.conf.single-run.js --reporters junit,dots,coverage",
         "lint": "eslint js --ext .jsx,.js",
         "travis": "eslint js --ext .jsx,.js && karma start ./karma.conf.single-run.js --browsers FirefoxHeadless --reporters dots,junit,coverage,coveralls",
         "updateDevDeps": "node updateDevDependencies.js"
     },
-    "author": "GeoSolutions",
-    "license": "BSD-2-Clause"
+    "author": "Open-Groupe",
+    "license": "Apache V2"
 }

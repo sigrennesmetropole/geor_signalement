@@ -8,11 +8,9 @@ import {PropTypes} from 'prop-types';
 import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, ControlLabel, Tooltip, FormGroup} from 'react-bootstrap';
 import Select from 'react-select';
 import Message from '@mapstore/components/I18N/Message';
-import MapInfoUtils from '@mapstore/utils/MapInfoUtils';
+import { setViewer, getViewer } from '@mapstore/utils/MapInfoUtils';
 import {closeIdentify} from '@mapstore/actions/mapInfo';
 import {SignalementTaskViewer} from './SignalementTaskViewer';
-//import './signalement-management.css';
-import {CSS} from './signalement-management-css.js';
 import {
     changeTypeView,
     closeTabularView,
@@ -92,8 +90,20 @@ export class SignalementManagementPanelComponent extends React.Component {
 
     constructor(props) {
         super(props);
+        console.log("sigm constructor...");
         this.handleContextChange = this.handleContextChange.bind(this);
 		this.props.initSignalementManagement(this.props.backendurl);
+        this.state = {
+            viewAdmin : false
+        }
+        console.log("sigm constructor done.");
+    }
+
+    componentWillMount() {
+        console.log("sigm willmount...");
+        this.setState({initialized: false, currentContext: null});
+        this.props.loadContexts();
+        this.props.getMe();
         const Connected = connect((state) => ({
             task: signalementManagementTaskSelector(state),
             user: signalementManagementMeSelector(state),
@@ -109,17 +119,8 @@ export class SignalementManagementPanelComponent extends React.Component {
             updateDoAction: updateDoAction,
             closeIdentify: closeIdentify
         })(SignalementTaskViewer);
-        MapInfoUtils.setViewer("TaskViewer", Connected);
-        this.state = {
-            viewAdmin : false
-        }
-        //configureBackendUrl(this.props.backendurl);
-    }
-
-    componentWillMount() {
-        this.setState({initialized: false, cssInitialized: false, currentContext: null});
-        this.props.loadContexts();
-        this.props.getMe();
+        setViewer("TaskViewer", Connected);
+        console.log("sigm willmount done.");
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -128,19 +129,12 @@ export class SignalementManagementPanelComponent extends React.Component {
         this.state.initialized = this.props.contexts !== null && 
             this.props.contexts.length > 0 && this.props.user !== null; 
 
-	if( this.state.cssInitialized == false ){
-            var script = document.createElement('style');
-            script.innerHTML = CSS.join("\n");
-            var head = document.getElementsByTagName('head')[0];
-            head.appendChild(script);
-            this.state.cssInitialized = true;
-            console.log("sigm css loaded");
-        }
-
         if( this.state.initialized && this.state.currentContext === null ) {
             this.state.currentContext = this.props.contexts[0];
             this.props.changeTypeView(viewType.MY,this.state.currentContext);
         }
+        console.log("sigm viewer=>" + getViewer('TaskViewer'));
+        console.log("sigm didUpdate done.");
     }
 
     /**

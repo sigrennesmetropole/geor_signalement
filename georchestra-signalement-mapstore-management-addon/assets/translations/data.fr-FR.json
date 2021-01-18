@@ -1,6 +1,9 @@
 {
     "locale": "fr-FR",
     "messages": {
+        "extension": {
+          "message": "Message!"
+        },
         "signalement-management": {
           "loading": "En cours d'initialisation...",
           "title": "Gestion des signalement",

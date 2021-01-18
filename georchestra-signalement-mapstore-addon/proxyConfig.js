@@ -4,54 +4,43 @@ const DEV_PROTOCOL = "http";
 const DEV_HOST = "localhost:8080";
 
 module.exports = {
-    "/rest": {
-        target: `${DEV_PROTOCOL}://${DEV_HOST}/mapstore`,
+    '/rest': {
+        target: "https://dev.mapstore.geo-solutions.it/mapstore",
         secure: false,
         headers: {
-            host: `${DEV_HOST}`
+            host: "dev.mapstore.geo-solutions.it"
         }
     },
-    "/pdf": {
-        target: `${DEV_PROTOCOL}://${DEV_HOST}/mapstore`,
+    '/pdf': {
+        target: "https://dev.mapstore.geo-solutions.it/mapstore",
         secure: false,
         headers: {
-            host: `${DEV_HOST}`
+            host: "dev.mapstore.geo-solutions.it"
         }
     },
-    "/mapstore/pdf": {
-        target: `${DEV_PROTOCOL}://${DEV_HOST}`,
+    '/mapstore/pdf': {
+        target: "https://dev.mapstore.geo-solutions.it",
         secure: false,
         headers: {
-            host: `${DEV_HOST}`
+            host: "dev.mapstore.geo-solutions.it"
         }
     },
-    "/proxy": {
-        target: `${DEV_PROTOCOL}://${DEV_HOST}/mapstore`,
-        secure: false
-    },
-    "/mapstore/proxy": {
-        target: `${DEV_PROTOCOL}://${DEV_HOST}`,
-        secure: false
-    },
-    "/geonetwork": {
-        target: `${DEV_PROTOCOL}://${DEV_HOST}/geonetwork`,
+    '/proxy': {
+        target: "http://localhost:8082/",
         secure: false,
         headers: {
-            host: `${DEV_HOST}`
+            host: "dev.mapstore.geo-solutions.it"
         }
     },
-    "/header": {
-        target: `${DEV_PROTOCOL}://${DEV_HOST}`,
-        secure: false,
-        headers: {
-            host: `${DEV_HOST}`
-        }
+    '/docs': {
+        target: "http://localhost:8081",
+        pathRewrite: {'/docs': '/mapstore/docs'}
     },
-    "/cadastrapp": {
-        target: `https://georchestra.geo-solutions.it`,
-        secure: false,
+    '/signalement': {
+        target: "http://localhost:8082",
+        pathRewrite: {'/signalement': '/'},
         headers: {
-            host: `georchestra.geo-solutions.it`
-        }
+            host: "localhost"
+        }   
     }
 };

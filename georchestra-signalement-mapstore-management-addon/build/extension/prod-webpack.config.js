@@ -1,3 +1,4 @@
+
 const path = require("path");
 
 const createExtensionWebpackConfig = require('../../MapStore2/build/createExtensionWebpackConfig');

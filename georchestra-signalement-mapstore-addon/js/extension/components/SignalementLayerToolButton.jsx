@@ -4,7 +4,6 @@ import {PropTypes} from 'prop-types';
 import {Button, Glyphicon, Tooltip} from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
 import OverlayTrigger from '@mapstore/components/misc/OverlayTrigger';
-//import './signalement.css';
 
 export class SignalementLayerToolButton extends React.Component {
 
@@ -33,10 +32,11 @@ export class SignalementLayerToolButton extends React.Component {
         console.log(this.props);
         console.log(this.state);
 
-        const signalableLayer = this.props.selectedLayer != null && 
+        const signalableLayer = this.props.selectedLayers != null && 
+            this.props.selectedLayers.length == 1 &&
             this.props.contextLayers && this.props.contextLayers.length > 0;
         let selectableLayers = signalableLayer ? 
-            this.props.contextLayers.filter( layer => layer.name === this.props.selectedLayer.name): [];
+            this.props.contextLayers.filter( layer => layer.name === this.props.selectedLayers[0].name): [];
 
         if( signalableLayer && selectableLayers.length > 0 ) {
             return (

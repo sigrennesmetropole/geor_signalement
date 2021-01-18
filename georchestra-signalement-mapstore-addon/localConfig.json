@@ -1,6 +1,6 @@
 {
     "proxyUrl": {
-        "url": "proxy/?url=",
+        "url": "/proxy/?url=",
         "useCORS": [
           "http://demo.geo-solutions.it/geoserver",
           "https://demo.geo-solutions.it:443/geoserver",
@@ -279,7 +279,13 @@
             },
             "FeedbackMask"
         ],
-        "desktop": ["Details",
+        "desktop": ["Details", 
+          {
+            "name":"SignalementExtension",
+            "cfg": {
+              "backend_url": "http://localhost:8082"
+            }
+          },
           {
             "name": "Map",
             "cfg": {
@@ -476,8 +482,7 @@
             "Timeline",
             "Playback",
             "FeedbackMask",
-            "StyleEditor",
-			"Signalement"
+            "StyleEditor"
         ],
         "embedded": ["Details", {
                 "name": "Map",

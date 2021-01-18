@@ -3,11 +3,9 @@ const path = require("path");
 const themeEntries = require('./MapStore2/build/themes.js').themeEntries;
 const extractThemesPlugin = require('./MapStore2/build/themes.js').extractThemesPlugin;
 const ModuleFederationPlugin = require('./MapStore2/build/moduleFederation').plugin;
-const buildConfig = require('./MapStore2/build/buildConfig');
 const proxyConfig = require('./proxyConfig');
 
-
-const cfg = buildConfig(
+module.exports = require('./MapStore2/build/buildConfig')(
     {
         'MapStoreExtension': path.join(__dirname, "js", "app"),
         'MapStoreExtension-embedded': path.join(__dirname, "MapStore2", "web", "client", "product", "embedded"),
@@ -31,7 +29,3 @@ const cfg = buildConfig(
     },
     proxyConfig
 );
-// stream are needed here in code
-cfg.resolve.fallback = {timers: false};
-cfg.devtool = "eval-cheap-source-map";
-module.exports = cfg;

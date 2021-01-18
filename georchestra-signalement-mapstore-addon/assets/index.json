@@ -1,11 +1,12 @@
 {
-    "plugins": [
-        {
-            "name": "Signalement",
-            "description": "Signalement Extension",
-            "dependencies": [
-                "BurgerMenu"
-            ]
-        }
-    ]
+  "plugins": [
+    {
+      "name": "SignalementExtension",
+      "description": "Signalement Extension Mapstore",
+      "dependencies": [
+        "BurgerMenu",
+        "Toolbar"
+      ]
+    }
+  ]
 }

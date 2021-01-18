@@ -1,12 +1,15 @@
 {
     "locale": "fr-FR",
     "messages": {
-        "signalement": {
+        "extension": {
+            "message": "Message!"
+		},
+		"signalement": {
             "close": "Fermer",
 			"cancel": "Abandonner",
 			"create": "Créer",
 			"user": "Utilisateur",
-			"login": "Vous aªtes",
+			"login": "Vous êtes",
 			"organization": "Collectivité",
 			"email": "Votre adresse mail",
 			"description": "Objet",			

@@ -3,7 +3,9 @@ import {Glyphicon} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import {createControlEnabledSelector} from '@mapstore/selectors/controls';
 import Message from '@mapstore/components/I18N/Message';
+import { name } from '../../../config';
 import {SignalementPanelComponent} from '../components/SignalementPanelComponent';
+import {SignalementLayerToolButton} from '../components/SignalementLayerToolButton';
 import * as epics from '../epics/signalement-epic';
 import signalementReducer from '../reducers/signalement-reducer';
 import {
@@ -35,10 +37,11 @@ import {
     signalementMeSelector,
     signalementThemasSelector
 } from '../selectors/signalement-selector';
+import '../assets/signalement.css';
 
 const isEnabled = createControlEnabledSelector('signalement');
 
-const Connected = connect((state) => ({
+const SignalementPanelComponentConnected = connect((state) => ({
     active: /*isEnabled(state) ||*/ !!isOpen(state),
     attachmentConfiguration: signalementAttachmentConfigurationSelector(state),
     contextLayers: signalementLayersSelector(state),
@@ -75,9 +78,17 @@ const Connected = connect((state) => ({
     toggleControl: () => closePanel()
 })(SignalementPanelComponent);
 
+const SignalementLayerToolButtonConnected = connect((state) => ({
+    contextLayers: signalementLayersSelector(state),
+    isOpen: isOpen(state),
+    state: state
+    }), {
+    onClick: openPanel
+})(SignalementLayerToolButton);
+
 export default {
-	name: "Signalement",
-    component: Connected,
+	name,
+    component: SignalementPanelComponentConnected,
     epics,
     reducers: {
         signalement: signalementReducer
@@ -91,6 +102,18 @@ export default {
             text: <Message msgId="signalement.msgBox.title" />,
             icon: <Glyphicon glyph="exclamation-sign" />,
             action: () => openPanel(null)
-        }
+        },
+        TOC: {
+            name: "signalement",
+            target: "toolbar",
+            //In case of target: toolbar, selector determine to show or not show the tool (returning true or false).
+            // As argument of this function you have several information, that will be passed also to the component.
+            // - status: that can be LAYER, LAYERS, GROUP or GROUPS, depending if only one or more than one layer is selected.
+            // - selectedGroups: current list of selected groups
+            // - selectedLayers: current list of selected layers
+            selector: ({ status }) => status === 'LAYER',
+            // The component to render. It receives as props the same object passed to the selector function.
+            Component: SignalementLayerToolButtonConnected
+        },
     }
 };

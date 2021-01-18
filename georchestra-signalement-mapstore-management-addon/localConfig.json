@@ -279,7 +279,13 @@
             },
             "FeedbackMask"
         ],
-        "desktop": ["Details",
+        "desktop": ["Details", 
+          {
+            "name":"SignalementManagementExtension",
+            "cfg": {
+              "backend_url": "http://localhost:8082"
+            }
+          },
           {
             "name": "Map",
             "cfg": {
@@ -476,8 +482,7 @@
             "Timeline",
             "Playback",
             "FeedbackMask",
-            "StyleEditor",
-			"SignalementManagement"
+            "StyleEditor"
         ],
         "embedded": ["Details", {
                 "name": "Map",

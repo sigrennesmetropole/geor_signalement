@@ -7,10 +7,9 @@
  */
 
 import { createPlugin } from "@mapstore/utils/PluginsUtils";
-import SignalementExtension from './extension/plugins/SignalementExtension';
+import Extension from './extension/plugins/SignalementExtension';
 import { name } from '../config';
 
-
 export default {
-    [name]: createPlugin(name, SignalementExtension)
+    [name]: createPlugin(name, Extension)
 };
