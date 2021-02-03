@@ -96,19 +96,26 @@ public class PreAuthenticationFilter implements Filter {
 			roles = Arrays.asList(rolesString.split(";"));
 			rolesSet.addAll(roles);
 		}
-		User user = userService.getUserByLogin(username);
-		if (user == null) {
-			user = new User();
+		try {
+			User user = userService.getUserByLogin(username);
+			if (user == null) {
+				user = new User();
+				user.setLogin(username);
+				assignUserData(user, httpServletRequest, roles);
+				user = userService.createUser(user);
+			} else {
+				boolean updated = assignUserData(user, httpServletRequest, roles);
+				if (updated) {
+					user = userService.updateUser(user);
+				}
+			}
+			return new PreAuthenticationToken(username, user, rolesSet);
+		} catch (Exception e) {
+			User user = new User();
 			user.setLogin(username);
 			assignUserData(user, httpServletRequest, roles);
-			user = userService.createUser(user);
-		} else {
-			boolean updated = assignUserData(user, httpServletRequest, roles);
-			if (updated) {
-				user = userService.updateUser(user);
-			}
+			return new PreAuthenticationToken(username, user, rolesSet);
 		}
-		return new PreAuthenticationToken(username, user, rolesSet);
 	}
 
 	private boolean assignUserData(User user, HttpServletRequest httpServletRequest, List<String> roles) {
