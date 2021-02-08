@@ -133,7 +133,7 @@ export class SignalementManagementPanelComponent extends React.Component {
             this.state.currentContext = this.props.contexts[0];
             this.props.changeTypeView(viewType.MY,this.state.currentContext);
         }
-        console.log("sigm viewer=>" + getViewer('TaskViewer'));
+        //console.log("sigm viewer=>" + getViewer('TaskViewer'));
         console.log("sigm didUpdate done.");
     }
 

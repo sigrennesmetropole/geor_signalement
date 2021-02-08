@@ -111,6 +111,7 @@ public class PreAuthenticationFilter implements Filter {
 			}
 			return new PreAuthenticationToken(username, user, rolesSet);
 		} catch (Exception e) {
+			LOGGER.debug("Mise à jour ou création d'utilisateur en erreur :{}", e.getMessage());
 			User user = new User();
 			user.setLogin(username);
 			assignUserData(user, httpServletRequest, roles);
