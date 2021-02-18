@@ -334,7 +334,7 @@ L'expression formelle doit retourner un chaine de caractère correspond à un id
 L'objet `worfkflowContext` propose la méthode suivante : 
 
 ```java
-${workflowContext.computeHumanPerformer(null,execution,&quot;Validator&quot;, &quot;Nouveau signalement&quot;, &quot;file:assignee-mail.html&quot;)}
+${workflowContext.computeHumanPerformer(null,execution,"Validator", "Nouveau signalement", "file:assignee-mail.html")}
 ```
 
 Les paramètres de la méthode sont :
@@ -366,7 +366,7 @@ dans le premier car, l'expression est un `candidateUser` dans le second l'expres
 L'objet `worfkflowContext` propose la méthode suivante : 
 
 ```java
-user(${workflowContext.computePotentialOwners(null,execution,&quot;Validator&quot;, &quot;Nouveau signalement&quot;, &quot;file:assignee-mail.html&quot;)})
+user(${workflowContext.computePotentialOwners(null,execution,"Validator", "Nouveau signalement", "file:assignee-mail.html")})
 ```
 Les paramètres de la méthode sont :
 * null (paramètre pour compabitilité)
