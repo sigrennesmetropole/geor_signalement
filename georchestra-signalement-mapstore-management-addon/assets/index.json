@@ -1,8 +1,7 @@
 {
-    "plugins": [
-        {
-            "name": "SignalementManagement",
-            "description": "Signalement Management Extension"
-        }
-    ]
+  "plugins": [
+    {
+      "name": "SignalementManagementExtension"
+    }
+  ]
 }
