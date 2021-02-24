@@ -1,0 +1,50 @@
+    {
+    "locale": "en-US",
+    "messages": {
+        "extension": {
+            "message": "Message!"
+        },
+        "signalement": {
+            "close": "Close",
+			"cancel": "Cancel",
+			"create": "Create",
+			"user": "User",
+			"login": "you are",
+			"organization": "Organization",
+			"email": "Your email address",
+			"description": "Description",			
+			"description.count":"remaining characters:",
+			"reporting.thema": "Report on thema",
+			"reporting.layer": "Report on layer",
+			"attachment.add": "Add",
+			"attachment.files": "Attachment(s)",
+			"attachment.file": "Attachment",
+			"attachment.size": "file size is greater than : ",
+			"attachment.typeFile": "You can't add this file type",
+			"attachment.length": "You can't add more file",
+			"attachment.error": "file has not been uploaded",
+			"attachment.select": "Select a file",
+			"attachment.delete": "Delete file",
+			"localization": "Geolocalize report",
+			"localization.tips": "Click on button to geolocalize report on map",
+			"localization.drawn": "Report geolocalized",
+			"task.create": "Report task has been created",
+			"task.error": "Failed to create report task",
+			"localization.layer": "Layer is not geolocalizable",
+			"msgBox.title": "Report",
+			"msgBox.info": "Do you confirm report cancellation ?",
+			"msgBox.ok": "Yes",
+			"msgBox.cancel": "No",
+			"loading": "Initialisation in progress...",
+			"init.themas.error": "Failed to load thema",
+			"init.layers.error": "Failed to load layers",
+			"init.attachmentConfiguration.error": "Failed to load configuration",
+			"init.me.error": "Failed to load user data",
+			"draft.error": "Failed to create draft report",
+			"generic.error": "Error",
+			"fileUpload.info": "10 Mo par file. Available format : pdf, doc(x), xls(x), png, jpg, tif, dxf, dwg, kml, geojson",
+			"field.error.positive": "Must be positive",
+			"field.error.negative": "Must be negative"
+        }
+    }
+}
