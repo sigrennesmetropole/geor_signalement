@@ -655,6 +655,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 	                text: this.tr('signalement.create'),
 	                disabled: true,
 	                handler: function () {
+	                	Ext.getCmp('createButton').setDisabled(true);
 	                    this.createTask();
 	                },
 	                scope: this
@@ -767,6 +768,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 });
             },
             failure: function (response) {
+            	Ext.getCmp('createButton').setDisabled(false);
                 Ext.Msg.show({
                     msg: this.tr('signalement.task.error')
                 });
