@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.georchestra.signalement.core.common.LongId;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.Status;
+import org.georchestra.signalement.core.dto.StatusFonctionnel;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 
 import lombok.Data;
@@ -49,6 +50,10 @@ public abstract class AbstractReportingEntity implements LongId {
 	@Column(name = "status", nullable = false, length = 50)
 	@Enumerated(EnumType.STRING)
 	private Status status;
+
+	@Column(name = "status_fonctionnel")
+	@Enumerated(EnumType.STRING)
+	private StatusFonctionnel statusFonctionnel;
 
 	@Column(name = "geographic_type", nullable = false, length = 50)
 	@Enumerated(EnumType.STRING)

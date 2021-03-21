@@ -1218,6 +1218,18 @@
 				"DELETED"
 			]
 		},
+		"StatusFonctionnel": {
+			"type": "string",
+			"description": "Etat fonctionnel d'un signalement",
+			"enum": [
+				"DRAFT",
+				"PENDING",
+				"HANDLED",
+				"CANCELLED",
+				"COMPLETED",
+				"DELETED"
+			]
+		},
 		"Attachment": {
 			"type": "object",
 			"properties": {
