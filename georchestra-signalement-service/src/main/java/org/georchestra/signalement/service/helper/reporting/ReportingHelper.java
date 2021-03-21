@@ -222,6 +222,7 @@ public class ReportingHelper {
 		task.setCreationDate(reportingDescription.getCreationDate());
 		task.setUpdatedDate(reportingDescription.getUpdatedDate());
 		task.setStatus(reportingDescription.getStatus());
+		task.setStatusFonctionnel(reportingDescription.getStatusFonctionnel());
 		task.setInitiator(reportingDescription.getInitiator());
 		List<Action> actions = bpmnHelper.computeTaskActions(input);
 		task.setActions(actions);
