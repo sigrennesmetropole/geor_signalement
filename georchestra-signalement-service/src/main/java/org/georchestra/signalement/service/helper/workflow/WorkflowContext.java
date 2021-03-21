@@ -18,6 +18,7 @@ import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
 import org.georchestra.signalement.core.dto.EMailData;
 import org.georchestra.signalement.core.dto.Status;
+import org.georchestra.signalement.core.dto.StatusFonctionnel;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.exception.DocumentGenerationException;
@@ -81,11 +82,20 @@ public class WorkflowContext {
 		String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
 		LOGGER.debug("WkC - Update {} to status {}", processInstanceBusinessKey, statusValue);
 		Status status = Status.valueOf(statusValue);
-		if (processInstanceBusinessKey != null && status != null) {
+		StatusFonctionnel statusFonctionnel = StatusFonctionnel.valueOf(statusValue); // on recupère aussi le status fonctionnel
+		// dans le cas où statusValue est HANDLED, status = null et statusFonctionnel != null
+		// dans le cas où statusValue n'est pas HANDLED, status != null et statusFonctionnel != null
+
+		// si processInstanceBusinessKey != null et que l'un des status est different de null
+		if (processInstanceBusinessKey != null && (status != null || statusFonctionnel != null)) {
 			UUID uuid = UUID.fromString(processInstanceBusinessKey);
 			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
 			if (reportingEntity != null) {
-				reportingEntity.setStatus(status);
+				// on fait un controle sur le statut car il peut être nul dans l'etat HANDLED
+				if (status != null) {
+					reportingEntity.setStatus(status);
+				}
+				reportingEntity.setStatusFonctionnel(statusFonctionnel); // On met à jour le statut fonctionnel, qui est censé être non dès lors qu'on arrive là
 				reportingEntity.setUpdatedDate(new Date());
 				reportingDao.save(reportingEntity);
 				LOGGER.debug("WkC - Update {} to status {} done.", processInstanceBusinessKey, statusValue);

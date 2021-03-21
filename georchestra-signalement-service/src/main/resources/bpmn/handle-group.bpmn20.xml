@@ -95,7 +95,7 @@
       <bpmn:outgoing>SequenceFlow_10</bpmn:outgoing>
       <bpmn:script>
       	workflowContext.info(&quot;Update status handled&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;PENDING&quot;);
+      	workflowContext.updateStatus(context, execution, &quot;HANDLED&quot;);
 		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Prise en compte d'un signalement&quot;, null, &quot;initiator-handled-mail.html&quot;);
 		workflowContext.sendEMail(context,execution,localEmailData);
       	</bpmn:script>
