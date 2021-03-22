@@ -96,6 +96,7 @@ public class GeoJSonHelper {
         properties.put(GeoJSonConstants.CREATION_DATE, task.getCreationDate());
         properties.put(GeoJSonConstants.UPDATED_DATE, task.getUpdatedDate());
         properties.put(GeoJSonConstants.STATUS, task.getStatus());
+        properties.put(GeoJSonConstants.FUNCTIONAL_STATUS, task.getFunctionalStatus());
         properties.put(GeoJSonConstants.DESCRIPTION, task.getAsset().getDescription());
         properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_NAME, task.getAsset().getContextDescription().getName());
         properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_LABEL, task.getAsset().getContextDescription().getLabel());
