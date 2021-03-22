@@ -18,7 +18,6 @@ import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
 import org.georchestra.signalement.core.dto.EMailData;
 import org.georchestra.signalement.core.dto.Status;
-import org.georchestra.signalement.core.dto.StatusFonctionnel;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.exception.DocumentGenerationException;
@@ -71,31 +70,23 @@ public class WorkflowContext {
 	}
 
 	/**
-	 * Méthode de mise à jour de l'état de l'asset associé
-	 * 
+	 * Méthode de mise à jour de l'état de l'asset associé, avec prise en compte du status fonctionnel
+	 *
 	 * @param scriptContext   le context du script
 	 * @param executionEntity le context d'execution
 	 * @param statusValue     l'état cible
 	 */
 	@Transactional(readOnly = false)
-	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue) {
+	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue, String functionalStatusValue) {
 		String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
 		LOGGER.debug("WkC - Update {} to status {}", processInstanceBusinessKey, statusValue);
 		Status status = Status.valueOf(statusValue);
-		StatusFonctionnel statusFonctionnel = StatusFonctionnel.valueOf(statusValue); // on recupère aussi le status fonctionnel
-		// dans le cas où statusValue est HANDLED, status = null et statusFonctionnel != null
-		// dans le cas où statusValue n'est pas HANDLED, status != null et statusFonctionnel != null
-
-		// si processInstanceBusinessKey != null et que l'un des status est different de null
-		if (processInstanceBusinessKey != null && (status != null || statusFonctionnel != null)) {
+		if (processInstanceBusinessKey != null && status != null && functionalStatusValue != null) {
 			UUID uuid = UUID.fromString(processInstanceBusinessKey);
 			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
 			if (reportingEntity != null) {
-				// on fait un controle sur le statut car il peut être nul dans l'etat HANDLED
-				if (status != null) {
-					reportingEntity.setStatus(status);
-				}
-				reportingEntity.setStatusFonctionnel(statusFonctionnel); // On met à jour le statut fonctionnel, qui est censé être non dès lors qu'on arrive là
+				reportingEntity.setStatus(status);
+				reportingEntity.setFunctionalStatus(functionalStatusValue);
 				reportingEntity.setUpdatedDate(new Date());
 				reportingDao.save(reportingEntity);
 				LOGGER.debug("WkC - Update {} to status {} done.", processInstanceBusinessKey, statusValue);
@@ -105,6 +96,17 @@ public class WorkflowContext {
 		} else {
 			LOGGER.debug("WkC - Update {} to status {} skipped.", processInstanceBusinessKey, statusValue);
 		}
+	}
+
+	/**
+	 * Méthode de mise à jour de l'état de l'asset associé
+	 * 
+	 * @param scriptContext   le context du script
+	 * @param executionEntity le context d'execution
+	 * @param statusValue     l'état cible
+	 */
+	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue) {
+		updateStatus(scriptContext, executionEntity, statusValue, statusValue);
 	}
 	
 	/**
