@@ -170,6 +170,7 @@ public class ReportingHelper {
 			result.setInitiator(reportingEntity.getInitiator());
 			result.setDescription(reportingEntity.getDescription());
 			result.setStatus(reportingEntity.getStatus());
+			result.setFunctionalStatus(reportingEntity.getFunctionalStatus());
 			result.setDatas(reportingEntity.getDatas());
 		}
 		return result;

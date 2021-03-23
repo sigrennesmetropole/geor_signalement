@@ -50,7 +50,7 @@ public abstract class AbstractReportingEntity implements LongId {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-	@Column(name = "functional_status", nullable = false, length = 100)
+	@Column(name = "functional_status", length = 100)
 	private String functionalStatus;
 
 	@Column(name = "geographic_type", nullable = false, length = 50)

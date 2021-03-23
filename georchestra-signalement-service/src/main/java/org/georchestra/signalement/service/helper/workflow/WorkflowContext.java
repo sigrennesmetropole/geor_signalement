@@ -105,6 +105,7 @@ public class WorkflowContext {
 	 * @param executionEntity le context d'execution
 	 * @param statusValue     l'état cible
 	 */
+	@Transactional(readOnly = false)
 	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue) {
 		updateStatus(scriptContext, executionEntity, statusValue, statusValue);
 	}
