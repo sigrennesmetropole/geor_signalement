@@ -1263,6 +1263,9 @@
 					"type": "object",
 					"$ref": "#/definitions/Status"
 				},
+				"functionalStatus": {
+					"type": "string"
+				},
 				"geographicType": {
 					"type": "object",
 					"$ref": "#/definitions/GeographicType"
@@ -1348,6 +1351,9 @@
 				"status": {
 					"type": "object",
 					"$ref": "#/definitions/Status"
+				},
+				"functionalStatus": {
+					"type": "string"
 				},
 				"initiator": {
 					"type": "string"

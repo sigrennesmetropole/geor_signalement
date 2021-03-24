@@ -70,22 +70,23 @@ public class WorkflowContext {
 	}
 
 	/**
-	 * Méthode de mise à jour de l'état de l'asset associé
-	 * 
+	 * Méthode de mise à jour de l'état de l'asset associé, avec prise en compte du status fonctionnel
+	 *
 	 * @param scriptContext   le context du script
 	 * @param executionEntity le context d'execution
 	 * @param statusValue     l'état cible
 	 */
 	@Transactional(readOnly = false)
-	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue) {
+	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue, String functionalStatusValue) {
 		String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
 		LOGGER.debug("WkC - Update {} to status {}", processInstanceBusinessKey, statusValue);
 		Status status = Status.valueOf(statusValue);
-		if (processInstanceBusinessKey != null && status != null) {
+		if (processInstanceBusinessKey != null && status != null && functionalStatusValue != null) {
 			UUID uuid = UUID.fromString(processInstanceBusinessKey);
 			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(uuid);
 			if (reportingEntity != null) {
 				reportingEntity.setStatus(status);
+				reportingEntity.setFunctionalStatus(functionalStatusValue);
 				reportingEntity.setUpdatedDate(new Date());
 				reportingDao.save(reportingEntity);
 				LOGGER.debug("WkC - Update {} to status {} done.", processInstanceBusinessKey, statusValue);
@@ -95,6 +96,18 @@ public class WorkflowContext {
 		} else {
 			LOGGER.debug("WkC - Update {} to status {} skipped.", processInstanceBusinessKey, statusValue);
 		}
+	}
+
+	/**
+	 * Méthode de mise à jour de l'état de l'asset associé
+	 * 
+	 * @param scriptContext   le context du script
+	 * @param executionEntity le context d'execution
+	 * @param statusValue     l'état cible
+	 */
+	@Transactional(readOnly = false)
+	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue) {
+		updateStatus(scriptContext, executionEntity, statusValue, statusValue);
 	}
 	
 	/**

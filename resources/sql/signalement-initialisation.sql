@@ -37,6 +37,7 @@ CREATE TABLE signalement.abstract_reporting
     id bigint NOT NULL,
     uuid uuid NOT NULL,
     status character varying(50)  NOT NULL,
+    functional_status character varying(100)  NOT NULL,
     geographic_type character varying(50)  NOT NULL,
     initiator character varying(100)  NOT NULL,
     datas text ,

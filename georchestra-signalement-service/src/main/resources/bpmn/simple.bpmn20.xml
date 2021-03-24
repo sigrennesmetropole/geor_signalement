@@ -98,7 +98,7 @@
 	  </bpmn:dataOutputAssociation>
       <bpmn:script>
       	workflowContext.info(&quot;Update status pending&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;PENDING&quot;);
+      	workflowContext.updateStatus(context, execution, &quot;PENDING&quot;, "Demande en attente de traitement");
 		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Création d'un signalement&quot;, null, &quot;initiator-mail.html&quot;);
 		workflowContext.sendEMail(context,execution,localEmailData);
       	</bpmn:script>
@@ -116,7 +116,7 @@
       </bpmn:ioSpecification>
       <bpmn:script>
       	workflowContext.info(&quot;Update status complete&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;COMPLETED&quot;);
+      	workflowContext.updateStatus(context, execution, &quot;COMPLETED&quot;, "Demande traitée");
 		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Validation d'un signalement&quot;, null, &quot;initiator-completed-mail.html&quot;);
 		workflowContext.sendEMail(context,execution,localEmailData);
       	</bpmn:script>
@@ -133,7 +133,7 @@
       </bpmn:ioSpecification>
       <bpmn:script>
       	workflowContext.info(&quot;Update status canceled&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;CANCELLED&quot;);
+      	workflowContext.updateStatus(context, execution, &quot;CANCELLED&quot;, "Demande abandonnée");
 		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Abandon d'un signalement&quot;, null, &quot;initiator-cancelled-mail.html&quot;);
 		workflowContext.sendEMail(context,execution,localEmailData);
       	</bpmn:script>
