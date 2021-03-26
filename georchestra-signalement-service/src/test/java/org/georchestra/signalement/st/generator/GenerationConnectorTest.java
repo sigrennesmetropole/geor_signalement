@@ -120,6 +120,87 @@ public class GenerationConnectorTest {
 		}
 	}
 
+	@Test
+	public void generateFileBodyTemplateInitiatorHandledMail() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("initiator-handled-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
+
+	//////////////////////////
+
+	@Test
+	public void generateFileBodyTemplateRVA_Initiator() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void generateFileBodyTemplateRVA_AssigneMail() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("RVA_assignee-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void generateFileBodyTemplateRVA_InitiatorCancelled() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-cancelled-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void generateFileBodyTemplateRVA_InitiatorCompletedMail() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-completed-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void generateFileBodyTemplateRVA_InitiatorHandledMail() {
+		try {
+			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-handled-mail.html");
+			DocumentContent document = generationConnector.generateDocument(emailDataModel);
+			Assert.assertNotNull(document);
+			Assert.assertNotNull(document.getFile());
+			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+		} catch (Exception e) {
+			Assert.fail("failed to generate:" + e.getMessage());
+		}
+	}
+
 
 	private EmailDataModel getEmailDataModel(String template) {
 		PointReportingEntity entity = new PointReportingEntity();
