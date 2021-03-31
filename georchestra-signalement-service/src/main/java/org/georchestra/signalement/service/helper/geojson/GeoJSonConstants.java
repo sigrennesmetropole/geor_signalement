@@ -45,6 +45,8 @@ public final class GeoJSonConstants {
 
 	public static final String ID = "id";
 
+	public static final String FUNCTIONAL_ID = "functionalId";
+
 	public static final String UUID = "uuid";
 
 	public static final String NUMBER_TYPE = "number";
