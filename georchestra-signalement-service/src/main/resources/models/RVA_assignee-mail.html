@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<style type="text/css">
+body {
+	font-size: small;
+	font-family: "Vista Sans OT", "Verdana", "Arial";
+}
+
+ul {
+	list-style-type: none;
+}
+
+.bold {
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+	<div>
+		<p>Numéro du signalement: <#if reporting.id??>${reporting.id}</#if></p>
+		<h4>Demande de modification sur le Référentiel Voies et Adresses (RVA)</h4>
+		<p>
+			Bonjour
+			<#if (dataModelUtils.getUser(reporting.assignee))??>
+				<#assign assigneeUser = dataModelUtils.getUser(reporting.assignee)>
+				${assigneeUser.getFirstName()?string} ${assigneeUser.getLastName()?string}
+			</#if>
+		</p>
+
+		<p>Un signalement a été déposé le
+			<#if reporting.creationDate??>
+				${reporting.creationDate?date}
+			</#if>
+		sur votre secteur.
+		</p>
+		<p>
+			Merci de vous connecter dès que possible à l'application RVA Gestion pour le consulter et procéder à d'éventuelles modifications du Référentiel Voies et Adresses.
+		</p>
+		<p>
+			Pour votre information, une copie de ce courriel a également été adressé à DANET Gaëtan qui assure une veille technique autour des données du RVA. En cas de doute sur la façon de corriger les données, n'hésitez pas à le contacter.
+		</p>
+		<br>
+		<p class="bold">Coordonées du demandeur:</p>
+		<ul>
+			<#if (dataModelUtils.getUser(reporting.initiator))??>
+				<#assign initiatorUser = dataModelUtils.getUser(reporting.initiator)>
+				<li>
+					Collectivité: ${initiatorUser.getOrganization()?string}
+				</li>
+				<li>
+					Nom: ${initiatorUser.getFirstName()?string} ${initiatorUser.getLastName()?string}
+				</li>
+				<li>
+					Courriel: ${initiatorUser.getEmail()?string}
+				</li>
+			</#if>
+			<#if reporting.description??>
+				<li>
+					Commentaires du signalement:
+					<p>${reporting.description?string}</p>
+				</li>
+			</#if>
+		</ul>
+		<p>
+			Pour plus d'informations sur le signalement, merci de prendre contact avec le demandeur.
+		</p>
+
+		<p>
+			Merci de votre collaboration.
+		</p>
+	</div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<style type="text/css">
+		body {
+			font-size: small;
+			font-family: "Vista Sans OT", "Verdana", "Arial";
+		}
+
+		ul {
+			list-style-type: none;
+		}
+
+		.bold {
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+<div>
+	<p>
+		Madame, Monsieur,
+		<#if (dataModelUtils.getUser(reporting.initiator))??>
+			<#assign initiatorUser = dataModelUtils.getUser(reporting.assignee)>
+			${initiatorUser.getLastName()?string}
+		</#if>
+	</p>
+
+	<p>Vous avez soumis
+		<#if reporting.creationDate??>
+			le ${reporting.creationDate?date},
+		</#if>
+		le signalement RVA
+		<#if reporting.id??>
+			${reporting.id}
+		</#if>
+		suivant :
+		<ul>
+			<#if reporting.description??>
+				<li>
+					Description: ${reporting.description?string}
+				</li>
+			</#if>
+		</ul>
+	</p>
+	<p>Il a été pris en charge par un opérateur et sera traité dans les plus brefs délais.</p>
+	<p>Au besoin, ou pour tout renseignement complémentaire concernant le RVA, veuillez contacter Gaëtan Danet (<a href="mailto:g.danet@rennesmetropole.fr">g.danet@rennesmetropole.fr</a>)</p>
+	<p>En vous souhaitant bonne réception</p>
+	<br>
+	<p>Le service SIG de Rennes Métropole</p>
+</div>
+</body>
+</html>

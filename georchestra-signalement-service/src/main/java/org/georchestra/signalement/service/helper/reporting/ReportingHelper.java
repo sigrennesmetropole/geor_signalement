@@ -170,6 +170,7 @@ public class ReportingHelper {
 			result.setInitiator(reportingEntity.getInitiator());
 			result.setDescription(reportingEntity.getDescription());
 			result.setStatus(reportingEntity.getStatus());
+			result.setFunctionalStatus(reportingEntity.getFunctionalStatus());
 			result.setDatas(reportingEntity.getDatas());
 		}
 		return result;
@@ -206,7 +207,9 @@ public class ReportingHelper {
 		task.setCreationDate(reportingDescription.getCreationDate());
 		task.setUpdatedDate(reportingDescription.getUpdatedDate());
 		task.setStatus(reportingDescription.getStatus());
+		task.setFunctionalStatus(reportingDescription.getFunctionalStatus());
 		task.setInitiator(reportingDescription.getInitiator());
+		task.setFunctionalId(reportingDescription.getId());
 		try {
 			task.setForm(formHelper.lookupDraftForm(reportingDescription.getContextDescription()));
 			fillFormWithData(task.getForm(), reportingDescription);
@@ -222,11 +225,13 @@ public class ReportingHelper {
 		task.setCreationDate(reportingDescription.getCreationDate());
 		task.setUpdatedDate(reportingDescription.getUpdatedDate());
 		task.setStatus(reportingDescription.getStatus());
+		task.setFunctionalStatus(reportingDescription.getFunctionalStatus());
 		task.setInitiator(reportingDescription.getInitiator());
 		List<Action> actions = bpmnHelper.computeTaskActions(input);
 		task.setActions(actions);
 		task.setAssignee(input.getAssignee());
 		task.setId(input.getId());
+		task.setFunctionalId(reportingDescription.getId());
 
 		try {
 			task.setForm(formHelper.lookupForm(input));
