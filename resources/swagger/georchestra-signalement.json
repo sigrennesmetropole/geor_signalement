@@ -1255,6 +1255,10 @@
 		"ReportingDescription": {
 			"type": "object",
 			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
 				"uuid": {
 					"type": "string",
 					"format": "uuid"
@@ -1262,6 +1266,9 @@
 				"status": {
 					"type": "object",
 					"$ref": "#/definitions/Status"
+				},
+				"functionalStatus": {
+					"type": "string"
 				},
 				"geographicType": {
 					"type": "object",
@@ -1345,9 +1352,16 @@
 				"id": {
 					"type": "string"
 				},
+				"functionalId": {
+					"type": "integer",
+					"format": "int64"
+				},
 				"status": {
 					"type": "object",
 					"$ref": "#/definitions/Status"
+				},
+				"functionalStatus": {
+					"type": "string"
 				},
 				"initiator": {
 					"type": "string"

@@ -33,6 +33,8 @@ public final class GeoJSonConstants {
 
 	public static final String STATUS = "status";
 
+	public static final String FUNCTIONAL_STATUS = "functionalStatus";
+
 	public static final String UPDATED_DATE = "updatedDate";
 
 	public static final String CREATION_DATE = "creationDate";
@@ -42,6 +44,8 @@ public final class GeoJSonConstants {
 	public static final String ASSIGNEE = "assignee";
 
 	public static final String ID = "id";
+
+	public static final String FUNCTIONAL_ID = "functionalId";
 
 	public static final String UUID = "uuid";
 
