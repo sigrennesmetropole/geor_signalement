@@ -97,25 +97,6 @@ public class WorkflowContext {
 			LOGGER.debug("WkC - Update {} to status {} skipped.", processInstanceBusinessKey, statusValue);
 		}
 	}
-	
-	/**
-	 * Envoi de courriel
-	 * 
-	 * @param scriptContext   le context du script
-	 * @param executionEntity le context d'execution
-	 * @param eMailData
-	 */
-	public void sendEMail(ScriptContext scriptContext, ExecutionEntity executionEntity, EMailData eMailData, List<String> emails) {
-		LOGGER.debug("Send email to dedicated emails {}...", emails);
-		try {
-			AbstractReportingEntity reportingEntity = lookupReportingEntity(executionEntity);
-			if (reportingEntity != null && eMailData != null) {
-				sendEMail(executionEntity, reportingEntity, eMailData, emails);
-			}
-		} catch (Exception e) {
-			LOGGER.warn("WkC - Failed to send mail for " + executionEntity.getProcessDefinitionKey(), e);
-		}
-	}
 
 	/**
 	 * Méthode de mise à jour de l'état de l'asset associé
