@@ -90,7 +90,8 @@
       </bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_6" sourceRef="ScriptTask_3" targetRef="EndEvent_13bsqqd"/>
-    <bpmn:scriptTask id="ScriptTask_4" name="As handled">
+    <bpmn:scriptTask id="ScriptTask_4" name="As handled" scriptFormat="javascript">
+      <bpmn:documentation id="Documentation_14"><![CDATA[Positionne le workflow dans l'état "pris en compte" (Handled)]]></bpmn:documentation>
       <bpmn:incoming>SequenceFlow_11</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10</bpmn:outgoing>
       <bpmn:script>
