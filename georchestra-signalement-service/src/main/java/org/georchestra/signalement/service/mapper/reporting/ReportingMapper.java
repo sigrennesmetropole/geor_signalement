@@ -41,6 +41,7 @@ public abstract class ReportingMapper {
 	 * @param dto dto to transform to entity
 	 * @return entity
 	 */
+	@Mapping(source = "id", target="functionalId")
 	public abstract ReportingDescription entityToDto(AbstractReportingEntity abstractReportingEntity);
 
 	@AfterMapping
@@ -63,6 +64,7 @@ public abstract class ReportingMapper {
 
 	@Mappings({ @Mapping(source = "description", target = "description"), @Mapping(ignore = true, target = "id"),
 			@Mapping(ignore = true, target = "uuid"), @Mapping(ignore = true, target = "status"),
+			@Mapping(ignore = true, target = "functionalStatus"),
 			@Mapping(ignore = true, target = "initiator"), @Mapping(ignore = true, target = "geographicType"),
 			@Mapping(ignore = true, target = "creationDate"), @Mapping(ignore = true, target = "updatedDate"),
 			@Mapping(ignore = true, target = "contextDescription"), @Mapping(ignore = true, target = "datas") })

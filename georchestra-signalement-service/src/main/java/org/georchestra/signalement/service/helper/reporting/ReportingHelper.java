@@ -209,7 +209,7 @@ public class ReportingHelper {
 		task.setStatus(reportingDescription.getStatus());
 		task.setFunctionalStatus(reportingDescription.getFunctionalStatus());
 		task.setInitiator(reportingDescription.getInitiator());
-		task.setFunctionalId(reportingDescription.getId());
+		task.setFunctionalId(reportingDescription.getFunctionalId());
 		try {
 			task.setForm(formHelper.lookupDraftForm(reportingDescription.getContextDescription()));
 			fillFormWithData(task.getForm(), reportingDescription);
@@ -231,7 +231,7 @@ public class ReportingHelper {
 		task.setActions(actions);
 		task.setAssignee(input.getAssignee());
 		task.setId(input.getId());
-		task.setFunctionalId(reportingDescription.getId());
+		task.setFunctionalId(reportingDescription.getFunctionalId());
 
 		try {
 			task.setForm(formHelper.lookupForm(input));

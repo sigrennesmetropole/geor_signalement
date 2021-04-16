@@ -1255,7 +1255,7 @@
 		"ReportingDescription": {
 			"type": "object",
 			"properties": {
-				"id": {
+				"functionalId": {
 					"type": "integer",
 					"format": "int64"
 				},
