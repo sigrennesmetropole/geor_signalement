@@ -31,21 +31,21 @@
       <bpmn:property id="Property_1" itemSubjectRef="ItemDefinition_18" name="action"/>
       <bpmn:potentialOwner id="PotentialOwner_1" name="Potential Owner 1">
         <bpmn:resourceAssignmentExpression id="ResourceAssignmentExpression_4">
-          <bpmn:formalExpression id="FormalExpression_8" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,&quot;Validator&quot;, &quot;Nouveau signalement&quot;, &quot;file:RVA_assignee-mail.html&quot;)})</bpmn:formalExpression>
+          <bpmn:formalExpression id="FormalExpression_8" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,"Validator", "Nouveau signalement", "file:RVA_assignee-mail.html")})</bpmn:formalExpression>
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_3" name="done" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_2">
       <bpmn:documentation id="Documentation_13"><![CDATA[Traitement du signalement]]></bpmn:documentation>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_5" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == &quot;done&quot;}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_5" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "done"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_4" name="canceled" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_3">
       <bpmn:documentation id="Documentation_11"><![CDATA[Abandon du signalement]]></bpmn:documentation>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_6" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == &quot;canceled&quot;}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_6" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "canceled"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_11" name="handled" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_4">
       <bpmn:documentation id="Documentation_1"><![CDATA[Prise en compte du signalement]]></bpmn:documentation>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_1" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == &quot;handled&quot;}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_1" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "handled"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="ExclusiveGateway_1" name="Handle or Close Gateway">
       <bpmn:incoming>SequenceFlow_5</bpmn:incoming>
@@ -59,11 +59,11 @@
       <bpmn:incoming>SequenceFlow_1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_12</bpmn:outgoing>
       <bpmn:script>
-      	workflowContext.info(&quot;Update status pending&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;PENDING&quot;, "Demande en attente de traitement");
-		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Création d'un signalement&quot;, null, &quot;RVA_initiator-mail.html&quot;);
-		workflowContext.sendEMail(context,execution,localEmailData);
-      	</bpmn:script>
+        workflowContext.info("Update status pending");
+        workflowContext.updateStatus(context, execution, "PENDING", "Demande en attente de traitement");
+        var localEmailData = new org.georchestra.signalement.core.dto.EMailData("Création d'un signalement", null, "RVA_initiator-mail.html");
+        workflowContext.sendEMail(context,execution,localEmailData);
+      </bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1" sourceRef="StartEvent_1" targetRef="ScriptTask_1"/>
     <bpmn:scriptTask id="ScriptTask_2" name="As Completed" scriptFormat="javascript">
@@ -71,11 +71,11 @@
       <bpmn:incoming>SequenceFlow_3</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_2</bpmn:outgoing>
       <bpmn:script>
-      	workflowContext.info(&quot;Update status complete&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;COMPLETED&quot;, "Demande traitée");
-		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Validation d'un signalement&quot;, null, &quot;RVA_initiator-completed-mail.html&quot;);
-		workflowContext.sendEMail(context,execution,localEmailData);
-      	</bpmn:script>
+        workflowContext.info("Update status complete");
+        workflowContext.updateStatus(context, execution, "COMPLETED", "Demande traitée");
+        var localEmailData = new org.georchestra.signalement.core.dto.EMailData("Validation d'un signalement", null, "RVA_initiator-completed-mail.html");
+        workflowContext.sendEMail(context,execution,localEmailData);
+      </bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_2" sourceRef="ScriptTask_2" targetRef="EndEvent_1ogwwp9"/>
     <bpmn:scriptTask id="ScriptTask_3" name="As Canceled" scriptFormat="javascript">
@@ -83,24 +83,25 @@
       <bpmn:incoming>SequenceFlow_4</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_6</bpmn:outgoing>
       <bpmn:script>
-      	workflowContext.info(&quot;Update status canceled&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;CANCELLED&quot;, "Demande abandonnée");
-		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Abandon d'un signalement&quot;, null, &quot;RVA_initiator-cancelled-mail.html&quot;);
-		workflowContext.sendEMail(context,execution,localEmailData);
-      	</bpmn:script>
+        workflowContext.info("Update status canceled");
+        workflowContext.updateStatus(context, execution, "CANCELLED", "Demande abandonnée");
+        var localEmailData = new org.georchestra.signalement.core.dto.EMailData("Abandon d'un signalement", null, "RVA_initiator-cancelled-mail.html");
+        workflowContext.sendEMail(context,execution,localEmailData);
+      </bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_6" sourceRef="ScriptTask_3" targetRef="EndEvent_13bsqqd"/>
-    <bpmn:scriptTask id="ScriptTask_4" name="As handled">
+    <bpmn:scriptTask id="ScriptTask_4" name="As handled" scriptFormat="javascript">
+      <bpmn:documentation id="Documentation_14"><![CDATA[Positionne le workflow dans l'état "pris en compte" (Handled)]]></bpmn:documentation>
       <bpmn:incoming>SequenceFlow_11</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10</bpmn:outgoing>
       <bpmn:script>
-      	workflowContext.info(&quot;Update status handled&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;PENDING&quot;, "Demande prise en compte");
-		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Prise en compte d'un signalement&quot;, null, &quot;RVA_initiator-handled-mail.html&quot;);
-		workflowContext.sendEMail(context,execution,localEmailData);
-      	</bpmn:script>
+        workflowContext.info("Update status handled");
+        workflowContext.updateStatus(context, execution, "PENDING", "Demande prise en compte");
+        var localEmailData = new org.georchestra.signalement.core.dto.EMailData("Prise en compte d'un signalement", null, "RVA_initiator-handled-mail.html");
+        workflowContext.sendEMail(context,execution,localEmailData);
+      </bpmn:script>
     </bpmn:scriptTask>
-    
+
     <bpmn:sequenceFlow id="SequenceFlow_12" sourceRef="ScriptTask_1" targetRef="UserTask_1"/>
     <bpmn:exclusiveGateway id="ExclusiveGateway_2" name="Close Gateway" gatewayDirection="Diverging">
       <bpmn:incoming>SequenceFlow_15</bpmn:incoming>
@@ -112,30 +113,30 @@
       <bpmn:incoming>SequenceFlow_8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_14</bpmn:outgoing>
       <bpmn:script>
-      	workflowContext.info(&quot;Update status complete&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;COMPLETED&quot;, "Demande traitée");
-		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Validation d'un signalement&quot;, null, &quot;RVA_initiator-completed-mail.html&quot;);
-		workflowContext.sendEMail(context,execution,localEmailData);
-      	</bpmn:script>
+        workflowContext.info("Update status complete");
+        workflowContext.updateStatus(context, execution, "COMPLETED", "Demande traitée");
+        var localEmailData = new org.georchestra.signalement.core.dto.EMailData("Validation d'un signalement", null, "RVA_initiator-completed-mail.html");
+        workflowContext.sendEMail(context,execution,localEmailData);
+      </bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_6" name="As Canceled" scriptFormat="javascript">
       <bpmn:documentation id="Documentation_12"><![CDATA[Positionne le workflow dans l'état "abandonné" (Canceled)]]></bpmn:documentation>
       <bpmn:incoming>SequenceFlow_9</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13</bpmn:outgoing>
       <bpmn:script>
-      	workflowContext.info(&quot;Update status canceled&quot;);
-      	workflowContext.updateStatus(context, execution, &quot;CANCELLED&quot;, "Demande abandonnée");
-		var localEmailData = new org.georchestra.signalement.core.dto.EMailData(&quot;Abandon d'un signalement&quot;, null, &quot;RVA_initiator-cancelled-mail.html&quot;);
-		workflowContext.sendEMail(context,execution,localEmailData);
-      	</bpmn:script>
+        workflowContext.info("Update status canceled");
+        workflowContext.updateStatus(context, execution, "CANCELLED", "Demande abandonnée");
+        var localEmailData = new org.georchestra.signalement.core.dto.EMailData("Abandon d'un signalement", null, "RVA_initiator-cancelled-mail.html");
+        workflowContext.sendEMail(context,execution,localEmailData);
+      </bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_8" name="done" sourceRef="ExclusiveGateway_2" targetRef="ScriptTask_5">
       <bpmn:documentation id="Documentation_17"><![CDATA[Traitement du signalement]]></bpmn:documentation>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_3" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == &quot;done&quot;}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_3" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "done"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_9" name="canceled" sourceRef="ExclusiveGateway_2" targetRef="ScriptTask_6">
       <bpmn:documentation id="Documentation_18"><![CDATA[Abandon du signalement]]></bpmn:documentation>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_4" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == &quot;canceled&quot; }</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_4" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "canceled" }</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="EndEvent_2" name="Done">
       <bpmn:incoming>SequenceFlow_14</bpmn:incoming>
@@ -155,7 +156,7 @@
       <bpmn:property id="Property_2" itemSubjectRef="ItemDefinition_18" name="action"/>
       <bpmn:potentialOwner id="PotentialOwner_2" name="Potential Owner 1">
         <bpmn:resourceAssignmentExpression id="ResourceAssignmentExpression_1">
-          <bpmn:formalExpression id="FormalExpression_2" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,&quot;Validator&quot;, &quot;Nouveau signalement&quot;, &quot;file:RVA_assignee-mail.html&quot;)})</bpmn:formalExpression>
+          <bpmn:formalExpression id="FormalExpression_2" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,"Validator", "Nouveau signalement", "file:RVA_assignee-mail.html")})</bpmn:formalExpression>
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
