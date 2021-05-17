@@ -35,6 +35,7 @@ export class SignalementPanelComponent extends React.Component {
         closeGlyph: PropTypes.string,
         createGlyph: PropTypes.string,
         deleteGlyph: PropTypes.string,
+        infoGlyph: PropTypes.string,
         buttonStyle: PropTypes.object,
         style: PropTypes.object,
         dockProps: PropTypes.object,
@@ -89,6 +90,7 @@ export class SignalementPanelComponent extends React.Component {
         closeGlyph: "1-close",
         createGlyph: "ok",
         deleteGlyph: "trash",
+        infoGlyph: "info-sign",
         // side panel properties
         width: 660,
         dockProps: {
@@ -305,6 +307,7 @@ export class SignalementPanelComponent extends React.Component {
         return (
             <Form model={this.state.task}>
                 {this.renderUserInformation()}
+                {this.renderInstructions()}
                 {this.renderContext()}
                 {this.renderDetail()}
                 {this.renderAttachments()}
@@ -378,6 +381,28 @@ export class SignalementPanelComponent extends React.Component {
                 </fieldset>
             </div>
         );
+    }
+
+    /**
+     * La rendition du bloc d'instructions
+     */
+    renderInstructions() {
+        return (
+            <div>
+                <fieldset className="instructions">
+                    <Row>
+                        <Col xs={1}>
+                            <Button className="square-button no-events info-glyph">
+                                <Glyphicon glyph={this.props.infoGlyph}/>
+                            </Button>
+                        </Col>
+                        <Col xs={11}>
+                            <Message msgId="signalement.instructions"/>
+                        </Col>
+                    </Row>
+                </fieldset>
+            </div>
+        )
     }
 
     /**

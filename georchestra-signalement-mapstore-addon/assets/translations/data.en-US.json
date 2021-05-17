@@ -14,6 +14,7 @@
 			"email": "Your email address",
 			"description": "Description",			
 			"description.count":"remaining characters:",
+			"instructions": "In order to make a report on a topic, please fill in the form below and locate on the map the subject of the report.",
 			"reporting.thema": "Report on thema",
 			"reporting.layer": "Report on layer",
 			"attachment.add": "Add",
