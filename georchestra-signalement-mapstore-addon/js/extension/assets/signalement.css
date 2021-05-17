@@ -30,3 +30,7 @@ span .info {
 fieldset{
     margin: 0 25px 0 30px;
 }
+
+.localization-tips {
+    padding-top: 5px;
+}
