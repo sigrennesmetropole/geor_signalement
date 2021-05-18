@@ -314,6 +314,7 @@ export class SignalementPanelComponent extends React.Component {
                 {this.renderDetail()}
                 {this.renderAttachments()}
                 {this.renderLocalisation()}
+                {this.renderFormButton()}
                 {this.renderCustomForm()}
             </Form>
         );
@@ -334,14 +335,6 @@ export class SignalementPanelComponent extends React.Component {
                     <Col xs={8}>
                         <h4><Message msgId="signalement.msgBox.title"/></h4>
                         {this.renderMessage()}
-                    </Col>
-                    <Col xs={2}>
-                        <Button className="square-button no-border" onClick={() => this.create()} >
-                            <Glyphicon glyph={this.props.createGlyph}/>
-                        </Button>
-                        <Button className="square-button no-border" onClick={() => this.cancel()} >
-                            <Glyphicon glyph={this.props.closeGlyph}/>
-                        </Button>
                     </Col>
                 </Row>
             </Grid>
@@ -570,6 +563,39 @@ export class SignalementPanelComponent extends React.Component {
         else {
             this.props.startDrawing(geometryType, this.props.task.asset.localisation);
         }
+    }
+
+    /**
+     * Affichage du message sur le dessin de la geometrie du signalement
+     */
+    renderGeometryDrawMessage = ()=> {
+        if (this.state.task && this.props.task.asset && this.props.task.asset.localisation && this.props.task.asset.localisation.length > 0) {
+            return (
+                <Message msgId="signalement.localization.drawn"/>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderFormButton() {
+        return (
+            <fieldset>
+                <div className="block-valid-form">
+                    <Button bsStyle="warning"
+                            bsSize="large"
+                            onClick={() => this.cancel()}>
+                        <Message msgId="signalement.cancel"/>
+                    </Button>
+                    <Button className="validation-button"
+                            bsStyle="primary"
+                            bsSize="large"
+                            onClick={() => this.create()}>
+                        <Message msgId="signalement.validate"/>
+                    </Button>
+                </div>
+            </fieldset>
+        )
     }
 
     /**

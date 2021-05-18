@@ -7,6 +7,7 @@
         "signalement": {
             "close": "Close",
 			"cancel": "Cancel",
+			"validate": "Validate",
 			"create": "Create",
 			"user": "User",
 			"login": "you are",
@@ -32,6 +33,16 @@
 			"localization.geolocate": "Geolocate",
 			"task.create": "Report task has been created",
 			"task.error": "Failed to create report task",
+			"task": {
+				"success": {
+					"title": "Success",
+					"message": "The report task has been created"
+				},
+				"fail": {
+					"title": "Failure",
+					"message": "The report task was not created"
+				}
+			},
 			"localization.layer": "Layer is not geolocalizable",
 			"msgBox.title": "Report",
 			"msgBox.info": "Do you confirm report cancellation ?",

@@ -27,6 +27,16 @@
     width: 35%;
 }
 
+.signalement-panel .block-valid-form {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+}
+
+.signalement-panel .block-valid-form .validation-button {
+    margin-left: 5px;
+}
+
 .info-glyph .glyphicon {
     font-size: 25px;
 }

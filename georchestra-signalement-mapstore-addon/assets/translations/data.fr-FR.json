@@ -6,7 +6,8 @@
 		},
 		"signalement": {
             "close": "Fermer",
-			"cancel": "Abandonner",
+			"cancel": "Annuler",
+			"validate": "Valider",
 			"create": "Créer",
 			"user": "Utilisateur",
 			"login": "Vous êtes",
