@@ -19,6 +19,7 @@ import Message from '@mapstore/components/I18N/Message';
 import ConfirmDialog from '@mapstore/components/misc/ConfirmDialog';
 import {status} from '../actions/signalement-action';
 import {GeometryType} from '../constants/signalement-constants';
+import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -581,6 +582,9 @@ export class SignalementPanelComponent extends React.Component {
     renderFormButton() {
         return (
             <fieldset>
+                <div className="block-inline-spinner">
+                     <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
+                </div>
                 <div className="block-valid-form">
                     <Button bsStyle="warning"
                             bsSize="large"
@@ -974,7 +978,7 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
-        if(this.state.task != null && this.state.task.asset.uuid) {
+        if( this.state.task != null && this.state.task.asset.uuid && !this.props.creating) {
             console.log("Create and close:"+this.state.task.asset.uuid);
             this.props.createTask(this.state.task);
         }

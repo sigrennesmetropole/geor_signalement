@@ -152,8 +152,7 @@ export const createTaskEpic = (action$) =>
                         position: "tr",
                         autoDismiss: 5
                     }),
-                    taskCreated(response.data),
-                    setTaskCreationFail(false)
+                    taskCreated(response.data)
                 ]))
                 .catch(() => Rx.Observable.from([
                     error({
@@ -163,7 +162,7 @@ export const createTaskEpic = (action$) =>
                         position: "tr",
                         autoDismiss: 5
                     }),
-                    setTaskCreationFail(true)
+                    setTaskCreationFail()
                 ]));
         });
 

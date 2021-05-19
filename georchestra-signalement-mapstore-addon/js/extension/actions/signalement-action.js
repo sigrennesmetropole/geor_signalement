@@ -295,9 +295,8 @@ export function clearDrawn() {
 }
 
 
-export function setTaskCreationFail(isTaskCreationFailed) {
+export function setTaskCreationFail() {
 	return {
-		type: actions.SIGNALEMENT_TASK_NOT_CREATED,
-		isTaskCreationFailed
+		type: actions.SIGNALEMENT_TASK_NOT_CREATED
 	}
 }

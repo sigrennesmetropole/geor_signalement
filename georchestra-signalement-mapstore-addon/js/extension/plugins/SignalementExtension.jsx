@@ -52,7 +52,7 @@ const SignalementPanelComponentConnected = connect((state) => ({
     task: state.signalement.task,
     attachments: state.signalement.attachments,
     status: state.signalement.status,
-    creating: state.signalement.status,
+    creating: state.signalement.creating,
     closing: state.signalement.closing,
     drawing: state.signalement.drawing,
     error: state.signalement.error,
