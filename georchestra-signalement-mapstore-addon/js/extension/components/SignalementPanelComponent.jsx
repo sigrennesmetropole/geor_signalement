@@ -24,6 +24,7 @@ export class SignalementPanelComponent extends React.Component {
     static propTypes = {
         id: PropTypes.string,
         active: PropTypes.bool,
+        creating: PropTypes.bool,
         status: PropTypes.string,
         closing: PropTypes.bool,
         drawing: PropTypes.bool,
@@ -74,6 +75,7 @@ export class SignalementPanelComponent extends React.Component {
     static defaultProps = {
         id: "signalement-panel",
         active: false,
+        creating: false,
         status: status.NO_TASK,
         closing: false,
         drawing: false,
