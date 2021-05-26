@@ -510,11 +510,14 @@ export class SignalementPanelComponent extends React.Component {
                 <fieldset>
                     <legend><Message msgId="signalement.localization"/></legend>
                     <FormGroup controlId="localisation">
-                        { this.renderGeometryDrawButton() }
-                        <label className="col-sm-offset-1">{ this.renderGeometryDrawMessage() }</label>
-                        <HelpBlock>
-                            <Message msgId="signalement.localization.tips"/>
-                        </HelpBlock>
+                        <Row>
+                            <Col xs={9} className="localization-tips">
+                                <Message msgId="signalement.localization.tips"/>
+                            </Col>
+                            <Col xs={3}>
+                                { this.renderGeometryDrawButton() }
+                            </Col>
+                        </Row>
                     </FormGroup>
                 </fieldset>
             </div>
@@ -526,8 +529,9 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderGeometryDrawButton = ()=> {
         return (
-            <Button className="square-button" bsStyle={this.props.drawing ? 'primary' : 'default'} onClick={this.onDraw}>
+            <Button bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
                 <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
+                <Message msgId="signalement.localization.geolocate"/>
             </Button>
         );
     }
@@ -542,19 +546,6 @@ export class SignalementPanelComponent extends React.Component {
         }
         else {
             this.props.startDrawing(geometryType, this.props.task.asset.localisation);
-        }
-    }
-
-    /**
-     * Affichage du message sur le dessin de la geometrie du signalement
-     */
-    renderGeometryDrawMessage = ()=> {
-        if (this.state.task && this.props.task.asset && this.props.task.asset.localisation && this.props.task.asset.localisation.length > 0) {
-            return (
-                <Message msgId="signalement.localization.drawn"/>
-            );
-        } else {
-            return null;
         }
     }
 

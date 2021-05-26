@@ -28,6 +28,7 @@
 			"localization": "Geolocalize report",
 			"localization.tips": "Click on button to geolocalize report on map",
 			"localization.drawn": "Report geolocalized",
+			"localization.geolocate": "Geolocate",
 			"task.create": "Report task has been created",
 			"task.error": "Failed to create report task",
 			"localization.layer": "Layer is not geolocalizable",
