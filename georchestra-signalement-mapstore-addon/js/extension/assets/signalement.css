@@ -19,6 +19,14 @@
     display: inline-block;
 }
 
+.signalement-panel .input-group {
+    width: 100%;
+}
+
+.signalement-panel .input-group .addon {
+    width: 35%;
+}
+
 span .error {
     color: red;
 }
