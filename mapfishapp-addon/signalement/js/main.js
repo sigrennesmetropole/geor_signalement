@@ -360,8 +360,8 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     	    iconCls: 'attachment-grid',
             stripeRows: true,
             autoExpandColumn: 'id',
-            height: 100,
-            width: 400,
+            height: 70,
+            width: 410,
             //title: 'Array Grid',
             // config options for stateful behavior
             stateful: true,
@@ -444,36 +444,23 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 
     	return new Ext.FormPanel({
             id: 'form-panel',
-            labelWidth: 100,
+            labelWidth: 40,
             frame: true,
             bodyStyle: 'padding:5px 5px 0',
-            width: 600,
+            width: 460,
             items: [
                 {
                     xtype: 'fieldset',
                     title: this.tr('signalement.user'),
                     collapsible: false,
-                    width: 500,
+                    width: 430,
                     store: 'type',
                     items: [
-                        {
-                            xtype: 'displayfield',
-                            fieldLabel: this.tr('signalement.login'),
-                            name: 'login',
-                            id: 'login',
-                        },
                         {
                             xtype: 'displayfield',
                             fieldLabel: this.tr('signalement.organization'),
                             name: 'organization',
                             id: 'organization',
-                        },
-                        {
-                            xtype: 'displayfield',
-                            fieldLabel: this.tr('signalement.email'),
-                            name: 'email',
-                            vtype: 'email',
-                            id: 'email',
                         }
                     ]
                 },
@@ -481,7 +468,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     xtype: 'fieldset',
                     title:titleCombo,
                     collapsible: false,
-                    width: 500,
+                    width: 430,
                     items: [{
                         xtype: 'compositefield',
                         anchor: '-20',
@@ -490,7 +477,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                             {
                                 xtype: 'combo',
                                 id: 'combo',
-                                width: 300,
+                                width: 343,
                                 queryMode: 'local',
                                 forceSelection: true,
                                 displayField: 'label',
@@ -520,13 +507,13 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     title: this.tr("signalement.description"),
                     id: "object",
                     collapsible: false,
-                    width: 500,
+                    width: 430,
                     items: [
                         {
                             xtype: 'textarea',
                             id: 'objet',
-                            height: 100,
-                            width: 300,
+                            height: 40,
+                            width: 345,
                             maxLength: nbrCharLimit,
                             enableKeyEvents : true,
                             listeners: {
@@ -552,12 +539,12 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     xtype: 'fieldset',
                     title: this.tr('signalement.attachment.files'),
                     collapsible: false,
-                    width: 500,
+                    width: 430,
                     items: [
                     	{
                             xtype: 'fileuploadfield',
                             id: 'form-file-field',
-                            width:327,
+                            width:345,
                             emptyText: this.tr('signalement.attachment.select'),
                             fieldLabel: this.tr('signalement.attachment.add'),
                             name: 'file',
@@ -589,7 +576,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     xtype: 'fieldset',
                     title: this.tr('signalement.localization'),
                     collapsible: false,
-                    width: 500,
+                    width: 430,
                     layout: {
                         type: 'hbox',
                         align: 'middle'
@@ -636,7 +623,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 
         this.signalementWindow = new Ext.Window({
             title: this.getText(this.initRecord),
-            width: 600,
+            width: 460,
             autoScroll: false,
             items: [form],
             buttons: [
@@ -698,10 +685,10 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     },
 
     fillForm: function () {
-        if (Ext.ComponentMgr.get('login') != null) {
-            Ext.ComponentMgr.get('login').setValue(this.noteStore.getAt(0).get("user").login);
+        if (Ext.ComponentMgr.get('organization') != null) {
+            //Ext.ComponentMgr.get('login').setValue(this.noteStore.getAt(0).get("user").login);
             Ext.ComponentMgr.get('organization').setValue(this.noteStore.getAt(0).get("user").organization);
-            Ext.ComponentMgr.get('email').setValue(this.noteStore.getAt(0).get("user").email);
+            //Ext.ComponentMgr.get('email').setValue(this.noteStore.getAt(0).get("user").email);
         }
     },
 
