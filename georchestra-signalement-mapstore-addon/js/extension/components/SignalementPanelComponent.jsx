@@ -96,7 +96,7 @@ export class SignalementPanelComponent extends React.Component {
             size: 0.30,
             fluid: true,
             position: "right",
-            zIndex: 1030
+            zIndex: 1050
         },
         dockStyle: {
             zIndex: 100,
