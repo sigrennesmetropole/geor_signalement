@@ -370,6 +370,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
     },
 
     buildForm: function() {
+        const that = this;
         var storeCombo, valueCombo, titleCombo, iconGeom, nbrCharLimit = 1000;
         // teste si le signalement est pour une couche ou thématique
         if(this.reportThema == true){
@@ -427,6 +428,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             }
             addon.noteStore.updateLocalisation(listLocalisation);
             disableButtonCreate();
+            that.setSignalementWindowOpacity(1);
 
         }
 
@@ -611,6 +613,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                                 this.removeLayer(addon);
                                 drawActionControl(this.noteStore.getTask().asset.geographicType);
                                 Ext.getCmp('createButton').setDisabled(true);
+                                this.setSignalementWindowOpacity(0.6);
 
                             }
                         },
@@ -623,6 +626,12 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 }
             ]
         });
+    },
+
+    setSignalementWindowOpacity: function (opacity) {
+        if (this.signalementWindow) {
+            this.signalementWindow.el.dom.style.opacity = opacity;
+        }
     },
 
     buildSignalementWindow: function () {
@@ -685,7 +694,6 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             }
         });
-
         this.fillForm();
 
     },
