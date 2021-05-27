@@ -652,6 +652,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
 	                disabled: true,
 	                handler: function () {
 	                	Ext.getCmp('createButton').setDisabled(true);
+                        Ext.getCmp('createButton').setIconClass('spinner');
 	                    this.createTask();
 	                },
 	                scope: this
@@ -727,6 +728,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         if (this.signalementWindow != null) {
             Ext.getCmp('closeButton').setDisabled(true);
             Ext.getCmp('createButton').setDisabled(true);
+            Ext.getCmp('createButton').setIconClass('');
             this.deleteDraftTask();
         }
     },
@@ -735,6 +737,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
         if (this.signalementWindow != null) {
             Ext.getCmp('closeButton').setDisabled(true);
             Ext.getCmp('createButton').setDisabled(true);
+            Ext.getCmp('createButton').setIconClass('');
             this.noteStore.updateTask({});
             this.signalementWindow.hide();
             this.signalementWindow.destroy();
@@ -755,6 +758,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             },
             success: function (response) {
                 this.log("response: ", response);
+                Ext.getCmp('createButton').setIconClass('');
                 this.removeLayer(this);
                 this.closeWindow();
                 Ext.Msg.show({
@@ -764,6 +768,7 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
             },
             failure: function (response) {
             	Ext.getCmp('createButton').setDisabled(false);
+                Ext.getCmp('createButton').setIconClass('');
                 Ext.Msg.show({
                     msg: this.tr('signalement.task.error')
                 });
