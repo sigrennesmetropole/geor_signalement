@@ -27,6 +27,21 @@
     width: 35%;
 }
 
+.signalement-panel .block-valid-form,
+.signalement-panel .block-inline-spinner {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+}
+
+.signalement-panel .block-valid-form .validation-button {
+    margin-left: 5px;
+}
+
+.signalement-panel .block-inline-spinner .inline-spinner {
+    width: 30px;
+}
+
 .info-glyph .glyphicon {
     font-size: 25px;
 }

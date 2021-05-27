@@ -6,7 +6,8 @@
 		},
 		"signalement": {
             "close": "Fermer",
-			"cancel": "Abandonner",
+			"cancel": "Annuler",
+			"validate": "Valider",
 			"create": "Créer",
 			"user": "Utilisateur",
 			"login": "Vous êtes",
@@ -32,6 +33,16 @@
 			"localization.geolocate": "Géolocaliser",
 			"task.create": "La tâche de signalement a été créée",
 			"task.error": "La tâche de signalement n'a pas été créée",
+			"task": {
+				"success": {
+					"title": "Succès",
+					"message": "La tâche de signalement a été créée"
+				},
+				"fail": {
+					"title": "Echec",
+					"message": "La tâche de signalement n'a pas été créée"
+				}
+			},
 			"localization.layer": "La couche n'est pas signalable",
 			"msgBox.title": "Signalement",
 			"msgBox.info": "Etes-vous sur de vouloir annuler ce signalement ?",

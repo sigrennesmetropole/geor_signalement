@@ -70,10 +70,13 @@ export default (state = initialState, action) => {
             return assign({}, state, {task: null, status: status.TASK_UNLOADED, open: false});
         }
         case actions.SIGNALEMENT_TASK_CREATE: {
-            return assign({}, state, {task: action.task, status: status.CREATE_TASK });
+            return assign({}, state, {task: action.task, status: status.CREATE_TASK, creating: true });
         }
         case actions.SIGNALEMENT_TASK_CREATED: {
-            return assign({}, state, {task: null, status: status.TASK_CREATED, open: false});
+            return assign({}, state, {task: null, status: status.TASK_CREATED, open: false, creating: false});
+        }
+        case actions.SIGNALEMENT_TASK_NOT_CREATED: {
+            return assign({}, state, {creating: false});
         }
         case actions.SIGNALEMENT_UPDATE_LOCALISATION: {
             return {

@@ -19,11 +19,13 @@ import Message from '@mapstore/components/I18N/Message';
 import ConfirmDialog from '@mapstore/components/misc/ConfirmDialog';
 import {status} from '../actions/signalement-action';
 import {GeometryType} from '../constants/signalement-constants';
+import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
         id: PropTypes.string,
         active: PropTypes.bool,
+        creating: PropTypes.bool,
         status: PropTypes.string,
         closing: PropTypes.bool,
         drawing: PropTypes.bool,
@@ -74,6 +76,7 @@ export class SignalementPanelComponent extends React.Component {
     static defaultProps = {
         id: "signalement-panel",
         active: false,
+        creating: false,
         status: status.NO_TASK,
         closing: false,
         drawing: false,
@@ -312,6 +315,7 @@ export class SignalementPanelComponent extends React.Component {
                 {this.renderDetail()}
                 {this.renderAttachments()}
                 {this.renderLocalisation()}
+                {this.renderFormButton()}
                 {this.renderCustomForm()}
             </Form>
         );
@@ -332,14 +336,6 @@ export class SignalementPanelComponent extends React.Component {
                     <Col xs={8}>
                         <h4><Message msgId="signalement.msgBox.title"/></h4>
                         {this.renderMessage()}
-                    </Col>
-                    <Col xs={2}>
-                        <Button className="square-button no-border" onClick={() => this.create()} >
-                            <Glyphicon glyph={this.props.createGlyph}/>
-                        </Button>
-                        <Button className="square-button no-border" onClick={() => this.cancel()} >
-                            <Glyphicon glyph={this.props.closeGlyph}/>
-                        </Button>
                     </Col>
                 </Row>
             </Grid>
@@ -568,6 +564,42 @@ export class SignalementPanelComponent extends React.Component {
         else {
             this.props.startDrawing(geometryType, this.props.task.asset.localisation);
         }
+    }
+
+    /**
+     * Affichage du message sur le dessin de la geometrie du signalement
+     */
+    renderGeometryDrawMessage = ()=> {
+        if (this.state.task && this.props.task.asset && this.props.task.asset.localisation && this.props.task.asset.localisation.length > 0) {
+            return (
+                <Message msgId="signalement.localization.drawn"/>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderFormButton() {
+        return (
+            <fieldset>
+                <div className="block-inline-spinner">
+                     <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
+                </div>
+                <div className="block-valid-form">
+                    <Button bsStyle="warning"
+                            bsSize="large"
+                            onClick={() => this.cancel()}>
+                        <Message msgId="signalement.cancel"/>
+                    </Button>
+                    <Button className="validation-button"
+                            bsStyle="primary"
+                            bsSize="large"
+                            onClick={() => this.create()}>
+                        <Message msgId="signalement.validate"/>
+                    </Button>
+                </div>
+            </fieldset>
+        )
     }
 
     /**
@@ -946,7 +978,7 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
-        if(this.state.task != null && this.state.task.asset.uuid) {
+        if( this.state.task != null && this.state.task.asset.uuid && !this.props.creating) {
             console.log("Create and close:"+this.state.task.asset.uuid);
             this.props.createTask(this.state.task);
         }
