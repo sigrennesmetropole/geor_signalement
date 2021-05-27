@@ -27,6 +27,14 @@
     width: 35%;
 }
 
+.info-glyph .glyphicon {
+    font-size: 25px;
+}
+
+.instructions {
+    margin-top: 10px;
+}
+
 span .error {
     color: red;
 }
