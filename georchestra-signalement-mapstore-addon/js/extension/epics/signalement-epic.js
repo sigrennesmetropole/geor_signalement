@@ -3,6 +3,7 @@ import axios from 'axios';
 //import {changedGeometriesSelector} from "@mapstore/selectors/draw";
 import {changeDrawingStatus, END_DRAWING, GEOMETRY_CHANGED} from "@mapstore/actions/draw";
 import {changeMapInfoState} from "@mapstore/actions/mapInfo";
+import {error, success} from '@mapstore/actions/notifications';
 import {
     actions,
     initSignalementDone,
@@ -18,7 +19,8 @@ import {
     loadInitError,
     setDrawing,
     taskCreated,
-    updateLocalisation
+    updateLocalisation,
+    setTaskCreationFail
 } from '../actions/signalement-action';
 import {FeatureProjection, GeometryType} from "../constants/signalement-constants";
 
@@ -139,8 +141,29 @@ export const createTaskEpic = (action$) =>
             };
 
             return Rx.Observable.defer(() => axios.post(url, task, params))
-                .switchMap((response) => Rx.Observable.of(taskCreated(response.data)))
-                .catch(e => Rx.Observable.of(loadActionError("signalement.task.error", e)));
+                .catch(e => {
+                    return Rx.Observable.throw(e);
+                })
+                .switchMap((response) => Rx.Observable.from([
+                    success({
+                        title: "signalement.task.success.title",
+                        message: "signalement.task.success.message",
+                        uid: "signalement.task.success.",
+                        position: "tr",
+                        autoDismiss: 5
+                    }),
+                    taskCreated(response.data)
+                ]))
+                .catch(() => Rx.Observable.from([
+                    error({
+                        title: "signalement.task.fail.title",
+                        message: "signalement.task.fail.message",
+                        uid: "signalement.task.fail.",
+                        position: "tr",
+                        autoDismiss: 5
+                    }),
+                    setTaskCreationFail()
+                ]));
         });
 
 export const cancelDraftEpic = (action$) =>

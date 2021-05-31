@@ -12,17 +12,20 @@ import {
     Glyphicon,
     Grid,
     HelpBlock,
-    Row
+    Row,
+    InputGroup
 } from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
 import ConfirmDialog from '@mapstore/components/misc/ConfirmDialog';
 import {status} from '../actions/signalement-action';
 import {GeometryType} from '../constants/signalement-constants';
+import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
         id: PropTypes.string,
         active: PropTypes.bool,
+        creating: PropTypes.bool,
         status: PropTypes.string,
         closing: PropTypes.bool,
         drawing: PropTypes.bool,
@@ -34,6 +37,7 @@ export class SignalementPanelComponent extends React.Component {
         closeGlyph: PropTypes.string,
         createGlyph: PropTypes.string,
         deleteGlyph: PropTypes.string,
+        infoGlyph: PropTypes.string,
         buttonStyle: PropTypes.object,
         style: PropTypes.object,
         dockProps: PropTypes.object,
@@ -72,6 +76,7 @@ export class SignalementPanelComponent extends React.Component {
     static defaultProps = {
         id: "signalement-panel",
         active: false,
+        creating: false,
         status: status.NO_TASK,
         closing: false,
         drawing: false,
@@ -88,6 +93,7 @@ export class SignalementPanelComponent extends React.Component {
         closeGlyph: "1-close",
         createGlyph: "ok",
         deleteGlyph: "trash",
+        infoGlyph: "info-sign",
         // side panel properties
         width: 660,
         dockProps: {
@@ -95,7 +101,7 @@ export class SignalementPanelComponent extends React.Component {
             size: 0.30,
             fluid: true,
             position: "right",
-            zIndex: 1030
+            zIndex: 1050
         },
         dockStyle: {
             zIndex: 100,
@@ -304,10 +310,12 @@ export class SignalementPanelComponent extends React.Component {
         return (
             <Form model={this.state.task}>
                 {this.renderUserInformation()}
+                {this.renderInstructions()}
                 {this.renderContext()}
                 {this.renderDetail()}
                 {this.renderAttachments()}
                 {this.renderLocalisation()}
+                {this.renderFormButton()}
                 {this.renderCustomForm()}
             </Form>
         );
@@ -328,14 +336,6 @@ export class SignalementPanelComponent extends React.Component {
                     <Col xs={8}>
                         <h4><Message msgId="signalement.msgBox.title"/></h4>
                         {this.renderMessage()}
-                    </Col>
-                    <Col xs={2}>
-                        <Button className="square-button no-border" onClick={() => this.create()} >
-                            <Glyphicon glyph={this.props.createGlyph}/>
-                        </Button>
-                        <Button className="square-button no-border" onClick={() => this.cancel()} >
-                            <Glyphicon glyph={this.props.closeGlyph}/>
-                        </Button>
                     </Col>
                 </Row>
             </Grid>
@@ -366,22 +366,39 @@ export class SignalementPanelComponent extends React.Component {
         return (
             <div>
                 <fieldset>
-                    <legend><Message msgId="signalement.user"/></legend>
-                    <FormGroup controlId="signalement.user.login">
-                        <ControlLabel><Message msgId="signalement.login"/></ControlLabel>
-                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.login : ''}/>
-                    </FormGroup>
                     <FormGroup controlId="signalement.user.organization">
-                        <ControlLabel><Message msgId="signalement.organization"/></ControlLabel>
-                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.organization : ''}/>
-                    </FormGroup>
-                    <FormGroup controlId="signalement.user.email">
-                        <ControlLabel><Message msgId="signalement.email"/></ControlLabel>
-                        <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.email : ''}/>
+                        <InputGroup className="input-group">
+                            <InputGroup.Addon className="addon">
+                                <Message msgId="signalement.organization"/>
+                            </InputGroup.Addon>
+                            <FormControl type="text" readOnly value={this.props.user !== null ? this.props.user.organization : ''}/>
+                        </InputGroup>
                     </FormGroup>
                 </fieldset>
             </div>
         );
+    }
+
+    /**
+     * La rendition du bloc d'instructions
+     */
+    renderInstructions() {
+        return (
+            <div>
+                <fieldset className="instructions">
+                    <Row>
+                        <Col xs={1}>
+                            <Button className="square-button no-events info-glyph">
+                                <Glyphicon glyph={this.props.infoGlyph}/>
+                            </Button>
+                        </Col>
+                        <Col xs={11}>
+                            <Message msgId="signalement.instructions"/>
+                        </Col>
+                    </Row>
+                </fieldset>
+            </div>
+        )
     }
 
     /**
@@ -510,11 +527,14 @@ export class SignalementPanelComponent extends React.Component {
                 <fieldset>
                     <legend><Message msgId="signalement.localization"/></legend>
                     <FormGroup controlId="localisation">
-                        { this.renderGeometryDrawButton() }
-                        <label className="col-sm-offset-1">{ this.renderGeometryDrawMessage() }</label>
-                        <HelpBlock>
-                            <Message msgId="signalement.localization.tips"/>
-                        </HelpBlock>
+                        <Row>
+                            <Col xs={9} className="localization-tips">
+                                <Message msgId="signalement.localization.tips"/>
+                            </Col>
+                            <Col xs={3}>
+                                { this.renderGeometryDrawButton() }
+                            </Col>
+                        </Row>
                     </FormGroup>
                 </fieldset>
             </div>
@@ -526,8 +546,9 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderGeometryDrawButton = ()=> {
         return (
-            <Button className="square-button" bsStyle={this.props.drawing ? 'primary' : 'default'} onClick={this.onDraw}>
+            <Button bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
                 <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
+                <Message msgId="signalement.localization.geolocate"/>
             </Button>
         );
     }
@@ -556,6 +577,29 @@ export class SignalementPanelComponent extends React.Component {
         } else {
             return null;
         }
+    }
+
+    renderFormButton() {
+        return (
+            <fieldset>
+                <div className="block-inline-spinner">
+                     <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
+                </div>
+                <div className="block-valid-form">
+                    <Button bsStyle="warning"
+                            bsSize="large"
+                            onClick={() => this.cancel()}>
+                        <Message msgId="signalement.cancel"/>
+                    </Button>
+                    <Button className="validation-button"
+                            bsStyle="primary"
+                            bsSize="large"
+                            onClick={() => this.create()}>
+                        <Message msgId="signalement.validate"/>
+                    </Button>
+                </div>
+            </fieldset>
+        )
     }
 
     /**
@@ -872,7 +916,7 @@ export class SignalementPanelComponent extends React.Component {
             errorAttachment = 'signalement.attachment.typeFile';
         }
 
-        if (attachment.file.size > this.props.attachmentConfiguration.maxSize) {
+        if (attachment.file && attachment.file.size > this.props.attachmentConfiguration.maxSize) {
             errorAttachment = `la taille du fichier est supérieur à : ${this.props.attachmentConfiguration.maxSize}`
         }
 
@@ -910,7 +954,8 @@ export class SignalementPanelComponent extends React.Component {
     /**
      * Action pour supprimer une pièce jointe
      *
-     * @param {*} e l'événement
+     * @param id du fichier à supprimer
+     * @param index du fichier dans la liste
      */
     fileDeleteHandler(id, index) {
         const attachment = {id: id, uuid: this.state.task.asset.uuid, index: index};
@@ -921,7 +966,7 @@ export class SignalementPanelComponent extends React.Component {
      * L'action d'abandon
      */
     cancel() {
-        if(  this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
+        if(  this.state.task != null && this.state.task.asset.uuid) {
             console.log("Cancel and close:"+this.state.task.asset.uuid);
             this.props.requestClosing();
         } else {
@@ -933,9 +978,9 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
-        if( this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.uuid !== null) {
+        if( this.state.task != null && this.state.task.asset.uuid && !this.props.creating) {
             console.log("Create and close:"+this.state.task.asset.uuid);
             this.props.createTask(this.state.task);
         }
     }
-};
+}
