@@ -20,6 +20,6 @@ ldap_password: secret
 
 backend_url: https://georchestra.open-dev.com/signalement/
 
-
+domain_name: georchestra.open-dev.com
 
 
