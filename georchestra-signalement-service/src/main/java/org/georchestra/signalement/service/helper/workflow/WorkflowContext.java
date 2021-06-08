@@ -159,7 +159,11 @@ public class WorkflowContext {
 	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
 			String roleName, String subject, String body) {
 		LOGGER.debug("computePotentialOwners...");
-		EMailData eMailData = new EMailData(subject, body);
+		EMailData eMailData = null;
+		// On Calcul les données de EmailData que si un subject et un body ont été fournis
+		if (StringUtils.isNotEmpty(subject) && StringUtils.isNotEmpty(body)) {
+			eMailData = new EMailData(subject, body);
+		}
 		return computePotentialOwners(scriptContext, executionEntity, roleName, eMailData);
 	}
 
@@ -181,7 +185,10 @@ public class WorkflowContext {
 			try {
 				LOGGER.info("Assignees:{}" + assignees);
 				// Ici il faut calcule le contenue de recipients
-				sendEMail(executionEntity, reportingEntity, eMailData, assignees);
+				// On envoie un mail à tous les potentialOwners si demandé
+				if (eMailData != null) {
+					sendEMail(executionEntity, reportingEntity, eMailData, assignees);
+				}
 			} catch (Exception e) {
 				LOGGER.warn("Failed to send email to " + assignees + " from " + reportingEntity, e);
 			}

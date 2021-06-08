@@ -157,7 +157,7 @@
       <bpmn:property id="Property_2" itemSubjectRef="ItemDefinition_18" name="action"/>
       <bpmn:potentialOwner id="PotentialOwner_2" name="Potential Owner 1">
         <bpmn:resourceAssignmentExpression id="ResourceAssignmentExpression_1">
-          <bpmn:formalExpression id="FormalExpression_2" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,"Validator", "Nouveau signalement", "file:RVA_assignee-mail.html")})</bpmn:formalExpression>
+          <bpmn:formalExpression id="FormalExpression_2" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,"Validator", null, null)})</bpmn:formalExpression>
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
