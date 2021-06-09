@@ -19,7 +19,12 @@ ul {
 <body>
 	<div>
 		<p>Numéro du signalement: <#if reporting.id??>${reporting.id}</#if></p>
-		<h4>Demande de modification sur le Référentiel Voies et Adresses (RVA)</h4>
+		<h4>Demande de modification sur le Référentiel Voies et Adresses (RVA)
+			<span>
+				<#assign communeSignalement = dataModelUtils.getCommuneDuSignalement(reporting)>
+				<#if communeSignalement??> - Commune de ${communeSignalement?string}</#if>
+			</span>
+		</h4>
 		<p>
 			Bonjour
 			<#if (dataModelUtils.getUser(reporting.assignee))??>
@@ -41,7 +46,7 @@ ul {
 			Pour votre information, une copie de ce courriel a également été adressé à DANET Gaëtan qui assure une veille technique autour des données du RVA. En cas de doute sur la façon de corriger les données, n'hésitez pas à le contacter.
 		</p>
 		<br>
-		<p class="bold">Coordonées du demandeur:</p>
+		<p class="bold">Coordonnées du demandeur:</p>
 		<ul>
 			<#if (dataModelUtils.getUser(reporting.initiator))??>
 				<#assign initiatorUser = dataModelUtils.getUser(reporting.initiator)>
