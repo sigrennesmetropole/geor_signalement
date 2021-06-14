@@ -5,10 +5,12 @@ package org.georchestra.signalement.service.helper.mail;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.apache.commons.lang3.StringUtils;
+import org.georchestra.signalement.core.dto.GeographicArea;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.acl.GeographicAreaService;
@@ -79,8 +81,8 @@ public class EmailDataModel extends DataModel {
 	 * @param reportingEntity
 	 * @return
 	 */
-	public String getCommuneDuSignalement(AbstractReportingEntity reportingEntity) {
-		return this.geographicAreaService.getNomGeographicAreaIntersectWithGeometry(reportingEntity.getGeometry(), reportingEntity.getGeographicType());
+	public List<GeographicArea> getCommunesDuSignalement(AbstractReportingEntity reportingEntity) {
+		return this.geographicAreaService.searchGeographicAreaIntersectWithGeometry(reportingEntity.getGeometry(), reportingEntity.getGeographicType());
 	}
 
 }
