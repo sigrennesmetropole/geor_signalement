@@ -1,12 +1,13 @@
 package org.georchestra.signalement.service.helper.workflow;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.georchestra.signalement.core.dao.acl.GeographicAreaCustumDao;
 import org.georchestra.signalement.core.dao.acl.RoleDao;
 import org.georchestra.signalement.core.dao.acl.UserDao;
+import org.georchestra.signalement.core.dto.GeographicArea;
 import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.core.entity.acl.UserEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
+import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class AssignmentHelper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AssignmentHelper.class);
 
 	@Autowired
-	private GeographicAreaCustumDao geographicAreaCustumDao;
+	private GeographicAreaService geographicAreaService;
 
 	@Autowired
 	private RoleDao roleDao;
@@ -101,15 +102,20 @@ public class AssignmentHelper {
 
 		// Faire l'intersection entre la geometrie du signalement et la table
 		// geographicArea et recuperer l'id geographicArea
-		Long idGographicArea = geographicAreaCustumDao.findGeographicAreaIntersectWithGeometry(
+		List<GeographicArea> geographicAreas = geographicAreaService.searchGeographicAreaIntersectWithGeometry(
 				reportingEntity.getGeometry(), reportingEntity.getGeographicType());
+
+		// On ne s'interessera pour le moment que à la commune qui comprend la plus grande part du signalement
+		// La commune d'indice 0 de la liste
+		Long idGographicArea = null;
+		if (!geographicAreas.isEmpty()) {
+			idGographicArea = geographicAreas.get(0).getId();
+		}
 
 		// faire une requete custom pour recuperer la liste d'utilisateur de la tale
 		// user_role_contexte
 		// à partir de idGographicArea, idContextDescription et idRole
 
-		List<UserEntity> userEntities = userDao.findUsers(idRole, idContextDescription, idGographicArea);
-
-		return userEntities;
+		return idGographicArea != null ? userDao.findUsers(idRole, idContextDescription, idGographicArea) : new ArrayList<>();
 	}
 }
