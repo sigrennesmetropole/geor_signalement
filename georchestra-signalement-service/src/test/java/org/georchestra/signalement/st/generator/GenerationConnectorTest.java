@@ -7,12 +7,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Date;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import org.apache.commons.io.IOUtils;
 import org.georchestra.signalement.StarterSpringBootTestApplication;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dto.ContextType;
+import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
+import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.georchestra.signalement.service.helper.mail.EmailDataModel;
 import org.georchestra.signalement.service.sm.UserService;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
@@ -44,6 +48,9 @@ public class GenerationConnectorTest {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	GeographicAreaService geographicAreaService;
+
 	@Test
 	public void generateStringBody() {
 		try (InputStream is = Thread.currentThread().getContextClassLoader()
@@ -57,7 +64,7 @@ public class GenerationConnectorTest {
 			entity.getContextDescription().setLabel("Label 1");
 			entity.getContextDescription().setContextType(ContextType.LAYER);
 			entity.setAssignee("testuser");
-			EmailDataModel emailDataModel = new EmailDataModel(userService, null, entity,
+			EmailDataModel emailDataModel = new EmailDataModel(userService, geographicAreaService, null, entity,
 					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString());
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
 			Assert.assertNotNull(document);
@@ -212,7 +219,10 @@ public class GenerationConnectorTest {
 		entity.setAssignee("testuser");
 		entity.setInitiator("testuser");
 		entity.setDescription("bla bla bla bla");
-		return new EmailDataModel(userService, null, entity, template);
+		entity.setGeographicType(GeographicType.POINT);
+		GeometryFactory gf = new GeometryFactory();
+		entity.setGeometry(gf.createPoint(new Coordinate(-1.606084, 48.126307)));
+		return new EmailDataModel(userService, geographicAreaService, null, entity, template);
 	}
 
 }

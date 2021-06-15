@@ -456,13 +456,14 @@ GEOR.Addons.Signalement = Ext.extend(GEOR.Addons.Base, {
                     title: this.tr('signalement.user'),
                     collapsible: false,
                     width: 430,
+                    labelWidth: 60,
                     store: 'type',
                     items: [
                         {
                             xtype: 'displayfield',
                             fieldLabel: this.tr('signalement.organization'),
                             name: 'organization',
-                            id: 'organization',
+                            id: 'organization'
                         }
                     ]
                 },

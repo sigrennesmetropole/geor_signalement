@@ -2,11 +2,11 @@ package org.georchestra.signalement.core.dao.acl.impl;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
 import org.georchestra.signalement.core.dao.acl.GeographicAreaCustumDao;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.SortCriteria;
+import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,68 +31,48 @@ public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implement
     }
 
     /**
-     * Récuperer l'id du polygone de la table geographicArea intersecter avec la géometrie.
+     * Récuperer le geographicArea qui intersecte la géometrie.
      * Dans le cas des polygones ou lignes à cheval sur plusieurs polygones,
-     * on récupere l'id du polygone qui la plus grande surface ou la plus grande ligne d'intersection
+     * on les classespar les polygones qui ont la plus grande surface ou la plus grande ligne d'intersection
      *
      * @param geometry
      * @param geographicType
      * @return
      */
     @Override
-    public Long findGeographicAreaIntersectWithGeometry(Geometry geometry, GeographicType geographicType) {
+    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometry(Geometry geometry, GeographicType geographicType) {
         String sqlQuery = null;
         switch (geographicType) {
             case POINT:
-                sqlQuery = String.format("select g.id  " +
+                sqlQuery = String.format("select *  " +
                         "from geographic_area g " +
                         "where st_contains(g.geometry, ST_GeometryFromText('%s',4326)) = TRUE;", geometry);
                 break;
             case LINE:
-                sqlQuery = String.format("select g.id, st_length(ST_Intersection(geography('%1$s') ,g.geometry)) as longeur " +
+                sqlQuery = String.format("select id, nom, codeinsee, geometry from (select *, st_length(ST_Intersection(geography('%1$s') ,g.geometry)) as longeur " +
                         "from geographic_area g " +
                         "where ST_Intersects(geography('%1$s'), g.geometry) = TRUE " +
-                        "order by longeur desc " +
-                        "limit 1; ", geometry);
+                        "order by longeur desc) AS g_len;", geometry);
                 break;
             case POLYGON:
-                sqlQuery = String.format("select g.id, st_area(st_intersection(geography('%1$s') ,g.geometry)) as area " +
+                sqlQuery = String.format("select id, nom, codeinsee, geometry from (select *, st_area(st_intersection(geography('%1$s') ,g.geometry)) as area " +
                         "from geographic_area g " +
                         "where ST_Intersects(geography('%1$s'), g.geometry) = TRUE " +
-                        "order by area desc " +
-                        "limit 1; ", geometry);
+                        "order by area desc) AS g_area;", geometry);
                 break;
             default:
                 break;
         }
 
         //Création de la requête
-        Query query = entityManager.createNativeQuery(sqlQuery);
+        Query query = entityManager.createNativeQuery(sqlQuery, GeographicAreaEntity.class);
 
         //Execution de la requête
         @SuppressWarnings("unchecked")
-		List<Object[]> result = query.getResultList();
+		List<GeographicAreaEntity> result = query.getResultList();
+        return result;
 
-        // Dans le cas où y a pas de resultat on retourne null sinon on retourne l'id du polygone de la geographicArea
-        if (CollectionUtils.isEmpty(result)) {
-            return null;
-        } else {
-            return getIdFromResult(geographicType, result);
-        }
-    }
 
-    private Long getIdFromResult(GeographicType geographicType, List<Object[]> result) {
-        Object idGeographicArea;
-
-        switch (geographicType) {
-            case POINT:
-                idGeographicArea = result.get(0);
-                break;
-            default:
-                idGeographicArea = result.get(0)[0];
-                break;
-        }
-        return Long.parseLong(idGeographicArea.toString());
     }
 
 

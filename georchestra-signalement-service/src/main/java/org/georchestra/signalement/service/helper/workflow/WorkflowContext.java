@@ -20,6 +20,7 @@ import org.georchestra.signalement.core.dto.EMailData;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
+import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.georchestra.signalement.service.exception.DocumentGenerationException;
 import org.georchestra.signalement.service.exception.DocumentModelNotFoundException;
 import org.georchestra.signalement.service.exception.EMailException;
@@ -59,6 +60,9 @@ public class WorkflowContext {
 
 	@Autowired
 	private AssignmentHelper assignmentHelper;
+
+	@Autowired
+	private GeographicAreaService geographicAreaService;
 
 	/**
 	 * Méthode utilitaire de log
@@ -159,7 +163,11 @@ public class WorkflowContext {
 	public List<String> computePotentialOwners(ScriptContext scriptContext, ExecutionEntity executionEntity,
 			String roleName, String subject, String body) {
 		LOGGER.debug("computePotentialOwners...");
-		EMailData eMailData = new EMailData(subject, body);
+		EMailData eMailData = null;
+		// On Calcul les données de EmailData que si un subject et un body ont été fournis
+		if (StringUtils.isNotEmpty(subject) && StringUtils.isNotEmpty(body)) {
+			eMailData = new EMailData(subject, body);
+		}
 		return computePotentialOwners(scriptContext, executionEntity, roleName, eMailData);
 	}
 
@@ -181,7 +189,10 @@ public class WorkflowContext {
 			try {
 				LOGGER.info("Assignees:{}" + assignees);
 				// Ici il faut calcule le contenue de recipients
-				sendEMail(executionEntity, reportingEntity, eMailData, assignees);
+				// On envoie un mail à tous les potentialOwners si demandé
+				if (eMailData != null) {
+					sendEMail(executionEntity, reportingEntity, eMailData, assignees);
+				}
 			} catch (Exception e) {
 				LOGGER.warn("Failed to send email to " + assignees + " from " + reportingEntity, e);
 			}
@@ -268,11 +279,11 @@ public class WorkflowContext {
 			EMailData eMailData) throws IOException, DocumentModelNotFoundException, DocumentGenerationException {
 		EmailDataModel emailDataModel = null;
 		if (StringUtils.isNotEmpty(eMailData.getBody())) {
-			emailDataModel = new EmailDataModel(userService, executionEntity, reportingEntity,
+			emailDataModel = new EmailDataModel(userService, geographicAreaService, executionEntity, reportingEntity,
 					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString()
 							+ ":" + eMailData.getBody());
 		} else {
-			emailDataModel = new EmailDataModel(userService, executionEntity, reportingEntity, eMailData.getFileBody());
+			emailDataModel = new EmailDataModel(userService, geographicAreaService, executionEntity, reportingEntity, eMailData.getFileBody());
 		}
 
 		return generationConnector.generateDocument(emailDataModel);

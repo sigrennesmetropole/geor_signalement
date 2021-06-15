@@ -35,6 +35,10 @@
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_11" name="handled" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_4">
+      <bpmn:documentation id="Documentation_1"><![CDATA[Prise en compte du signalement]]></bpmn:documentation>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_1" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "handled"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_3" name="done" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_2">
       <bpmn:documentation id="Documentation_13"><![CDATA[Traitement du signalement]]></bpmn:documentation>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_5" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "done"}</bpmn:conditionExpression>
@@ -43,15 +47,12 @@
       <bpmn:documentation id="Documentation_11"><![CDATA[Abandon du signalement]]></bpmn:documentation>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_6" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "canceled"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_11" name="handled" sourceRef="ExclusiveGateway_1" targetRef="ScriptTask_4">
-      <bpmn:documentation id="Documentation_1"><![CDATA[Prise en compte du signalement]]></bpmn:documentation>
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" id="FormalExpression_1" evaluatesToTypeRef="ItemDefinition_18" language="http://www.java.com/java">${action == "handled"}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="ExclusiveGateway_1" name="Handle or Close Gateway">
       <bpmn:incoming>SequenceFlow_5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_11</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_3</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_4</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_11</bpmn:outgoing>
+
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_5" sourceRef="UserTask_1" targetRef="ExclusiveGateway_1"/>
     <bpmn:scriptTask id="ScriptTask_1" name="As Pending" scriptFormat="javascript">
@@ -156,7 +157,7 @@
       <bpmn:property id="Property_2" itemSubjectRef="ItemDefinition_18" name="action"/>
       <bpmn:potentialOwner id="PotentialOwner_2" name="Potential Owner 1">
         <bpmn:resourceAssignmentExpression id="ResourceAssignmentExpression_1">
-          <bpmn:formalExpression id="FormalExpression_2" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,"Validator", "Nouveau signalement", "file:RVA_assignee-mail.html")})</bpmn:formalExpression>
+          <bpmn:formalExpression id="FormalExpression_2" language="http://www.java.com/java">user(${workflowContext.computePotentialOwners(null,execution,"Validator", null, null)})</bpmn:formalExpression>
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
