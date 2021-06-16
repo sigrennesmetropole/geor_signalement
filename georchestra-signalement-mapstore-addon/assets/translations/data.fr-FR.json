@@ -6,7 +6,8 @@
 		},
 		"signalement": {
             "close": "Fermer",
-			"cancel": "Abandonner",
+			"cancel": "Annuler",
+			"validate": "Valider",
 			"create": "Créer",
 			"user": "Utilisateur",
 			"login": "Vous êtes",
@@ -14,22 +15,34 @@
 			"email": "Votre adresse mail",
 			"description": "Objet",			
 			"description.count":"nombre de caracteres restants:",
+			"instructions": "Afin d'effectuer un signalement sur une thématique, merci de renseigner le formulaire ci-dessous ainsi que de localiser sur la carte l'objet du signalement.",
 			"reporting.thema": "Signalement sur la thématique",
 			"reporting.layer": "Signalement sur la couche",
 			"attachment.add": "Ajouter",
-			"attachment.files": "Piece(s) jointe(s)",
-			"attachment.file": "Piece jointe",
-			"attachment.size": "la taille du fichier est supérieur a : ",
+			"attachment.files": "Pièce(s) jointe(s)",
+			"attachment.file": "Pièce jointe",
+			"attachment.size": "la taille du fichier est supérieur à: ",
 			"attachment.typeFile": "Vous ne pouvez pas ajouter ce type fichier",
 			"attachment.length": "Vous ne pouvez pas ajouter plus de fichiers",
 			"attachment.error": "le fichier n'a pas été uploadé",
 			"attachment.select": "Sélectionner un document",
 			"attachment.delete": "Supprimer un document",
-			"localization": "Géolocation de l'anomalie",
+			"localization": "Géolocalisation de l'anomalie",
 			"localization.tips": "Cliquer sur le bouton pour géolocaliser le signalement sur la carte",
 			"localization.drawn": "Signalement géolocalisé",
+			"localization.geolocate": "Géolocaliser",
 			"task.create": "La tâche de signalement a été créée",
 			"task.error": "La tâche de signalement n'a pas été créée",
+			"task": {
+				"success": {
+					"title": "Succès",
+					"message": "La tâche de signalement a été créée"
+				},
+				"fail": {
+					"title": "Echec",
+					"message": "La tâche de signalement n'a pas été créée"
+				}
+			},
 			"localization.layer": "La couche n'est pas signalable",
 			"msgBox.title": "Signalement",
 			"msgBox.info": "Etes-vous sur de vouloir annuler ce signalement ?",

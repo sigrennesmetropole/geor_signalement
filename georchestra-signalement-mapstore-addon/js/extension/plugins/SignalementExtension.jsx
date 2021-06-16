@@ -28,7 +28,8 @@ import {
     requestClosing,
     startDrawing,
     stopDrawing,
-    stopDrawingSupport
+    stopDrawingSupport,
+    setTaskCreationFail
 } from '../actions/signalement-action';
 import {
     isOpen,
@@ -51,6 +52,7 @@ const SignalementPanelComponentConnected = connect((state) => ({
     task: state.signalement.task,
     attachments: state.signalement.attachments,
     status: state.signalement.status,
+    creating: state.signalement.creating,
     closing: state.signalement.closing,
     drawing: state.signalement.drawing,
     error: state.signalement.error,
@@ -75,6 +77,7 @@ const SignalementPanelComponentConnected = connect((state) => ({
     requestClosing: requestClosing,
     cancelClosing: cancelClosing,
     confirmClosing: confirmClosing,
+    setTaskCreationFail: setTaskCreationFail,
     toggleControl: () => closePanel()
 })(SignalementPanelComponent);
 

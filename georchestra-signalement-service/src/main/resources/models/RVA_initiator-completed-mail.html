@@ -21,7 +21,7 @@
 	<p>
 		Madame, Monsieur,
 		<#if (dataModelUtils.getUser(reporting.initiator))??>
-		<#assign initiatorUser = dataModelUtils.getUser(reporting.assignee)>
+		<#assign initiatorUser = dataModelUtils.getUser(reporting.initiator)>
 		${initiatorUser.getLastName()?string}
 	</#if>
 	</p>

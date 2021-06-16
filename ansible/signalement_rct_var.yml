@@ -19,3 +19,5 @@ ldap_username: cn=admin,dc=georchestra,dc=org
 ldap_password: secret
 
 backend_url: https://tr.georchestra.open-groupe.com/signalement/
+
+domain_name: tr.georchestra.open-groupe.com

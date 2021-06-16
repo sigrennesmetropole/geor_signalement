@@ -19,6 +19,37 @@
     display: inline-block;
 }
 
+.signalement-panel .input-group {
+    width: 100%;
+}
+
+.signalement-panel .input-group .addon {
+    width: 35%;
+}
+
+.signalement-panel .block-valid-form,
+.signalement-panel .block-inline-spinner {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+}
+
+.signalement-panel .block-valid-form .validation-button {
+    margin-left: 5px;
+}
+
+.signalement-panel .block-inline-spinner .inline-spinner {
+    width: 30px;
+}
+
+.info-glyph .glyphicon {
+    font-size: 25px;
+}
+
+.instructions {
+    margin-top: 10px;
+}
+
 span .error {
     color: red;
 }
@@ -29,4 +60,8 @@ span .info {
 
 fieldset{
     margin: 0 25px 0 30px;
+}
+
+.localization-tips {
+    padding-top: 5px;
 }
