@@ -12,9 +12,10 @@ public interface GeographicAreaCustumDao {
 
     /**
      *  Récuperer l'id d'intersection entre la geometrie et la table geographic area
-     * @param geometry
-     * @param geographicType
+     * @param geometry          Géometrie representant le signalement
+     * @param geographicType    Type de géometrie fournie (ligne, point, polygone)
+     * @param excludedArea      geographic area a exclure des resuktats de la recherche (en l'occurrence Rennes Métropole)
      * @return
      */
-    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometry(Geometry geometry, GeographicType geographicType);
+    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometry(Geometry geometry, GeographicType geographicType, String excludedArea);
 }
