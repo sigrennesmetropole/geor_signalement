@@ -40,25 +40,27 @@ public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implement
      * @return
      */
     @Override
-    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometry(Geometry geometry, GeographicType geographicType) {
+    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometry(Geometry geometry, GeographicType geographicType, String excludedArea) {
         String sqlQuery = null;
         switch (geographicType) {
             case POINT:
                 sqlQuery = String.format("select *  " +
                         "from geographic_area g " +
-                        "where st_contains(g.geometry, ST_GeometryFromText('%s',4326)) = TRUE;", geometry);
+                        "where st_contains(g.geometry, ST_GeometryFromText('%s',4326)) = TRUE and nom <> '%s';", geometry, excludedArea);
                 break;
             case LINE:
-                sqlQuery = String.format("select id, nom, codeinsee, geometry from (select *, st_length(ST_Intersection(geography('%1$s') ,g.geometry)) as longeur " +
+                sqlQuery = String.format("select id, nom, codeinsee, geometry from (select *, st_length(ST_Intersection(geography('%1$s') ,g.geometry)) as longueur " +
                         "from geographic_area g " +
                         "where ST_Intersects(geography('%1$s'), g.geometry) = TRUE " +
-                        "order by longeur desc) AS g_len;", geometry);
+                        "and nom <> '%2$s' " +
+                        "order by longueur desc) AS g_len;", geometry, excludedArea);
                 break;
             case POLYGON:
                 sqlQuery = String.format("select id, nom, codeinsee, geometry from (select *, st_area(st_intersection(geography('%1$s') ,g.geometry)) as area " +
                         "from geographic_area g " +
                         "where ST_Intersects(geography('%1$s'), g.geometry) = TRUE " +
-                        "order by area desc) AS g_area;", geometry);
+                        "and nom <> '%2$s' " +
+                        "order by area desc) AS g_area;", geometry, excludedArea);
                 break;
             default:
                 break;
