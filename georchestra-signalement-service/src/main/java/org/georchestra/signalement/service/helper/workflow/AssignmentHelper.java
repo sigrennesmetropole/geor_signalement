@@ -91,19 +91,15 @@ public class AssignmentHelper {
 	private List<UserEntity> getUserEntities(AbstractReportingEntity reportingEntity, String roleName) {
 
 		// récuper l'id du role name
-		Long idRole = null;
-		RoleEntity roleEntity = roleDao.findByName(roleName);
-		if (roleEntity != null) {
-			idRole = roleEntity.getId();
-		}
+		Long idRole = getRoleIdByRoleName(roleName);
 
 		// récuper l'id du context description
 		Long idContextDescription = reportingEntity.getContextDescription().getId();
 
 		// Faire l'intersection entre la geometrie du signalement et la table
 		// geographicArea et recuperer l'id geographicArea
-		List<GeographicArea> geographicAreas = geographicAreaService.searchGeographicAreaIntersectWithGeometry(
-				reportingEntity.getGeometry(), reportingEntity.getGeographicType());
+		List<GeographicArea> geographicAreas = geographicAreaService.searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(
+				reportingEntity.getGeometry(), reportingEntity.getGeographicType(), idContextDescription, idRole);
 
 		// On ne s'interessera pour le moment que à la commune qui comprend la plus grande part du signalement
 		// La commune d'indice 0 de la liste
@@ -117,5 +113,35 @@ public class AssignmentHelper {
 		// à partir de idGographicArea, idContextDescription et idRole
 
 		return idGographicArea != null ? userDao.findUsers(idRole, idContextDescription, idGographicArea) : new ArrayList<>();
+	}
+
+	private Long getRoleIdByRoleName(String roleName) {
+		Long idRole = null;
+		RoleEntity roleEntity = roleDao.findByName(roleName);
+		if (roleEntity != null) {
+			idRole = roleEntity.getId();
+		}
+		return idRole;
+	}
+
+	/**
+	 * Récuperer la liste des utilisateur
+	 *
+	 * @param reportingEntity
+	 * @param roleName
+	 * @return
+	 */
+	public List<GeographicArea> computeUsersGeographicAreas(AbstractReportingEntity reportingEntity, String roleName) {
+
+		// récuper l'id du role name
+		Long idRole = getRoleIdByRoleName(roleName);
+
+
+		// récuper l'id du context description
+		Long idContextDescription = reportingEntity.getContextDescription().getId();
+
+		return geographicAreaService.searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(reportingEntity.getGeometry(),
+				reportingEntity.getGeographicType(), idContextDescription, idRole);
+
 	}
 }
