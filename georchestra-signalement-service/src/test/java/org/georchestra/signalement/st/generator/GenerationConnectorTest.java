@@ -18,6 +18,7 @@ import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
 import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.georchestra.signalement.service.helper.mail.EmailDataModel;
+import org.georchestra.signalement.service.helper.workflow.AssignmentHelper;
 import org.georchestra.signalement.service.sm.UserService;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
 import org.georchestra.signalement.service.st.generator.GenerationConnectorConstants;
@@ -51,6 +52,11 @@ public class GenerationConnectorTest {
 	@Autowired
 	GeographicAreaService geographicAreaService;
 
+	@Autowired
+	AssignmentHelper assignmentHelper;
+
+	private String roleName = "Validator";
+
 	@Test
 	public void generateStringBody() {
 		try (InputStream is = Thread.currentThread().getContextClassLoader()
@@ -64,8 +70,8 @@ public class GenerationConnectorTest {
 			entity.getContextDescription().setLabel("Label 1");
 			entity.getContextDescription().setContextType(ContextType.LAYER);
 			entity.setAssignee("testuser");
-			EmailDataModel emailDataModel = new EmailDataModel(userService, geographicAreaService, null, entity,
-					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString());
+			EmailDataModel emailDataModel = new EmailDataModel(userService, assignmentHelper, null, entity,
+					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString(), roleName);
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
 			Assert.assertNotNull(document);
 			Assert.assertNotNull(document.getFile());
@@ -222,7 +228,7 @@ public class GenerationConnectorTest {
 		entity.setGeographicType(GeographicType.POINT);
 		GeometryFactory gf = new GeometryFactory();
 		entity.setGeometry(gf.createPoint(new Coordinate(-1.606084, 48.126307)));
-		return new EmailDataModel(userService, geographicAreaService, null, entity, template);
+		return new EmailDataModel(userService, assignmentHelper, null, entity, template, roleName);
 	}
 
 }
