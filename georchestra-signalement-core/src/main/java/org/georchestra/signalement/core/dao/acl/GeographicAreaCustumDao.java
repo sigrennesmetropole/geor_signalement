@@ -11,11 +11,12 @@ import java.util.List;
 public interface GeographicAreaCustumDao {
 
     /**
-     *  Récuperer l'id d'intersection entre la geometrie et la table geographic area
+     *  Récuperer les geographic area d'intersection entre la geometrie et la table geographic area et du contexte et du role concerné
      * @param geometry          Géometrie representant le signalement
      * @param geographicType    Type de géometrie fournie (ligne, point, polygone)
-     * @param excludedArea      geographic area a exclure des resuktats de la recherche (en l'occurrence Rennes Métropole)
+     * @param idContext         Id du contexte, restrictions sur les geographic area appartenant au contexte
+     * @param idRole                         Role des utilisateurs du contexte qui sont concernés
      * @return
      */
-    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometry(Geometry geometry, GeographicType geographicType, String excludedArea);
+    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole);
 }
