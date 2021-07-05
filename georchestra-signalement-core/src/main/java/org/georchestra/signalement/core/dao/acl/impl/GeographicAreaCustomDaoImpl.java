@@ -30,37 +30,32 @@ public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implement
         return null;
     }
 
-    /**
-     * Récuperer le geographicArea qui intersecte la géometrie.
-     * Dans le cas des polygones ou lignes à cheval sur plusieurs polygones,
-     * on les classespar les polygones qui ont la plus grande surface ou la plus grande ligne d'intersection
-     *
-     * @param geometry
-     * @param geographicType
-     * @return
-     */
     @Override
-    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometry(Geometry geometry, GeographicType geographicType, String excludedArea) {
+    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole) {
         String sqlQuery = null;
         switch (geographicType) {
             case POINT:
-                sqlQuery = String.format("select *  " +
-                        "from geographic_area g " +
-                        "where st_contains(g.geometry, ST_GeometryFromText('%s',4326)) = TRUE and nom <> '%s';", geometry, excludedArea);
+                sqlQuery = String.format("select g.id, g.nom, g.codeinsee, g.geometry " +
+                        "from geographic_area g inner join user_role_context urc on g.id=urc.geographic_area_id " +
+                        "where st_contains(g.geometry, ST_GeometryFromText('%1$s',4326)) = TRUE " +
+                        "and urc.context_description_id = %2$d " +
+                        "and urc.role_id = %3$d;", geometry, idContext, idRole);
                 break;
             case LINE:
-                sqlQuery = String.format("select id, nom, codeinsee, geometry from (select *, st_length(ST_Intersection(geography('%1$s') ,g.geometry)) as longueur " +
-                        "from geographic_area g " +
+                sqlQuery = String.format("select g.id, g.nom, g.codeinsee, g.geometry, st_length(ST_Intersection(geography('%1$s') ,g.geometry)) as longueur " +
+                        "from geographic_area g inner join user_role_context urc on g.id=urc.geographic_area_id " +
                         "where ST_Intersects(geography('%1$s'), g.geometry) = TRUE " +
-                        "and nom <> '%2$s' " +
-                        "order by longueur desc) AS g_len;", geometry, excludedArea);
+                        "and urc.context_description_id = %2$d " +
+                        "and urc.role_id = %3$d " +
+                        "order by longueur desc;", geometry, idContext, idRole);
                 break;
             case POLYGON:
-                sqlQuery = String.format("select id, nom, codeinsee, geometry from (select *, st_area(st_intersection(geography('%1$s') ,g.geometry)) as area " +
-                        "from geographic_area g " +
+                sqlQuery = String.format("select g.id, g.nom, g.codeinsee, g.geometry, st_area(st_intersection(geography('%1$s') ,g.geometry)) as area " +
+                        "from geographic_area g inner join user_role_context urc on g.id=urc.geographic_area_id " +
                         "where ST_Intersects(geography('%1$s'), g.geometry) = TRUE " +
-                        "and nom <> '%2$s' " +
-                        "order by area desc) AS g_area;", geometry, excludedArea);
+                        "and urc.context_description_id = %2$d " +
+                        "and urc.role_id = %3$d " +
+                        "order by area desc;", geometry, idContext, idRole);
                 break;
             default:
                 break;
