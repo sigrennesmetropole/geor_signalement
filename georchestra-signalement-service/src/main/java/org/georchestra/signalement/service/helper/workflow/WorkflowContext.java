@@ -187,11 +187,11 @@ public class WorkflowContext {
 		if (reportingEntity != null) {
 			assignees = assignmentHelper.computeAssignees(reportingEntity, roleName);
 			try {
-				LOGGER.info("Assignees:{}" + assignees);
+				LOGGER.info(String.format("Assignees: {%s}", StringUtils.join(assignees, "}, {")));
 				// Ici il faut calcule le contenue de recipients
 				// On envoie un mail à tous les potentialOwners si demandé
 				if (eMailData != null) {
-					sendEMail(executionEntity, reportingEntity, eMailData, assignees);
+					sendEMail(executionEntity, reportingEntity, eMailData, assignees, roleName);
 				}
 			} catch (Exception e) {
 				LOGGER.warn("Failed to send email to " + assignees + " from " + reportingEntity, e);
@@ -216,7 +216,7 @@ public class WorkflowContext {
 		if (reportingEntity != null) {
 			assignee = assignmentHelper.computeAssignee(reportingEntity, roleName);
 			try {
-				LOGGER.info("Assignees:{}" + assignee);
+				LOGGER.info(String.format("Assignees: {%s}", assignee));
 				// Ici il faut calcule le contenue de result
 				sendEMail(executionEntity, reportingEntity, eMailData, Arrays.asList(assignee));
 			} catch (Exception e) {
@@ -247,7 +247,12 @@ public class WorkflowContext {
 	}
 
 	private void sendEMail(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
-			EMailData eMailData, List<String> recipients)
+						   EMailData eMailData, List<String> recipients) throws EMailException, IOException, DocumentModelNotFoundException, DocumentGenerationException {
+		sendEMail(executionEntity, reportingEntity, eMailData, recipients, null);
+	}
+
+	private void sendEMail(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
+			EMailData eMailData, List<String> recipients, String roleName)
 			throws EMailException, IOException, DocumentModelNotFoundException, DocumentGenerationException {
 		if (eMailData != null && CollectionUtils.isNotEmpty(recipients)) {
 			for (String recipient : recipients) {
@@ -258,7 +263,7 @@ public class WorkflowContext {
 					mailDescription.setSubject(generateSubject(eMailData));
 					mailDescription.addTo(user.getEmail());
 					mailDescription.setHtml(true);
-					mailDescription.setBody(generateEMailBody(executionEntity, reportingEntity, eMailData));
+					mailDescription.setBody(generateEMailBody(executionEntity, reportingEntity, eMailData, roleName));
 					mailService.sendMail(mailDescription);
 				} else {
 					LOGGER.warn("No user for  {}", recipient);
@@ -276,14 +281,14 @@ public class WorkflowContext {
 	}
 
 	private DocumentContent generateEMailBody(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
-			EMailData eMailData) throws IOException, DocumentModelNotFoundException, DocumentGenerationException {
+			EMailData eMailData, String roleName) throws IOException, DocumentModelNotFoundException, DocumentGenerationException {
 		EmailDataModel emailDataModel = null;
 		if (StringUtils.isNotEmpty(eMailData.getBody())) {
-			emailDataModel = new EmailDataModel(userService, geographicAreaService, executionEntity, reportingEntity,
+			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity, roleName,
 					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString()
 							+ ":" + eMailData.getBody());
 		} else {
-			emailDataModel = new EmailDataModel(userService, geographicAreaService, executionEntity, reportingEntity, eMailData.getFileBody());
+			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity, roleName, eMailData.getFileBody());
 		}
 
 		return generationConnector.generateDocument(emailDataModel);
