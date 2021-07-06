@@ -31,7 +31,7 @@ public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implement
     }
 
     @Override
-    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole) {
+    public List<GeographicAreaEntity> searchGeographicAreaIntersections(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole) {
         String sqlQuery = null;
         switch (geographicType) {
             case POINT:

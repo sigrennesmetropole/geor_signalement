@@ -18,5 +18,5 @@ public interface GeographicAreaCustumDao {
      * @param idRole                         Role des utilisateurs du contexte qui sont concernés
      * @return
      */
-    public List<GeographicAreaEntity> searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole);
+    public List<GeographicAreaEntity> searchGeographicAreaIntersections(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole);
 }
