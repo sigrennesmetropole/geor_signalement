@@ -70,8 +70,8 @@ public class GenerationConnectorTest {
 			entity.getContextDescription().setLabel("Label 1");
 			entity.getContextDescription().setContextType(ContextType.LAYER);
 			entity.setAssignee("testuser");
-			EmailDataModel emailDataModel = new EmailDataModel(userService, assignmentHelper, null, entity,
-					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString(), roleName);
+			EmailDataModel emailDataModel = new EmailDataModel(userService, assignmentHelper, null, entity, roleName,
+					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString());
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
 			Assert.assertNotNull(document);
 			Assert.assertNotNull(document.getFile());
@@ -228,7 +228,7 @@ public class GenerationConnectorTest {
 		entity.setGeographicType(GeographicType.POINT);
 		GeometryFactory gf = new GeometryFactory();
 		entity.setGeometry(gf.createPoint(new Coordinate(-1.606084, 48.126307)));
-		return new EmailDataModel(userService, assignmentHelper, null, entity, template, roleName);
+		return new EmailDataModel(userService, assignmentHelper, null, entity, roleName, template);
 	}
 
 }

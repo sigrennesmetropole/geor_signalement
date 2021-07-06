@@ -284,11 +284,11 @@ public class WorkflowContext {
 			EMailData eMailData, String roleName) throws IOException, DocumentModelNotFoundException, DocumentGenerationException {
 		EmailDataModel emailDataModel = null;
 		if (StringUtils.isNotEmpty(eMailData.getBody())) {
-			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity,
+			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity, roleName,
 					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString()
-							+ ":" + eMailData.getBody(), roleName);
+							+ ":" + eMailData.getBody());
 		} else {
-			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity, eMailData.getFileBody(), roleName);
+			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity, roleName, eMailData.getFileBody());
 		}
 
 		return generationConnector.generateDocument(emailDataModel);
