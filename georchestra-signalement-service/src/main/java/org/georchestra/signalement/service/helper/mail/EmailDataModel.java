@@ -37,7 +37,7 @@ public class EmailDataModel extends DataModel {
 	 * @param reportingEntity
 	 * @param template
 	 */
-	public EmailDataModel(UserService userService, AssignmentHelper assignmentHelper, ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity, String template, String roleName) {
+	public EmailDataModel(UserService userService, AssignmentHelper assignmentHelper, ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity, String roleName, String template) {
 		super(GenerationFormat.HTML);
 		this.executionEntity = executionEntity;
 		this.reportingEntity = reportingEntity;
