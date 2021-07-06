@@ -16,5 +16,5 @@ public interface GeographicAreaService {
      * @param geographicType    le type de la geomtrie (point, line, polygon)
      * @return {string} le nom de la geograhicARea
      */
-    List<GeographicArea> searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole);
+    List<GeographicArea> searchGeographicAreaIntersections(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole);
 }

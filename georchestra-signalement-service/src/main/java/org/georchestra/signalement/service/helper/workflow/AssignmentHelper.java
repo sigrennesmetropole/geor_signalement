@@ -98,7 +98,7 @@ public class AssignmentHelper {
 
 		// Faire l'intersection entre la geometrie du signalement et la table
 		// geographicArea et recuperer l'id geographicArea
-		List<GeographicArea> geographicAreas = geographicAreaService.searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(
+		List<GeographicArea> geographicAreas = geographicAreaService.searchGeographicAreaIntersections(
 				reportingEntity.getGeometry(), reportingEntity.getGeographicType(), idContextDescription, idRole);
 
 		// On ne s'interessera pour le moment que à la commune qui comprend la plus grande part du signalement
@@ -140,7 +140,7 @@ public class AssignmentHelper {
 		// récuper l'id du context description
 		Long idContextDescription = reportingEntity.getContextDescription().getId();
 
-		return geographicAreaService.searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(reportingEntity.getGeometry(),
+		return geographicAreaService.searchGeographicAreaIntersections(reportingEntity.getGeometry(),
 				reportingEntity.getGeographicType(), idContextDescription, idRole);
 
 	}

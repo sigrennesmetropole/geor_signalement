@@ -22,10 +22,10 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
     private GeographicAreaMapper geographicAreaMapper;
 
     @Override
-    public List<GeographicArea> searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole) {
+    public List<GeographicArea> searchGeographicAreaIntersections(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole) {
 
         // On cherche d'abord l'id de la geographic Area
-        List<GeographicAreaEntity> geographicAreaEntities = geographicAreaCustumDao.searchGeographicAreaIntersectWithGeometryRectrictedOnRoleAndContext(geometry, geographicType, idContext, idRole);
+        List<GeographicAreaEntity> geographicAreaEntities = geographicAreaCustumDao.searchGeographicAreaIntersections(geometry, geographicType, idContext, idRole);
         // On convertie les entités en dtos
         return geographicAreaMapper.entitiesToDtos(geographicAreaEntities);
     }
