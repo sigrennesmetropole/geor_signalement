@@ -36,6 +36,7 @@ stages:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
       - $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/SignalementExtension.zip
       - $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip
+      - $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip
  
 signalementapi:build:
   extends: .signalementapi:build
@@ -104,6 +105,7 @@ signalementapi:sonar:master:
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api-addon.zip
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/SignalementExtension.zip $CI_PROJECT_DIR/ansible/dockerize/files/SignalementExtension.zip
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip $CI_PROJECT_DIR/ansible/dockerize/files/SignalementManagementExtension.zip
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-front-management.zip
     - cd $CI_PROJECT_DIR/ansible  
     - chmod og-rw key/id_rsa
     - cp ${ANSIBLE_VAR_FILE} $HOME/signalement_var.yml

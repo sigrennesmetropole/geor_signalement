@@ -27,6 +27,7 @@
 		<module>georchestra-signalement-core</module>
 		<module>georchestra-signalement-mapstore-addon</module>
 		<module>georchestra-signalement-mapstore-management-addon</module>
+		<module>georchestra-signalement-front-management</module>
 	</modules>
 
 	<!-- Propriétés du projet -->

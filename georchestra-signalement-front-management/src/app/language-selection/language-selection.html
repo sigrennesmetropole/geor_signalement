@@ -1,0 +1,18 @@
+<div mat-dialog-title>
+<h2 class="center text-center" mat-dialog-title>{{'common.languageSelection' | translate}}</h2>
+</div>
+<div mat-dialog-content>
+<mat-select class="text-center" [value]="getCurrentLang()" (selectionChange)="handleLanguageChange(($event).value)">
+  <mat-select-trigger>
+    <img class="selectedImage" src="assets/icons/flags/{{getCurrentLang()}}.png">
+  </mat-select-trigger>
+  
+  <mat-option *ngFor="let lang of getLangs()" class="text-center" value="{{lang}}">
+    <img class="flagImage" src="assets/icons/flags/{{lang}}.png">
+  </mat-option>
+
+</mat-select>
+</div>
+<div mat-dialog-actions align="center">
+  <button mat-button color="primary" class="icon"  (click)="handleCancelClick()"><mat-icon>cancel</mat-icon></button>
+</div>

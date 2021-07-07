@@ -10,6 +10,9 @@ public class Configuration {
 
 	// Version de l'application
 	private String version;
+
+	// Nom du rôle d'administrateur de signalement
+	private String roleAdministrator;
 	
 	/**
 	 * Constructeur par defaut A conserver pour l'utilisation des mapper mapStruct
@@ -18,12 +21,14 @@ public class Configuration {
 	}
 
 	/**
-	 * Constructeur avec la version
+	 * Constructeur avec la version et le role
 	 * 
 	 * @param version
+	 * @param role
 	 */
-	public Configuration(String version) {
+	public Configuration(String version, String role) {
 		this.version = version;
+		this.roleAdministrator = role;
 	}
 
 }

@@ -12,7 +12,7 @@
 		}
 	},
 	"host": "",
-	"basePath": "/",
+	"basePath": "/signalement",
 	"tags": [
 		{
 			"name": "administration",
@@ -135,6 +135,13 @@
 						"description": "Nom du processus",
 						"required": true,
 						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "version",
+						"description": "Version du processus",
+						"required": false,
+						"type": "integer"
 					}
 				],
 				"responses": {
@@ -958,6 +965,9 @@
 			"type": "object",
 			"properties": {
 				"version": {
+					"type": "string"
+				},
+				"roleAdministrator": {
 					"type": "string"
 				}
 			}

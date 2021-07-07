@@ -1,0 +1,19 @@
+.text-center{
+    text-align: center;
+}
+::ng-deep .mat-select-arrow {
+    border: none;
+}
+::ng-deep mat-option {
+    position: relative;
+    width: 100%;
+}
+.selectedImage{
+    width: 50px;
+}
+
+.flagImage{
+    margin: auto;
+    display: block;
+    height: 40px;
+}

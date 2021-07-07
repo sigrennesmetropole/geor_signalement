@@ -1,0 +1,27 @@
+<h2 class="text-center add-form-title">{{'workflow.add.title' | translate}}</h2>
+<div mat-dialog-content class="add-form-group">
+    <div class="add-form-input">
+        <mat-form-field appearance="fill" class="text-center">
+            <label matLabel >{{'workflow.add.deploymentName' | translate}}</label>
+            <input matInput type="text" [(ngModel)]='deploymentName'>
+        </mat-form-field>
+    </div>
+    <div class="add-form-input" align="center">
+        <input type="file" class="file-input"
+        [accept]="requiredFileType" 
+        (change)="handleFileSelected($event)"
+        #fileUpload>
+        
+        <button mat-mini-fab color="primary" class="upload-btn add-form-file-button" (click)="fileUpload.click()">
+            <mat-icon>attach_file</mat-icon>
+        </button>
+        <label matLabel class="">{{fileName || ("workflow.add.noFileYet" | translate)}}</label>
+    </div>
+    
+</div>
+
+<div mat-dialog-action align="center" class="add-form-group">
+    <button mat-flat-button color="primary" (click)="handleSubmitClick()" *ngIf="!operationInProgress()">{{'common.buttons.submit' | translate}}</button>
+    <mat-spinner [diameter]="30" *ngIf="operationInProgress()"></mat-spinner>
+</div>
+
