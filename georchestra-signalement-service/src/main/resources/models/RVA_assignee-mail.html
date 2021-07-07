@@ -21,7 +21,7 @@ ul {
 		<p>Numéro du signalement: <#if reporting.id??>${reporting.id}</#if></p>
 		<h4>Demande de modification sur le Référentiel Voies et Adresses (RVA)
 			<span>
-				<#assign communesSignalement = dataModelUtils.getCommunesDuSignalement(reporting)>
+				<#assign communesSignalement = assignmentHelper.computeUsersGeographicAreas(reporting, roleName)>
 				<#assign nbreDeCommunes = communesSignalement?size>
 				<#if nbreDeCommunes == 1> - Commune de
 				<#elseif nbreDeCommunes gt 1> - Communes de

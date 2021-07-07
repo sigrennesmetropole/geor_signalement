@@ -5,15 +5,13 @@ package org.georchestra.signalement.service.helper.mail;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.apache.commons.lang3.StringUtils;
-import org.georchestra.signalement.core.dto.GeographicArea;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
-import org.georchestra.signalement.service.acl.GeographicAreaService;
+import org.georchestra.signalement.service.helper.workflow.AssignmentHelper;
 import org.georchestra.signalement.service.sm.UserService;
 import org.georchestra.signalement.service.st.generator.datamodel.DataModel;
 import org.georchestra.signalement.service.st.generator.datamodel.GenerationFormat;
@@ -30,19 +28,22 @@ public class EmailDataModel extends DataModel {
 
 	private AbstractReportingEntity reportingEntity;
 
-	private GeographicAreaService geographicAreaService;
+	private String roleName;
+
+	private AssignmentHelper assignmentHelper;
 
 	/**
 	 * @param executionEntity
 	 * @param reportingEntity
 	 * @param template
 	 */
-	public EmailDataModel(UserService userService, GeographicAreaService geographicAreaService, ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity, String template) {
+	public EmailDataModel(UserService userService, AssignmentHelper assignmentHelper, ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity, String roleName, String template) {
 		super(GenerationFormat.HTML);
 		this.executionEntity = executionEntity;
 		this.reportingEntity = reportingEntity;
 		this.userService = userService;
-		this.geographicAreaService = geographicAreaService;
+		this.roleName = roleName;
+		this.assignmentHelper = assignmentHelper;
 		setModelFileName(template);
 	}
 
@@ -51,6 +52,8 @@ public class EmailDataModel extends DataModel {
 		Map<Object, Object> datas = new HashMap<>();
 		datas.put("execution", executionEntity);
 		datas.put("reporting", reportingEntity);
+		datas.put("roleName", roleName);
+		datas.put("assignmentHelper", assignmentHelper);
 		datas.put("dataModelUtils", this);
 		return datas;
 	}
@@ -76,13 +79,6 @@ public class EmailDataModel extends DataModel {
 		return u;
 	}
 
-	/**
-	 * Permet d'obtenir la commune dans laquelle à été posé le signalement
-	 * @param reportingEntity
-	 * @return
-	 */
-	public List<GeographicArea> getCommunesDuSignalement(AbstractReportingEntity reportingEntity) {
-		return this.geographicAreaService.searchGeographicAreaIntersectWithGeometry(reportingEntity.getGeometry(), reportingEntity.getGeographicType());
-	}
+
 
 }
