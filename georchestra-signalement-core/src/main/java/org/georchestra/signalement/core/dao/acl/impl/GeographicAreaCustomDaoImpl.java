@@ -35,14 +35,14 @@ public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implement
         String sqlQuery = null;
         switch (geographicType) {
             case POINT:
-                sqlQuery = String.format("select g.id, g.nom, g.codeinsee, g.geometry " +
+                sqlQuery = String.format("select distinct g.id, g.nom, g.codeinsee, g.geometry " +
                         "from geographic_area g inner join user_role_context urc on g.id=urc.geographic_area_id " +
                         "where st_contains(g.geometry, ST_GeometryFromText('%1$s',4326)) = TRUE " +
                         "and urc.context_description_id = %2$d " +
                         "and urc.role_id = %3$d;", geometry, idContext, idRole);
                 break;
             case LINE:
-                sqlQuery = String.format("select g.id, g.nom, g.codeinsee, g.geometry, st_length(ST_Intersection(geography('%1$s') ,g.geometry)) as longueur " +
+                sqlQuery = String.format("select distinct g.id, g.nom, g.codeinsee, g.geometry, st_length(ST_Intersection(geography('%1$s') ,g.geometry)) as longueur " +
                         "from geographic_area g inner join user_role_context urc on g.id=urc.geographic_area_id " +
                         "where ST_Intersects(geography('%1$s'), g.geometry) = TRUE " +
                         "and urc.context_description_id = %2$d " +
@@ -50,7 +50,7 @@ public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implement
                         "order by longueur desc;", geometry, idContext, idRole);
                 break;
             case POLYGON:
-                sqlQuery = String.format("select g.id, g.nom, g.codeinsee, g.geometry, st_area(st_intersection(geography('%1$s') ,g.geometry)) as area " +
+                sqlQuery = String.format("select distinct g.id, g.nom, g.codeinsee, g.geometry, st_area(st_intersection(geography('%1$s') ,g.geometry)) as area " +
                         "from geographic_area g inner join user_role_context urc on g.id=urc.geographic_area_id " +
                         "where ST_Intersects(geography('%1$s'), g.geometry) = TRUE " +
                         "and urc.context_description_id = %2$d " +
