@@ -14,11 +14,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Value("${application.version}")
     private String version;
 
+    @Value("${signalementbo.role.administrator}")
+    private String roleAdministrator;
+
     @Autowired
     ConfigurationMapper configMapper;
 
     @Override
-    public ConfigurationData getApplicationVersion() {
-        return configMapper.entityToDto(new Configuration(version));
+    public ConfigurationData getApplicationConfiguration() {
+        return configMapper.entityToDto(new Configuration(version, roleAdministrator));
     }
 }

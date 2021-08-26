@@ -1,0 +1,30 @@
+<mat-sidenav-container autosize class="sidenav-container" *ngIf="isAllowed() != null && isAllowed()">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="false">
+    <mat-toolbar>{{"menu.title"|translate}}</mat-toolbar>
+    <mat-nav-list>
+      <a *ngFor="let item of menuElements" mat-list-item routerLink="{{item.path}}">{{item.name |translate}}</a>
+      <a class="inner-content" mat-list-item color ="primary" (click)="handleOpenLanguageSelector()"><img class="inside-image" src="assets/icons/world.png" alt="{{'languageSelection' | translate}}"/></a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>{{"title" | translate}}</span>
+      <span class="connection-information" *ngIf="!connected">{{"menu.disconnected" | translate}}</span>
+      <span class="connection-information" *ngIf="connected">{{"menu.connected" | translate}} : {{username}}</span>
+    </mat-toolbar>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<app-forbidden *ngIf="isAllowed() != null  && !isAllowed()"></app-forbidden>
+<app-error *ngIf="isAllowed() === null"></app-error>

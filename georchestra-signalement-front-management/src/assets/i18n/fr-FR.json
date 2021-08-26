@@ -1,0 +1,75 @@
+{
+	
+	"title":"Administration du module Signalement",
+
+    "menu": {
+        "title": "Menu",
+        "items": {
+            "home":"Accueil",
+            "roles": "Rôles",
+            "operators": "Opérateurs",
+            "workflows": "Workflows"
+        },
+        "connected": "Connecté",
+        "disconnected": "Non connecté"
+    },
+
+    "workflow": {
+        "table": {
+            "name": "Nom",
+            "version": "Version",
+            "resourceName": "Nom de la ressource",
+            "key": "Clef",
+            "description": "Description",
+            "actions": "Actions"
+        },
+        "add": {
+            "title": "Ajout d'un workflow",
+            "deploymentName": "Nom de déploiement",
+            "noFileYet": "Pas de fichier selectionné",
+            "success" : "L'upload du workflow a réussi",
+            "error" : "L'upload du workflow a échoué",
+            "noDeploymentName" : "Pas de nom de déploiement fourni"
+        },
+        "delete": {
+            "version":{
+                "success": "La version du workflow a été supprimée avec succès",
+                "error" : "La suppression de la version du workflow a echouée"
+            },
+            "workflow":{
+                "success": "Le workflow a été supprimé avec succès",
+                "error" : "La suppression du workflow a echoué"
+            }
+        },
+        "title": "Workflow",
+        "version": "Version"
+    },
+
+    "paginator":{
+        "itemsPerPage": "Nombre d'éléments par page",
+        "nextPage": "Page suivante",
+        "previousPage": "Page précédente",
+        "range": "de"
+    },
+
+    "common":{
+        "buttons":{
+            "refresh": "Actualiser",
+            "delete": "Supprimer",
+            "close" :"Fermer",
+            "yes": "Oui",
+            "no": "Non",
+            "submit": "Envoyer",
+            "cancel": "Annuler"
+        },
+
+        "languageSelection" : "Sélection de la langue du site",
+
+        "suppression":{
+            "asking": "Êtes-vous sûr de vouloir supprimer"
+        },
+        "genericError": "Une erreur est survenue",
+        "accessError" : "Accès non autorisé",
+        "contactAdmin" : "Si le problème persiste, merci de contacter un administrateur"
+    }
+}

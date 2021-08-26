@@ -6,6 +6,7 @@ proxy:
     - mapfishapp
     - signalement
     - header
+    - front
   environment:
     - XMX=512M
 
@@ -23,3 +24,6 @@ header:
   environment:
     - XMX=512M
   image: georchestra/header
+
+front:
+  build: front

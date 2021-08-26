@@ -32,7 +32,9 @@ signalement_ldap_username: cn=admin,dc=georchestra,dc=org
 signalement_ldap_password: secret
 
 
+# Front installation
 
- 
-
-
+front_image_directory: /opt/images/signalementbo
+front_zip_name: georchestra-signalement-front-management.zip
+front_signalement_port: 80
+front_signalement_expose_port: 8085

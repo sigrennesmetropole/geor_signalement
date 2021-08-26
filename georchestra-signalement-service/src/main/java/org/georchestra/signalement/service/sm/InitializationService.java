@@ -3,6 +3,7 @@
  */
 package org.georchestra.signalement.service.sm;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.georchestra.signalement.core.common.DocumentContent;
@@ -40,7 +41,7 @@ public interface InitializationService {
 	 * @param processDefinitionName
 	 * @throws InitializationException
 	 */
-	boolean deleteProcessDefinition(String processDefinitionName) throws InitializationException;
+	boolean deleteProcessDefinition(String processDefinitionName, Integer version) throws InitializationException;
 
 	/**
 	 * Retourne la liste des définitions

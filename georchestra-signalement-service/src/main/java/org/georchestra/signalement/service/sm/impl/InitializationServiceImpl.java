@@ -4,6 +4,7 @@
 package org.georchestra.signalement.service.sm.impl;
 
 import java.io.FileInputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
@@ -95,11 +97,16 @@ public class InitializationServiceImpl implements InitializationService {
 	}
 
 	@Override
-	public boolean deleteProcessDefinition(String processDefinitionName) throws InitializationException {
+	public boolean deleteProcessDefinition(String processDefinitionName, Integer version) throws InitializationException {
 		boolean result = false;
 		RepositoryService repositoryService = processEngine.getRepositoryService();
-		List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefinitionQuery()
-				.processDefinitionName(processDefinitionName).list();
+		ProcessDefinitionQuery query = repositoryService.createProcessDefinitionQuery()
+				.processDefinitionName(processDefinitionName);
+		if(version != null){
+			LOGGER.info("A version has been provided : ", version);
+			query = query.processDefinitionVersion(version);
+		}
+		List<ProcessDefinition> processDefinitions = query.list();
 		if (CollectionUtils.isNotEmpty(processDefinitions)) {
 			for (ProcessDefinition processDefinition : processDefinitions) {
 				LOGGER.info("Start delete deployment {}.", processDefinition.getDeploymentId());
@@ -110,5 +117,6 @@ public class InitializationServiceImpl implements InitializationService {
 		}
 		return result;
 	}
+
 
 }

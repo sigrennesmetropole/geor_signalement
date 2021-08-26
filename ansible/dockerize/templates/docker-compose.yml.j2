@@ -33,3 +33,10 @@ services:
       - ADD_JAVA_OPTS=
       - XMX=1G
 
+  signalementbo:
+    image: signalementbo-image
+    depends_on:
+      - database
+      - ldap
+    ports:
+      - "{{front_signalement_expose_port}}:{{front_signalement_port}}"
