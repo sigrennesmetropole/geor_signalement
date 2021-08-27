@@ -9,6 +9,7 @@
     - "{{signalement_image_directory}}/"
     - "{{signalement_image_directory}}/signalement"
     - "{{signalement_config_directory}}/signalement"
+    - "{{front_image_directory}}/"
         
 # copy addon
 - name: Copy addon to mapfishapp
@@ -38,6 +39,18 @@
   shell:
     cmd: echo "signalement=http://signalement:{{signalement_server_port}}/signalement" >> "{{ signalement_config_directory }}/security-proxy/targets-mapping.properties"    
 
+- name: Check whether targets-mapping.properties contains signalement back office
+  command: grep -Fcq "signalementbo" "{{ signalement_config_directory }}/security-proxy/targets-mapping.properties"
+  register: checksecuritysignalementbo
+  check_mode: no
+  ignore_errors: yes
+  changed_when: no
+
+- name: Update targets-mapping.properties if needed
+  when: checksecuritysignalementbo.rc == 1
+  shell:
+    cmd: echo "signalementbo=http://signalementbo:{{front_signalement_port}}" >> "{{ signalement_config_directory }}/security-proxy/targets-mapping.properties"    
+
 # copy images 
 - name: Copy signalement api Dockerfile
   template:
@@ -62,7 +75,28 @@
     src: default.properties.j2
     dest: "{{ signalement_config_directory }}/default.properties"
     mode: 0777
-        
+
+- name: Copy front Dockerfile
+  template:
+    src: Dockerfile.front
+    dest: "{{ front_image_directory }}/Dockerfile"
+    mode: 0770
+
+- name: Copy front zip
+  copy:
+    src: "{{ front_zip_name }}"
+    dest: "{{ front_image_directory }}/{{ front_zip_name }}"
+    mode: 0770
+
+- name: Copy httpd.conf
+  copy:
+    src: "httpd.conf"
+    dest: "{{ front_image_directory }}"
+          
+- name: Build front image
+  shell:
+    cmd: docker build -t signalementbo-image {{front_image_directory}}
+
 #- name: Copy tomcat lib jar
 #  copy:
 #    src: "tomcat-juli.jar"
@@ -73,7 +107,7 @@
   shell: 
     cmd: docker build -t signalement-image {{signalement_image_directory}}
     chdir: "{{signalement_image_directory}}"  
-    
+
 # install yaml-merge
 - name: Clone yaml-merge
   shell: 
@@ -118,4 +152,4 @@
 - name: Restart docker compose
   shell:
     cmd: docker-compose up -d --build
-    chdir: "{{signalement_docker_directory}}"    
+    chdir: "{{signalement_docker_directory}}"

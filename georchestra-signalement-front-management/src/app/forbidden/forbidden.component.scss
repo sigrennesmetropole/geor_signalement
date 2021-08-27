@@ -1,0 +1,21 @@
+@import '../../colors.scss';
+
+.global{
+    width: 100%;
+    height: 100%;
+    background-color: $primary-color;
+    text-align: center;
+}
+
+.code{
+    font-size: 20em;
+    padding: 0.5em;
+    font-weight: 900;
+    color: $white-text-color;
+}
+
+.message{
+    font-size: 7em;
+    font-weight: 600;
+    color: $white-text-color;
+}

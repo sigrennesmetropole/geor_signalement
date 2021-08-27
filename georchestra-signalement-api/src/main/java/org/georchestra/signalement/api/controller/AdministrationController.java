@@ -47,7 +47,7 @@ public class AdministrationController implements AdministrationApi {
 
 	@Override
 	public ResponseEntity<ConfigurationData> getConfiguration() throws Exception {
-		return new ResponseEntity<ConfigurationData>(configurationService.getApplicationVersion(), HttpStatus.OK);
+		return new ResponseEntity<ConfigurationData>(configurationService.getApplicationConfiguration(), HttpStatus.OK);
 	}
 
 	@Override
@@ -72,9 +72,9 @@ public class AdministrationController implements AdministrationApi {
 	}
 
 	@Override
-	public ResponseEntity<Boolean> deleteProcessDefinition(String name) throws Exception {
+	public ResponseEntity<Boolean> deleteProcessDefinition(String name, Integer version) throws Exception {
 		try {
-			initializationService.deleteProcessDefinition(name);
+			initializationService.deleteProcessDefinition(name, version);
 			return ResponseEntity.ok(true);
 		} catch (Exception e) {
 			LOGGER.warn("Failed to delete process definition:" + name, e);

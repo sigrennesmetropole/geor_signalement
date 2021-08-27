@@ -8,9 +8,9 @@ import org.georchestra.signalement.core.dto.ConfigurationData;
 public interface ConfigurationService {
 
     /**
-     * Lecture de la version de l'application.
+     * Lecture de la configuration de l'application
      *
-     * @return version
+     * @return ConfigurationData contenant les informations de l'application
      */
-	ConfigurationData getApplicationVersion();
+	ConfigurationData getApplicationConfiguration();
 }
