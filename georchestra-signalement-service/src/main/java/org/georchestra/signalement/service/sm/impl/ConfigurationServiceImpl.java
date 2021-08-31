@@ -14,7 +14,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Value("${application.version}")
     private String version;
 
-    @Value("${signalementbo.role.administrator}")
+    @Value("${georchestra.role.administrator}")
     private String roleAdministrator;
 
     @Autowired
