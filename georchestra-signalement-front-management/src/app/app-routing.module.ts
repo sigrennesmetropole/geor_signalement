@@ -2,8 +2,8 @@ import {NgModule} from '@angular/core';
 import {Route, RouterModule} from '@angular/router';
 import {IsSignalementAdmin} from './guards/access.guard';
 import {HomePageComponent} from './home-page/home-page.component';
-import {OperatorComponent} from './operator/operator.component';
 import {RoleComponent} from './role/role.component';
+import {UserComponent} from './user/user.component';
 import {WorkflowComponent} from './workflow/workflow.component';
 
 const appRoutes: Route[] = [
@@ -13,8 +13,8 @@ const appRoutes: Route[] = [
       IsSignalementAdmin,
     ]},
 
-  {path: 'operators',
-    component: OperatorComponent,
+  {path: 'users',
+    component: UserComponent,
     canActivate: [
       IsSignalementAdmin,
     ]},

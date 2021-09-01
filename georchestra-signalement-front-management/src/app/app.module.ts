@@ -4,25 +4,33 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {LayoutModule} from '@angular/cdk/layout';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AppRoutingModule} from './app-routing.module';
 
 // Components
 import {AppComponent} from './app.component';
 import {HomePageComponent} from './home-page/home-page.component';
 import {WorkflowComponent} from './workflow/workflow.component';
 import {RoleComponent} from './role/role.component';
-import {OperatorComponent} from './operator/operator.component';
+import {UserComponent} from './user/user.component';
+import {ErrorComponent} from './error/error.component';
 
 
-import {WorkflowDataSource} from './workflow/workflow-datasource';
+// Data Sources
+import {WorkflowDataSource} from './workflow/workflow.datasource';
+import {UserDataSource} from './user/user.datasource';
 
 // Dialogs PopIn
 import {DialogLanguageSelectionDialog}
   from './language-selection/language-selection';
-import {DialogWorkflowAddDialog}
+import {WorkflowAddDialog}
   from './workflow/workflow-add-dialog/workflow-add-dialog';
-import {DialogWorkflowDeleteDialog}
+import {WorkflowDeleteDialog}
   from './workflow/workflow-delete-dialog/workflow-delete-dialog';
+import {DialogUserDeleteDialog}
+  from './user/user-delete-dialog/user-delete-dialog';
+import {DialogUserAddDialog}
+  from './user/user-add-dialog/user-add-dialog';
 
 // Services
 import {AdministrationService, UserService} from './api/services';
@@ -34,8 +42,13 @@ import {AccessService} from './services/access.service';
 // Utils
 import {ToasterUtil} from './utils/toaster.util';
 
+// Mappers
+import {WorkflowItemMapper} from './mappers/workflow-item.mapper';
+import {UserItemMapper} from './mappers/user-item.mapper';
+
 // Material
 import {MatButtonModule} from '@angular/material/button';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatGridListModule} from '@angular/material/grid-list';
@@ -55,9 +68,6 @@ import {MatSortModule} from '@angular/material/sort';
 // Translation imports
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {AppRoutingModule} from './app-routing.module';
-import {WorkflowItemMapper} from './mappers/workflow-item.mapper';
-import {ErrorComponent} from './error/error.component';
 
 
 @NgModule({
@@ -66,12 +76,14 @@ import {ErrorComponent} from './error/error.component';
     HomePageComponent,
     WorkflowComponent,
     RoleComponent,
-    OperatorComponent,
     DialogLanguageSelectionDialog,
-    DialogWorkflowAddDialog,
-    DialogWorkflowDeleteDialog,
+    WorkflowAddDialog,
+    WorkflowDeleteDialog,
+    DialogUserAddDialog,
+    DialogUserDeleteDialog,
     ForbiddenComponent,
     ErrorComponent,
+    UserComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -80,6 +92,7 @@ import {ErrorComponent} from './error/error.component';
     FormsModule,
     LayoutModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatDialogModule,
     MatFormFieldModule,
     MatGridListModule,
@@ -94,6 +107,7 @@ import {ErrorComponent} from './error/error.component';
     MatSortModule,
     MatTableModule,
     MatToolbarModule,
+    ReactiveFormsModule,
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
@@ -107,9 +121,12 @@ import {ErrorComponent} from './error/error.component';
     AccessService,
     AdministrationService,
     WorkflowItemMapper,
+    UserItemMapper,
+    UserService,
     ToasterUtil,
     UserService,
     WorkflowDataSource,
+    UserDataSource,
     WorkflowService,
     IsSignalementAdmin,
   ],

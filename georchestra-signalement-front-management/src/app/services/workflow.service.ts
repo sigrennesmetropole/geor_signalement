@@ -4,7 +4,7 @@ import {map} from 'rxjs/operators';
 import {AdministrationService} from '../api/services';
 import {WorkflowItemMapper} from '../mappers/workflow-item.mapper';
 import {ToasterUtil} from '../utils/toaster.util';
-import {WorkflowItem} from '../workflow/workflow-datasource';
+import {WorkflowItem} from '../workflow/workflow.datasource';
 
 
 @Injectable({

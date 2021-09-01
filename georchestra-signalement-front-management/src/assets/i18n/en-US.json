@@ -1,74 +1,132 @@
 {
-	
-	"title":"Reporting Module Administration",
-
-    "menu": {
-        "title": "Menu",
-        "items": {
-            "home":"Home",
-            "roles": "Roles",
-            "operators": "Operators",
-            "workflows": "Workflows"
-        },
-        "connected": "Connected",
-        "disconnected": "Disconnected"
+  "title": "Reporting Module Administration",
+  "menu": {
+    "title": "Menu",
+    "items": {
+      "home": "Home",
+      "roles": "Roles",
+      "operators": "Operators",
+      "workflows": "Workflows",
+      "users": "Users",
+      "context": "Contexts"
     },
-
-    "workflow": {
-        "table": {
-            "name": "Name",
-            "version": "Version",
-            "resourceName": "Resource name",
-            "key": "Key",
-            "description": "Description",
-            "actions": "Actions"
-        },
-        "add": {
-            "title": "Adding a Workflow",
-            "deploymentName": "Deployment name",
-            "noFileYet": "No file selected yet",
-            "success" : "The workflow upload succeed",
-            "error" : "The workflow upload failed",
-            "noDeploymentName" : "No given deployment name"
-        },
-        "delete": {
-            "version":{
-                "success": "The workflow version suppression succeed",
-                "error" : "The workflow version suppression failed"
-            },
-            "workflow":{
-                "success": "The workflow suppression succeed",
-                "error" : "The workflow suppression failed"
-            }
-        },
-        "title": "Workflow",
-        "version": "Version"
+    "connected": "Connected",
+    "disconnected": "Disconnected"
+  },
+  "workflow": {
+    "table": {
+      "name": "Name",
+      "version": "Version",
+      "resourceName": "Resource name",
+      "key": "Key",
+      "description": "Description",
+      "actions": "Actions"
     },
-
-    "paginator":{
-        "itemsPerPage": "Items per page",
-        "nextPage": "Next page",
-        "previousPage": "Previous page",
-        "range": "of"
+    "add": {
+      "title": "Add a Workflow",
+      "deploymentName": "Deployment name",
+      "noFileYet": "No file selected yet",
+      "success": "The workflow upload succeed",
+      "error": "The workflow upload failed",
+      "noDeploymentName": "No given deployment name"
     },
-	"common":{
-        "buttons":{
-            "refresh": "Refresh",
-            "delete": "Delete",
-            "close" :"Close",
-            "yes": "Yes",
-            "no": "No",
-            "submit": "Submit",
-            "cancel": "Cancel"
-        },
-
-        "languageSelection" : "Select the language of the site",
-
-        "suppression":{
-            "asking": "Are you sure you want to delete"
-        },
-        "genericError": "An error as occured",
-        "accessError" : "Acces not granted",
-        "contactAdmin" : "If the problem persists please contact an administrator"
+    "delete": {
+      "version": {
+        "success": "The workflow version suppression succeed",
+        "error": "The workflow version suppression failed",
+        "usedError": "The workflow version is used and can't be deleted"
+      },
+      "workflow": {
+        "success": "The workflow suppression succeed",
+        "error": "The workflow suppression failed",
+        "partialError": "All or part of the workflow versions are used and could not be deleted"
+      }
+    },
+    "title": "Workflow",
+    "version": "Version"
+  },
+  "user": {
+    "table": {
+      "login": "Login",
+      "email": "E-mail adress",
+      "firstname": "First name",
+      "lastname": "Last name",
+      "organization": "Organization",
+      "actions": "Actions",
+      "filter": "Filter"
+    },
+    "delete": {
+      "success": "User successfully suppressed",
+      "error": "User suprpression failed"
+    },
+    "add": {
+      "title": "Add an user",
+      "success": "The user creation succeed",
+      "error": "The user creation failed",
+      "noLogin": "You must provide a login",
+      "noMail": "You must provide an e-mail address",
+      "notValidEmail": "This is not a valid e-mail address"
+    },
+    "search": {
+      "title": "User search"
     }
+  },
+  "context": {
+    "table": {
+      "name": "Name",
+      "label": "Label",
+      "contextType": "Context type",
+      "geographicType": "Geographic type",
+      "processDefinition": "Workflow",
+      "version": "Workflow version",
+      "actions": "Actions"
+    },
+    "delete": {
+      "error": "The context suppression failed",
+      "success": "The context suppression succeed"
+    },
+    "add": {
+      "title": "Add a context",
+      "error": "The context post failed",
+      "success": "The context post succeed",
+      "errors": {
+        "wrongContextType": "This type of context is not recognized",
+        "wrongGeographicType": "This type of geographic is not recognized",
+        "noValue": "You must provide a value",
+        "tooLongValue": "Must be shorter",
+        "unknownError": "There is an error in the form"
+      }
+    },
+    "update": {
+      "error": "The context update failed",
+      "success": "The context update succeed"
+    }
+  },
+  "paginator": {
+    "itemsPerPage": "Items per page",
+    "nextPage": "Next page",
+    "previousPage": "Previous page",
+    "range": "of"
+  },
+  "common": {
+    "buttons": {
+      "refresh": "Refresh",
+      "delete": "Delete",
+      "close": "Close",
+      "yes": "Yes",
+      "no": "No",
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "apply": "Apply",
+      "reset": "Reset"
+    },
+    "languageSelection": "Select the language of the site",
+    "suppression": {
+      "asking": "Are you sure you want to delete"
+    },
+    "genericError": "An error as occured",
+    "accessError": "Acces not granted",
+    "contactAdmin": "If the problem persists please contact an administrator"
+  }
 }

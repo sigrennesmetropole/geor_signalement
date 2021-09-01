@@ -127,17 +127,12 @@ export class AppComponent {
       path: '',
     },
     {
-      name: 'menu.items.roles',
-      path: 'roles',
-    },
-    {
-      name: 'menu.items.operators',
-      path: 'operators',
-    },
-    {
       name: 'menu.items.workflows',
       path: 'workflows',
     },
-
+    {
+      name: 'menu.items.users',
+      path: 'users',
+    },
   ]
 }

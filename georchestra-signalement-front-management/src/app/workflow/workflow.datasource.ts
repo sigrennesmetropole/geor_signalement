@@ -3,7 +3,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {map} from 'rxjs/operators';
 import {Observable, of as observableOf,
-  merge, Subscription, Subject} from 'rxjs';
+  merge, Subject} from 'rxjs';
 import {WorkflowService} from '../services/workflow.service';
 import {Injectable} from '@angular/core';
 import {ToasterUtil} from '../utils/toaster.util';
@@ -122,8 +122,10 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
             (data)=>{
               this.data = data;
             },
-            (err)=>{
-              this.toasterService.sendErrorMessage('common.genericError', err);
+            (response)=>{
+              this.toasterService
+                  .sendErrorMessage('common.genericError',
+                      response.error.label);
             },
             ()=>{
               this.actualize.next();
@@ -135,10 +137,9 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
       * Delete a processDefinition on the user's ask
       * by calling the WorkflowService
       * @param {WorkfowItem} target The item asked to be delete
-      * @return {Subscription}
       */
-  deleteProcessDefinition(target : WorkflowItem) : Subscription {
-    return this.workflowService
+  deleteProcessDefinition(target : WorkflowItem) : void {
+    this.workflowService
         .deleteProcessDefinition(target)
         .subscribe(
             (result)=>{
@@ -147,12 +148,15 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
                     .sendSuccessMessage('workflow.delete.workflow.success');
               } else {
                 this.toasterService
-                    .sendSuccessMessage('workflow.delete.workflow.error');
+                    .sendWarningMessage(
+                        'workflow.delete.workflow.partialError');
               }
             },
-            (err)=>{
-              this.toasterService
-                  .sendErrorMessage('workflow.delete.workflow.error', err);
+            (response)=>{
+              this
+                  .toasterService
+                  .sendErrorMessage('workflow.delete.workflow.error',
+                      response.error.label);
             },
             ()=>{
               this.refreshData();
@@ -164,10 +168,9 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
         * Delete a processDefinition on the user's ask
         * by calling the WorkflowService
         * @param {WorkflowItem} target The item asked to be delete
-        * @return {Subscription}
         */
-  deleteProcessDefinitionVersion(target : WorkflowItem) : Subscription {
-    return this.workflowService
+  deleteProcessDefinitionVersion(target : WorkflowItem) : void {
+    this.workflowService
         .deleteProcessDefinitionVersion(target)
         .subscribe(
             (result)=>{
@@ -176,12 +179,13 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
                     .sendSuccessMessage('workflow.delete.version.success');
               } else {
                 this.toasterService
-                    .sendSuccessMessage('workflow.delete.version.error');
+                    .sendErrorMessage('workflow.delete.version.usedError');
               }
             },
-            (err)=>{
+            (response)=>{
               this.toasterService
-                  .sendErrorMessage('workflow.delete.version.error', err);
+                  .sendErrorMessage('workflow.delete.version.error',
+                      response.error.label);
             },
             ()=>{
               this.refreshData();
@@ -194,10 +198,9 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
           * by calling the WorkflowService
           * @param {Blob} file The file to upload
           * @param {string} deploymentName The deploymentName of the file
-          * @return {Subscription}
           */
-  updateProcessDefinition(file:Blob, deploymentName: string) : Subscription {
-    return this.workflowService
+  updateProcessDefinition(file:Blob, deploymentName: string) : void {
+    this.workflowService
         .updateProcessDefinition(file, deploymentName)
         .subscribe(
             (result)=>{
@@ -207,8 +210,10 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
                 this.toasterService.sendErrorMessage('workflow.add.error');
               }
             },
-            (err)=>{
-              this.toasterService.sendErrorMessage('workflow.add.error', err);
+            (response)=>{
+              this.toasterService
+                  .sendErrorMessage('workflow.add.error',
+                      response.error.label);
             },
             ()=>{
               this.refreshData();
@@ -255,12 +260,12 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
   }
 
   /**
-            * Compare WorkflowItem by ResourceName
-            * @param {WorkflowItem} a
-            * @param {WorkflowItem} b
-            * @param {boolean} isAsc
-            * @return {number}
-            */
+   * Compare WorkflowItem by ResourceName
+   * @param {WorkflowItem} a
+   * @param {WorkflowItem} b
+   * @param {boolean} isAsc
+   * @return {number}
+   */
   compareResourceName(a: WorkflowItem, b:WorkflowItem, isAsc:boolean) : number {
     const result = this.compare(a.resourceName, b.resourceName, isAsc);
 

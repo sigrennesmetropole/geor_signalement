@@ -29,6 +29,18 @@
 		{
 			"name": "reporting",
 			"description": "Services de gestion des signalements"
+		},
+		{
+			"name": "contextDescriptions",
+			"description": "Services de gestion des définitions de contexte"
+		},
+		{
+			"name": "roles",
+			"description": "Services de gestion des rôles"
+		},
+		{
+			"name": "geographicAreas",
+			"description": "Services de gestion des zones géographiques"
 		}
 	],
 	"schemes": [
@@ -352,7 +364,8 @@
 		"/reporting/contextDescription/search": {
 			"get": {
 				"tags": [
-					"reporting"
+					"reporting",
+					"contextDescriptions"
 				],
 				"summary": "Lister les contextes",
 				"description": "Listes les contexts selon le type",
@@ -920,7 +933,7 @@
 					"application/json"
 				],
 				"parameters": [
-					{	
+					{
 						"in": "query",
 						"name": "contextName",
 						"description": "Nom du contexte géographique",
@@ -938,6 +951,699 @@
 					},
 					"400": {
 						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/contextDescriptions": {
+			"get": {
+				"tags": [
+					"contextDescriptions"
+				],
+				"summary": "Liste les desctiptions de contexte disponibles.",
+				"description": "Retourne la liste des desctiptions de contexte existantes",
+				"operationId": "searchContextDescriptions",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "offset",
+						"description": "Index de début",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"description": "Nombre de résultats à retourner",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "sortExpression",
+						"description": "Indications de tri",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/ContextDescriptionPageResult"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"contextDescriptions"
+				],
+				"summary": "Créer une desctiption de contexte.",
+				"description": "Créer une desctiption de contexte telle que stipulée dans le body de la requête",
+				"operationId": "createContextDescription",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "contextDescription",
+						"description": "Description du contexte",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ContextDescription"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/ContextDescription"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"contextDescriptions"
+				],
+				"summary": "Mise à jour d'une description de contexte.",
+				"description": "Mise à jour d'une desctiption de contexte telle que stipulée dans le body de la requête, en fonction du nom de la description",
+				"operationId": "updateContextDescription",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "contextDescription",
+						"description": "Description du contexte",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ContextDescription"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/ContextDescription"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/contextDescriptions/{name}": {
+			"get": {
+				"tags": [
+					"contextDescriptions"
+				],
+				"summary": "Récupération d'une description de contexte.",
+				"description": "Récupération d'une desctiption de contexte en fonction de son nom",
+				"operationId": "getContextDescription",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"description": "Nom de la description du contexte à récupérer",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/ContextDescription"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"contextDescriptions"
+				],
+				"summary": "Suppression d'une description de contexte.",
+				"description": "Suppression d'une desctiption de contexte en fonction de son nom",
+				"operationId": "deleteContextDescription",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"description": "Nom de la description du contexte à supprimer",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/roles": {
+			"get": {
+				"tags": [
+					"roles"
+				],
+				"summary": "Récupération de la liste des rôles.",
+				"description": "Récupération de la liste des rôles disponibles.",
+				"operationId": "getRoles",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Role"
+							}
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"roles"
+				],
+				"summary": "Upload d'un rôle.",
+				"description": "Upload d'un rôle.",
+				"operationId": "uploadRole",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "role",
+						"description": "Rôle à ajouter",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Role"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/Role"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"roles"
+				],
+				"summary": "Mise à jour d'un rôle.",
+				"description": "Mise à jour d'un rôle.",
+				"operationId": "updateRole",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "role",
+						"description": "Rôle à mettre à jour",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Role"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/Role"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/roles/{name}": {
+			"get": {
+				"tags": [
+					"roles"
+				],
+				"summary": "Récupération d'un rôle.",
+				"description": "Récupération d'un rôle en fonction de son nom",
+				"operationId": "getRole",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"description": "Nom du rôle à récupérer",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/Role"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"roles"
+				],
+				"summary": "Suppression d'un rôle.",
+				"description": "Suppression d'un rôle en fonction de son nom",
+				"operationId": "deleteRole",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"description": "Nom du rôle à supprimer",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/geographicareas": {
+			"get": {
+				"tags": [
+					"geographicAreas"
+				],
+				"summary": "Récupération de la liste des zones géographiques disponibles",
+				"description": "Récupération de la liste des zones géographiques disponibles, avec la possibilité de filtrer en fonction du nom",
+				"operationId": "getGeographicAreas",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "name",
+						"description": "Nom ou partie du nom pour filtrer",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/GeographicArea"
+							}
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/geographicareas/{name}": {
+			"get": {
+				"tags": [
+					"geographicAreas"
+				],
+				"summary": "Récupération d'une zones géographique",
+				"description": "Récupération d'une zones géographique en fonction du nom",
+				"operationId": "getGeographicArea",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"description": "Nom de la zone géographique",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/GeographicArea"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/users": {
+			"get": {
+				"tags": [
+					"user"
+				],
+				"summary": "Recherche de la liste des utilisateurs.",
+				"description": "Récupération de la liste des utilisateurs disponibles qui respectent les filtres.",
+				"operationId": "searchUsers",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"description": "Filtre de recherche sur l'e-mail",
+						"required": false,
+						"type": "string",
+						"default": ""
+					},
+					{
+						"in": "query",
+						"name": "login",
+						"description": "Filtre de recherche sur le login",
+						"required": false,
+						"type": "string",
+						"default": ""
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"description": "Index de début",
+						"required": false,
+						"type": "integer",
+						"default": 0
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"description": "Nombre de résultats à retourner",
+						"required": false,
+						"type": "integer",
+						"default": 10
+					},
+					{
+						"in": "query",
+						"name": "sortExpression",
+						"description": "Indications de tri",
+						"required": false,
+						"type": "string",
+						"default": ""
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/UserPageResult"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"user"
+				],
+				"summary": "Pré création d'un utilisateur.",
+				"description": "Pré création d'un utilisateur.",
+				"operationId": "createUser",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "user",
+						"description": "Le User à précréé",
+						"required": true,
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/User"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "CREATED",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/User"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"users/{login}": {
+			"get": {
+				"tags": [
+					"user"
+				],
+				"summary": "Récupération d'un utilisateur",
+				"description": "Récupération d'un utilisateur en fonction de son login",
+				"operationId": "getUser",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "login",
+						"description": "Login de l'utilisateur'",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/User"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"user"
+				],
+				"summary": "Suppression d'un utilisateur",
+				"description": "Suppression d'un utilisateur en fonction de son login",
+				"operationId": "deleteUser",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "login",
+						"description": "Login de l'utilisateur'",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
 					},
 					"500": {
 						"description": "Internal server error",
@@ -1214,6 +1920,27 @@
 				},
 				"label": {
 					"type": "string"
+				},
+				"processDefinitionKey": {
+					"type": "string"
+				},
+				"revision": {
+					"type": "integer"
+				}
+			}
+		},
+		"ContextDescriptionPageResult": {
+			"type": "object",
+			"properties": {
+				"totalItems": {
+					"type": "number"
+				},
+				"results": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/ContextDescription"
+					}
 				}
 			}
 		},
@@ -1348,10 +2075,25 @@
 				"organization": {
 					"type": "string"
 				},
-				"roles":{
+				"roles": {
 					"type": "array",
 					"items": {
 						"type": "string"
+					}
+				}
+			}
+		},
+		"UserPageResult": {
+			"type": "object",
+			"properties": {
+				"totalItems": {
+					"type": "number"
+				},
+				"results": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/User"
 					}
 				}
 			}
@@ -1426,13 +2168,13 @@
 				}
 			}
 		},
-		"Point2D":{
+		"Point2D": {
 			"type": "array",
 			"maxItems": 2,
-    		"minItems": 2,
-    		"items":{
-    			"type": "number"
-    		}
+			"minItems": 2,
+			"items": {
+				"type": "number"
+			}
 		},
 		"Point": {
 			"type": "object",
@@ -1541,7 +2283,7 @@
 								"type": "array",
 								"items":{
 									"type": "array",
-									"items":{
+									"items": {
 										"$ref": "#/definitions/Point2D"
 									}
 								}
@@ -1551,24 +2293,26 @@
 				}
 			]
 		},
-		"GeometryCollection":{
-    		"type": "object",
+		"GeometryCollection": {
+			"type": "object",
 			"description": "GeoJSon geometry collection",
 			"properties": {
 				"type": {
 					"type": "string",
-					"enum" : [ "GeometryCollection"]
+					"enum": [
+						"GeometryCollection"
+					]
 				},
-				"geometries":{
+				"geometries": {
 					"type": "array",
-					"items":{
+					"items": {
 						"$ref": "#/definitions/Geometry"
 					}
 				}
 			}
-    	},
-    	"Style": {
-    		"type": "object",
+		},
+		"Style": {
+			"type": "object",
 			"description": "GeoJSon feature style",
 			"properties": {
 				"color": {
@@ -1613,7 +2357,7 @@
 				},
 				"dashArray": {
 					"type": "array",
-					"items":{
+					"items": {
 						"type": "number",
 						"format": "double"
 					}
@@ -1622,117 +2366,121 @@
 					"type": "boolean"
 				}
 			}
-    	},
-    	"Feature":{
-    		"type": "object",
+		},
+		"Feature": {
+			"type": "object",
 			"description": "GeoJSon feature",
 			"properties": {
 				"type": {
 					"type": "string",
-					"enum" : [ "Feature"]
+					"enum": [
+						"Feature"
+					]
 				},
-				"id":{
+				"id": {
 					"type": "string",
 					"format": "uuid"
 				},
-				"geometry":{
+				"geometry": {
 					"$ref": "#/definitions/Geometry"
 				},
 				"style": {
 					"type": "array",
-					"items":{
+					"items": {
 						"$ref": "#/definitions/Style"
 					}
 				},
-				"properties":{
+				"properties": {
 					"type": "object"
 				}
 			}
-    	},
-    	"FeatureCollection":{
-    		"type": "object",
+		},
+		"FeatureCollection": {
+			"type": "object",
 			"description": "GeoJSon feature collection",
 			"properties": {
 				"type": {
 					"type": "string",
-					"enum" : [ "FeatureCollection"]
+					"enum": [
+						"FeatureCollection"
+					]
 				},
-				"features":{
+				"features": {
 					"type": "array",
-					"items":{
+					"items": {
 						"$ref": "#/definitions/Feature"
 					}
 				},
 				"style": {
 					"type": "array",
-					"items":{
+					"items": {
 						"$ref": "#/definitions/Style"
 					}
 				}
 			}
-    	},
-    	"FeatureProperty":{
-    		"type": "object",
-    		"description": "GeoJSon feature property description",
-    		"properties": {
-    			"name":{
-    				"type": "string"
-    			},
-    			"maxOccurs": {
-    				"type": "integer",
-    				"format": "int32"
-    			},
-    			"minOccurs": {
-    				"type": "integer",
-    				"format": "int32"
-    			},
-    			"nillable": {
-    				"type": "boolean"
-    			},
-    			"type": {
-    				"type": "string"
-    			},
-    			"localType": {
-    				"type": "string"
-    			}
-    		}
-    	},
-    	"FeatureType": {
-    		"type": "object",
-    		"description": "GeoJSon feature type",
-    		"properties": {
-    			"typeName":{
-    				"type": "string"
-    			},
-    			"properties":{
-    				"type": "array",
-    				"items": {
-    					"$ref": "#/definitions/FeatureProperty"
-    				}
-    			}
-    		}
-    	},
-    	"FeatureTypeDescription": {	
-    		"type": "object",
-    		"description": "GeoJSon feature type description",
-    		"properties": {
-    			"elementFormDefault":{
-    				"type": "string"
-    			},
-    			"targetNamespace": {
-    				"type": "string"
-    			},
-    			"targetPrefix": {
-    				"type": "string"
-    			},
+		},
+		"FeatureProperty": {
+			"type": "object",
+			"description": "GeoJSon feature property description",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"maxOccurs": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"minOccurs": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"nillable": {
+					"type": "boolean"
+				},
+				"type": {
+					"type": "string"
+				},
+				"localType": {
+					"type": "string"
+				}
+			}
+		},
+		"FeatureType": {
+			"type": "object",
+			"description": "GeoJSon feature type",
+			"properties": {
+				"typeName": {
+					"type": "string"
+				},
+				"properties": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/FeatureProperty"
+					}
+				}
+			}
+		},
+		"FeatureTypeDescription": {
+			"type": "object",
+			"description": "GeoJSon feature type description",
+			"properties": {
+				"elementFormDefault": {
+					"type": "string"
+				},
+				"targetNamespace": {
+					"type": "string"
+				},
+				"targetPrefix": {
+					"type": "string"
+				},
 				"featureTypes": {
 					"type": "array",
 					"items": {
-    					"$ref": "#/definitions/FeatureType"
-    				}
+						"$ref": "#/definitions/FeatureType"
+					}
 				}
-    		}
-    	},
+			}
+		},
 		"GeographicArea": {
 			"type": "object",
 			"properties": {
@@ -1745,6 +2493,34 @@
 				},
 				"codeInsee": {
 					"type": "string"
+				}
+			}
+		},
+		"Role": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"label": {
+					"type": "string"
+				}
+			}
+		},
+		"UserRoleContext": {
+			"type": "object",
+			"properties": {
+				"role": {
+					"type": "object",
+					"$ref": "#/definitions/Role"
+				},
+				"contextDescription": {
+					"type": "object",
+					"$ref": "#/definitions/ContextDescription"
+				},
+				"geographicArea": {
+					"type": "object",
+					"$ref": "#/definitions/GeographicArea"
 				}
 			}
 		}
