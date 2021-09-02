@@ -1,0 +1,77 @@
+<div class="mat-elevation-z8">
+  
+    <div class="top-bar">
+      <div class="top-bar-filters">
+        <form class="my-form">
+          <mat-form-field class="text-center">
+            <label>{{'context.table.label' | translate}} : </label>
+            <input matInput class="filter-input" name="labelFilter" (input)="updateFilters()" [(ngModel)]="labelFilter">
+          </mat-form-field>
+          <mat-form-field class="text-center">
+            <label for="emailFilter">{{'context.table.processDefinition' | translate}} :</label>
+            <input matInput class="filter-input" name="workflowFilter" (input)="updateFilters()" [(ngModel)]="workflowFilter">  
+          </mat-form-field>  
+        </form>
+      </div>
+      <div class="top-bar-buttons">
+        <button class="top-bar-button" mat-mini-fab color="primary" (click)="handleRefreshDataClick()"><mat-icon>refresh</mat-icon></button>
+        <button class="top-bar-button" mat-mini-fab color="primary" (click)='handleOpenAddDialogClick()'><mat-icon>note_add</mat-icon></button>
+      </div>  
+      </div>
+
+
+    <table mat-table class="full-width-table" matSort aria-label="Contexts">
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"context.table.name" | translate}}</th>
+        <td mat-cell *matCellDef="let row">{{row.name}}</td>
+      </ng-container>
+
+      <!-- Label Column -->
+      <ng-container matColumnDef="label">
+        <th mat-header-cell *matHeaderCellDef>{{"context.table.label" | translate}}</th>
+        <td mat-cell *matCellDef="let row">{{row.label}}</td>
+      </ng-container>
+
+      <!-- ContextType Column -->
+      <ng-container matColumnDef="contextType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"context.table.contextType" | translate}}</th>
+        <td mat-cell *matCellDef="let row">{{row.contextType}}</td>
+      </ng-container>
+
+      <!-- GeographicType Column -->
+      <ng-container matColumnDef="geographicType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"context.table.geographicType" | translate}}</th>
+        <td mat-cell *matCellDef="let row">{{row.geographicType}}</td>
+      </ng-container>
+
+      <!-- ProcessDefinition Column -->
+      <ng-container matColumnDef="processDefinition">
+        <th mat-header-cell *matHeaderCellDef>{{"context.table.processDefinition" | translate}}</th>
+        <td mat-cell *matCellDef="let row">{{getWorkflowName(row.processDefinition)}}</td>
+      </ng-container>
+
+      <!-- Version Column -->
+      <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef>{{"context.table.version" | translate}}</th>
+        <td mat-cell *matCellDef="let row">{{getVersion(row.version) | async}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{"context.table.actions" | translate}}</th>
+        <td mat-cell *matCellDef="let row">
+          <button class="action-button" mat-mini-fab color="primary" (click)='handleOpenEditDialogClick(row)'><mat-icon>edit</mat-icon></button>
+          <button mat-mini-fab color="warn" (click)='handleOpenSupressDialogClick(row)'><mat-icon>delete</mat-icon></button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator #paginator
+    [length]="dataSource?.totalItems"
+    [pageIndex]="0"
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 25, 50, 100]">
+  </mat-paginator>
+  </div>

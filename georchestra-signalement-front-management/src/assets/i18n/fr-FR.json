@@ -127,6 +127,7 @@
     },
     "genericError": "Une erreur est survenue",
     "accessError": "Accès non autorisé",
-    "contactAdmin": "Si le problème persiste, merci de contacter un administrateur"
+    "contactAdmin": "Si le problème persiste, merci de contacter un administrateur",
+    "lastVersion": "Dernière version"
   }
 }

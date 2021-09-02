@@ -127,6 +127,7 @@
     },
     "genericError": "An error as occured",
     "accessError": "Acces not granted",
-    "contactAdmin": "If the problem persists please contact an administrator"
+    "contactAdmin": "If the problem persists please contact an administrator",
+    "lastVersion": "Last version"
   }
 }

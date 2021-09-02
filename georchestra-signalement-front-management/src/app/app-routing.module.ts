@@ -1,14 +1,14 @@
 import {NgModule} from '@angular/core';
 import {Route, RouterModule} from '@angular/router';
+import {ContextComponent} from './context/context.component';
 import {IsSignalementAdmin} from './guards/access.guard';
 import {HomePageComponent} from './home-page/home-page.component';
-import {RoleComponent} from './role/role.component';
 import {UserComponent} from './user/user.component';
 import {WorkflowComponent} from './workflow/workflow.component';
 
 const appRoutes: Route[] = [
-  {path: 'roles',
-    component: RoleComponent,
+  {path: 'contexts',
+    component: ContextComponent,
     canActivate: [
       IsSignalementAdmin,
     ]},

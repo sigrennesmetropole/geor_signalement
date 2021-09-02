@@ -1,0 +1,63 @@
+<h2 class="text-center add-form-title">{{'context.add.title' | translate}}</h2>
+
+<form class="my-form" [formGroup]="contextAddForm">
+<div class="add-form-group">
+    <div class="add-form-input">
+        <mat-form-field class="text-center">
+          <input matInput placeholder="{{'context.table.name' | translate}}" name="name" [formControl]="nameControl" required>
+          <mat-error *ngIf="nameControl.invalid">{{getNameError() | async}}</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="add-form-input">
+        <mat-form-field class="text-center">
+            <input matInput placeholder="{{'context.table.label' | translate}}" name="label" [formControl]="labelControl" required>
+            <mat-error *ngIf="labelControl.invalid">{{getLabelError() | async}}</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="add-form-input">
+        <mat-form-field class="text-center">
+            <mat-select placeholder="{{'context.table.contextType' | translate}}" name="contextType" [formControl]="contextTypeControl" required>
+              <mat-option *ngFor="let type of contextTypes" [value]="type">
+                {{type}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="contextTypeControl.invalid">{{getContextTypeError() | async}}</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="add-form-input">
+      <mat-form-field class="text-center">
+          <mat-select placeholder="{{'context.table.geographicType' | translate}}" name="geographicType" [formControl]="geographicTypeControl" required>
+            <mat-option *ngFor="let type of geographicTypes" [value]="type">
+              {{type}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="geographicTypeControl.invalid">{{getGeographicTypeError() | async}}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="add-form-input">
+      <mat-form-field class="text-center">
+          <mat-select placeholder="{{'context.table.processDefinition' | translate}}" name="processDefinition" [formControl]="processDefinitionControl" required>
+            <mat-option *ngFor="let workflowKey of getWorkflowKeys()" [value]="workflowKey">
+              {{getWorkflowName(workflowKey)}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="add-form-input">
+      <mat-form-field class="text-center">
+          <mat-select placeholder="{{'context.table.version' | translate}}" name="version" [formControl]="versionControl" required>
+            <mat-option *ngFor="let version of getWorflowsVersions()" [value]="version">
+              {{version}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="versionControl.invalid">{{getVersionError() | async}}</mat-error>
+      </mat-form-field>
+    </div>
+    
+</div>
+
+<div mat-dialog-action align="center" class="add-form-group">
+    <button class="action-button" mat-flat-button color="primary" (click)='handleSubmitClick()' [disabled]="!validData()">{{'common.buttons.submit' | translate}}</button>
+    <button class="action-button" mat-flat-button color="warn" (click)='handleCancelClick()'>{{'common.buttons.cancel' | translate}}</button>
+</div>
+</form>

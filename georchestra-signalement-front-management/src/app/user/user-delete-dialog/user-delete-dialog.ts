@@ -8,7 +8,7 @@ import {UserItem} from '../user.datasource';
 
 
  @Component({
-   selector: 'dialog-user-delete-dialog',
+   selector: 'user-delete-dialog',
    templateUrl: 'user-delete-dialog.html',
    styleUrls: ['user-delete-dialog.scss'],
  })
@@ -16,14 +16,14 @@ import {UserItem} from '../user.datasource';
 /**
   * The dialog window to delete a user
   */
-export class DialogUserDeleteDialog {
+export class UserDeleteDialog {
   /**
    * The constructor of the delete window
-   * @param {MatDialogRef<DialogUserDeleteDialog>} dialogRef
+   * @param {MatDialogRef<UserDeleteDialog>} dialogRef
    * @param {UserItem} target The target to delete
    */
   constructor(
-    private dialogRef: MatDialogRef<DialogUserDeleteDialog>,
+    private dialogRef: MatDialogRef<UserDeleteDialog>,
     @Inject(MAT_DIALOG_DATA) private target: UserItem) {}
 
   /**

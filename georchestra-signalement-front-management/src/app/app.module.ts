@@ -14,23 +14,29 @@ import {WorkflowComponent} from './workflow/workflow.component';
 import {RoleComponent} from './role/role.component';
 import {UserComponent} from './user/user.component';
 import {ErrorComponent} from './error/error.component';
+import {ContextComponent} from './context/context.component';
 
 
 // Data Sources
 import {WorkflowDataSource} from './workflow/workflow.datasource';
 import {UserDataSource} from './user/user.datasource';
+import {ContextDataSource} from './context/context.datasource';
 
 // Dialogs PopIn
-import {DialogLanguageSelectionDialog}
+import {LanguageSelectionDialog}
   from './language-selection/language-selection';
 import {WorkflowAddDialog}
   from './workflow/workflow-add-dialog/workflow-add-dialog';
 import {WorkflowDeleteDialog}
   from './workflow/workflow-delete-dialog/workflow-delete-dialog';
-import {DialogUserDeleteDialog}
+import {UserDeleteDialog}
   from './user/user-delete-dialog/user-delete-dialog';
-import {DialogUserAddDialog}
+import {UserAddDialog}
   from './user/user-add-dialog/user-add-dialog';
+import {ContextDeleteDialog}
+  from './context/context-delete-dialog/context-delete-dialog';
+import {ContextAddDialog}
+  from './context/context-add-dialog/context-add-dialog';
 
 // Services
 import {AdministrationService, UserService} from './api/services';
@@ -45,6 +51,7 @@ import {ToasterUtil} from './utils/toaster.util';
 // Mappers
 import {WorkflowItemMapper} from './mappers/workflow-item.mapper';
 import {UserItemMapper} from './mappers/user-item.mapper';
+import {ContextItemMapper} from './mappers/context-item.mapper';
 
 // Material
 import {MatButtonModule} from '@angular/material/button';
@@ -68,6 +75,8 @@ import {MatSortModule} from '@angular/material/sort';
 // Translation imports
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {ContextEditDialog}
+  from './context/context-edit-dialog/context-edit-dialog';
 
 
 @NgModule({
@@ -76,14 +85,18 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     HomePageComponent,
     WorkflowComponent,
     RoleComponent,
-    DialogLanguageSelectionDialog,
+    LanguageSelectionDialog,
     WorkflowAddDialog,
     WorkflowDeleteDialog,
-    DialogUserAddDialog,
-    DialogUserDeleteDialog,
+    UserAddDialog,
+    UserDeleteDialog,
+    ContextDeleteDialog,
+    ContextAddDialog,
+    ContextEditDialog,
     ForbiddenComponent,
     ErrorComponent,
     UserComponent,
+    ContextComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -122,9 +135,11 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     AdministrationService,
     WorkflowItemMapper,
     UserItemMapper,
+    ContextItemMapper,
     UserService,
     ToasterUtil,
     UserService,
+    ContextDataSource,
     WorkflowDataSource,
     UserDataSource,
     WorkflowService,

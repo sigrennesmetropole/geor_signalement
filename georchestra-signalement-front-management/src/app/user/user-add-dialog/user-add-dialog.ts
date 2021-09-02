@@ -6,21 +6,21 @@ import {Observable, of} from 'rxjs';
 import {ToasterUtil} from 'src/app/utils/toaster.util';
 
 @Component({
-  selector: 'dialog-user-add-dialog',
+  selector: 'user-add-dialog',
   templateUrl: 'user-add-dialog.html',
   styleUrls: ['user-add-dialog.scss'],
 })
 /**
 * Dialog window to add a User
 */
-export class DialogUserAddDialog {
+export class UserAddDialog {
   /**
   * The constructor of the add dialog
   * @param {MatDialogRef} dialogRef Reference to the DialogUserAddDialog
   * @param {ToasterUtil} toaster The toaster to display messages
   */
   constructor(
-    public dialogRef: MatDialogRef<DialogUserAddDialog>,
+    public dialogRef: MatDialogRef<UserAddDialog>,
     public toasterUtil: ToasterUtil,
     private translateService: TranslateService) {}
 

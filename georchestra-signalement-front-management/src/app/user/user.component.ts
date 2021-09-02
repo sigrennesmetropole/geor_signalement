@@ -3,8 +3,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
-import {DialogUserAddDialog} from './user-add-dialog/user-add-dialog';
-import {DialogUserDeleteDialog} from './user-delete-dialog/user-delete-dialog';
+import {UserAddDialog} from './user-add-dialog/user-add-dialog';
+import {UserDeleteDialog} from './user-delete-dialog/user-delete-dialog';
 import {UserDataSource, UserItem} from './user.datasource';
 
 @Component({
@@ -55,7 +55,7 @@ export class UserComponent implements AfterViewInit {
     * @param {UserItem} target The UserItem to delete
     */
   handleOpenSupressDialogClick(target: UserItem): void {
-    const dialog = this.dialog.open(DialogUserDeleteDialog, {
+    const dialog = this.dialog.open(UserDeleteDialog, {
       width: 'auto',
       height: 'auto',
       data: target,
@@ -76,7 +76,7 @@ export class UserComponent implements AfterViewInit {
       * If a result is returned, add the user
       */
   handleOpenAddDialogClick(): void {
-    const dialog = this.dialog.open(DialogUserAddDialog, {
+    const dialog = this.dialog.open(UserAddDialog, {
       width: 'auto',
       height: 'auto',
       data: this.dataSource,

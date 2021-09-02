@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {map, shareReplay} from 'rxjs/operators';
 
 import {TranslateService} from '@ngx-translate/core';
-import {DialogLanguageSelectionDialog}
+import {LanguageSelectionDialog}
   from './language-selection/language-selection';
 import {MatDialog} from '@angular/material/dialog';
 import {AccessService} from './services/access.service';
@@ -97,7 +97,7 @@ export class AppComponent {
    * On click on the langage button, open the langage dialog window
    */
   handleOpenLanguageSelector(): void {
-    this.dialog.open(DialogLanguageSelectionDialog, {
+    this.dialog.open(LanguageSelectionDialog, {
       data: this,
     });
   }
@@ -131,8 +131,13 @@ export class AppComponent {
       path: 'workflows',
     },
     {
+      name: 'menu.items.context',
+      path: 'contexts',
+    },
+    {
       name: 'menu.items.users',
       path: 'users',
     },
+
   ]
 }

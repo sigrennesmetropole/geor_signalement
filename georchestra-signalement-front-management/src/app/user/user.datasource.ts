@@ -138,7 +138,6 @@ export class UserDataSource extends DataSource<UserItem> {
               this.sortCriteria)
           .pipe(map(
               (response)=>{
-                console.log(response);
                 this.data = (response.body.results ?? [])
                     .map(this.userItemMapper.usertoUserItem);
 

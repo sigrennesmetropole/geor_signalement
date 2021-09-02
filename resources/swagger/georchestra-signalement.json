@@ -975,6 +975,22 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "description",
+						"description": "Filtre de recherche sur la description",
+						"required": false,
+						"type": "string",
+						"default": ""
+					},
+					{
+						"in": "query",
+						"name": "workflow",
+						"description": "Filtre de recherche sur le workflow",
+						"required": false,
+						"type": "string",
+						"default": ""
+					},
+					{
+						"in": "query",
 						"name": "offset",
 						"description": "Index de début",
 						"required": false,

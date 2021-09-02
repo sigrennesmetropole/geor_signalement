@@ -5,15 +5,15 @@ package org.georchestra.signalement.service.sm.impl;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.activiti.engine.task.Task;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dto.ContextDescription;
-import org.georchestra.signalement.core.dto.ContextDescriptionSearchCriteria;
-import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.service.exception.InitializationException;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.georchestra.signalement.service.mapper.workflow.ProcessDefinitionMapper;
@@ -25,10 +25,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 
 import java.io.FileInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author FNI18300
+ *
  */
 @Component
 public class InitializationServiceImpl implements InitializationService {
@@ -112,9 +116,12 @@ public class InitializationServiceImpl implements InitializationService {
 		}
 		List<ProcessDefinition> processDefinitions = query.list();
 		if (CollectionUtils.isNotEmpty(processDefinitions)) {
-			Map<String, Set<Integer>> usedWorflows = getUsedWorkflows();
+			TaskService taskService = processEngine.getTaskService();
+			List<Task> tasks = taskService.createTaskQuery().list();
+			List<ContextDescription> contexts = contextService.searchContextDescriptions(null, null);
+			ProcessDefinition latestVersion = getMostRecentVersion(processDefinitions);
 			for (ProcessDefinition processDefinition : processDefinitions) {
-				if (!processDefinitionIsUsed(processDefinition, usedWorflows)) {
+				if (!processDefinitionIsUsed(processDefinition, latestVersion, tasks, contexts)) {
 					LOGGER.info("Start delete deployment {}.", processDefinition.getDeploymentId());
 					repositoryService.deleteDeployment(processDefinition.getDeploymentId(), true);
 					LOGGER.info("Delate deployment {} done.", processDefinition.getDeploymentId());
@@ -130,23 +137,31 @@ public class InitializationServiceImpl implements InitializationService {
 		return result;
 	}
 
-	private Map<String, Set<Integer>> getUsedWorkflows() {
-		ContextDescriptionSearchCriteria searchCriteria = new ContextDescriptionSearchCriteria();
-		SortCriteria sortCriteria = new SortCriteria();
-		List<ContextDescription> contexts = contextService.searchContextDescriptions(searchCriteria, sortCriteria);
-		Map<String, Set<Integer>> usedWorkflows = new HashMap<>();
-		for (ContextDescription context : contexts) {
-			if (!usedWorkflows.containsKey(context.getProcessDefinitionKey())) {
-				usedWorkflows.put(context.getProcessDefinitionKey(), new HashSet<>());
-			}
-			usedWorkflows.get(context.getProcessDefinitionKey()).add(context.getRevision());
-		}
-		return usedWorkflows;
+	private ProcessDefinition getMostRecentVersion(List<ProcessDefinition> processDefinitions) {
+		return processDefinitions.stream()
+				.sorted(Comparator.comparingInt(ProcessDefinition::getVersion).reversed())
+				.collect(Collectors.toList())
+				.get(0);
 	}
 
-	private boolean processDefinitionIsUsed(ProcessDefinition processDefinition, Map<String, Set<Integer>> usedWorflows) {
-		String key = processDefinition.getKey();
-		Integer revision = processDefinition.getVersion();
-		return usedWorflows.containsKey(key) && usedWorflows.get(key).contains(revision);
+	private boolean processDefinitionIsUsed(ProcessDefinition processDefinition,
+											ProcessDefinition latestVersion,
+											List<Task> tasks,
+											List<ContextDescription> contexts) {
+		boolean usedInTask = tasks.stream().anyMatch(task ->
+				task.getProcessDefinitionId().equals(processDefinition.getId()));
+
+		boolean lastVersion = latestVersion.equals(processDefinition);
+		boolean usedInContext = contexts.stream().anyMatch(context ->
+				ContextUsesProcess(context, processDefinition, lastVersion));
+
+		return usedInTask || usedInContext;
+	}
+
+	private boolean ContextUsesProcess(ContextDescription context, ProcessDefinition process, boolean lastVersion) {
+		boolean key = context.getProcessDefinitionKey().equals(process.getKey());
+		boolean revision = (context.getRevision() != null && context.getRevision() == process.getVersion())
+				|| (context.getRevision() == null && lastVersion);
+		return key && revision;
 	}
 }
