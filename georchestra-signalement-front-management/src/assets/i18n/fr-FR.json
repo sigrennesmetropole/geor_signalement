@@ -163,6 +163,25 @@
       "contextNameIndication" : "Premières lettres du contexte"
     }
   },
+  "role": {
+    "title": "Rôles",
+    "table": {
+      "name": "Nom",
+      "label": "Libellé",
+      "actions": "Actions"
+    },
+    "delete": {
+      "success": "Le rôle a été supprimé avec succès",
+      "error": "La suppression du rôle a échoué"
+    },
+    "add": {
+      "title": "Ajouter un rôle",
+      "success": "Le rôle a été créé avec succès",
+      "error": "La création du rôle a échoué",
+      "noName": "Vous devez fournir un nom",
+      "noLabel": "Vous devez fournir un libellé"
+    }
+  },
   "paginator": {
     "itemsPerPage": "Nombre d'éléments par page",
     "nextPage": "Page suivante",
