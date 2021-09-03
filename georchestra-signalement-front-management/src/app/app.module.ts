@@ -21,6 +21,7 @@ import {ContextComponent} from './context/context.component';
 import {WorkflowDataSource} from './workflow/workflow.datasource';
 import {UserDataSource} from './user/user.datasource';
 import {ContextDataSource} from './context/context.datasource';
+import {RoleDataSource} from './role/role.datasource';
 
 // Dialogs PopIn
 import {LanguageSelectionDialog}
@@ -37,6 +38,13 @@ import {ContextDeleteDialog}
   from './context/context-delete-dialog/context-delete-dialog';
 import {ContextAddDialog}
   from './context/context-add-dialog/context-add-dialog';
+import {ContextEditDialog}
+  from './context/context-edit-dialog/context-edit-dialog';
+import {RoleAddDialog}
+  from './role/role-add-dialog/role-add-dialog';
+import {RoleDeleteDialog}
+  from './role/role-delete-dialog/role-delete-dialog';
+
 
 // Services
 import {AdministrationService, UserService} from './api/services';
@@ -44,6 +52,9 @@ import {WorkflowService} from './services/workflow.service';
 import {IsSignalementAdmin} from './guards/access.guard';
 import {ForbiddenComponent} from './forbidden/forbidden.component';
 import {AccessService} from './services/access.service';
+import {UserItemService} from './services/user.service';
+import {ContextService} from './services/context.service';
+import {RoleService} from './services/role.service';
 
 // Utils
 import {ToasterUtil} from './utils/toaster.util';
@@ -75,8 +86,6 @@ import {MatSortModule} from '@angular/material/sort';
 // Translation imports
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {ContextEditDialog}
-  from './context/context-edit-dialog/context-edit-dialog';
 
 
 @NgModule({
@@ -93,6 +102,8 @@ import {ContextEditDialog}
     ContextDeleteDialog,
     ContextAddDialog,
     ContextEditDialog,
+    RoleAddDialog,
+    RoleDeleteDialog,
     ForbiddenComponent,
     ErrorComponent,
     UserComponent,
@@ -133,16 +144,19 @@ import {ContextEditDialog}
   providers: [
     AccessService,
     AdministrationService,
-    WorkflowItemMapper,
-    UserItemMapper,
-    ContextItemMapper,
+    ContextService,
+    UserItemService,
     UserService,
-    ToasterUtil,
-    UserService,
-    ContextDataSource,
-    WorkflowDataSource,
-    UserDataSource,
     WorkflowService,
+    RoleService,
+    ContextItemMapper,
+    UserItemMapper,
+    WorkflowItemMapper,
+    ToasterUtil,
+    ContextDataSource,
+    RoleDataSource,
+    UserDataSource,
+    WorkflowDataSource,
     IsSignalementAdmin,
   ],
   bootstrap: [AppComponent],

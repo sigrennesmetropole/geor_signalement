@@ -138,6 +138,9 @@ export class AppComponent {
       name: 'menu.items.users',
       path: 'users',
     },
-
+    {
+      name: 'menu.items.roles',
+      path: 'roles',
+    },
   ]
 }

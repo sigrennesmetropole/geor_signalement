@@ -191,7 +191,7 @@
 				}
 			}
 		},
-		"/user/me":{
+		"/user/me": {
 			"get": {
 				"tags": [
 					"user"
@@ -220,7 +220,7 @@
 				}
 			}
 		},
-		"user/contexts":{
+		"user/contexts": {
 			"get": {
 				"tags": [
 					"user"
@@ -1205,15 +1205,35 @@
 				"produces": [
 					"application/json"
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "offset",
+						"description": "Index de début",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"description": "Nombre de résultats à retourner",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "sortExpression",
+						"description": "Indications de tri",
+						"required": false,
+						"type": "string"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "OK",
 						"schema": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Role"
-							}
+							"type": "object",
+							"$ref": "#/definitions/RolePageResult"
 						}
 					},
 					"400": {
@@ -1231,9 +1251,9 @@
 				"tags": [
 					"roles"
 				],
-				"summary": "Upload d'un rôle.",
-				"description": "Upload d'un rôle.",
-				"operationId": "uploadRole",
+				"summary": "Création d'un rôle.",
+				"description": "Création d'un rôle.",
+				"operationId": "createRole",
 				"produces": [
 					"application/json"
 				],
@@ -1241,7 +1261,7 @@
 					{
 						"in": "body",
 						"name": "role",
-						"description": "Rôle à ajouter",
+						"description": "Rôle à créer",
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/Role"
@@ -1258,49 +1278,6 @@
 					},
 					"400": {
 						"description": "Bad input parameter"
-					},
-					"500": {
-						"description": "Internal server error",
-						"schema": {
-							"$ref": "#/definitions/ApiError"
-						}
-					}
-				}
-			},
-			"put": {
-				"tags": [
-					"roles"
-				],
-				"summary": "Mise à jour d'un rôle.",
-				"description": "Mise à jour d'un rôle.",
-				"operationId": "updateRole",
-				"produces": [
-					"application/json"
-				],
-				"parameters": [
-					{
-						"in": "body",
-						"name": "role",
-						"description": "Rôle à mettre à jour",
-						"required": true,
-						"schema": {
-							"$ref": "#/definitions/Role"
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK",
-						"schema": {
-							"type": "object",
-							"$ref": "#/definitions/Role"
-						}
-					},
-					"400": {
-						"description": "Bad input parameter"
-					},
-					"404": {
-						"description": "NOT FOUND"
 					},
 					"500": {
 						"description": "Internal server error",
@@ -2520,6 +2497,21 @@
 				},
 				"label": {
 					"type": "string"
+				}
+			}
+		},
+		"RolePageResult": {
+			"type": "object",
+			"properties": {
+				"totalItems": {
+					"type": "number"
+				},
+				"results": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/Role"
+					}
 				}
 			}
 		},
