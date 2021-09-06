@@ -1,7 +1,6 @@
 package org.georchestra.signalement.core.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,8 +16,12 @@ public class UtilPageable {
 
     private final int paginationSize;
 
-    public UtilPageable(@Value("${pagination.size:10}") int paginationSize) {
-        this.paginationSize = paginationSize;
+    public UtilPageable(@Nullable Integer paginationSize) {
+        if (paginationSize == null) {
+            this.paginationSize = 10;
+        } else {
+            this.paginationSize = paginationSize;
+        }
     }
 
     /**
