@@ -1375,7 +1375,7 @@
 				],
 				"summary": "Récupération de la liste des zones géographiques disponibles",
 				"description": "Récupération de la liste des zones géographiques disponibles, avec la possibilité de filtrer en fonction du nom",
-				"operationId": "getGeographicAreas",
+				"operationId": "searchGeographicAreas",
 				"produces": [
 					"application/json"
 				],
@@ -1386,16 +1386,35 @@
 						"description": "Nom ou partie du nom pour filtrer",
 						"required": false,
 						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"description": "Index de début",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"description": "Nombre de résultats à retourner",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "sortExpression",
+						"description": "Indications de tri",
+						"required": false,
+						"type": "string"
 					}
 				],
 				"responses": {
 					"200": {
 						"description": "OK",
 						"schema": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/GeographicArea"
-							}
+							"type": "object",
+							"$ref": "#/definitions/GeographicAreaPageResult"
 						}
 					},
 					"400": {
@@ -2486,6 +2505,21 @@
 				},
 				"codeInsee": {
 					"type": "string"
+				}
+			}
+		},
+		"GeographicAreaPageResult": {
+			"type": "object",
+			"properties": {
+				"totalItems": {
+					"type": "number"
+				},
+				"results": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/GeographicArea"
+					}
 				}
 			}
 		},
