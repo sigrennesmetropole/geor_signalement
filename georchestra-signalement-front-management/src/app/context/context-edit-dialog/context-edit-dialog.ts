@@ -85,7 +85,6 @@ export class ContextEditDialog {
    * - Close the window with data returned.
    */
   handleSubmitClick() : void {
-    console.log(this.versionControl.value);
     if (!this.contextEditForm.valid) {
       this.toaster.sendErrorMessage('context.edit.formErrors.unknownError');
     } else {

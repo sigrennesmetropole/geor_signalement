@@ -159,10 +159,9 @@ export class ContextDataSource extends DataSource<ContextItem> {
                   .sendSuccessMessage('context.delete.success');
             },
             (response)=>{
-              console.log(response);
               this.toasterService
                   .sendErrorMessage('context.delete.error',
-                      response.error.label);
+                      response.error.code);
             },
             ()=>{
               this.refreshData();
@@ -190,7 +189,7 @@ export class ContextDataSource extends DataSource<ContextItem> {
             (response)=>{
               this.toasterService
                   .sendErrorMessage('context.update.error',
-                      response.error.label);
+                      response.error.code);
             },
             ()=>{
               this.refreshData();
@@ -219,7 +218,7 @@ export class ContextDataSource extends DataSource<ContextItem> {
               (response)=>{
                 this.toasterService
                     .sendErrorMessage('context.add.error',
-                        response.error.label);
+                        response.error.code);
               },
               ()=>{
                 this.refreshData();

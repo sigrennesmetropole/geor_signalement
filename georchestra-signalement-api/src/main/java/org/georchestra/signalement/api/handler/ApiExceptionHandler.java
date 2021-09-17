@@ -46,8 +46,15 @@ public class ApiExceptionHandler {
 	}
 
 	/**
-	 * Capture les exceptions de type <code>FormDefinitionException.class</code>,
-	 * <code>IllegalArgumentException.class</code>, <code>InvalidDataException.class</code>
+	 * Capture les exceptions de type <code>InvalidDataException.class</code>
+	 * pour la transformer en erreur json
+	 * Erreurs levées lorsque les données envoyées sont contraires aux contraintes métiers
+	 * <p>
+	 * Capture les exceptions de type <code>IllegalArgumentException.class</code>
+	 * pour la transformer en erreur json
+	 * Erreurs levées lorsque les données envoyées sont incorrectes
+	 * <p>
+	 * Capture les exceptions de type <code>FormDefinitionException.class</code>
 	 * pour la transformer en erreur json
 	 *
 	 * @param e Exception capturée
@@ -58,8 +65,7 @@ public class ApiExceptionHandler {
 	public @ResponseBody
 	ApiError handleBadRequestException(final Exception e) {
 		final ApiError error = new ApiError();
-		error.setCode(HttpStatus.BAD_REQUEST.name());
-		error.setLabel(e.getLocalizedMessage());
+		error.setCode(e.getLocalizedMessage());
 		return error;
 	}
 

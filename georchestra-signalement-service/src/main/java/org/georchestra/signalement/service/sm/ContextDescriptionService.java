@@ -28,9 +28,10 @@ public interface ContextDescriptionService {
 	List<ContextDescription> searchContextDescriptions(ContextDescriptionSearchCriteria searchCriteria,
 													   SortCriteria sortCriteria);
 
-	Page<ContextDescription> searchPageContextDescriptions(Pageable pageable, String description, String workflow);
+	Page<ContextDescription> searchPageContextDescriptions(Pageable pageable, SortCriteria sortCriteria,
+														   String description, String workflow);
 
-	ContextDescription getContextDescription(String name) throws InvalidDataException;
+	ContextDescription getContextDescription(String name);
 
 	void deleteContextDescription(String name) throws InvalidDataException;
 

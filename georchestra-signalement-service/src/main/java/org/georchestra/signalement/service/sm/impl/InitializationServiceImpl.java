@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dto.ContextDescription;
+import org.georchestra.signalement.service.common.ErrorMessageConstants;
 import org.georchestra.signalement.service.exception.InitializationException;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.georchestra.signalement.service.mapper.workflow.ProcessDefinitionMapper;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,11 +58,11 @@ public class InitializationServiceImpl implements InitializationService {
 			throws InitializationException {
 		LOGGER.info("Start update process definition ...");
 		if (documentContent == null || StringUtils.isEmpty(deploymentName)) {
-			throw new IllegalArgumentException("Name and document required");
+			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
 		}
 		if (!documentContent.getContentType().equalsIgnoreCase(MimeTypeUtils.APPLICATION_XML_VALUE)
 				&& !documentContent.getContentType().equalsIgnoreCase(MimeTypeUtils.TEXT_XML_VALUE)) {
-			throw new IllegalArgumentException("Invalide type mime(" + documentContent.getContentType() + ")");
+			throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
 		}
 		RepositoryService repositoryService = processEngine.getRepositoryService();
 		if (documentContent.isFile()) {
@@ -95,13 +95,7 @@ public class InitializationServiceImpl implements InitializationService {
 		List<org.georchestra.signalement.core.dto.ProcessDefinition> result = null;
 		RepositoryService repositoryService = processEngine.getRepositoryService();
 		List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefinitionQuery().list();
-		if (CollectionUtils.isNotEmpty(processDefinitions)) {
-			result = new ArrayList<>(processDefinitions.size());
-			for (ProcessDefinition processDefinition : processDefinitions) {
-				result.add(processDefinitionMapper.entityToDto(processDefinition));
-			}
-		}
-		return result;
+		return processDefinitions.stream().map(processDefinitionMapper::entityToDto).collect(Collectors.toList());
 	}
 
 	@Override
@@ -131,8 +125,7 @@ public class InitializationServiceImpl implements InitializationService {
 				}
 			}
 		} else {
-			String msg = processDefinitionName + " not found";
-			throw new InvalidDataException(msg);
+			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
 		}
 		return result;
 	}

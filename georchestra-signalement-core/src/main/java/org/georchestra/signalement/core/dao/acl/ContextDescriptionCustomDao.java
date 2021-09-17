@@ -22,7 +22,5 @@ public interface ContextDescriptionCustomDao {
 	List<ContextDescriptionEntity> searchContextDescriptions(ContextDescriptionSearchCriteria searchCriteria,
 															 SortCriteria sortCriteria);
 
-	ContextDescriptionEntity getContextDescriptionByName(String name);
-
 	ContextDescriptionEntity updateContextDescription(ContextDescriptionEntity updatedContext);
 }

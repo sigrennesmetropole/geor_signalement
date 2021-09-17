@@ -7,11 +7,15 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.acl.UserDao;
+import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
 import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.dto.User;
+import org.georchestra.signalement.core.dto.UserRoleContextSearchCriteria;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.acl.UserEntity;
 import org.georchestra.signalement.core.entity.acl.UserRoleContextEntity;
+import org.georchestra.signalement.core.util.UtilPageable;
+import org.georchestra.signalement.service.common.ErrorMessageConstants;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
 import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;
@@ -56,6 +60,12 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserMapper userMapper;
 
+	@Autowired
+	private UtilPageable utilPageable;
+
+	@Autowired
+	private UserRoleContextCustomDao userRoleContextCustomDao;
+
 	@Override
 	@Transactional(readOnly = true)
 	public User getMe() {
@@ -89,7 +99,7 @@ public class UserServiceImpl implements UserService {
 					if (userRoleContextEntity.getContextDescription() != null) {
 						// le contexte n'est pas encore dans la liste on l'ajoute
 						contexts.add(userRoleContextEntity.getContextDescription());
-					} else if (userRoleContextEntity.getContextDescription() == null) {
+					} else {
 						// si le contexte est vide, on considère que l'on peut avoir un rôle sur tous
 						// les contextes
 						contexts.addAll(contextDescriptionDao.findAll());
@@ -128,7 +138,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional(readOnly = false)
 	public User updateUser(User user) {
 		if (user == null || StringUtils.isEmpty(user.getLogin())) {
-			throw new IllegalArgumentException("Invaluder user : " + user);
+			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
 		}
 		UserEntity userEntity = userDao.findByLogin(user.getLogin());
 		userMapper.dtoToEntity(user, userEntity);
@@ -159,14 +169,17 @@ public class UserServiceImpl implements UserService {
 	public void deleteUser(String login) throws InvalidDataException {
 		UserEntity userEntity = userDao.findByLogin(login);
 		if (userEntity == null) {
-			String msg = "User " + login + " not found";
-			throw new InvalidDataException(msg);
-		} else if (!userEntity.getUserRoles().isEmpty()) {
-			String msg = "User " + userEntity.getLogin() + " is an operator";
-			throw new InvalidDataException(msg);
-		} else {
-			userDao.delete(userEntity);
+			throw new InvalidDataException(ErrorMessageConstants.NULL_OBJECT);
 		}
+
+		Pageable pageable = utilPageable.getPageable(0, 1, null);
+		UserRoleContextSearchCriteria searchCriteria = new UserRoleContextSearchCriteria();
+		searchCriteria.setUser(userEntity);
+		if (userRoleContextCustomDao.searchUserRoleContext(searchCriteria, pageable).getTotalElements() != 0) {
+			throw new InvalidDataException(ErrorMessageConstants.USED_OBJECT);
+		}
+
+		userDao.delete(userEntity);
 
 	}
 

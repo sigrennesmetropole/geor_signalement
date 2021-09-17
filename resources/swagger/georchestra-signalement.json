@@ -41,6 +41,10 @@
 		{
 			"name": "geographicAreas",
 			"description": "Services de gestion des zones géographiques"
+		},
+		{
+			"name": "userRoleContext",
+			"description": "Services de gestion des opérateurs"
 		}
 	],
 	"schemes": [
@@ -1429,13 +1433,13 @@
 				}
 			}
 		},
-		"/geographicareas/{name}": {
+		"/geographicareas/{id}": {
 			"get": {
 				"tags": [
 					"geographicAreas"
 				],
 				"summary": "Récupération d'une zones géographique",
-				"description": "Récupération d'une zones géographique en fonction du nom",
+				"description": "Récupération d'une zones géographique en fonction de son id",
 				"operationId": "getGeographicArea",
 				"produces": [
 					"application/json"
@@ -1443,10 +1447,11 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "name",
-						"description": "Nom de la zone géographique",
+						"name": "id",
+						"description": "Id de la zone géographique",
 						"required": true,
-						"type": "string"
+						"type": "integer",
+						"format": "int64"
 					}
 				],
 				"responses": {
@@ -1586,7 +1591,7 @@
 				}
 			}
 		},
-		"users/{login}": {
+		"/users/{login}": {
 			"get": {
 				"tags": [
 					"user"
@@ -1645,6 +1650,226 @@
 						"description": "Login de l'utilisateur'",
 						"required": true,
 						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/userRoleContexts": {
+			"get": {
+				"tags": [
+					"userRoleContext"
+				],
+				"summary": "Recherche des userRoleContext",
+				"description": "Récupération de la liste des userRoleContext disponibles qui respectent les filtres.",
+				"operationId": "searchUserRoleContexts",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "user",
+						"description": "Filtre de recherche sur le user",
+						"required": false,
+						"type": "string",
+						"default": ""
+					},
+					{
+						"in": "query",
+						"name": "role",
+						"description": "Filtre de recherche sur le role",
+						"required": false,
+						"type": "string",
+						"default": ""
+					},
+					{
+						"in": "query",
+						"name": "geographicArea",
+						"description": "Filtre de recherche sur la zone géographique",
+						"required": false,
+						"type": "integer",
+						"format": "int64"
+					},
+					{
+						"in": "query",
+						"name": "contextDescription",
+						"description": "Filtre de recherche sur le contexte",
+						"required": false,
+						"type": "string",
+						"default": ""
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"description": "Index de début",
+						"required": false,
+						"type": "integer",
+						"default": 0
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"description": "Nombre de résultats à retourner",
+						"required": false,
+						"type": "integer",
+						"default": 10
+					},
+					{
+						"in": "query",
+						"name": "sortExpression",
+						"description": "Indications de tri",
+						"required": false,
+						"type": "string",
+						"default": ""
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/UserRoleContextPageResult"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"userRoleContext"
+				],
+				"summary": "Création d'un opérateur.",
+				"description": "Création d'un opérateur.",
+				"operationId": "createUserRoleContext",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "user",
+						"description": "Les infos sur le UserRoleContext à créer",
+						"required": true,
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/UserRoleContext"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "CREATED",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/UserRoleContext"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/userRoleContexts/{id}": {
+			"get": {
+				"tags": [
+					"userRoleContext"
+				],
+				"summary": "Récupération d'un opérateur",
+				"description": "Récupération d'un opérateur en fonction de son id",
+				"operationId": "getUserRoleContext",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"description": "id de l'opérateur",
+						"required": true,
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/UserRoleContext"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"userRoleContext"
+				],
+				"summary": "Suppression d'un opérateur",
+				"description": "Suppression d'un opérateur en fonction de son id",
+				"operationId": "deleteUserRoleContext",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"description": "id de l'opérateur",
+						"required": true,
+						"type": "integer",
+						"format": "int64"
+					},
+					{
+						"in": "query",
+						"name": "force",
+						"description": "Force la suppression si l'opérateur a des signalements en cours",
+						"required": false,
+						"type": "boolean",
+						"default": false
 					}
 				],
 				"responses": {
@@ -1945,7 +2170,8 @@
 			"type": "object",
 			"properties": {
 				"totalItems": {
-					"type": "number"
+					"type": "integer",
+					"format": "int64"
 				},
 				"results": {
 					"type": "array",
@@ -2099,7 +2325,8 @@
 			"type": "object",
 			"properties": {
 				"totalItems": {
-					"type": "number"
+					"type": "integer",
+					"format": "int64"
 				},
 				"results": {
 					"type": "array",
@@ -2512,7 +2739,8 @@
 			"type": "object",
 			"properties": {
 				"totalItems": {
-					"type": "number"
+					"type": "integer",
+					"format": "int64"
 				},
 				"results": {
 					"type": "array",
@@ -2538,7 +2766,8 @@
 			"type": "object",
 			"properties": {
 				"totalItems": {
-					"type": "number"
+					"type": "integer",
+					"format": "int64"
 				},
 				"results": {
 					"type": "array",
@@ -2552,6 +2781,14 @@
 		"UserRoleContext": {
 			"type": "object",
 			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"user": {
+					"type": "object",
+					"$ref": "#/definitions/User"
+				},
 				"role": {
 					"type": "object",
 					"$ref": "#/definitions/Role"
@@ -2563,6 +2800,22 @@
 				"geographicArea": {
 					"type": "object",
 					"$ref": "#/definitions/GeographicArea"
+				}
+			}
+		},
+		"UserRoleContextPageResult": {
+			"type": "object",
+			"properties": {
+				"totalItems": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"results": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/UserRoleContext"
+					}
 				}
 			}
 		}

@@ -5,7 +5,6 @@ import {UserService} from '../api/services';
 import {ToasterUtil} from '../utils/toaster.util';
 import {UserItem} from '../user/user.datasource';
 import {UserItemMapper} from '../mappers/user-item.mapper';
-import {StrictHttpResponse} from '../api/strict-http-response';
 import {UserPageResult} from '../api/models';
 
 
@@ -32,14 +31,14 @@ export class UserItemService {
    * @param {number} offset Page to display
    * @param {number} limit Number of elements to display
    * @param {string} sortExpression Sort expression
-   * @return {Observable<StrictHttpResponse<User[]>>}
+   * @return {Observable<UserPageResult[]>}
    */
   searchUsers(mailFilter ?: string,
       loginFilter ?: string,
       offset ?: number,
       limit ?: number,
       sortExpression ?: string):
-      Observable<StrictHttpResponse<UserPageResult>> {
+      Observable<UserPageResult> {
     const searchParameters = {
       login: loginFilter,
       email: mailFilter,
@@ -47,7 +46,7 @@ export class UserItemService {
       limit: limit,
       sortExpression: sortExpression,
     };
-    return this.userService.searchUsersResponse(searchParameters);
+    return this.userService.searchUsers(searchParameters);
   }
   /**
       * Function to delete a UserItem

@@ -37,13 +37,13 @@
       <!-- ContextType Column -->
       <ng-container matColumnDef="contextType">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"context.table.contextType" | translate}}</th>
-        <td mat-cell *matCellDef="let row">{{row.contextType}}</td>
+        <td mat-cell *matCellDef="let row">{{"context.contextTypes." + row.contextType.toLowerCase() | translate}}</td>
       </ng-container>
 
       <!-- GeographicType Column -->
       <ng-container matColumnDef="geographicType">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"context.table.geographicType" | translate}}</th>
-        <td mat-cell *matCellDef="let row">{{row.geographicType}}</td>
+        <td mat-cell *matCellDef="let row">{{"context.geographicTypes." + row.geographicType.toLowerCase() | translate}}</td>
       </ng-container>
 
       <!-- ProcessDefinition Column -->

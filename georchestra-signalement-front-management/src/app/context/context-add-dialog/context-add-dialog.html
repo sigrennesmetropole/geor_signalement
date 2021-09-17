@@ -18,7 +18,7 @@
         <mat-form-field class="text-center">
             <mat-select placeholder="{{'context.table.contextType' | translate}}" name="contextType" [formControl]="contextTypeControl" required>
               <mat-option *ngFor="let type of contextTypes" [value]="type">
-                {{type}}
+                {{"context.contextTypes." + type.toLowerCase() | translate}}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="contextTypeControl.invalid">{{getContextTypeError() | async}}</mat-error>
@@ -28,7 +28,7 @@
       <mat-form-field class="text-center">
           <mat-select placeholder="{{'context.table.geographicType' | translate}}" name="geographicType" [formControl]="geographicTypeControl" required>
             <mat-option *ngFor="let type of geographicTypes" [value]="type">
-              {{type}}
+              {{"context.geographicTypes." + type.toLowerCase() | translate}}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="geographicTypeControl.invalid">{{getGeographicTypeError() | async}}</mat-error>

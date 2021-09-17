@@ -1,8 +1,11 @@
 package org.georchestra.signalement.service.sm.impl;
 
 import org.georchestra.signalement.core.dao.acl.RoleDao;
+import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
 import org.georchestra.signalement.core.dto.Role;
 import org.georchestra.signalement.core.entity.acl.RoleEntity;
+import org.georchestra.signalement.core.util.UtilPageable;
+import org.georchestra.signalement.service.common.ErrorMessageConstants;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.georchestra.signalement.service.mapper.acl.RoleMapper;
 import org.georchestra.signalement.service.sm.RoleService;
@@ -20,6 +23,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     RoleMapper roleMapper;
+
+    @Autowired
+    UtilPageable utilPageable;
+
+    @Autowired
+    UserRoleContextCustomDao userRoleContextCustomDao;
 
     @Override
     public Page<Role> getPageRole(Pageable pageable) {
@@ -41,27 +50,32 @@ public class RoleServiceImpl implements RoleService {
     public void deleteRole(String name) throws InvalidDataException {
         RoleEntity role = roleDao.findByName(name);
         if (role == null) {
-            String msg = name + "not found";
-            throw new InvalidDataException(msg);
+            throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
         }
-        //TODO : Add not used verification in a UserRoleContext
+
+        Pageable pageable = utilPageable.getPageable(0, 1, null);
+        if (userRoleContextCustomDao.searchUserRoleContext(null, pageable).getTotalElements() != 0) {
+            throw new InvalidDataException(ErrorMessageConstants.USED_OBJECT);
+        }
         roleDao.delete(role);
     }
 
     @Override
     @Transactional(rollbackFor = InvalidDataException.class)
     public Role createRole(Role role) throws InvalidDataException {
+        if (role == null) {
+            throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
+        }
         String name = role.getName();
         String label = role.getLabel();
         if (name == null) {
-            throw new InvalidDataException("No role name provided");
+            throw new IllegalArgumentException(ErrorMessageConstants.NULL_ATTRIBUTE);
         }
         if (label == null) {
-            throw new InvalidDataException("No role label provided");
+            throw new IllegalArgumentException(ErrorMessageConstants.NULL_ATTRIBUTE);
         }
         if (getRole(name) != null) {
-            String msg = name + " is already used";
-            throw new InvalidDataException(msg);
+            throw new InvalidDataException(ErrorMessageConstants.ALREADY_EXISTS);
         }
         roleDao.save(roleMapper.dtoToEntity(role));
         return getRole(role.getName());

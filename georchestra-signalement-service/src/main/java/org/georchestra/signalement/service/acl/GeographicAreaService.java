@@ -23,5 +23,5 @@ public interface GeographicAreaService {
 
     Page<GeographicArea> searchGeographicAreas(Pageable pageable, String name);
 
-    GeographicArea getGeographicArea(String name);
+    GeographicArea getGeographicArea(Long id);
 }

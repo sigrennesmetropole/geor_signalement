@@ -73,7 +73,7 @@
   },
   "context": {
     "table": {
-      "name": "Name",
+      "name": "Theme/Layer Id",
       "label": "Label",
       "contextType": "Context type",
       "geographicType": "Geographic type",
@@ -100,6 +100,15 @@
     "update": {
       "error": "The context update failed",
       "success": "The context update succeed"
+    },
+    "contextTypes":{
+      "thema" : "Theme",
+      "layer": "Layer"
+    },
+    "geographicTypes":{
+      "point": "Point",
+      "line": "Line",
+      "polygon": "Area"
     }
   },
   "role": {
@@ -121,11 +130,47 @@
       "noLabel": "You must provide a label"
     }
   },
+  "userRoleContext":{
+    "table":{
+      "user":"User",
+      "role": "Role",
+      "geographicArea": "Geographic Area",
+      "context": "Context",
+      "actions": "Actions"
+    },
+    "add":{
+      "title" : "Add an operator",
+      "noUser" : "You must provide an User",
+      "noRole": "You must provide a Role",
+      "noGeographicArea": "You must provide a Geographic Area",
+      "noContextDescription": "You must provide a Context Description",
+      "success": "Operator succesfuly created",
+      "error": "Operator creation failed"
+    },
+    "delete":{
+      "success": "Operator succesfuly deleted",
+      "error": "Operator suppression failed",
+      "confirmDeleteUsedOperator": "This operator is currently assigned to tasks. His suppression will unclaims his tasks. Would you want to continue ?"
+    },
+    "search":{
+      "userLoginIndication" : "First letters of the login",
+      "geographicNameIndication" : "First letters of the area",
+      "contextNameIndication" : "First letters of the contexts"
+    }
+  },
   "paginator": {
     "itemsPerPage": "Items per page",
     "nextPage": "Next page",
     "previousPage": "Previous page",
     "range": "of"
+  },
+  "serverErrors":{
+    "nullData": "Missing data",
+    "nullAttribute": "Missing attribute",
+    "illegalAttribute": "Not allowed attribute provided",
+    "alreadyExists": "The element already exists",
+    "notAvailable": "The element doesn't exist",
+    "usedObject": "The element is currently used"
   },
   "common": {
     "buttons": {
@@ -137,6 +182,7 @@
       "submit": "Submit",
       "cancel": "Cancel",
       "confirm": "Confirm",
+      "continue":"Continue",
       "apply": "Apply",
       "reset": "Reset"
     },

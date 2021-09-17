@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-
 /**
  * GeographicAreas Controller.
  */
@@ -26,20 +24,22 @@ public class GeographicAreasController implements GeographicareasApi {
     @Autowired
     GeographicAreaService geographicAreaService;
 
+    @Autowired
+    UtilPageable utilPageable;
+
     @Override
-    public ResponseEntity<GeographicArea> getGeographicArea(String name) throws Exception {
-        return ResponseEntity.ok(geographicAreaService.getGeographicArea(name));
+    public ResponseEntity<GeographicArea> getGeographicArea(Long id) throws Exception {
+        return ResponseEntity.ok(geographicAreaService.getGeographicArea(id));
     }
 
     @Override
     public ResponseEntity<GeographicAreaPageResult> searchGeographicAreas(String name, Integer offset, Integer limit, String sortExpression) throws Exception {
 
-        UtilPageable utilPageable = new UtilPageable(limit);
         Pageable pageable = utilPageable.getPageable(offset, limit, sortExpression);
         Page<GeographicArea> pageResult = geographicAreaService.searchGeographicAreas(pageable, name);
         GeographicAreaPageResult resultObject = new GeographicAreaPageResult();
         resultObject.setResults(pageResult.getContent());
-        resultObject.setTotalItems(new BigDecimal(pageResult.getTotalElements()));
+        resultObject.setTotalItems(pageResult.getTotalElements());
 
         return ResponseEntity.ok(resultObject);
     }

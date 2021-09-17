@@ -43,7 +43,7 @@ export class UserDataSource extends DataSource<UserItem> {
 
     /**
     * DataSource constructor
-    * @param {UserItemService} userService to interract with workflows
+    * @param {UserItemService} userService to interract with users
     * @param {ToasterUtil} toasterService to display messages
     * @param {TranslateService} translateService to translate
     */
@@ -138,10 +138,10 @@ export class UserDataSource extends DataSource<UserItem> {
               this.sortCriteria)
           .pipe(map(
               (response)=>{
-                this.data = (response.body.results ?? [])
+                this.data = (response.results ?? [])
                     .map(this.userItemMapper.usertoUserItem);
 
-                this.totalItems = (response.body.totalItems ?? 0);
+                this.totalItems = (response.totalItems ?? 0);
 
                 return this.data;
               }),
@@ -166,7 +166,7 @@ export class UserDataSource extends DataSource<UserItem> {
           },
           (response)=>{
             this.toasterService.sendErrorMessage('user.delete.error',
-                response.error.label);
+                response.error.code);
           },
           ()=>{
             this.refreshData();
@@ -190,7 +190,7 @@ export class UserDataSource extends DataSource<UserItem> {
           },
           (response)=>{
             this.toasterService.sendErrorMessage('user.add.error',
-                response.error.label);
+                response.error.code);
           },
           ()=>{
             this.refreshData();

@@ -72,7 +72,7 @@ export class UserComponent implements AfterViewInit {
   }
 
   /**
-      * When the user clicks on the upload button, open the add Dialog
+      * When the user clicks on the create button, open the add Dialog
       * If a result is returned, add the user
       */
   handleOpenAddDialogClick(): void {
@@ -94,14 +94,6 @@ export class UserComponent implements AfterViewInit {
         */
   handleRefreshDataClick(): void {
     this.dataSource.refreshData();
-  }
-
-  /**
-        * Function not developed yet
-        * @param {UserItem} target The user to open
-        */
-  handleOpenUserView(target: UserItem): void {
-    throw new Error('Function not implemented.');
   }
 
   timeoutFilters:any;

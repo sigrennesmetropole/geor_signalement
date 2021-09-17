@@ -58,9 +58,6 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>{{"user.table.actions" | translate}}</th>
       <td mat-cell *matCellDef="let row">
-        <button class="action-buttons" mat-mini-fab color="primary" (click)='handleOpenUserView(row)'>
-          <mat-icon>open_in_new</mat-icon>
-        </button>
         <button class="action-buttons" mat-mini-fab color="warn" (click)='handleOpenSupressDialogClick(row)'>
           <mat-icon>delete</mat-icon>
         </button>

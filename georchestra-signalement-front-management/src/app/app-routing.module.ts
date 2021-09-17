@@ -5,6 +5,8 @@ import {IsSignalementAdmin} from './guards/access.guard';
 import {HomePageComponent} from './home-page/home-page.component';
 import {RoleComponent} from './role/role.component';
 import {UserComponent} from './user/user.component';
+import {UserRoleContextComponent}
+  from './userRoleContext/userRoleContext.component';
 import {WorkflowComponent} from './workflow/workflow.component';
 
 const appRoutes: Route[] = [
@@ -28,6 +30,12 @@ const appRoutes: Route[] = [
 
   {path: 'roles',
     component: RoleComponent,
+    canActivate: [
+      IsSignalementAdmin,
+    ]},
+
+  {path: 'operators',
+    component: UserRoleContextComponent,
     canActivate: [
       IsSignalementAdmin,
     ]},

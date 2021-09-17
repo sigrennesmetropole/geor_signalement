@@ -15,6 +15,8 @@ import {RoleComponent} from './role/role.component';
 import {UserComponent} from './user/user.component';
 import {ErrorComponent} from './error/error.component';
 import {ContextComponent} from './context/context.component';
+import {UserRoleContextComponent}
+  from './userRoleContext/userRoleContext.component';
 
 
 // Data Sources
@@ -22,6 +24,8 @@ import {WorkflowDataSource} from './workflow/workflow.datasource';
 import {UserDataSource} from './user/user.datasource';
 import {ContextDataSource} from './context/context.datasource';
 import {RoleDataSource} from './role/role.datasource';
+import {UserRoleContextDataSource}
+  from './userRoleContext/userRoleContext.datasource';
 
 // Dialogs PopIn
 import {LanguageSelectionDialog}
@@ -44,10 +48,17 @@ import {RoleAddDialog}
   from './role/role-add-dialog/role-add-dialog';
 import {RoleDeleteDialog}
   from './role/role-delete-dialog/role-delete-dialog';
+import {UserRoleContextAddDialog} from
+  './userRoleContext/userRoleContext-add-dialog/userRoleContext-add-dialog';
+import {UserRoleContextDeleteDialog}
+  from './userRoleContext/userRoleContext-delete-dialog/userRoleContext-delete-dialog';
+import {ConfirmUserRoleContextDeleteDialog}
+  from './userRoleContext/userRoleContext-delete-dialog/confirm-delete-dialog/confirmUserRoleContext-delete-dialog';
 
 
 // Services
-import {AdministrationService, UserService} from './api/services';
+import {AdministrationService, UserRoleContextService, UserService}
+  from './api/services';
 import {WorkflowService} from './services/workflow.service';
 import {IsSignalementAdmin} from './guards/access.guard';
 import {ForbiddenComponent} from './forbidden/forbidden.component';
@@ -81,6 +92,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSortModule} from '@angular/material/sort';
+import {MatSelectInfiniteScrollModule} from 'ng-mat-select-infinite-scroll';
 
 
 // Translation imports
@@ -94,6 +106,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     HomePageComponent,
     WorkflowComponent,
     RoleComponent,
+    UserRoleContextComponent,
     LanguageSelectionDialog,
     WorkflowAddDialog,
     WorkflowDeleteDialog,
@@ -104,6 +117,9 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     ContextEditDialog,
     RoleAddDialog,
     RoleDeleteDialog,
+    UserRoleContextAddDialog,
+    UserRoleContextDeleteDialog,
+    ConfirmUserRoleContextDeleteDialog,
     ForbiddenComponent,
     ErrorComponent,
     UserComponent,
@@ -126,6 +142,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatSelectInfiniteScrollModule,
     MatSidenavModule,
     MatSnackBarModule,
     MatSortModule,
@@ -149,6 +166,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     UserService,
     WorkflowService,
     RoleService,
+    UserRoleContextService,
     ContextItemMapper,
     UserItemMapper,
     WorkflowItemMapper,
@@ -156,6 +174,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     ContextDataSource,
     RoleDataSource,
     UserDataSource,
+    UserRoleContextDataSource,
     WorkflowDataSource,
     IsSignalementAdmin,
   ],

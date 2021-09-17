@@ -14,9 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 /**
  * Controlleur pour les users.
  */
@@ -31,6 +28,9 @@ public class UsersController implements UsersApi {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UtilPageable utilPageable;
+
     @Override
     public ResponseEntity<Void> deleteUser(String login) throws Exception {
         userService.deleteUser(login);
@@ -43,21 +43,19 @@ public class UsersController implements UsersApi {
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
         }
     }
 
     @Override
     public ResponseEntity<UserPageResult> searchUsers(String email, String login, Integer offset, Integer limit, String sortExpression) throws Exception {
-        UtilPageable utilPageable = new UtilPageable(limit);
+
         Pageable pageable = utilPageable.getPageable(offset, limit, sortExpression);
         Page<User> pageResult = userService.searchUsers(email, login, pageable);
-        long totalItems = pageResult.getTotalElements();
-        List<User> results = pageResult.getContent();
 
         UserPageResult resultObject = new UserPageResult();
-        resultObject.setResults(results);
-        resultObject.setTotalItems(new BigDecimal(totalItems));
+        resultObject.setResults(pageResult.getContent());
+        resultObject.setTotalItems(pageResult.getTotalElements());
         return ResponseEntity.ok(resultObject);
     }
 

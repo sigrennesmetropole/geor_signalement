@@ -39,7 +39,7 @@ export class ToasterUtil {
   sendErrorMessage(key : string, reason?: string) : void {
     let message: string = this.translateService.instant(key);
     if (reason) {
-      message = message + ' (' + reason + ')';
+      message = message + ' (' + this.translateService.instant(reason) + ')';
     }
 
     this.displayError(message);

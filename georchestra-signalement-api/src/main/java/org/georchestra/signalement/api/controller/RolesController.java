@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-
 /**
  * Roles Controller.
  */
@@ -25,6 +23,9 @@ public class RolesController implements RolesApi {
 
     @Autowired
     RoleService roleService;
+
+    @Autowired
+    UtilPageable utilPageable;
 
     @Override
     public ResponseEntity<Void> deleteRole(String name) throws Exception {
@@ -39,12 +40,11 @@ public class RolesController implements RolesApi {
 
     @Override
     public ResponseEntity<RolePageResult> getRoles(Integer offset, Integer limit, String sortExpression) throws Exception {
-        UtilPageable utilPageable = new UtilPageable(limit);
         Pageable pageable = utilPageable.getPageable(offset, limit, sortExpression);
         Page<Role> pageResult = roleService.getPageRole(pageable);
         RolePageResult resultObject = new RolePageResult();
         resultObject.setResults(pageResult.getContent());
-        resultObject.setTotalItems(new BigDecimal(pageResult.getTotalElements()));
+        resultObject.setTotalItems(pageResult.getTotalElements());
         return ResponseEntity.ok(resultObject);
     }
 

@@ -4,8 +4,10 @@
 package org.georchestra.signalement.core.dao.acl.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionCustomDao;
+import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dto.ContextDescriptionSearchCriteria;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
@@ -20,10 +22,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author FNI18300
@@ -35,6 +35,9 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 
 	@Autowired
 	private EntityManager entityManager;
+
+	@Autowired
+	private ContextDescriptionDao contextDescriptionDao;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
@@ -51,39 +54,15 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 		applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
 
 		TypedQuery<ContextDescriptionEntity> typedQuery = entityManager.createQuery(searchQuery);
-		result = typedQuery.getResultList().stream().distinct().collect(Collectors.toList());
+		result = typedQuery.getResultList();
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("{} results founded", result.size());
 		}
 		return result;
 	}
-
-	@Override
-	public ContextDescriptionEntity getContextDescriptionByName(String name) {
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-
-		CriteriaQuery<ContextDescriptionEntity> searchQuery = builder.createQuery(ContextDescriptionEntity.class);
-		Root<ContextDescriptionEntity> searchRoot = searchQuery.from(ContextDescriptionEntity.class);
-		List<Predicate> predicates = new ArrayList<>();
-		predicates.add(builder.equal(searchRoot.get("name"), name));
-
-		searchQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
-		TypedQuery<ContextDescriptionEntity> typedQuery = entityManager.createQuery(searchQuery);
-		List<ContextDescriptionEntity> result = typedQuery.getResultList().stream()
-				.distinct().sorted(Comparator.comparing(ContextDescriptionEntity::getProcessDefinitionKey))
-				.collect(Collectors.toList());
-		if (result.size() == 0) {
-			return null;
-		} else if (result.size() > 1) {
-			LOGGER.warn("More than one context found ! Only return the first one, ordered by key");
-		}
-		return result.get(0);
-
-	}
-
 	@Override
 	public ContextDescriptionEntity updateContextDescription(ContextDescriptionEntity updatedContext) {
-		ContextDescriptionEntity toUpdate = getContextDescriptionByName(updatedContext.getName());
+		ContextDescriptionEntity toUpdate = contextDescriptionDao.findByName(updatedContext.getName());
 		toUpdate.setLabel(updatedContext.getLabel());
 		toUpdate.setProcessDefinitionKey(updatedContext.getProcessDefinitionKey());
 		toUpdate.setRevision(updatedContext.getRevision());
@@ -99,6 +78,14 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 			}
 			if (searchCriteria.getGeographicType() != null) {
 				predicates.add(builder.equal(root.get("geographicType"), searchCriteria.getGeographicType()));
+			}
+			if (StringUtils.isNotEmpty(searchCriteria.getDescription())) {
+				predicates.add(builder.like(builder.lower(root.get("label")),
+						"%" + searchCriteria.getDescription().toLowerCase() + "%"));
+			}
+			if (CollectionUtils.isNotEmpty(searchCriteria.getProcessDefinitionKeys())) {
+				predicates.add(root.get("processDefinitionKey")
+						.in(searchCriteria.getProcessDefinitionKeys()));
 			}
 			if (CollectionUtils.isNotEmpty(predicates)) {
 				criteriaQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));

@@ -3,16 +3,9 @@
  */
 package org.georchestra.signalement.core.entity.acl;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import lombok.Data;
+
+import javax.persistence.*;
 
 /**
  * Représente l'association d'un utilisateur avec un rôle pour un contexte
@@ -48,4 +41,7 @@ public class UserRoleContextEntity {
 	@JoinColumn(name = "geographic_area_id")
 	private GeographicAreaEntity geographicArea;
 
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private UserEntity user;
 }

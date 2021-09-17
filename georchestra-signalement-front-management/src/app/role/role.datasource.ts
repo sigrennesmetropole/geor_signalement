@@ -130,9 +130,8 @@ export class RoleDataSource extends DataSource<Role> {
             this.toasterService.sendSuccessMessage('role.delete.success');
           },
           (response)=>{
-            console.log(response)
             this.toasterService.sendErrorMessage('role.delete.error',
-                response.error);
+                response.error.code);
           },
           ()=>{
             this.refreshData();
@@ -156,7 +155,7 @@ export class RoleDataSource extends DataSource<Role> {
           },
           (response)=>{
             this.toasterService.sendErrorMessage('role.add.error',
-                response.error);
+                response.error.code);
           },
           ()=>{
             this.refreshData();

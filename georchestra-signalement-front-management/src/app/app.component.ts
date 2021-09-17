@@ -142,5 +142,9 @@ export class AppComponent {
       name: 'menu.items.roles',
       path: 'roles',
     },
+    {
+      name: 'menu.items.operators',
+      path: 'operators',
+    },
   ]
 }

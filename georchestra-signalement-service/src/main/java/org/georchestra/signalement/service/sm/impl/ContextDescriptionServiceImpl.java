@@ -4,21 +4,26 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionCustomDao;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
+import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
 import org.georchestra.signalement.core.dto.*;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
+import org.georchestra.signalement.core.util.UtilPageable;
+import org.georchestra.signalement.service.common.ErrorMessageConstants;
 import org.georchestra.signalement.service.dto.TaskSearchCriteria;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;
+import org.georchestra.signalement.service.mapper.workflow.ProcessDefinitionMapper;
 import org.georchestra.signalement.service.sm.ContextDescriptionService;
-import org.georchestra.signalement.service.sm.InitializationService;
 import org.georchestra.signalement.service.sm.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -43,9 +48,16 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 	private ProcessEngine processEngine;
 
 	@Autowired
-	private InitializationService initializationService;
+	private UserRoleContextCustomDao userRoleContextCustomDao;
+
+	@Autowired
+	private UtilPageable utilPageable;
+
+	@Autowired
+	private ProcessDefinitionMapper processDefinitionMapper;
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ContextDescription> searchContextDescriptions(ContextDescriptionSearchCriteria searchCriteria,
 															  SortCriteria sortCriteria) {
 
@@ -54,57 +66,74 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 	}
 
 	@Override
-	@Transactional
-	public Page<ContextDescription> searchPageContextDescriptions(Pageable pageable, String description, String workflow) {
-		ContextDescriptionEntity contextEntity = new ContextDescriptionEntity();
-		contextEntity.setLabel(description);
-		ExampleMatcher matcher = ExampleMatcher.matching()
-				.withIgnoreCase(true)
-				.withIgnoreNullValues()
-				.withMatcher("label", ExampleMatcher.GenericPropertyMatchers.contains());
+	@Transactional(readOnly = true)
+	public Page<ContextDescription> searchPageContextDescriptions(Pageable pageable, SortCriteria sortCriteria,
+																  String description, String workflow) {
+		ContextDescriptionSearchCriteria searchCriteria = new ContextDescriptionSearchCriteria();
+		if (!description.equals("")) {
+			searchCriteria.setDescription(description);
+		}
 
-		Example<ContextDescriptionEntity> example = Example.of(contextEntity, matcher);
-		List<String> filteredWorkflowKeys = initializationService
-				.searchProcessDefinitions().stream()
-				.filter(process -> process.getName().toLowerCase().contains(workflow.toLowerCase(Locale.ROOT)))
-				.map(ProcessDefinition::getKey)
-				.collect(Collectors.toList());
-
-
-		List<ContextDescription> results = contextDescriptionDao
-				.findAll(example)
-				.stream()
-				.filter(context -> filteredWorkflowKeys.contains(context.getProcessDefinitionKey()))
-				.map(entity -> contextDescriptionMapper.entityToDto(entity))
-				.collect(Collectors.toList());
-		return new PageImpl<>(results, pageable, results.size());
-
+		if (!workflow.equals("")) {
+			RepositoryService repository = processEngine.getRepositoryService();
+			List<org.activiti.engine.repository.ProcessDefinition> allWorkflows = repository.createProcessDefinitionQuery().list();
+			List<String> workflowKeys = allWorkflows.stream()
+					.filter(process -> process.getKey().toLowerCase().contains(workflow.toLowerCase()))
+					.map(org.activiti.engine.repository.ProcessDefinition::getKey)
+					.distinct().collect(Collectors.toList());
+			if (workflowKeys.isEmpty()) {
+				return new PageImpl<>(new ArrayList<>(), pageable, 0);
+			}
+			searchCriteria.setProcessDefinitionKeys(workflowKeys);
+		}
+		List<ContextDescriptionEntity> contexts;
+		try {
+			contexts = contextDescriptionCustomDao
+					.searchContextDescriptions(searchCriteria, sortCriteria);
+		} catch (java.lang.IllegalArgumentException exception) {
+			throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
+		}
+		if (pageable.getOffset() > contexts.size()) {
+			return new PageImpl<>(new ArrayList<>(), pageable, contexts.size());
+		} else {
+			int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), contexts.size());
+			List<ContextDescription> results = contexts.subList((int) pageable.getOffset(), endIndex)
+					.stream().map(entity -> contextDescriptionMapper.entityToDto(entity))
+					.collect(Collectors.toList());
+			return new PageImpl<>(results, pageable, contexts.size());
+		}
 	}
 
 
 	@Override
-	@Transactional(readOnly = true, rollbackFor = InvalidDataException.class)
-	public ContextDescription getContextDescription(String name) throws InvalidDataException {
-		ContextDescriptionEntity result = contextDescriptionCustomDao.getContextDescriptionByName(name);
+	@Transactional(readOnly = true)
+	public ContextDescription getContextDescription(String name) {
+		ContextDescriptionEntity result = contextDescriptionDao.findByName(name);
 		return contextDescriptionMapper.entityToDto(result);
 	}
 
 	@Override
-	@Transactional(rollbackFor = InvalidDataException.class)
+	@Transactional(rollbackFor = {InvalidDataException.class, IllegalArgumentException.class})
 	public void deleteContextDescription(String name) throws InvalidDataException {
-		if (contextDescriptionCustomDao.getContextDescriptionByName(name) == null) {
-			String msg = name + " does not exist";
-			throw new InvalidDataException(msg);
+		if (contextDescriptionDao.findByName(name) == null) {
+			throw new IllegalArgumentException(ErrorMessageConstants.NOT_AVAILABLE);
 		}
 
-		TaskSearchCriteria searchCriteria = new TaskSearchCriteria();
-		searchCriteria.setContextName(name);
-		List<Task> tasks = taskService.searchTasks(searchCriteria);
+		TaskSearchCriteria taskSearchCriteria = new TaskSearchCriteria();
+		taskSearchCriteria.setContextName(name);
+		List<Task> tasks = taskService.searchTasks(taskSearchCriteria);
 		if (tasks != null) {
-			String msg = name + " context is used in " + tasks.size() + " tasks";
-			throw new InvalidDataException(msg);
+			throw new InvalidDataException(ErrorMessageConstants.USED_OBJECT);
 		}
-		ContextDescriptionEntity toDelete = contextDescriptionCustomDao.getContextDescriptionByName(name);
+		ContextDescriptionEntity toDelete = contextDescriptionDao.findByName(name);
+
+		UserRoleContextSearchCriteria userRoleContextSearchCriteria = new UserRoleContextSearchCriteria();
+		userRoleContextSearchCriteria.setContextDescription(toDelete);
+		if (userRoleContextCustomDao.searchUserRoleContext(userRoleContextSearchCriteria,
+				utilPageable.getPageable(0, 1, "")).getTotalElements() != 0) {
+			throw new InvalidDataException(ErrorMessageConstants.USED_OBJECT);
+		}
+
 		contextDescriptionDao.delete(toDelete);
 	}
 
@@ -113,14 +142,13 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 	public ContextDescription updateContextDescription(ContextDescription contextDescription) throws InvalidDataException {
 
 		if (contextDescription == null) {
-			throw new InvalidDataException("Null contextDescription");
+			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
 		}
 
 		ContextDescription existing = getContextDescription(contextDescription.getName());
 
 		if (existing == null) {
-			String msg = contextDescription.getName() + " does not exist";
-			throw new InvalidDataException(msg);
+			throw new IllegalArgumentException(ErrorMessageConstants.NOT_AVAILABLE);
 		}
 
 		if (contextDescription.getRevision() == 0) {
@@ -128,7 +156,7 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 		}
 
 		if (!hasValidWorkflow(contextDescription)) {
-			throw new InvalidDataException("Workflow doesn't exist");
+			throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
 		}
 
 		return contextDescriptionMapper
@@ -140,12 +168,11 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 	@Transactional(rollbackFor = InvalidDataException.class)
 	public ContextDescription createContextDescription(ContextDescription contextDescription) throws InvalidDataException {
 		if (contextDescription == null) {
-			throw new InvalidDataException("Null contextDescription");
-		} else if (contextDescriptionCustomDao.getContextDescriptionByName(contextDescription.getName()) != null) {
-			String msg = contextDescription.getName() + " is already used";
-			throw new InvalidDataException(msg);
+			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
+		} else if (contextDescriptionDao.findByName(contextDescription.getName()) != null) {
+			throw new InvalidDataException(ErrorMessageConstants.ALREADY_EXISTS);
 		}
-		if (contextDescription.getRevision() == 0) {
+		if (contextDescription.getRevision() != null && contextDescription.getRevision() == 0) {
 			contextDescription.setRevision(null);
 		}
 
@@ -154,9 +181,7 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 					.entityToDto(contextDescriptionDao
 							.save(contextDescriptionMapper.dtoToEntity(contextDescription)));
 		} else {
-			String msg = contextDescription.getProcessDefinitionKey()
-					+ "(" + contextDescription.getRevision() + ") is not a valid workflow";
-			throw new InvalidDataException(msg);
+			throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
 		}
 
 
@@ -164,7 +189,10 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 
 	private boolean hasValidWorkflow(ContextDescription context) {
 		RepositoryService repositoryService = processEngine.getRepositoryService();
-		List<Integer> versions = initializationService.searchProcessDefinitions().stream()
+
+		List<Integer> versions = repositoryService
+				.createProcessDefinitionQuery().list().stream()
+				.map(processDefinitionMapper::entityToDto)
 				.filter(process -> process.getKey().equals(context.getProcessDefinitionKey()))
 				.map(ProcessDefinition::getVersion)
 				.collect(Collectors.toList());

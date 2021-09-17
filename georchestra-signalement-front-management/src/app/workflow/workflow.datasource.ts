@@ -80,7 +80,7 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
   private getPagedData(data: WorkflowItem[]): WorkflowItem[] {
     if (this.paginator) {
       const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-      return data.slice(startIndex, this.paginator.pageSize);
+      return data.slice(startIndex, startIndex+this.paginator.pageSize);
     } else {
       return data;
     }
@@ -125,7 +125,7 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
             (response)=>{
               this.toasterService
                   .sendErrorMessage('common.genericError',
-                      response.error.label);
+                      response.error.code);
             },
             ()=>{
               this.actualize.next();
@@ -156,7 +156,7 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
               this
                   .toasterService
                   .sendErrorMessage('workflow.delete.workflow.error',
-                      response.error.label);
+                      response.error.code);
             },
             ()=>{
               this.refreshData();
@@ -185,7 +185,7 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
             (response)=>{
               this.toasterService
                   .sendErrorMessage('workflow.delete.version.error',
-                      response.error.label);
+                      response.error.code);
             },
             ()=>{
               this.refreshData();
@@ -213,7 +213,7 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
             (response)=>{
               this.toasterService
                   .sendErrorMessage('workflow.add.error',
-                      response.error.label);
+                      response.error.code);
             },
             ()=>{
               this.refreshData();
