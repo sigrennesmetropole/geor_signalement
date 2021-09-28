@@ -97,9 +97,14 @@
         "unknownError": "There is an error in the form"
       }
     },
-    "update": {
+    "edit": {
+      "title": "Edit a context",
       "error": "The context update failed",
-      "success": "The context update succeed"
+      "success": "The context update succeed",
+      "formErrors": {
+        "unknownError": "An error occured in the form",
+        "noValue": "You must provide a value"
+      }
     },
     "contextTypes":{
       "thema" : "Theme",

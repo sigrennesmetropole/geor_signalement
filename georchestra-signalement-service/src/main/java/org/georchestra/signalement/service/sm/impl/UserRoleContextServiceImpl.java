@@ -74,9 +74,9 @@ public class UserRoleContextServiceImpl implements UserRoleContextService {
             searchCriteria.setContextDescription(contextDescriptionDao.findByName(contextDescriptionName));
         }
 
-        if (geographicAreaId != null && geographicAreaDao.findById(geographicAreaId).isPresent()) {
+        if (geographicAreaId != null && geographicAreaDao.findEntityById(geographicAreaId) != null) {
             LOGGER.debug("Geographic Area filter provided : {}", geographicAreaId);
-            searchCriteria.setGeographicArea(geographicAreaDao.findById(geographicAreaId).get());
+            searchCriteria.setGeographicArea(geographicAreaDao.findEntityById(geographicAreaId));
         }
 
         return userRoleContextCustomDao
@@ -98,7 +98,7 @@ public class UserRoleContextServiceImpl implements UserRoleContextService {
         TaskService taskService = processEngine.getTaskService();
         List<Task> assignedTasks = taskService.createTaskQuery().taskAssignee(entity.getUser().getLogin()).list();
 
-        if (!assignedTasks.isEmpty() && force) {
+        if (!assignedTasks.isEmpty() && Boolean.TRUE.equals(force)) {
             LOGGER.debug("{} task(s) found being assigned to the operator, they will be unclaimed", assignedTasks.size());
             for (Task task : assignedTasks) {
                 taskService.unclaim(task.getId());
@@ -126,7 +126,7 @@ public class UserRoleContextServiceImpl implements UserRoleContextService {
             throw new IllegalArgumentException(ErrorMessageConstants.NULL_ATTRIBUTE);
         }
 
-        if (!geographicAreaDao.findById(userRoleContext.getGeographicArea().getId()).isPresent()
+        if (geographicAreaDao.findEntityById(userRoleContext.getGeographicArea().getId()) == null
                 || roleDao.findByName(userRoleContext.getRole().getName()) == null
                 || userDao.findByLogin(userRoleContext.getUser().getLogin()) == null
                 || contextDescriptionDao.findByName(userRoleContext.getContextDescription().getName()) == null) {
@@ -135,8 +135,7 @@ public class UserRoleContextServiceImpl implements UserRoleContextService {
 
         UserRoleContextEntity entity = new UserRoleContextEntity();
         UserRoleContextSearchCriteria searchCriteria = new UserRoleContextSearchCriteria();
-
-        entity.setGeographicArea(geographicAreaDao.findById(userRoleContext.getGeographicArea().getId()).get());
+        entity.setGeographicArea(geographicAreaDao.findEntityById(userRoleContext.getGeographicArea().getId()));
         searchCriteria.setGeographicArea(entity.getGeographicArea());
 
         entity.setRole(roleDao.findByName(userRoleContext.getRole().getName()));

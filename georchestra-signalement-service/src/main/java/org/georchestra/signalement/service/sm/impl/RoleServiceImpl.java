@@ -3,6 +3,7 @@ package org.georchestra.signalement.service.sm.impl;
 import org.georchestra.signalement.core.dao.acl.RoleDao;
 import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
 import org.georchestra.signalement.core.dto.Role;
+import org.georchestra.signalement.core.dto.UserRoleContextSearchCriteria;
 import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.common.ErrorMessageConstants;
@@ -54,7 +55,9 @@ public class RoleServiceImpl implements RoleService {
         }
 
         Pageable pageable = utilPageable.getPageable(0, 1, null);
-        if (userRoleContextCustomDao.searchUserRoleContext(null, pageable).getTotalElements() != 0) {
+        UserRoleContextSearchCriteria searchCriteria = new UserRoleContextSearchCriteria();
+        searchCriteria.setRole(role);
+        if (userRoleContextCustomDao.searchUserRoleContext(searchCriteria, pageable).getTotalElements() != 0) {
             throw new InvalidDataException(ErrorMessageConstants.USED_OBJECT);
         }
         roleDao.delete(role);

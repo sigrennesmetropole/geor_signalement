@@ -75,7 +75,7 @@ public class ContextDescriptionsController implements ContextDescriptionsApi {
             String[] splitted = sortString.split(" ");
             for (String criteria : splitted) {
                 SortCriterion criterion = new SortCriterion();
-                if (criteria.indexOf("-") == 0) {
+                if (criteria.indexOf('-') == 0) {
                     criterion.setAsc(false);
                     criterion.setProperty(criteria.substring(1));
                     sortCriteria.addElementsItem(criterion);

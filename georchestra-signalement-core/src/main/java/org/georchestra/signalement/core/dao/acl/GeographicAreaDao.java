@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GeographicAreaDao extends QueryDslDao<GeographicAreaEntity, Long> {
+    GeographicAreaEntity findEntityById(Long id);
 }

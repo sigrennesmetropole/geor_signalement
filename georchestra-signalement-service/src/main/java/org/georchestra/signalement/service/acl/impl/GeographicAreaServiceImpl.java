@@ -54,6 +54,6 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
 
     @Override
     public GeographicArea getGeographicArea(Long id) {
-        return geographicAreaMapper.entityToDto(geographicAreaDao.findById(id).orElse(null));
+        return geographicAreaMapper.entityToDto(geographicAreaDao.findEntityById(id));
     }
 }
