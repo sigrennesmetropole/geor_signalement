@@ -116,8 +116,7 @@ public class UserServiceImpl implements UserService {
 	public User createUser(User user) throws InvalidDataException {
 		if (user == null ||
 				StringUtils.isEmpty(user.getLogin()) ||
-				StringUtils.isEmpty(user.getEmail()) ||
-				!StringUtils.isAlphanumeric(user.getLogin())) {
+				StringUtils.isEmpty(user.getEmail())) {
 			throw new InvalidDataException("Invalid user : " + user);
 		}
 		EmailValidator emailValidator = new EmailValidator();

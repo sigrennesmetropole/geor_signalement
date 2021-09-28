@@ -92,7 +92,6 @@ public class InitializationServiceImpl implements InitializationService {
 
 	@Override
 	public List<org.georchestra.signalement.core.dto.ProcessDefinition> searchProcessDefinitions() {
-		List<org.georchestra.signalement.core.dto.ProcessDefinition> result = null;
 		RepositoryService repositoryService = processEngine.getRepositoryService();
 		List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefinitionQuery().list();
 		return processDefinitions.stream().map(processDefinitionMapper::entityToDto).collect(Collectors.toList());
@@ -146,12 +145,12 @@ public class InitializationServiceImpl implements InitializationService {
 
 		boolean lastVersion = latestVersion.equals(processDefinition);
 		boolean usedInContext = contexts.stream().anyMatch(context ->
-				ContextUsesProcess(context, processDefinition, lastVersion));
+				contextUsesProcess(context, processDefinition, lastVersion));
 
 		return usedInTask || usedInContext;
 	}
 
-	private boolean ContextUsesProcess(ContextDescription context, ProcessDefinition process, boolean lastVersion) {
+	private boolean contextUsesProcess(ContextDescription context, ProcessDefinition process, boolean lastVersion) {
 		boolean key = context.getProcessDefinitionKey().equals(process.getKey());
 		boolean revision = (context.getRevision() != null && context.getRevision() == process.getVersion())
 				|| (context.getRevision() == null && lastVersion);

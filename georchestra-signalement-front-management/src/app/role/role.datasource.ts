@@ -117,6 +117,7 @@ export class RoleDataSource extends DataSource<Role> {
      * Function called to ask a refresh of data
      */
     public refreshData() : void {
+      this.paginator?.firstPage();
       this.actualize.next();
     }
 

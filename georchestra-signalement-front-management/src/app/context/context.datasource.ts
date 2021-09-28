@@ -142,6 +142,7 @@ export class ContextDataSource extends DataSource<ContextItem> {
    * Function called to ask a refresh of data
    */
   refreshData(): void {
+    this.paginator?.firstPage();
     this.actualize.next();
   }
 

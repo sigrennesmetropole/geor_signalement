@@ -128,6 +128,7 @@ export class WorkflowDataSource extends DataSource<WorkflowItem> {
                       response.error.code);
             },
             ()=>{
+              this.paginator?.firstPage();
               this.actualize.next();
             },
         );

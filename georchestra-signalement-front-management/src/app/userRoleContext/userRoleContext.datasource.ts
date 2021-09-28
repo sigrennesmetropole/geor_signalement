@@ -134,6 +134,7 @@ export class UserRoleContextDataSource extends DataSource<UserRoleContext> {
      * Function called to ask a refresh of data
      */
     public refreshData() : void {
+      this.paginator?.firstPage();
       this.actualize.next();
     }
 

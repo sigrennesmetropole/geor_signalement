@@ -136,7 +136,7 @@ export class UserRoleContextComponent implements AfterViewInit {
             }),
         catchError(
             (response)=>{
-              if (response.error.code == 'errors.usedObject') {
+              if (response.error.code == 'serverErrors.usedObject') {
                 return this.dialog.open(ConfirmUserRoleContextDeleteDialog, {
                   width: 'auto',
                   height: 'auto',

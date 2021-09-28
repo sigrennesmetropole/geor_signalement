@@ -152,6 +152,7 @@ export class UserDataSource extends DataSource<UserItem> {
      * Function called to ask a refresh of data
      */
     public refreshData() : void {
+      this.paginator?.firstPage();
       this.actualize.next();
     }
 
