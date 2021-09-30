@@ -1,75 +1,203 @@
 {
-	
-	"title":"Administration du module Signalement",
-
-    "menu": {
-        "title": "Menu",
-        "items": {
-            "home":"Accueil",
-            "roles": "Rôles",
-            "operators": "Opérateurs",
-            "workflows": "Workflows"
-        },
-        "connected": "Connecté",
-        "disconnected": "Non connecté"
+  "title": "Administration du module Signalement",
+  "menu": {
+    "title": "Menu",
+    "items": {
+      "home": "Accueil",
+      "roles": "Rôles",
+      "operators": "Opérateurs",
+      "workflows": "Workflows",
+      "users": "Utilisateurs",
+      "context": "Contextes"
     },
-
-    "workflow": {
-        "table": {
-            "name": "Nom",
-            "version": "Version",
-            "resourceName": "Nom de la ressource",
-            "key": "Clef",
-            "description": "Description",
-            "actions": "Actions"
-        },
-        "add": {
-            "title": "Ajout d'un workflow",
-            "deploymentName": "Nom de déploiement",
-            "noFileYet": "Pas de fichier selectionné",
-            "success" : "L'upload du workflow a réussi",
-            "error" : "L'upload du workflow a échoué",
-            "noDeploymentName" : "Pas de nom de déploiement fourni"
-        },
-        "delete": {
-            "version":{
-                "success": "La version du workflow a été supprimée avec succès",
-                "error" : "La suppression de la version du workflow a echouée"
-            },
-            "workflow":{
-                "success": "Le workflow a été supprimé avec succès",
-                "error" : "La suppression du workflow a echoué"
-            }
-        },
-        "title": "Workflow",
-        "version": "Version"
+    "connected": "Connecté",
+    "disconnected": "Non connecté"
+  },
+  "workflow": {
+    "table": {
+      "name": "Nom",
+      "version": "Version",
+      "resourceName": "Nom de la ressource",
+      "key": "Clef",
+      "description": "Description",
+      "actions": "Actions"
     },
-
-    "paginator":{
-        "itemsPerPage": "Nombre d'éléments par page",
-        "nextPage": "Page suivante",
-        "previousPage": "Page précédente",
-        "range": "de"
+    "add": {
+      "title": "Ajout d'un workflow",
+      "deploymentName": "Nom de déploiement",
+      "noFileYet": "Pas de fichier selectionné",
+      "success": "L'upload du workflow a réussi",
+      "error": "L'upload du workflow a échoué",
+      "noDeploymentName": "Pas de nom de déploiement fourni"
     },
-
-    "common":{
-        "buttons":{
-            "refresh": "Actualiser",
-            "delete": "Supprimer",
-            "close" :"Fermer",
-            "yes": "Oui",
-            "no": "Non",
-            "submit": "Envoyer",
-            "cancel": "Annuler"
-        },
-
-        "languageSelection" : "Sélection de la langue du site",
-
-        "suppression":{
-            "asking": "Êtes-vous sûr de vouloir supprimer"
-        },
-        "genericError": "Une erreur est survenue",
-        "accessError" : "Accès non autorisé",
-        "contactAdmin" : "Si le problème persiste, merci de contacter un administrateur"
+    "delete": {
+      "version": {
+        "success": "La version du workflow a été supprimée avec succès",
+        "error": "La suppression de la version du workflow a echouée",
+        "usedError": "La version du workflow est utilisée et ne peut-être supprimée"
+      },
+      "workflow": {
+        "success": "Le workflow a été supprimé avec succès",
+        "error": "La suppression du workflow a echoué",
+        "partialError": "Tout ou partie des versions du workflow sont utilisées et ne peuvent pas être supprimées"
+      }
+    },
+    "title": "Workflow",
+    "version": "Version"
+  },
+  "user": {
+    "table": {
+      "login": "Login",
+      "email": "Adresse mail",
+      "firstname": "Prénom",
+      "lastname": "Nom de famille",
+      "organization": "Organisation",
+      "actions": "Actions",
+      "filter": "Filtrer"
+    },
+    "delete": {
+      "success": "L'utilisateur a été supprimé avec succès",
+      "error": "La suppression de l'utilisateur a echoué"
+    },
+    "add": {
+      "title": "Ajout d'un utilisateur",
+      "success": "L'utilisateur a été ajouté avec succès",
+      "error": "L'ajout de l'utilisateur a echoué",
+      "noLogin": "Vous devez ajouter un login",
+      "noMail": "Vous devez ajouter une adresse mail",
+      "notValidEmail": "Veuillez saisir une adresse mail valid"
+    },
+    "search": {
+      "title": "Recherche d'utilisateur"
     }
+  },
+  "context": {
+    "table": {
+      "name": "Id Thème/Couche",
+      "label": "Description",
+      "contextType": "Type de contexte",
+      "geographicType": "Type de géographie",
+      "processDefinition": "Workflow",
+      "version": "Version du workflow",
+      "actions": "Actions"
+    },
+    "delete": {
+      "error": "La suppression du contexte a echoué",
+      "success": "Le contexte a été supprimé avec succès"
+    },
+    "add": {
+      "title": "Ajout d'un contexte",
+      "error": "L'ajout du contexte a échoué",
+      "success": "Le contexte a été ajouté avec succès",
+      "errors": {
+        "wrongContextType": "Le type de contexte n'est pas reconnu",
+        "wrongGeographicType": "Le type de géographie n'est pas reconnu",
+        "noValue": "Vous devez fournir une valeur",
+        "tooLongValue": "Trop long",
+        "unknownError": "Il y a une erreur dans le formulaire"
+      }
+    },
+    "edit": {
+      "title": "Édition d'un contexte",
+      "error": "La mise à jour du contexte a échoué",
+      "success": "Le contexte a été mis à jour avec succès",
+      "formErrors": {
+        "unknownError": "Une erreur est survenue dans le formulaire",
+        "noValue": "Vous devez fournir une valeur"
+      }
+    },
+    "contextTypes":{
+      "thema" : "Thème",
+      "layer": "Couche"
+    },
+    "geographicTypes":{
+      "point": "Point",
+      "line": "Ligne",
+      "polygon": "Zone"
+    }
+  },
+  "role": {
+    "title": "Rôles",
+    "table": {
+      "name": "Nom",
+      "label": "Libellé",
+      "actions": "Actions"
+    },
+    "delete": {
+      "success": "Le rôle a été supprimé avec succès",
+      "error": "La suppression du rôle a échoué"
+    },
+    "add": {
+      "title": "Ajouter un rôle",
+      "success": "Le rôle a été créé avec succès",
+      "error": "La création du rôle a échoué",
+      "noName": "Vous devez fournir un nom",
+      "noLabel": "Vous devez fournir un libellé"
+    }
+  },
+  "userRoleContext":{
+    "table":{
+      "user":"Utilisateur",
+      "role": "Rôle",
+      "geographicArea": "Zone Géographique",
+      "context": "Contexte",
+      "actions": "Actions"
+    },
+    "add":{
+      "title" : "Ajout d'un opérateur",
+      "noUser" : "Vous devez indiquer un Utilisateur",
+      "noRole": "Vous devez indiquer un Rôle",
+      "noGeographicArea": "Vous devez indiquer une Zone Géographique",
+      "noContextDescription": "Vous devez indiquer un Contexte",
+      "success": "L'opérateur a été créé avec succès",
+      "error": "La création de l'opérateur a échoué"
+    },
+    "delete":{
+      "success": "La suppression de l'opérateur a réussi",
+      "error": "La suppression de l'opérateur a échoué",
+      "confirmDeleteUsedOperator": "Cet opérateur est assigné à des signalements. Sa suppression entraînera la désassignation de ses signalements. Voulez-vous poursuivre ?"
+    },
+    "search":{
+      "userLoginIndication" : "Premières lettres du login",
+      "geographicNameIndication" : "Premières lettres de la zone",
+      "contextNameIndication" : "Premières lettres du contexte"
+    }
+  },
+  "paginator": {
+    "itemsPerPage": "Nombre d'éléments par page",
+    "nextPage": "Page suivante",
+    "previousPage": "Page précédente",
+    "range": "de"
+  },
+  "serverErrors":{
+    "nullData": "Donnée manquante",
+    "nullAttribute": "Attribut manquant",
+    "illegalAttribute": "Un attribut non autorisé a été fourni",
+    "alreadyExists": "L'élément existe déjà",
+    "notAvailable": "L'élément n'existe pas",
+    "usedObject": "L'élément est utilisé"
+  },
+  "common": {
+    "buttons": {
+      "refresh": "Actualiser",
+      "delete": "Supprimer",
+      "close": "Fermer",
+      "yes": "Oui",
+      "no": "Non",
+      "submit": "Envoyer",
+      "cancel": "Annuler",
+      "confirm": "Confirmer",
+      "continue": "Continuer",
+      "apply": "Appliquer",
+      "reset": "Réinitialiser"
+    },
+    "languageSelection": "Sélection de la langue du site",
+    "suppression": {
+      "asking": "Êtes-vous sûr de vouloir supprimer"
+    },
+    "genericError": "Une erreur est survenue",
+    "accessError": "Accès non autorisé",
+    "contactAdmin": "Si le problème persiste, merci de contacter un administrateur",
+    "lastVersion": "Dernière version"
+  }
 }

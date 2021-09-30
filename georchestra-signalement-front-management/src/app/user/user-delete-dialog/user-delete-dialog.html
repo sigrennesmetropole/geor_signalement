@@ -1,0 +1,9 @@
+<mat-dialog-content align="center">
+  <p>{{'common.suppression.asking' | translate}} : {{getTarget().login}}</p>
+</mat-dialog-content>
+
+
+<div mat-dialog-actions align="center">
+  <button mat-flat-button color="warn" (click)='handleConfirmClick()'>{{'common.buttons.confirm' | translate}}</button>
+  <button mat-flat-button color="primary" (click)='handleCancelClick()'>{{'common.buttons.cancel' | translate}}</button>
+</div>

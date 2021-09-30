@@ -4,38 +4,80 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {LayoutModule} from '@angular/cdk/layout';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AppRoutingModule} from './app-routing.module';
 
 // Components
 import {AppComponent} from './app.component';
 import {HomePageComponent} from './home-page/home-page.component';
 import {WorkflowComponent} from './workflow/workflow.component';
 import {RoleComponent} from './role/role.component';
-import {OperatorComponent} from './operator/operator.component';
+import {UserComponent} from './user/user.component';
+import {ErrorComponent} from './error/error.component';
+import {ContextComponent} from './context/context.component';
+import {UserRoleContextComponent}
+  from './userRoleContext/userRoleContext.component';
 
 
-import {WorkflowDataSource} from './workflow/workflow-datasource';
+// Data Sources
+import {WorkflowDataSource} from './workflow/workflow.datasource';
+import {UserDataSource} from './user/user.datasource';
+import {ContextDataSource} from './context/context.datasource';
+import {RoleDataSource} from './role/role.datasource';
+import {UserRoleContextDataSource}
+  from './userRoleContext/userRoleContext.datasource';
 
 // Dialogs PopIn
-import {DialogLanguageSelectionDialog}
+import {LanguageSelectionDialog}
   from './language-selection/language-selection';
-import {DialogWorkflowAddDialog}
+import {WorkflowAddDialog}
   from './workflow/workflow-add-dialog/workflow-add-dialog';
-import {DialogWorkflowDeleteDialog}
+import {WorkflowDeleteDialog}
   from './workflow/workflow-delete-dialog/workflow-delete-dialog';
+import {UserDeleteDialog}
+  from './user/user-delete-dialog/user-delete-dialog';
+import {UserAddDialog}
+  from './user/user-add-dialog/user-add-dialog';
+import {ContextDeleteDialog}
+  from './context/context-delete-dialog/context-delete-dialog';
+import {ContextAddDialog}
+  from './context/context-add-dialog/context-add-dialog';
+import {ContextEditDialog}
+  from './context/context-edit-dialog/context-edit-dialog';
+import {RoleAddDialog}
+  from './role/role-add-dialog/role-add-dialog';
+import {RoleDeleteDialog}
+  from './role/role-delete-dialog/role-delete-dialog';
+import {UserRoleContextAddDialog} from
+  './userRoleContext/userRoleContext-add-dialog/userRoleContext-add-dialog';
+import {UserRoleContextDeleteDialog}
+  from './userRoleContext/userRoleContext-delete-dialog/userRoleContext-delete-dialog';
+import {ConfirmUserRoleContextDeleteDialog}
+  from './userRoleContext/userRoleContext-delete-dialog/confirm-delete-dialog/confirmUserRoleContext-delete-dialog';
+
 
 // Services
-import {AdministrationService, UserService} from './api/services';
+import {AdministrationService, UserRoleContextService, UserService}
+  from './api/services';
 import {WorkflowService} from './services/workflow.service';
 import {IsSignalementAdmin} from './guards/access.guard';
 import {ForbiddenComponent} from './forbidden/forbidden.component';
 import {AccessService} from './services/access.service';
+import {UserItemService} from './services/user.service';
+import {ContextService} from './services/context.service';
+import {RoleService} from './services/role.service';
 
 // Utils
 import {ToasterUtil} from './utils/toaster.util';
 
+// Mappers
+import {WorkflowItemMapper} from './mappers/workflow-item.mapper';
+import {UserItemMapper} from './mappers/user-item.mapper';
+import {ContextItemMapper} from './mappers/context-item.mapper';
+
 // Material
 import {MatButtonModule} from '@angular/material/button';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatGridListModule} from '@angular/material/grid-list';
@@ -50,14 +92,12 @@ import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSortModule} from '@angular/material/sort';
+import {MatSelectInfiniteScrollModule} from 'ng-mat-select-infinite-scroll';
 
 
 // Translation imports
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {AppRoutingModule} from './app-routing.module';
-import {WorkflowItemMapper} from './mappers/workflow-item.mapper';
-import {ErrorComponent} from './error/error.component';
 
 
 @NgModule({
@@ -66,12 +106,24 @@ import {ErrorComponent} from './error/error.component';
     HomePageComponent,
     WorkflowComponent,
     RoleComponent,
-    OperatorComponent,
-    DialogLanguageSelectionDialog,
-    DialogWorkflowAddDialog,
-    DialogWorkflowDeleteDialog,
+    UserRoleContextComponent,
+    LanguageSelectionDialog,
+    WorkflowAddDialog,
+    WorkflowDeleteDialog,
+    UserAddDialog,
+    UserDeleteDialog,
+    ContextDeleteDialog,
+    ContextAddDialog,
+    ContextEditDialog,
+    RoleAddDialog,
+    RoleDeleteDialog,
+    UserRoleContextAddDialog,
+    UserRoleContextDeleteDialog,
+    ConfirmUserRoleContextDeleteDialog,
     ForbiddenComponent,
     ErrorComponent,
+    UserComponent,
+    ContextComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -80,6 +132,7 @@ import {ErrorComponent} from './error/error.component';
     FormsModule,
     LayoutModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatDialogModule,
     MatFormFieldModule,
     MatGridListModule,
@@ -89,11 +142,13 @@ import {ErrorComponent} from './error/error.component';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatSelectInfiniteScrollModule,
     MatSidenavModule,
     MatSnackBarModule,
     MatSortModule,
     MatTableModule,
     MatToolbarModule,
+    ReactiveFormsModule,
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
@@ -106,11 +161,21 @@ import {ErrorComponent} from './error/error.component';
   providers: [
     AccessService,
     AdministrationService,
+    ContextService,
+    UserItemService,
+    UserService,
+    WorkflowService,
+    RoleService,
+    UserRoleContextService,
+    ContextItemMapper,
+    UserItemMapper,
     WorkflowItemMapper,
     ToasterUtil,
-    UserService,
+    ContextDataSource,
+    RoleDataSource,
+    UserDataSource,
+    UserRoleContextDataSource,
     WorkflowDataSource,
-    WorkflowService,
     IsSignalementAdmin,
   ],
   bootstrap: [AppComponent],
