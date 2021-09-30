@@ -62,7 +62,6 @@ public class UserRoleContextServiceImpl implements UserRoleContextService {
 	@Override
 	public Page<UserRoleContext> searchUserRoleContexts(UserRoleContextSearchCriteria searchCriteria,
 			Pageable pageable) {
-
 		return userRoleContextCustomDao.searchUserRoleContexts(searchCriteria, pageable)
 				.map(entity -> userRoleContextMapper.entityToDto(entity));
 	}
@@ -92,13 +91,11 @@ public class UserRoleContextServiceImpl implements UserRoleContextService {
 		}
 
 		userRoleContextDao.delete(entity);
-
 	}
 
 	@Override
 	@Transactional(rollbackFor = { IllegalArgumentException.class, InvalidDataException.class })
 	public UserRoleContext createUserRoleContext(UserRoleContext userRoleContext) throws InvalidDataException {
-
 		if (userRoleContext == null) {
 			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
 		}
@@ -133,11 +130,6 @@ public class UserRoleContextServiceImpl implements UserRoleContextService {
 
 	@Override
 	public UserRoleContext getUserRoleContext(Long id) {
-		if (id == null) {
-			return null;
-		}
-
 		return userRoleContextMapper.entityToDto(userRoleContextDao.findById(id).orElse(null));
-
 	}
 }

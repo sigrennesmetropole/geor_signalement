@@ -55,22 +55,13 @@ public class UserRoleContextController implements UserRoleContextsApi {
 
 	@Override
 	public ResponseEntity<Void> deleteUserRoleContext(Long id, Boolean force) throws Exception {
-		if (id != null) {
-			userRoleContextService.deleteUserRoleContext(id, force);
-		}
+		userRoleContextService.deleteUserRoleContext(id, force);
 		return ResponseEntity.ok().build();
 	}
 
 	@Override
 	public ResponseEntity<UserRoleContext> getUserRoleContext(Long id) throws Exception {
-		UserRoleContext result = null;
-		if (id != null) {
-			result = userRoleContextService.getUserRoleContext(id);
-		}
-		if (result != null) {
-			return ResponseEntity.ok(result);
-		} else {
-			return ResponseEntity.ok().build();
-		}
+		return ResponseEntity.ok(userRoleContextService.getUserRoleContext(id));
+
 	}
 }

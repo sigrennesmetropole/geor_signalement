@@ -32,6 +32,7 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
 	private static final String FIELD_CONTEXT_DESCRIPTION = "contextDescription";
 	private static final String FIELD_ROLE = "role";
 	private static final String FIELD_USER = "user";
+	
 	@Autowired
     EntityManager entityManager;
 

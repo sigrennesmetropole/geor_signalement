@@ -20,7 +20,6 @@ import org.georchestra.signalement.core.dto.EMailData;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
-import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.georchestra.signalement.service.exception.DocumentGenerationException;
 import org.georchestra.signalement.service.exception.DocumentModelNotFoundException;
 import org.georchestra.signalement.service.exception.EMailException;
@@ -60,9 +59,6 @@ public class WorkflowContext {
 
 	@Autowired
 	private AssignmentHelper assignmentHelper;
-
-	@Autowired
-	private GeographicAreaService geographicAreaService;
 
 	/**
 	 * Méthode utilitaire de log

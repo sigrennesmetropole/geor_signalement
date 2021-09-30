@@ -22,48 +22,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(tags = "user")
 public class UsersController implements UsersApi {
+	
+	@Autowired
+	private UserService userService;
 
-    @Autowired
-    private UserMapper userMapper;
+	@Autowired
+	private UtilPageable utilPageable;
 
-    @Autowired
-    private UserService userService;
+	@Override
+	public ResponseEntity<Void> deleteUser(String login) throws Exception {
+		userService.deleteUser(login);
+		return ResponseEntity.ok().build();
+	}
 
-    @Autowired
-    private UtilPageable utilPageable;
+	@Override
+	public ResponseEntity<User> getUser(String login) throws Exception {
+		return ResponseEntity.ok(userService.getUserByLogin(login));
+	}
 
-    @Override
-    public ResponseEntity<Void> deleteUser(String login) throws Exception {
-        userService.deleteUser(login);
-        return ResponseEntity.ok().build();
-    }
+	@Override
+	public ResponseEntity<UserPageResult> searchUsers(String email, String login, Integer offset, Integer limit,
+			String sortExpression) throws Exception {
 
-    @Override
-    public ResponseEntity<User> getUser(String login) throws Exception {
-        User result = userService.getUserByLogin(login);
-        if (result != null) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.ok().build();
-        }
-    }
+		Pageable pageable = utilPageable.getPageable(offset, limit, sortExpression);
+		UserSearchCriteria searchCriteria = UserSearchCriteria.builder().email(email).login(login).build();
+		Page<User> pageResult = userService.searchUsers(searchCriteria, pageable);
 
-    @Override
-    public ResponseEntity<UserPageResult> searchUsers(String email, String login, Integer offset, Integer limit, String sortExpression) throws Exception {
+		UserPageResult resultObject = new UserPageResult();
+		resultObject.setResults(pageResult.getContent());
+		resultObject.setTotalItems(pageResult.getTotalElements());
+		return ResponseEntity.ok(resultObject);
+	}
 
-        Pageable pageable = utilPageable.getPageable(offset, limit, sortExpression);
-        UserSearchCriteria searchCriteria = UserSearchCriteria.builder().email(email).login(login).build(); 
-        Page<User> pageResult = userService.searchUsers(searchCriteria, pageable);
-
-        UserPageResult resultObject = new UserPageResult();
-        resultObject.setResults(pageResult.getContent());
-        resultObject.setTotalItems(pageResult.getTotalElements());
-        return ResponseEntity.ok(resultObject);
-    }
-
-    @Override
-    public ResponseEntity<User> createUser(User user) throws Exception {
-        User userCreated = userService.createUser(user);
-        return ResponseEntity.ok(userCreated);
-    }
+	@Override
+	public ResponseEntity<User> createUser(User user) throws Exception {
+		return ResponseEntity.ok(userService.createUser(user));
+	}
 }
