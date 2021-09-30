@@ -80,7 +80,7 @@ export class UserRoleContextComponent implements AfterViewInit {
               this.totalUsers = page.totalItems ?? 0;
             },
         );
-    this.roleService.getRoles({limit: this.NUMBER_ELEMENTS_IN_FILTER})
+    this.roleService.searchRoles({limit: this.NUMBER_ELEMENTS_IN_FILTER})
         .subscribe(
             (page) => {
               this.filteredRoles = page.results ?? [];
@@ -261,7 +261,7 @@ export class UserRoleContextComponent implements AfterViewInit {
         this.NUMBER_ELEMENTS_IN_FILTER),
       limit: this.NUMBER_ELEMENTS_IN_FILTER,
     };
-    this.roleService.getRoles(params).subscribe(
+    this.roleService.searchRoles(params).subscribe(
         (data)=>{
           this.filteredRoles = this.filteredRoles
               .concat(data.results ?? []),
@@ -280,7 +280,7 @@ export class UserRoleContextComponent implements AfterViewInit {
       const params = {
         limit: this.NUMBER_ELEMENTS_IN_FILTER,
       };
-      this.roleService.getRoles(params).subscribe(
+      this.roleService.searchRoles(params).subscribe(
           (data)=>{
             this.filteredRoles = data.results ?? [];
             this.totalRoles = data.totalItems ?? 0;
