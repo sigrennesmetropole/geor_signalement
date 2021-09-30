@@ -27,7 +27,7 @@ export class RoleService {
    */
   getRoles(offset: number, limit: number, sortCriteria: string)
   : Observable<StrictHttpResponse<RolePageResult>> {
-    return this.rolesService.getRolesResponse({
+    return this.rolesService.searchRolesResponse({
       offset: offset,
       limit: limit,
       sortExpression: sortCriteria});

@@ -39,7 +39,7 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
     }
 
     @Override
-    public Page<GeographicArea> searchGeographicAreas(Pageable pageable, String name) {
+    public Page<GeographicArea> searchGeographicAreas(String name, Pageable pageable) {
 
         GeographicAreaEntity exampleEntity = new GeographicAreaEntity();
         exampleEntity.setNom(name);

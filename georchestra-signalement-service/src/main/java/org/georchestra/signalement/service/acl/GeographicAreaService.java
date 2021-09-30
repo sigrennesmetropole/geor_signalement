@@ -21,7 +21,18 @@ public interface GeographicAreaService {
      */
     List<GeographicArea> searchGeographicAreaIntersections(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole);
 
-    Page<GeographicArea> searchGeographicAreas(Pageable pageable, String name);
+    /**
+     * Méthode paginée de recherche des zones géographiques
+     * @param name
+     * @param pageable
+     * @return
+     */
+    Page<GeographicArea> searchGeographicAreas(String name, Pageable pageable);
 
+    /**
+     * Récupération unitaire d'une zone géographique
+     * @param id
+     * @return
+     */
     GeographicArea getGeographicArea(Long id);
 }

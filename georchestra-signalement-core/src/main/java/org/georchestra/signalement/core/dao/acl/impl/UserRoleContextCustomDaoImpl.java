@@ -1,6 +1,7 @@
 package org.georchestra.signalement.core.dao.acl.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
 import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
 import org.georchestra.signalement.core.dto.SortCriteria;
@@ -24,7 +25,14 @@ import java.util.Map;
 
 @Repository
 public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implements UserRoleContextCustomDao {
-    @Autowired
+    private static final String FIELD_LOGIN = "login";
+	private static final String FIELD_NAME = "name";
+	private static final String FIELD_ID = "id";
+	private static final String FIELD_GEOGRAPHIC_AREA = "geographicArea";
+	private static final String FIELD_CONTEXT_DESCRIPTION = "contextDescription";
+	private static final String FIELD_ROLE = "role";
+	private static final String FIELD_USER = "user";
+	@Autowired
     EntityManager entityManager;
 
     @Override
@@ -34,9 +42,7 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Page<UserRoleContextEntity> searchUserRoleContext(UserRoleContextSearchCriteria searchCriteria, Pageable pageable) {
-
-
+    public Page<UserRoleContextEntity> searchUserRoleContexts(UserRoleContextSearchCriteria searchCriteria, Pageable pageable) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
@@ -65,23 +71,32 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
     }
 
     private void buildQuery(UserRoleContextSearchCriteria searchCriteria, CriteriaBuilder builder,
-                            CriteriaQuery criteriaQuery, Root<UserRoleContextEntity> root) {
+                            CriteriaQuery<?> criteriaQuery, Root<UserRoleContextEntity> root) {
         if (searchCriteria != null) {
             List<Predicate> predicates = new ArrayList<>();
-            if (searchCriteria.getUser() != null) {
-                predicates.add(builder.equal(root.get("user"), searchCriteria.getUser()));
+            if (searchCriteria.getUserId() != null) {
+                predicates.add(builder.equal(root.get(FIELD_USER).get(FIELD_ID), searchCriteria.getUserId()));
             }
-            if (searchCriteria.getRole() != null) {
-                predicates.add(builder.equal(root.get("role"), searchCriteria.getRole()));
+            if (StringUtils.isNotEmpty(searchCriteria.getUserLogin())) {
+                predicates.add(builder.equal(root.get(FIELD_USER).get(FIELD_LOGIN), searchCriteria.getUserLogin()));
             }
-            if (searchCriteria.getContextDescription() != null) {
-                predicates.add(builder.equal(root.get("contextDescription"), searchCriteria.getContextDescription()));
+            if (searchCriteria.getRoleId() != null) {
+                predicates.add(builder.equal(root.get(FIELD_ROLE).get(FIELD_ID), searchCriteria.getRoleId()));
             }
-            if (searchCriteria.getGeographicArea() != null) {
-                predicates.add(builder.equal(root.get("geographicArea"), searchCriteria.getGeographicArea()));
+            if (searchCriteria.getRoleName() != null) {
+                predicates.add(builder.equal(root.get(FIELD_ROLE).get(FIELD_NAME), searchCriteria.getRoleName()));
+            }
+            if (searchCriteria.getContextDescriptionId() != null) {
+                predicates.add(builder.equal(root.get(FIELD_CONTEXT_DESCRIPTION).get(FIELD_ID), searchCriteria.getContextDescriptionId()));
+            }
+            if (StringUtils.isNotEmpty(searchCriteria.getContextDescriptionName())) {
+                predicates.add(builder.equal(root.get(FIELD_CONTEXT_DESCRIPTION).get(FIELD_NAME), searchCriteria.getContextDescriptionName()));
+            }
+            if (searchCriteria.getGeographicAreaId() != null) {
+                predicates.add(builder.equal(root.get(FIELD_GEOGRAPHIC_AREA).get(FIELD_ID), searchCriteria.getGeographicAreaId()));
             }
             if (CollectionUtils.isNotEmpty(predicates)) {
-                criteriaQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
+                criteriaQuery.where(builder.and(predicates.toArray(Predicate[]::new)));
             }
         }
     }

@@ -1205,7 +1205,7 @@
 				],
 				"summary": "Récupération de la liste des rôles.",
 				"description": "Récupération de la liste des rôles disponibles.",
-				"operationId": "getRoles",
+				"operationId": "searchRoles",
 				"produces": [
 					"application/json"
 				],
@@ -1685,7 +1685,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "user",
+						"name": "userLogin",
 						"description": "Filtre de recherche sur le user",
 						"required": false,
 						"type": "string",
@@ -1693,7 +1693,7 @@
 					},
 					{
 						"in": "query",
-						"name": "role",
+						"name": "roleName",
 						"description": "Filtre de recherche sur le role",
 						"required": false,
 						"type": "string",
@@ -1701,7 +1701,7 @@
 					},
 					{
 						"in": "query",
-						"name": "geographicArea",
+						"name": "geographicAreaId",
 						"description": "Filtre de recherche sur la zone géographique",
 						"required": false,
 						"type": "integer",
@@ -1709,7 +1709,7 @@
 					},
 					{
 						"in": "query",
-						"name": "contextDescription",
+						"name": "contextDescriptionName",
 						"description": "Filtre de recherche sur le contexte",
 						"required": false,
 						"type": "string",

@@ -127,9 +127,8 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 		}
 		ContextDescriptionEntity toDelete = contextDescriptionDao.findByName(name);
 
-		UserRoleContextSearchCriteria userRoleContextSearchCriteria = new UserRoleContextSearchCriteria();
-		userRoleContextSearchCriteria.setContextDescription(toDelete);
-		if (userRoleContextCustomDao.searchUserRoleContext(userRoleContextSearchCriteria,
+		UserRoleContextSearchCriteria userRoleContextSearchCriteria = UserRoleContextSearchCriteria.builder().contextDescriptionId(toDelete.getId()).build();
+		if (userRoleContextCustomDao.searchUserRoleContexts(userRoleContextSearchCriteria,
 				utilPageable.getPageable(0, 1, "")).getTotalElements() != 0) {
 			throw new InvalidDataException(ErrorMessageConstants.USED_OBJECT);
 		}

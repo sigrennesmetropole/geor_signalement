@@ -5,6 +5,7 @@ package org.georchestra.signalement.service.sm;
 
 import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.dto.User;
+import org.georchestra.signalement.core.dto.UserSearchCriteria;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,12 +69,16 @@ public interface UserService {
 	/**
 	 * Retourne la liste des utilisateurs avec un filtre possile sur le login et le mail
 	 *
-	 * @param mail     Filtre sur le mail
-	 * @param login    Filtre sur le login
+	 * @param searchCriteria
 	 * @param pageable
 	 * @return la liste des User respectant les filtres
 	 */
-	Page<User> searchUsers(String mail, String login, Pageable pageable);
+	Page<User> searchUsers(UserSearchCriteria searchCriteria, Pageable pageable);
 
+	/**
+	 * Supprime un utilisateur 
+	 * @param login
+	 * @throws InvalidDataException
+	 */
 	void deleteUser(String login) throws InvalidDataException;
 }

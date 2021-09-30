@@ -40,10 +40,10 @@ export class OperatorService {
       sortExpression ?: string):
       Observable<UserRoleContextPageResult> {
     const searchParameters = {
-      user: user,
-      role: role,
-      geographicArea: geographicArea,
-      contextDescription: contextDescription,
+      userLogin: user,
+      roleName: role,
+      geographicAreaId: geographicArea,
+      contextDescriptionName: contextDescription,
       offset: offset,
       limit: limit,
       sortExpression: sortExpression,

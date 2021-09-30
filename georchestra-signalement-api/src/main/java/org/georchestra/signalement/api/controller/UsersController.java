@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import org.georchestra.signalement.api.UsersApi;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.dto.UserPageResult;
+import org.georchestra.signalement.core.dto.UserSearchCriteria;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.mapper.acl.UserMapper;
 import org.georchestra.signalement.service.sm.UserService;
@@ -51,7 +52,8 @@ public class UsersController implements UsersApi {
     public ResponseEntity<UserPageResult> searchUsers(String email, String login, Integer offset, Integer limit, String sortExpression) throws Exception {
 
         Pageable pageable = utilPageable.getPageable(offset, limit, sortExpression);
-        Page<User> pageResult = userService.searchUsers(email, login, pageable);
+        UserSearchCriteria searchCriteria = UserSearchCriteria.builder().email(email).login(login).build(); 
+        Page<User> pageResult = userService.searchUsers(searchCriteria, pageable);
 
         UserPageResult resultObject = new UserPageResult();
         resultObject.setResults(pageResult.getContent());

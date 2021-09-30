@@ -32,7 +32,7 @@ public class RoleServiceImpl implements RoleService {
     UserRoleContextCustomDao userRoleContextCustomDao;
 
     @Override
-    public Page<Role> getPageRole(Pageable pageable) {
+    public Page<Role> searchRoles(Pageable pageable) {
         return roleDao.findAll(pageable).map(roleEntity -> roleMapper.entityToDto(roleEntity));
     }
 
@@ -55,9 +55,8 @@ public class RoleServiceImpl implements RoleService {
         }
 
         Pageable pageable = utilPageable.getPageable(0, 1, null);
-        UserRoleContextSearchCriteria searchCriteria = new UserRoleContextSearchCriteria();
-        searchCriteria.setRole(role);
-        if (userRoleContextCustomDao.searchUserRoleContext(searchCriteria, pageable).getTotalElements() != 0) {
+        UserRoleContextSearchCriteria searchCriteria = UserRoleContextSearchCriteria.builder().roleId(role.getId()).build();
+        if (userRoleContextCustomDao.searchUserRoleContexts(searchCriteria, pageable).getTotalElements() != 0) {
             throw new InvalidDataException(ErrorMessageConstants.USED_OBJECT);
         }
         roleDao.delete(role);

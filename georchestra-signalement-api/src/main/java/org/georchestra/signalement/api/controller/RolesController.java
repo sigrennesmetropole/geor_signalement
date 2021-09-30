@@ -39,9 +39,9 @@ public class RolesController implements RolesApi {
     }
 
     @Override
-    public ResponseEntity<RolePageResult> getRoles(Integer offset, Integer limit, String sortExpression) throws Exception {
+    public ResponseEntity<RolePageResult> searchRoles(Integer offset, Integer limit, String sortExpression) throws Exception {
         Pageable pageable = utilPageable.getPageable(offset, limit, sortExpression);
-        Page<Role> pageResult = roleService.getPageRole(pageable);
+        Page<Role> pageResult = roleService.searchRoles(pageable);
         RolePageResult resultObject = new RolePageResult();
         resultObject.setResults(pageResult.getContent());
         resultObject.setTotalItems(pageResult.getTotalElements());

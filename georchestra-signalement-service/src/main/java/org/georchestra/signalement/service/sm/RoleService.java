@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface RoleService {
 
-    Page<Role> getPageRole(Pageable pageable);
+    Page<Role> searchRoles(Pageable pageable);
 
     Role getRole(String name);
 

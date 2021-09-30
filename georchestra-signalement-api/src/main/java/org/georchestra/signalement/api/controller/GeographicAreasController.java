@@ -36,7 +36,7 @@ public class GeographicAreasController implements GeographicareasApi {
     public ResponseEntity<GeographicAreaPageResult> searchGeographicAreas(String name, Integer offset, Integer limit, String sortExpression) throws Exception {
 
         Pageable pageable = utilPageable.getPageable(offset, limit, sortExpression);
-        Page<GeographicArea> pageResult = geographicAreaService.searchGeographicAreas(pageable, name);
+        Page<GeographicArea> pageResult = geographicAreaService.searchGeographicAreas(name, pageable);
         GeographicAreaPageResult resultObject = new GeographicAreaPageResult();
         resultObject.setResults(pageResult.getContent());
         resultObject.setTotalItems(pageResult.getTotalElements());

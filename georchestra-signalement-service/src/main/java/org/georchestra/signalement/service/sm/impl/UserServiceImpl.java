@@ -3,14 +3,20 @@
  */
 package org.georchestra.signalement.service.sm.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
+import org.georchestra.signalement.core.dao.acl.UserCustomDao;
 import org.georchestra.signalement.core.dao.acl.UserDao;
 import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
 import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.dto.UserRoleContextSearchCriteria;
+import org.georchestra.signalement.core.dto.UserSearchCriteria;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.acl.UserEntity;
 import org.georchestra.signalement.core.entity.acl.UserRoleContextEntity;
@@ -26,16 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author FNI18300
@@ -50,6 +50,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDao userDao;
+
+	@Autowired
+	private UserCustomDao userCustomDao;
 
 	@Autowired
 	private ContextDescriptionDao contextDescriptionDao;
@@ -114,9 +117,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(readOnly = false, rollbackFor = InvalidDataException.class)
 	public User createUser(User user) throws InvalidDataException {
-		if (user == null ||
-				StringUtils.isEmpty(user.getLogin()) ||
-				StringUtils.isEmpty(user.getEmail())) {
+		if (user == null || StringUtils.isEmpty(user.getLogin()) || StringUtils.isEmpty(user.getEmail())) {
 			throw new InvalidDataException("Invalid user : " + user);
 		}
 		EmailValidator emailValidator = new EmailValidator();
@@ -146,22 +147,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<User> searchUsers(String email, String login, Pageable pageable) {
-		LOGGER.info("Recherche des utilisateurs avec e-mail : {} et login : {}", email, login);
-		User user = new User();
-		user.setLogin(login);
-		user.setEmail(email);
-		UserEntity userEntity = userMapper.dtoToEntity(user);
+	public Page<User> searchUsers(UserSearchCriteria searchCriteria, Pageable pageable) {
+		LOGGER.info("Recherche des utilisateurs : {}", searchCriteria);
 
-		ExampleMatcher matcher = ExampleMatcher.matching()
-				.withIgnoreCase(true)
-				.withIgnoreNullValues()
-				.withMatcher("login", ExampleMatcher.GenericPropertyMatchers.contains())
-				.withMatcher("email", ExampleMatcher.GenericPropertyMatchers.contains());
-
-		Example<UserEntity> example = Example.of(userEntity, matcher);
-		return userDao.findAll(example, pageable).map(userMapper::entityToDto);
-
+		return userMapper.entitiesToDto(userCustomDao.searchUsers(searchCriteria, pageable), pageable);
 	}
 
 	@Override
@@ -172,9 +161,8 @@ public class UserServiceImpl implements UserService {
 		}
 
 		Pageable pageable = utilPageable.getPageable(0, 1, null);
-		UserRoleContextSearchCriteria searchCriteria = new UserRoleContextSearchCriteria();
-		searchCriteria.setUser(userEntity);
-		if (userRoleContextCustomDao.searchUserRoleContext(searchCriteria, pageable).getTotalElements() != 0) {
+		UserRoleContextSearchCriteria searchCriteria = UserRoleContextSearchCriteria.builder().userId(userEntity.getId()).build();
+		if (userRoleContextCustomDao.searchUserRoleContexts(searchCriteria, pageable).getTotalElements() != 0) {
 			throw new InvalidDataException(ErrorMessageConstants.USED_OBJECT);
 		}
 
