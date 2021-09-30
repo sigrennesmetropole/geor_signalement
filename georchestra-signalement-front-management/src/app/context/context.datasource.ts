@@ -182,14 +182,14 @@ export class ContextDataSource extends DataSource<ContextItem> {
             (result)=>{
               if (result) {
                 this.toasterService
-                    .sendSuccessMessage('context.update.success');
+                    .sendSuccessMessage('context.edit.success');
               } else {
-                this.toasterService.sendErrorMessage('context.update.error');
+                this.toasterService.sendErrorMessage('context.edit.error');
               }
             },
             (response)=>{
               this.toasterService
-                  .sendErrorMessage('context.update.error',
+                  .sendErrorMessage('context.edit.error',
                       response.error.code);
             },
             ()=>{

@@ -97,9 +97,14 @@
         "unknownError": "Il y a une erreur dans le formulaire"
       }
     },
-    "update": {
+    "edit": {
+      "title": "Édition d'un contexte",
       "error": "La mise à jour du contexte a échoué",
-      "success": "Le contexte a été mis à jour avec succès"
+      "success": "Le contexte a été mis à jour avec succès",
+      "formErrors": {
+        "unknownError": "Une erreur est survenue dans le formulaire",
+        "noValue": "Vous devez fournir une valeur"
+      }
     },
     "contextTypes":{
       "thema" : "Thème",
