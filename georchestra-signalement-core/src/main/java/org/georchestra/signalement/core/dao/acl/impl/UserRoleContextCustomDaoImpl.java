@@ -75,24 +75,9 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
                             CriteriaQuery<?> criteriaQuery, Root<UserRoleContextEntity> root) {
         if (searchCriteria != null) {
             List<Predicate> predicates = new ArrayList<>();
-            if (searchCriteria.getUserId() != null) {
-                predicates.add(builder.equal(root.get(FIELD_USER).get(FIELD_ID), searchCriteria.getUserId()));
-            }
-            if (StringUtils.isNotEmpty(searchCriteria.getUserLogin())) {
-                predicates.add(builder.equal(root.get(FIELD_USER).get(FIELD_LOGIN), searchCriteria.getUserLogin()));
-            }
-            if (searchCriteria.getRoleId() != null) {
-                predicates.add(builder.equal(root.get(FIELD_ROLE).get(FIELD_ID), searchCriteria.getRoleId()));
-            }
-            if (searchCriteria.getRoleName() != null) {
-                predicates.add(builder.equal(root.get(FIELD_ROLE).get(FIELD_NAME), searchCriteria.getRoleName()));
-            }
-            if (searchCriteria.getContextDescriptionId() != null) {
-                predicates.add(builder.equal(root.get(FIELD_CONTEXT_DESCRIPTION).get(FIELD_ID), searchCriteria.getContextDescriptionId()));
-            }
-            if (StringUtils.isNotEmpty(searchCriteria.getContextDescriptionName())) {
-                predicates.add(builder.equal(root.get(FIELD_CONTEXT_DESCRIPTION).get(FIELD_NAME), searchCriteria.getContextDescriptionName()));
-            }
+            buildQueryUser(searchCriteria, builder, root, predicates);
+            buildQueryRole(searchCriteria, builder, root, predicates);
+            buildQueryContxtDescription(searchCriteria, builder, root, predicates);
             if (searchCriteria.getGeographicAreaId() != null) {
                 predicates.add(builder.equal(root.get(FIELD_GEOGRAPHIC_AREA).get(FIELD_ID), searchCriteria.getGeographicAreaId()));
             }
@@ -101,4 +86,34 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
             }
         }
     }
+
+	private void buildQueryContxtDescription(UserRoleContextSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<UserRoleContextEntity> root, List<Predicate> predicates) {
+		if (searchCriteria.getContextDescriptionId() != null) {
+		    predicates.add(builder.equal(root.get(FIELD_CONTEXT_DESCRIPTION).get(FIELD_ID), searchCriteria.getContextDescriptionId()));
+		}
+		if (StringUtils.isNotEmpty(searchCriteria.getContextDescriptionName())) {
+		    predicates.add(builder.equal(root.get(FIELD_CONTEXT_DESCRIPTION).get(FIELD_NAME), searchCriteria.getContextDescriptionName()));
+		}
+	}
+
+	private void buildQueryRole(UserRoleContextSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<UserRoleContextEntity> root, List<Predicate> predicates) {
+		if (searchCriteria.getRoleId() != null) {
+		    predicates.add(builder.equal(root.get(FIELD_ROLE).get(FIELD_ID), searchCriteria.getRoleId()));
+		}
+		if (searchCriteria.getRoleName() != null) {
+		    predicates.add(builder.equal(root.get(FIELD_ROLE).get(FIELD_NAME), searchCriteria.getRoleName()));
+		}
+	}
+
+	private void buildQueryUser(UserRoleContextSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<UserRoleContextEntity> root, List<Predicate> predicates) {
+		if (searchCriteria.getUserId() != null) {
+		    predicates.add(builder.equal(root.get(FIELD_USER).get(FIELD_ID), searchCriteria.getUserId()));
+		}
+		if (StringUtils.isNotEmpty(searchCriteria.getUserLogin())) {
+		    predicates.add(builder.equal(root.get(FIELD_USER).get(FIELD_LOGIN), searchCriteria.getUserLogin()));
+		}
+	}
 }
