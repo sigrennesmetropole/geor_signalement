@@ -54,6 +54,7 @@ public class UserCustomDaoImpl extends AbstractCustomDaoImpl implements UserCust
 
 		buildQuery(searchCriteria, builder, countQuery, countRoot);
 
+		countQuery.select(builder.count(countRoot));
 		Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
 
 		// Si aucun résultat
@@ -66,7 +67,8 @@ public class UserCustomDaoImpl extends AbstractCustomDaoImpl implements UserCust
 
 		buildQuery(searchCriteria, builder, searchQuery, searchRoot);
 		searchQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
-
+		searchQuery.select(searchRoot);
+		
 		TypedQuery<UserEntity> typedQuery = entityManager.createQuery(searchQuery);
 		List<UserEntity> tiersEntities = typedQuery.setFirstResult((int) pageable.getOffset())
 				.setMaxResults(pageable.getPageSize()).getResultList();
@@ -86,7 +88,7 @@ public class UserCustomDaoImpl extends AbstractCustomDaoImpl implements UserCust
 					predicates.add(builder.equal(root.get(FIELD_LOGIN), searchCriteria.getLogin()));
 				}
 			}
-			if (searchCriteria.getEmail() != null) {
+			if (StringUtils.isNotEmpty(searchCriteria.getEmail())) {
 				if (isWildCarded(searchCriteria.getEmail())) {
 					predicates.add(
 							builder.like(builder.lower(root.get(FIELD_EMAIL)), wildcard(searchCriteria.getEmail())));
