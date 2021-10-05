@@ -102,7 +102,7 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
 		if (searchCriteria.getRoleId() != null) {
 		    predicates.add(builder.equal(root.get(FIELD_ROLE).get(FIELD_ID), searchCriteria.getRoleId()));
 		}
-		if (searchCriteria.getRoleName() != null) {
+		if (StringUtils.isNotEmpty(searchCriteria.getRoleName())) {
 		    predicates.add(builder.equal(root.get(FIELD_ROLE).get(FIELD_NAME), searchCriteria.getRoleName()));
 		}
 	}
