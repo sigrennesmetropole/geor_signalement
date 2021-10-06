@@ -1,0 +1,24 @@
+<h2 class="text-center add-form-title">{{'role.add.title' | translate}}</h2>
+
+<form class="my-form" (ngSubmit)="handleSubmitClick()" [formGroup]="roleAddForm">
+<div class="add-form-group">
+    <div class="add-form-input">
+        <mat-form-field class="text-center">
+          <input matInput placeholder="{{'role.table.name' | translate}}" name="name" [formControl]="nameControl" required>
+          <mat-error *ngIf="nameControl.invalid">{{getNameError() | async}}</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="add-form-input">
+        <mat-form-field class="text-center">
+            <input matInput placeholder="{{'role.table.label' | translate}}" name="label" [formControl]="labelControl" required>
+            <mat-error *ngIf="labelControl.invalid">{{getLabelError() | async}}</mat-error>
+        </mat-form-field>
+    </div>
+    
+</div>
+
+<div mat-dialog-action align="center" class="add-form-group">
+    <button mat-flat-button color="primary" type="submit" [disabled]="!validData()">{{'common.buttons.submit' | translate}}</button>
+</div>
+</form>
+

@@ -1,28 +1,27 @@
 /**
- * 
+ *
  */
 package org.georchestra.signalement.service.helper.authentification;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author FNI18300
  *
  */
-@Component
+@Component(value = "authentificationHelper")
 public class AuthentificationHelper {
 
 	@Value("${georchestra.role.administrator}")
 	private String georchestraAdministrator;
-	
+
 	/**
-	 * 
 	 * @return l'username de la personne authentifiée
 	 */
 	public String getUsername() {
@@ -35,7 +34,7 @@ public class AuthentificationHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return vrai si l'utilisateur connecté est administrateur
 	 */
 	public boolean isAdmin() {
@@ -56,7 +55,7 @@ public class AuthentificationHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param roleName
 	 * @return
 	 */
