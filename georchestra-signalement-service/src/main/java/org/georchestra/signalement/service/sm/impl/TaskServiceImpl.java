@@ -3,16 +3,6 @@
  */
 package org.georchestra.signalement.service.sm.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RuntimeService;
@@ -28,16 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
-import org.georchestra.signalement.core.dto.Attachment;
-import org.georchestra.signalement.core.dto.AttachmentConfiguration;
-import org.georchestra.signalement.core.dto.Feature;
-import org.georchestra.signalement.core.dto.FeatureCollection;
-import org.georchestra.signalement.core.dto.FeatureTypeDescription;
-import org.georchestra.signalement.core.dto.Form;
-import org.georchestra.signalement.core.dto.GeographicType;
-import org.georchestra.signalement.core.dto.ReportingDescription;
-import org.georchestra.signalement.core.dto.Status;
-import org.georchestra.signalement.core.dto.Task;
+import org.georchestra.signalement.core.dto.*;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.dto.TaskSearchCriteria;
@@ -59,6 +40,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import java.util.*;
 
 /**
  * @author FNI18300
@@ -205,7 +189,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 				org.activiti.engine.TaskService taskService = processEngine.getTaskService();
 				taskService.claim(taskId, authentificationHelper.getUsername());
-
+				
 				// rechargement de la tâche après claim
 				originalTask = bpmnHelper.queryTaskById(taskId);
 				result = reportingHelper.createTaskFromWorkflow(originalTask,

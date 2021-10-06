@@ -1,0 +1,76 @@
+<div class="mat-elevation-z8">
+  <div class="top-bar">
+    <div class="top-bar-filters">
+      <form class="my-form">
+        <mat-form-field class="text-center">
+          <label>{{'user.table.login' | translate}} : </label>
+          <input matInput class="filter-input" name="loginFilter" (input)="updateFilters()" [(ngModel)]="loginFilter">
+        </mat-form-field>
+        <mat-form-field class="text-center">
+          <label for="emailFilter">{{'user.table.email' | translate}} :</label>
+          <input matInput class="filter-input" name="emailFilter" (input)="updateFilters()" [(ngModel)]="emailFilter">
+        </mat-form-field>
+      </form>
+    </div>
+    <div class="top-bar-buttons">
+      <button class="top-bar-button" mat-mini-fab color="primary" (click)='handleRefreshDataClick()'>
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button class="top-bar-button" mat-mini-fab color="primary" (click)='handleOpenAddDialogClick()'>
+        <mat-icon>person_add</mat-icon>
+      </button>
+    </div>
+  </div>
+
+
+  <table mat-table class="full-width-table" matSort aria-label="Elements">
+
+    <!-- Login Column -->
+    <ng-container matColumnDef="login">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"user.table.login" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.login}}</td>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>{{"user.table.email" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.email}}</td>
+    </ng-container>
+
+    <!-- Firstname Column -->
+    <ng-container matColumnDef="firstname">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"user.table.firstname" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.firstname}}</td>
+    </ng-container>
+
+    <!-- Lastname Column -->
+    <ng-container matColumnDef="lastname">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"user.table.lastname" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.lastname}}</td>
+    </ng-container>
+
+    <!-- Organization Column -->
+    <ng-container matColumnDef="organization">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"user.table.organization" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.organization}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>{{"user.table.actions" | translate}}</th>
+      <td mat-cell *matCellDef="let row">
+        <button class="action-buttons" mat-mini-fab color="warn" (click)='handleOpenSupressDialogClick(row)'>
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator #paginator
+                 [length]="dataSource?.totalItems"
+                 [pageIndex]="0"
+                 [pageSize]="10"
+                 [pageSizeOptions]="[10, 25, 50, 100]">
+  </mat-paginator>
+</div>

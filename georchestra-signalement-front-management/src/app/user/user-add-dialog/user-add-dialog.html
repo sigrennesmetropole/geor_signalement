@@ -1,0 +1,27 @@
+<h2 class="text-center add-form-title">{{'user.add.title' | translate}}</h2>
+
+<form class="my-form" (ngSubmit)="handleSubmitClick()" [formGroup]="userAddForm">
+  <div class="add-form-group">
+    <div class="add-form-input">
+      <mat-form-field class="text-center">
+        <input matInput placeholder="{{'user.table.login' | translate}}" name="login" [formControl]="loginControl"
+               required>
+        <mat-error *ngIf="loginControl.invalid">{{getLoginError() | async}}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="add-form-input">
+      <mat-form-field class="text-center">
+        <input type="email" matInput placeholder="{{'user.table.email' | translate}}" name="email"
+               [formControl]="emailControl" required>
+        <mat-error *ngIf="emailControl.invalid">{{getEmailError() | async}}</mat-error>
+      </mat-form-field>
+    </div>
+
+  </div>
+
+  <div mat-dialog-action align="center" class="add-form-group">
+    <button mat-flat-button color="primary" type="submit" [disabled]="!validData()">{{'common.buttons.submit' |
+      translate}}
+    </button>
+  </div>
+</form>

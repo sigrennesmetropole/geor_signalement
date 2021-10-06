@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ProcessDefinition} from '../api/models';
-import {WorkflowItem} from '../workflow/workflow-datasource';
+import {WorkflowItem} from '../workflow/workflow.datasource';
 
 @Injectable()
 /**

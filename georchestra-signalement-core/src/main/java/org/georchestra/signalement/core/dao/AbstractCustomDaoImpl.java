@@ -93,4 +93,12 @@ public abstract class AbstractCustomDaoImpl {
 	 */
 	protected abstract Map<String, Path<?>> addJoinSortCriteria(CriteriaBuilder builder, CriteriaQuery<?> criteriaQuery,
 			Root<?> root, SortCriteria sortCriteria);
+	
+	protected boolean isWildCarded(String input) {
+		return input != null && input.contains("*");
+	}
+	
+	protected String wildcard(String input) {
+		return input.trim().replace("*", "%").toLowerCase();
+	}
 }

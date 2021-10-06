@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {WorkflowDataSource, WorkflowItem} from '../workflow-datasource';
+import {WorkflowDataSource, WorkflowItem} from '../workflow.datasource';
 
 export interface SuppressionData{
   dataSource: WorkflowDataSource,
@@ -13,7 +13,7 @@ export interface SuppressionData{
 
 
  @Component({
-   selector: 'dialog-workflow-delete-dialog',
+   selector: 'workflow-delete-dialog',
    templateUrl: 'workflow-delete-dialog.html',
    styleUrls: ['workflow-delete-dialog.scss'],
  })
@@ -21,15 +21,15 @@ export interface SuppressionData{
 /**
   * The dialog window to delete a workflow
   */
-export class DialogWorkflowDeleteDialog {
+export class WorkflowDeleteDialog {
   private operation:boolean=false;
   /**
    * The constructor of the delete window
-   * @param {MatDialogRef<DialogWorkflowDeleteDialog>}dialogRef
+   * @param {MatDialogRef<WorkflowDeleteDialog>}dialogRef
    * @param {SuppressionData} params
    */
   constructor(
-    private dialogRef: MatDialogRef<DialogWorkflowDeleteDialog>,
+    private dialogRef: MatDialogRef<WorkflowDeleteDialog>,
     @Inject(MAT_DIALOG_DATA) private params: SuppressionData) {}
 
   /**

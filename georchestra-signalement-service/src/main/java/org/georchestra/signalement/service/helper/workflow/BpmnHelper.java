@@ -47,6 +47,9 @@ public class BpmnHelper {
 	@Autowired
 	private AuthentificationHelper authentificationHelper;
 
+	@Autowired
+	private AssignmentHelper assignmentHelper;
+	
 	/**
 	 * Retourne la tâche activiti par son id
 	 * 
@@ -229,7 +232,24 @@ public class BpmnHelper {
 		}
 		return result;
 	}
-
+	
+	/**
+	 * Ajoute un candidat sur une tâche
+	 * @param taskId
+	 * @param userId
+	 */
+	public void addTaskCandidateUser(String taskId, String userLogin) {
+		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+		taskService.addCandidateUser(taskId, userLogin);
+	}
+	
+	/**
+	 * Supprime un candidate d'une tâche
+	 */
+	public void removeTaskCandidateUser(String taskId, String userLogin) {
+		org.activiti.engine.TaskService taskService = processEngine.getTaskService();
+		taskService.deleteCandidateUser(taskId, userLogin);
+	}
 	/**
 	 * Retourne le séquence flow correspondant à une action
 	 * 

@@ -1,0 +1,35 @@
+.full-width-table{
+    width:100%;
+}
+
+.top-bar{
+    margin-left: 24px;
+}
+
+.top-bar-buttons{
+    float:inline-end;
+    margin: 1.5em 0;
+}
+
+.top-bar-button{
+    margin-right: 0.6em;
+}
+
+.top-bar-filters{
+    float: inline-start;
+}
+
+.mat-form-field{
+    padding-right: 1em;
+}
+
+form{
+    display: inline-flex;
+}
+.filter-input{
+    margin-left: 0.2em;
+}
+
+.action-buttons{
+    margin: 0 0.3em;
+}

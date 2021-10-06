@@ -20,7 +20,6 @@ import org.georchestra.signalement.core.dto.EMailData;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
-import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.georchestra.signalement.service.exception.DocumentGenerationException;
 import org.georchestra.signalement.service.exception.DocumentModelNotFoundException;
 import org.georchestra.signalement.service.exception.EMailException;
@@ -46,6 +45,10 @@ public class WorkflowContext {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowContext.class);
 
+	public static final String COMPUTE_POTENTIAL_OWNERS = "computePotentialOwners";
+
+	public static final String COMPUTE_HUMAN_PERFORMER = "computeHumanPerformer";
+
 	@Autowired
 	private ReportingDao reportingDao;
 
@@ -61,9 +64,6 @@ public class WorkflowContext {
 	@Autowired
 	private AssignmentHelper assignmentHelper;
 
-	@Autowired
-	private GeographicAreaService geographicAreaService;
-
 	/**
 	 * Méthode utilitaire de log
 	 * 
@@ -74,14 +74,16 @@ public class WorkflowContext {
 	}
 
 	/**
-	 * Méthode de mise à jour de l'état de l'asset associé, avec prise en compte du status fonctionnel
+	 * Méthode de mise à jour de l'état de l'asset associé, avec prise en compte du
+	 * status fonctionnel
 	 *
 	 * @param scriptContext   le context du script
 	 * @param executionEntity le context d'execution
 	 * @param statusValue     l'état cible
 	 */
 	@Transactional(readOnly = false)
-	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue, String functionalStatusValue) {
+	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue,
+			String functionalStatusValue) {
 		String processInstanceBusinessKey = executionEntity.getProcessInstanceBusinessKey();
 		LOGGER.debug("WkC - Update {} to status {}", processInstanceBusinessKey, statusValue);
 		Status status = Status.valueOf(statusValue);
@@ -113,7 +115,7 @@ public class WorkflowContext {
 	public void updateStatus(ScriptContext scriptContext, ExecutionEntity executionEntity, String statusValue) {
 		updateStatus(scriptContext, executionEntity, statusValue, statusValue);
 	}
-	
+
 	/**
 	 * Envoi de courriel
 	 * 
@@ -121,7 +123,8 @@ public class WorkflowContext {
 	 * @param executionEntity le context d'execution
 	 * @param eMailData
 	 */
-	public void sendEMail(ScriptContext scriptContext, ExecutionEntity executionEntity, EMailData eMailData, List<String> emails) {
+	public void sendEMail(ScriptContext scriptContext, ExecutionEntity executionEntity, EMailData eMailData,
+			List<String> emails) {
 		LOGGER.debug("Send email to dedicated emails {}...", emails);
 		try {
 			AbstractReportingEntity reportingEntity = lookupReportingEntity(executionEntity);
@@ -164,7 +167,8 @@ public class WorkflowContext {
 			String roleName, String subject, String body) {
 		LOGGER.debug("computePotentialOwners...");
 		EMailData eMailData = null;
-		// On Calcul les données de EmailData que si un subject et un body ont été fournis
+		// On Calcul les données de EmailData que si un subject et un body ont été
+		// fournis
 		if (StringUtils.isNotEmpty(subject) && StringUtils.isNotEmpty(body)) {
 			eMailData = new EMailData(subject, body);
 		}
@@ -247,7 +251,8 @@ public class WorkflowContext {
 	}
 
 	private void sendEMail(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
-						   EMailData eMailData, List<String> recipients) throws EMailException, IOException, DocumentModelNotFoundException, DocumentGenerationException {
+			EMailData eMailData, List<String> recipients)
+			throws EMailException, IOException, DocumentModelNotFoundException, DocumentGenerationException {
 		sendEMail(executionEntity, reportingEntity, eMailData, recipients, null);
 	}
 
@@ -281,14 +286,16 @@ public class WorkflowContext {
 	}
 
 	private DocumentContent generateEMailBody(ExecutionEntity executionEntity, AbstractReportingEntity reportingEntity,
-			EMailData eMailData, String roleName) throws IOException, DocumentModelNotFoundException, DocumentGenerationException {
+			EMailData eMailData, String roleName)
+			throws IOException, DocumentModelNotFoundException, DocumentGenerationException {
 		EmailDataModel emailDataModel = null;
 		if (StringUtils.isNotEmpty(eMailData.getBody())) {
-			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity, roleName,
-					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + reportingEntity.getUuid().toString()
-							+ ":" + eMailData.getBody());
+			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity,
+					roleName, GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX
+							+ reportingEntity.getUuid().toString() + ":" + eMailData.getBody());
 		} else {
-			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity, roleName, eMailData.getFileBody());
+			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity,
+					roleName, eMailData.getFileBody());
 		}
 
 		return generationConnector.generateDocument(emailDataModel);
