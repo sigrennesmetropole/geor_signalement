@@ -1,0 +1,38 @@
+<h2 class="text-center edit-form-title">{{'context.edit.title' | translate}}</h2>
+
+<form class="my-form" [formGroup]="contextEditForm">
+<div class="edit-form-group">
+  <div class="edit-form-input">
+    <mat-form-field class="text-center">
+        <input matInput placeholder="{{'context.table.label' | translate}}" name="label" [formControl]="labelControl" required>
+        <mat-error *ngIf="labelControl.invalid">{{getLabelError() | async}}</mat-error>
+    </mat-form-field>
+  </div>
+    <div class="edit-form-input">
+      <mat-form-field class="text-center">
+          <mat-select placeholder="{{'context.table.processDefinition' | translate}}" name="processDefinition" [formControl]="processDefinitionControl" required>
+            <mat-option *ngFor="let workflowKey of getWorkflowKeys()" [value]="workflowKey">
+              {{getWorkflowName(workflowKey)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="processDefinitionControl.invalid">{{getProcessDefinitionError() | async}}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="edit-form-input">
+      <mat-form-field class="text-center">
+          <mat-select placeholder="{{'context.table.version' | translate}}" name="version" [formControl]="versionControl" required>
+            <mat-option *ngFor="let version of getVersionsOfWorkflow()" [value]="version">
+              {{version}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="versionControl.invalid">{{getVersionError() | async}}</mat-error>
+      </mat-form-field>
+    </div>
+    
+</div>
+
+<div mat-dialog-action align="center" class="edit-form-group">
+    <button class="action-button" mat-flat-button color="primary" (click)='handleSubmitClick()' [disabled]="!validData()">{{'common.buttons.submit' | translate}}</button>
+    <button class="action-button" mat-flat-button color="warn" (click)='handleCancelClick()'>{{'common.buttons.cancel' | translate}}</button>
+</div>
+</form>

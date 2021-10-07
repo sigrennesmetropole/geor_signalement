@@ -4,12 +4,14 @@
 package org.georchestra.signalement.core.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author FNI18300
  *
  */
 @Data
+@NoArgsConstructor
 public class ProcessFormDefinitionSearchCriteria {
 
 	private String processDefinitionId;
@@ -32,6 +34,4 @@ public class ProcessFormDefinitionSearchCriteria {
 		this.acceptFlexUserTaskId = acceptFlexUserTaskId;
 	}
 
-	public ProcessFormDefinitionSearchCriteria() {
-	}
 }
