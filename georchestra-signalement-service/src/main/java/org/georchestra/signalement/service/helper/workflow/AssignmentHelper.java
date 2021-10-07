@@ -47,7 +47,9 @@ public class AssignmentHelper {
 		// Recuperer les logins des users
 		if (CollectionUtils.isNotEmpty(userEntities)) {
 			for (UserEntity userEntity : userEntities) {
-				assignees.add(userEntity.getLogin());
+				if (!assignees.contains(userEntity.getLogin())) {
+					assignees.add(userEntity.getLogin());
+				}
 			}
 		}
 		return assignees;
@@ -71,7 +73,7 @@ public class AssignmentHelper {
 		if (CollectionUtils.isNotEmpty(userEntities)) {
 
 			if (userEntities.size() > 1) {
-				LOGGER.warn("Find more than user to compute human perfomer from " + reportingEntity);
+				LOGGER.warn("Find more than user to compute human perfomer from  {}", reportingEntity);
 			}
 
 			assignee = userEntities.get(0).getLogin();
@@ -101,7 +103,8 @@ public class AssignmentHelper {
 		List<GeographicArea> geographicAreas = geographicAreaService.searchGeographicAreaIntersections(
 				reportingEntity.getGeometry(), reportingEntity.getGeographicType(), idContextDescription, idRole);
 
-		// On ne s'interessera pour le moment que à la commune qui comprend la plus grande part du signalement
+		// On ne s'interessera pour le moment que à la commune qui comprend la plus
+		// grande part du signalement
 		// La commune d'indice 0 de la liste
 		Long idGographicArea = null;
 		if (!geographicAreas.isEmpty()) {
@@ -112,7 +115,8 @@ public class AssignmentHelper {
 		// user_role_contexte
 		// à partir de idGographicArea, idContextDescription et idRole
 
-		return idGographicArea != null ? userDao.findUsers(idRole, idContextDescription, idGographicArea) : new ArrayList<>();
+		return idGographicArea != null ? userDao.findUsers(idRole, idContextDescription, idGographicArea)
+				: new ArrayList<>();
 	}
 
 	private Long getRoleIdByRoleName(String roleName) {
@@ -135,7 +139,6 @@ public class AssignmentHelper {
 
 		// récuper l'id du role name
 		Long idRole = getRoleIdByRoleName(roleName);
-
 
 		// récuper l'id du context description
 		Long idContextDescription = reportingEntity.getContextDescription().getId();

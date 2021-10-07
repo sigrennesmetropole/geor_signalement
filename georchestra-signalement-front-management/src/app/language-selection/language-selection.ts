@@ -7,21 +7,21 @@ import {AppComponent} from '../app.component';
  */
 
  @Component({
-   selector: 'dialog-language-selector-dialog',
+   selector: 'language-selector-dialog',
    templateUrl: 'language-selection.html',
    styleUrls: ['language-selection.scss'],
  })
  /**
   * Dialog window to select language
   */
-export class DialogLanguageSelectionDialog {
+export class LanguageSelectionDialog {
   /**
    * Constructor of the language selection window
-   * @param {MatDialogRef<DialogLanguageSelectionDialog>} dialogRef
+   * @param {MatDialogRef<LanguageSelectionDialog>} dialogRef
    * @param {AppComponent} caller The App which called the language selection
    */
   constructor(
-    private dialogRef: MatDialogRef<DialogLanguageSelectionDialog>,
+    private dialogRef: MatDialogRef<LanguageSelectionDialog>,
     @Inject(MAT_DIALOG_DATA) private caller: AppComponent) {}
 
   /**

@@ -1,0 +1,96 @@
+<div class="mat-elevation-z8">
+  <div class="top-bar">
+    <div class="top-bar-filters">
+      <form class="my-form">
+        <mat-form-field class="text-center">
+          <label>{{'userRoleContext.table.user' | translate}} : </label>
+          <mat-select  (ngModelChange)="updateUserFilter()" msInfiniteScroll (infiniteScroll)="getNextUsers()" [complete]="filteredUsers.length === totalUsers" [formControl]="userFormControl">
+            <mat-label>
+              <input placeholder="{{'userRoleContext.search.userLoginIndication' | translate}}..." (keyup)="updateFilteredUsers($event.target)" matInput type="text" class="filter-input">
+            </mat-label>
+            <mat-option *ngFor="let user of filteredUsers" [value]="user">{{user.login}} ({{user.firstName}} {{user.lastName}})</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="text-center">
+          <label>{{'userRoleContext.table.role' | translate}} : </label>
+          <mat-select  (ngModelChange)="updateRoleFilter()" msInfiniteScroll (infiniteScroll)="getNextRoles()" [complete]="filteredRoles.length === totalUsers" [formControl]="roleFormControl">
+            <mat-option *ngFor="let role of filteredRoles" [value]="role">{{role.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="text-center">
+          <label>{{'userRoleContext.table.geographicArea' | translate}} : </label>
+          <mat-select  (ngModelChange)="updateGeographicFilter()" msInfiniteScroll (infiniteScroll)="getNextGeographics()" [complete]="filteredGeographics.length === totalGeographics" [formControl]="geographicFormControl">
+            <mat-label>
+              <input placeholder="{{'userRoleContext.search.geographicNameIndication' | translate}}..." (keyup)="updateFilteredGeographics($event.target)" matInput type="text" class="filter-input">
+            </mat-label>
+            <mat-option *ngFor="let geographicArea of filteredGeographics" [value]="geographicArea">{{geographicArea.nom}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="text-center">
+          <label>{{'userRoleContext.table.context' | translate}} : </label>
+          <mat-select (ngModelChange)="updateContextFilter()" name="contextFilter" msInfiniteScroll (infiniteScroll)="getNextContexts()" [complete]="filteredContexts.length === totalContexts" [formControl]="contextFormControl">
+            <mat-label>
+              <input placeholder="{{'userRoleContext.search.contextNameIndication' | translate}}..." (keyup)="updateFilteredContexts($event.target)" matInput type="text" class="filter-input">
+            </mat-label>
+            <mat-option *ngFor="let context of filteredContexts" [value]="context">{{context.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        </form>
+        <button mat-flat-button color="primary" (click)='resetFilters()' class="reset-button">{{'common.buttons.reset' | translate}}</button>
+        </div>
+    <div class="top-bar-buttons">
+      <button class="top-bar-button" mat-mini-fab color="primary" (click)='handleRefreshDataClick()'>
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button class="top-bar-button" mat-mini-fab color="primary" (click)='handleOpenAddDialogClick()'>
+        <mat-icon>person_add</mat-icon>
+      </button>
+    </div>
+  </div>
+
+
+  <table mat-table class="full-width-table" matSort aria-label="Elements">
+
+    <!-- User Column -->
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"userRoleContext.table.user" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.user.login}} ({{row.user.firstName}} {{row.user.lastName}})</td>
+    </ng-container>
+
+    <!-- Role Column -->
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"userRoleContext.table.role" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.role.label}}</td>
+    </ng-container>
+
+    <!-- GeographicArea Column -->
+    <ng-container matColumnDef="geographicArea">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"userRoleContext.table.geographicArea" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.geographicArea?.nom ?? ""}}</td>
+    </ng-container>
+
+    <!-- Context Column -->
+    <ng-container matColumnDef="context">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"userRoleContext.table.context" | translate}}</th>
+      <td mat-cell *matCellDef="let row">{{row.contextDescription.label}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>{{"user.table.actions" | translate}}</th>
+      <td mat-cell *matCellDef="let row">
+        <button class="action-buttons" mat-mini-fab color="warn" (click)='handleOpenSupressDialogClick(row)'>
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator #paginator
+                 [length]="dataSource?.totalItems"
+                 [pageIndex]="0"
+                 [pageSize]="10"
+                 [pageSizeOptions]="[10, 25, 50, 100]">
+  </mat-paginator>
+</div>

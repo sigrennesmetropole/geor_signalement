@@ -1,0 +1,51 @@
+<h2 class="text-center add-form-title">{{'userRoleContext.add.title' | translate}}</h2>
+
+<form class="my-form" (ngSubmit)="handleSubmitClick()" [formGroup]="userRoleContextAddForm">
+  <div class="add-form-group">
+    <div class="add-form-input">
+      <mat-form-field class="text-center">
+        <label class="label-select">{{'userRoleContext.table.user' | translate}} : </label>
+        <mat-select  msInfiniteScroll (infiniteScroll)="getNextUsers()" [complete]="filteredUsers.length === totalUsers" [formControl]="userFormControl">
+          <mat-label>
+            <input placeholder="{{'userRoleContext.search.userLoginIndication' | translate}}..." (keyup)="updateFilteredUsers($event.target)" matInput type="text" class="filter-input">
+          </mat-label>
+          <mat-option *ngFor="let user of filteredUsers" [value]="user">{{user.login}} ({{user.firstName}} {{user.lastName}})</mat-option>
+        </mat-select>
+        <mat-error *ngIf="userFormControl.invalid">{{getUserError() | async}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="text-center">
+        <label class="label-select">{{'userRoleContext.table.role' | translate}} : </label>
+        <mat-select msInfiniteScroll (infiniteScroll)="getNextRoles()" [complete]="filteredRoles.length === totalUsers" [formControl]="roleFormControl">
+          <mat-option *ngFor="let role of filteredRoles" [value]="role">{{role.label}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="roleFormControl.invalid">{{getRoleError() | async}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="text-center">
+        <label class="label-select">{{'userRoleContext.table.geographicArea' | translate}} : </label>
+        <mat-select  msInfiniteScroll (infiniteScroll)="getNextGeographics()" [complete]="filteredGeographics.length === totalGeographics" [formControl]="geographicFormControl">
+          <mat-label>
+            <input placeholder="{{'userRoleContext.search.geographicNameIndication' | translate}}..." (keyup)="updateFilteredGeographics($event.target)" matInput type="text" class="filter-input">
+          </mat-label>
+          <mat-option *ngFor="let geographicArea of filteredGeographics" [value]="geographicArea">{{geographicArea.nom}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="geographicFormControl.invalid">{{getGeographicError() | async}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="text-center">
+        <label class="label-select">{{'userRoleContext.table.context' | translate}} : </label>
+        <mat-select name="contextFilter" msInfiniteScroll (infiniteScroll)="getNextContexts()" [complete]="filteredContexts.length === totalContexts" [formControl]="contextFormControl">
+          <mat-label>
+            <input placeholder="{{'userRoleContext.search.contextNameIndication' | translate}}..." (keyup)="updateFilteredContexts($event.target)" matInput type="text" class="filter-input">
+          </mat-label>
+          <mat-option *ngFor="let context of filteredContexts" [value]="context">{{context.label}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="contextFormControl.invalid">{{getContextError() | async}}</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div mat-dialog-action align="center" class="add-form-group">
+    <button mat-flat-button color="primary" type="submit" [disabled]="!validData()">{{'common.buttons.submit' |
+      translate}}
+    </button>
+  </div>
+</form>

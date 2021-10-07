@@ -18,7 +18,7 @@ jobs:
     - name: "Setting up Java"
       uses: actions/setup-java@v1
       with:
-        java-version: '8.x'
+        java-version: '11.x'
 
     - name: "Maven repository caching"
       uses: actions/cache@v1
@@ -32,8 +32,11 @@ jobs:
       id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - name: "Build a docker image"
+    - name: "Build a docker image for front-office"
       run: mvn -B clean package -Pdocker,prod -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }}
+
+    - name: "Build a docker image for back-office"
+      run: mvn -B clean package -Pdocker-front-management,prod -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement_bo:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
@@ -46,12 +49,17 @@ jobs:
       run: |
         docker tag sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }} sigrennesmetropole/geor_signalement:latest
         docker push sigrennesmetropole/geor_signalement:latest
+        docker tag sigrennesmetropole/geor_signalement_bo:${{ steps.version.outputs.VERSION }} sigrennesmetropole/geor_signalement_bo:latest
+        docker push sigrennesmetropole/geor_signalement_bo:latest
 
     - name: "Pushing release tag to docker.io"
       if: contains(github.ref, 'refs/tags/')
       run: |
         docker push sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }}
+        docker push sigrennesmetropole/geor_signalement_bo:${{ steps.version.outputs.VERSION }}
 
     - name: "Remove SNAPSHOT jars from repository"
       run: |
         find .m2/repository -name "*SNAPSHOT*" -type d | xargs rm -rf {}
+ 
+

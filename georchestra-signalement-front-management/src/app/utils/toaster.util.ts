@@ -39,7 +39,7 @@ export class ToasterUtil {
   sendErrorMessage(key : string, reason?: string) : void {
     let message: string = this.translateService.instant(key);
     if (reason) {
-      message = message + ' (' + reason + ')';
+      message = message + ' (' + this.translateService.instant(reason) + ')';
     }
 
     this.displayError(message);
@@ -66,5 +66,28 @@ export class ToasterUtil {
   sendSuccessMessage(key: string) : void {
     const message: string = this.translateService.instant(key);
     this.displaySuccess(message);
+  }
+
+  /**
+   * Display a warning message
+   * @param {string} message The message to display
+   * @param {number} duration The duration of the message
+   */
+  private displayWarning(message: string, duration: number = 3000) : void {
+    this.snackBar.open(message, '', {
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: duration,
+      panelClass: ['warning-snackbar', 'snackbar'],
+    });
+  }
+
+  /**
+ * Public method to display an error message
+ * @param {string} key Translation key of the message
+ */
+  sendWarningMessage(key: string) : void {
+    const message: string = this.translateService.instant(key);
+    this.displayWarning(message);
   }
 }

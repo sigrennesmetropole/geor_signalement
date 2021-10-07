@@ -38,5 +38,6 @@ services:
     depends_on:
       - database
       - ldap
+      - signalement
     ports:
       - "{{front_signalement_expose_port}}:{{front_signalement_port}}"

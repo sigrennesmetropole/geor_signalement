@@ -1,7 +1,6 @@
-import {Component, Inject} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Component} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {ToasterUtil} from 'src/app/utils/toaster.util';
-import {WorkflowDataSource} from '../workflow-datasource';
 
 @Component({
   selector: 'dialog-workflow-add-dialog',
@@ -11,7 +10,7 @@ import {WorkflowDataSource} from '../workflow-datasource';
 /**
 * Dialog window to add a Workflow version
 */
-export class DialogWorkflowAddDialog {
+export class WorkflowAddDialog {
   /**
   * The constructor of the add dialog
   * @param {MatDialogRef} dialogRef Reference to the DialogWorflowAddDialog
@@ -20,8 +19,7 @@ export class DialogWorkflowAddDialog {
   * @param {TranslateService} translate The translate service
   */
   constructor(
-    public dialogRef: MatDialogRef<DialogWorkflowAddDialog>,
-    @Inject(MAT_DIALOG_DATA) private dataSource: WorkflowDataSource,
+    public dialogRef: MatDialogRef<WorkflowAddDialog>,
     private toaster: ToasterUtil) {}
 
     file:File|null = null;

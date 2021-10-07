@@ -1,0 +1,46 @@
+.full-width-table{
+    width:100%;
+}
+
+.top-bar{
+    padding: 0 1em;
+
+    .top-bar-filters{
+        display: inline-flex;
+        align-items: center;
+        margin-left: 1em;
+    }
+
+    .top-bar-buttons{
+        float:inline-end;
+        margin-top: 1.2em;
+    }
+}
+
+.top-bar-button{
+    margin : 0 0.2em;
+}
+
+.mat-form-field{
+    padding-right: 1em;
+}
+
+form{
+    display: inline-flex;
+}
+.filter-input{
+    height: 40px;
+}
+
+.action-buttons{
+    margin-right: 0.3em;
+}
+
+.reset-button{
+    max-height: 3em;
+}
+
+table{
+    max-height: 90vh;
+    overflow: auto;
+}

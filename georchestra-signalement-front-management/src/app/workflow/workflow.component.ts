@@ -3,10 +3,10 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
-import {DialogWorkflowAddDialog}
+import {WorkflowAddDialog}
   from './workflow-add-dialog/workflow-add-dialog';
-import {WorkflowDataSource, WorkflowItem} from './workflow-datasource';
-import {DialogWorkflowDeleteDialog}
+import {WorkflowDataSource, WorkflowItem} from './workflow.datasource';
+import {WorkflowDeleteDialog}
   from './workflow-delete-dialog/workflow-delete-dialog';
 
 
@@ -52,7 +52,7 @@ export class WorkflowComponent implements AfterViewInit {
    * @param {WorkflowItem} target The WorkflowItem to delete
    */
   handleOpenSupressDialogClick(target: WorkflowItem): void {
-    const dialog = this.dialog.open(DialogWorkflowDeleteDialog, {
+    const dialog = this.dialog.open(WorkflowDeleteDialog, {
       width: 'auto',
       height: 'auto',
       data: {
@@ -74,7 +74,7 @@ export class WorkflowComponent implements AfterViewInit {
    * When the user clicks on the upload button, open the add Dialog
    */
   handleOpenAddDialogClick(): void {
-    const dialog = this.dialog.open(DialogWorkflowAddDialog, {
+    const dialog = this.dialog.open(WorkflowAddDialog, {
       width: 'auto',
       height: 'auto',
       data: this.dataSource,
