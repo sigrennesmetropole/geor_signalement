@@ -36,7 +36,7 @@ jobs:
       run: mvn -B clean package -Pdocker,prod -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }}
 
     - name: "Build a docker image for back-office"
-      run: mvn -B clean package -Pdocker-front-managemen,prod -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement_bo:${{ steps.version.outputs.VERSION }}
+      run: mvn -B clean package -Pdocker-front-management,prod -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement_bo:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
