@@ -191,7 +191,7 @@ public class WorkflowContext {
 		if (reportingEntity != null) {
 			assignees = assignmentHelper.computeAssignees(reportingEntity, roleName);
 			try {
-				LOGGER.info(String.format("Assignees: {%s}", StringUtils.join(assignees, "}, {")));
+				LOGGER.info("Assignees: {}", StringUtils.join(assignees, ", "));
 				// Ici il faut calcule le contenue de recipients
 				// On envoie un mail à tous les potentialOwners si demandé
 				if (eMailData != null) {
@@ -220,7 +220,7 @@ public class WorkflowContext {
 		if (reportingEntity != null) {
 			assignee = assignmentHelper.computeAssignee(reportingEntity, roleName);
 			try {
-				LOGGER.info(String.format("Assignees: {%s}", assignee));
+				LOGGER.info("Assignees: {}", assignee);
 				// Ici il faut calcule le contenue de result
 				sendEMail(executionEntity, reportingEntity, eMailData, Arrays.asList(assignee));
 			} catch (Exception e) {

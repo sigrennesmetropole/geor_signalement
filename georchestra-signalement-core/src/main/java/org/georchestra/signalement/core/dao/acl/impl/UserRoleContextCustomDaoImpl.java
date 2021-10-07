@@ -82,7 +82,7 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
                 predicates.add(builder.equal(root.get(FIELD_GEOGRAPHIC_AREA).get(FIELD_ID), searchCriteria.getGeographicAreaId()));
             }
             if (CollectionUtils.isNotEmpty(predicates)) {
-                criteriaQuery.where(builder.and(predicates.toArray(Predicate[]::new)));
+                criteriaQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
             }
         }
     }

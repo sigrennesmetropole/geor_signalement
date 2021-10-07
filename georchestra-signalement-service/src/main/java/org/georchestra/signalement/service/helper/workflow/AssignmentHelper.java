@@ -73,7 +73,7 @@ public class AssignmentHelper {
 		if (CollectionUtils.isNotEmpty(userEntities)) {
 
 			if (userEntities.size() > 1) {
-				LOGGER.warn("Find more than user to compute human perfomer from " + reportingEntity);
+				LOGGER.warn("Find more than user to compute human perfomer from  {}", reportingEntity);
 			}
 
 			assignee = userEntities.get(0).getLogin();
