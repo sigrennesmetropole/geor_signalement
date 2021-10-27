@@ -142,9 +142,13 @@ export class SignalementPanelComponent extends React.Component {
             errorAttachment: "",
             errorFields: {}
         }
+
+        // disable custom logging function if debug_signalement is set to false in local config
+        if (!this.props.debug_signalement) {
+            window.signalement.debug = () => {};
+        }
+
 		this.props.initSignalement(this.props.backendurl);
-        //console.log(this.state);
-        //console.log(this.props);
     }
 
     componentWillMount() {
@@ -157,7 +161,7 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("sig didUpdate...");
+        window.signalement.debug("sig didUpdate...");
         // Tout est-il initialisé ?
         this.state.initialized = this.props.contextLayers !== null && this.props.contextThemas !== null &&
             this.props.attachmentConfiguration !== null && this.props.user !== null;
@@ -166,7 +170,7 @@ export class SignalementPanelComponent extends React.Component {
 
         if( this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED ){
             // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"
-            console.log("sig draft created");
+            window.signalement.debug("sig draft created");
             this.state.task = this.props.task;
             this.state.loaded = true;
             this.setState(this.state);
@@ -182,20 +186,20 @@ export class SignalementPanelComponent extends React.Component {
         if( this.state.task !== null && this.state.task.asset !== null && this.state.task.asset.uuid &&
             this.props.status === status.REQUEST_UNLOAD_TASK){
             // on a une tâche et on demande son annulation => on lancer l'annulation
-            console.log("sig draft cancel");
+            window.signalement.debug("sig draft cancel");
             this.props.cancelDraft(this.state.task.asset.uuid);
         }
 
         if( (this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) && this.state.loaded === true){
             // on a demandé l'annulation et on l'a obtenue => on ferme le panel
-            console.log("sig draft canceled or task created");
+            window.signalement.debug("sig draft canceled or task created");
             this.state.task = null;
             this.state.loaded = false;
             this.setState(this.state);
             this.props.stopDrawingSupport();
             this.props.toggleControl();
         }
-        console.log(this.state);
+        window.signalement.debug(this.state);
     }
 
     /**
@@ -223,7 +227,7 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     render() {
-        console.log("sig render");
+        window.signalement.debug("sig render");
         if( this.props.active ){
             // si le panel est ouvert
             if( this.state.initialized && (this.props.contextThemas.length > 0 || this.props.currentLayer) ){
@@ -234,7 +238,7 @@ export class SignalementPanelComponent extends React.Component {
                         || this.props.status === status.TASK_CREATED)) {
                     // il n'y a pas de tâche dans les props et on a rien fait ou a vient de créer un tâche avec succès
                     // on lance la création d'une tâche draft avec le context par défaut
-                    console.log("sig create draft");
+                    window.signalement.debug("sig create draft");
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
                     this.props.createDraft(initContext);
                 }
@@ -277,7 +281,7 @@ export class SignalementPanelComponent extends React.Component {
     renderModelClosing(){
         if (this.props.closing ) {
             // si closing == true on demande l'abandon
-            console.log("sig closing");
+            window.signalement.debug("sig closing");
             return (<ConfirmDialog
                 show
                 modal
@@ -765,7 +769,7 @@ export class SignalementPanelComponent extends React.Component {
 
                 );
             default:
-                console.log("Type of definition undefined");
+                window.signalement.debug("Type of definition undefined");
         }
     }
 
@@ -967,7 +971,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     cancel() {
         if(  this.state.task != null && this.state.task.asset.uuid) {
-            console.log("Cancel and close:"+this.state.task.asset.uuid);
+            window.signalement.debug("Cancel and close:"+this.state.task.asset.uuid);
             this.props.requestClosing();
         } else {
             this.props.toggleControl();
@@ -979,7 +983,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     create() {
         if( this.state.task != null && this.state.task.asset.uuid && !this.props.creating) {
-            console.log("Create and close:"+this.state.task.asset.uuid);
+            window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
             this.props.createTask(this.state.task);
         }
     }

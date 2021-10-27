@@ -8,7 +8,6 @@
 
 import { checkForMissingPlugins } from '@mapstore/utils/DebugUtils';
 import main from '@mapstore/product/main';
-import { env } from '../config';
 
 const ConfigUtils = require('@mapstore/utils/ConfigUtils').default;
 /**
@@ -56,9 +55,5 @@ plugins.plugins = { ...plugins.plugins, ...extensions };
 ConfigUtils.setConfigProp('translationsPath', ['./MapStore2/web/client/translations', './assets/translations']);
 // end of lines to comment
 checkForMissingPlugins(plugins.plugins);
-
-if (env === 'prod') {
-    window.console.log = function() {};
-}
 
 main(appConfig, plugins);
