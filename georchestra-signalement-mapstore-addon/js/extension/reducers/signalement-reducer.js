@@ -11,7 +11,7 @@ const initialState = {
 }
 
 export default (state = initialState, action) => {
-    console.log("sig reduce:" + action.type);
+    window.signalement.debug("sig reduce:" + action.type);
     switch (action.type) {
         case actions.INIT_ERROR: {
             return assign({}, state, {error: action.error});

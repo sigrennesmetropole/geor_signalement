@@ -42,6 +42,9 @@ import '../assets/signalement.css';
 
 const isEnabled = createControlEnabledSelector('signalement');
 
+// custom logging function inside plugin
+window.signalement = { debug: (obj) => console.log(obj) };
+
 const SignalementPanelComponentConnected = connect((state) => ({
     active: /*isEnabled(state) ||*/ !!isOpen(state),
     attachmentConfiguration: signalementAttachmentConfigurationSelector(state),

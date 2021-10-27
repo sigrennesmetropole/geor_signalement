@@ -29,7 +29,7 @@ let backendURLPrefix = "/signalement";
 export const initSignalementEpic = (action$) =>
 	action$.ofType(actions.INIT_SIGNALEMENT)
 	    .switchMap((action) => {
-	        console.log("sig epics init:"+ action.url);
+            window.signalement.debug("sig epics init:"+ action.url);
 	        if( action.url ) {	        	
 	        	backendURLPrefix = action.url;
 	        }
@@ -39,11 +39,11 @@ export const initSignalementEpic = (action$) =>
 export const loadAttachmentConfigurationEpic = (action$) =>
     action$.ofType(actions.ATTACHMENT_CONFIGURATION_LOAD)
         .switchMap((action) => {
-            console.log("sig epics attachment config");
+            window.signalement.debug("sig epics attachment config");
             if (action.attachmentConfiguration) {
                 return Rx.Observable.of(loadedAttachmentConfiguration(action.attachmentConfiguration)).delay(0);
             }
-            console.log("sig back " + backendURLPrefix);
+            window.signalement.debug("sig back " + backendURLPrefix);
             const url = backendURLPrefix + "/reporting/attachment/configuration";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedAttachmentConfiguration(response.data)))
@@ -53,7 +53,7 @@ export const loadAttachmentConfigurationEpic = (action$) =>
 export const addAttachmentEpic = (action$) =>
     action$.ofType(actions.ADD_ATTACHMENT)
         .switchMap((action) => {
-            console.log("sig epics add attachement");
+            window.signalement.debug("sig epics add attachement");
             const url = backendURLPrefix + "/reporting/" + action.attachment.uuid + "/upload";
             const formData = new FormData();
             formData.append('file',action.attachment.file);
@@ -66,7 +66,7 @@ export const addAttachmentEpic = (action$) =>
 export const removeAttachmentEpic = (action$) =>
     action$.ofType(actions.REMOVE_ATTACHMENT)
         .switchMap((action) => {
-            console.log("sig epics remove attachement");
+            window.signalement.debug("sig epics remove attachement");
             const url = backendURLPrefix + "/reporting/" + action.attachment.uuid + "/delete/" + action.attachment.id;
 
             return Rx.Observable.defer(() => axios.delete(url))
@@ -77,7 +77,7 @@ export const removeAttachmentEpic = (action$) =>
 export const loadThemasEpic = (action$, store) =>
     action$.ofType(actions.THEMAS_LOAD)
         .switchMap((action) => {
-            console.log("sig epics themas");
+            window.signalement.debug("sig epics themas");
             if (action.themas) {
                 return Rx.Observable.of(loadedThemas(action.themas)).delay(0);
             }
@@ -90,7 +90,7 @@ export const loadThemasEpic = (action$, store) =>
 export const loadLayersEpic = (action$) =>
     action$.ofType(actions.LAYERS_LOAD)
         .switchMap((action) => {
-            console.log("sig epics layers");
+            window.signalement.debug("sig epics layers");
             if (action.layers) {
                 return Rx.Observable.of(loadedLayers(action.layers)).delay(0);
             }
@@ -103,7 +103,7 @@ export const loadLayersEpic = (action$) =>
 export const loadMeEpic = (action$) =>
     action$.ofType(actions.USER_ME_GET)
         .switchMap((action) => {
-            console.log("sig epics me");
+            window.signalement.debug("sig epics me");
             if (action.user) {
                 return Rx.Observable.of(gotMe(action.user)).delay(0);
             }
@@ -116,7 +116,7 @@ export const loadMeEpic = (action$) =>
 export const createDraftEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_DRAFT_CREATE)
         .switchMap((action) => {
-            console.log("sig epics draft");
+            window.signalement.debug("sig epics draft");
             const url = backendURLPrefix + "/task/draft";
             const task = { contextDescription: action.context, description: ""};
             const params = {
@@ -132,7 +132,7 @@ export const createDraftEpic = (action$) =>
 export const createTaskEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_TASK_CREATE)
         .switchMap((action) => {
-            console.log("sig epics draft");
+            window.signalement.debug("sig epics draft");
             const url = backendURLPrefix + "/task/start";
             const task = action.task;
             const params = {
@@ -169,7 +169,7 @@ export const createTaskEpic = (action$) =>
 export const cancelDraftEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_DRAFT_CANCEL)
         .switchMap((action) => {
-            console.log("sig epics draft");
+            window.signalement.debug("sig epics draft");
             const url = backendURLPrefix + "/task/cancel/" + action.uuid;
 
             return Rx.Observable.defer(() => axios.delete(url))
