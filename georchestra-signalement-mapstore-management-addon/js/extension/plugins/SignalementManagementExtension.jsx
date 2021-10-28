@@ -33,6 +33,9 @@ import { name } from '../../../config';
 import { setViewer } from '@mapstore/utils/MapInfoUtils';
 import {SignalementTaskViewer} from '../components/SignalementTaskViewer';
 
+// custom logging function inside plugin
+window.signalementMgmt = { debug: (obj) => console.log(obj) };
+
 const SignalementManagementPanelComponentConnected = connect((state) => ({
     contexts: signalementManagementContextsSelector(state),
     user: signalementManagementMeSelector(state),
