@@ -35,6 +35,36 @@
     display: inline-block;
 }
 
+.signalement-management-panel .ms-header-title {
+    background-color: #078aa3;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+.signalement-management-panel .square-button {
+    background: transparent;
+    color: white;
+}
+.signalement-management-panel .col-xs-10 {
+    padding: 10px 15px;
+}
+.signalement-management-panel h4 {
+    margin: 0;
+}
+.signalement-management-panel .signalement-panel-body {
+    padding: 5px;
+}
+.signalement-management-panel .signalement-management-form .label {
+    background: transparent;
+    color: #333333;
+}
+.signalement-management-panel .signalement-action-buttons {
+    text-align: right;
+}
+.signalement-management-panel .signalement-action-buttons button {
+    margin-left: 5px;
+}
+
 span .error {
     color: red;
 }
