@@ -7,6 +7,9 @@
         "signalement-management": {
           "loading": "En cours d'initialisation...",
           "title": "Gestion des signalement",
+          "select.label": "Sélectionner la couche ou la thématique :",
+          "tooltip.tabular_view": "Afficher la vue en tableau",
+          "tooltip.map_picker": "Sélectionner un signalement sur la carte",
           "init.me.error": "Impossible de récupérer l'utilisation courant",
           "init.contexts.error": "Impossible de récupérer les contexts de l'utilisateur courant",
           "load.searchTask.error": "Impossible de récupérer les tâches",

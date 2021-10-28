@@ -5,7 +5,7 @@ import assign from 'object-assign';
 import ContainerDimensions from 'react-container-dimensions';
 import {connect} from 'react-redux';
 import {PropTypes} from 'prop-types';
-import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, ControlLabel, Tooltip, FormGroup} from 'react-bootstrap';
+import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, Label, Tooltip, FormGroup, OverlayTrigger} from 'react-bootstrap';
 import Select from 'react-select';
 import Message from '@mapstore/components/I18N/Message';
 import { setViewer, getViewer } from '@mapstore/utils/MapInfoUtils';
@@ -166,11 +166,13 @@ export class SignalementManagementPanelComponent extends React.Component {
                                 <span className="ms-signalement-management-panel ">
                                     <div className={this.props.panelClassName}>
                                         {this.renderHeader()}
-                                        {
-                                            !this.state.initialized ? 
-                                                this.renderLoading() : 
-                                                this.renderForm()
-                                        }
+                                        <div className="signalement-panel-body">
+                                            {
+                                                !this.state.initialized && false ?
+                                                    this.renderLoading() :
+                                                    this.renderForm()
+                                            }
+                                        </div>
                                     </div>
                                 </span>
                             </span>
@@ -199,6 +201,7 @@ export class SignalementManagementPanelComponent extends React.Component {
             <div className="signalement-management-form">
                 <Form>
                     <FormGroup controlId="signalement.thema">
+                        <Label><Message msgId="signalement-management.select.label"/></Label>
                         <FormControl componentClass="select"
                             value={this.state.currentContext.name}
                             onChange={this.handleContextChange} >
@@ -209,22 +212,37 @@ export class SignalementManagementPanelComponent extends React.Component {
                             }
                         </FormControl>
                     </FormGroup>
-                    <Grid fluid className="ms-header" style={this.props.styling || this.props.mode !== "list" ? { width: '100%', boxShadow: 'none'} : { width: '100%' }}>
+                    <Grid fluid className="ms-header signalement-action-buttons" style={this.props.styling || this.props.mode !== "list" ? { width: '100%', boxShadow: 'none'} : { width: '100%' }}>
                         <Row>
-                            <Col xs={4}>
-                                <Button key="signalement-admin-view" bsStyle={this.props.tabularViewOpen ? 'success' : 'primary'} 
+                            <OverlayTrigger
+                                key="tabular-view-overlay"
+                                placement="bottom"
+                                overlay={
+                                    <Tooltip id={`tooltip-tabular-view`}>
+                                        <Message msgId="signalement-management.tooltip.tabular_view"/>
+                                    </Tooltip>
+                                }
+                            >
+                                <Button key="signalement-admin-view" bsStyle={this.props.tabularViewOpen ? 'success' : 'primary'}
                                     className="square-button-md" onClick={()=> this.toggleTabularView()}>
                                     <Glyphicon glyph="features-grid" />
                                 </Button>
-                            </Col>
-                            <Col xs={4}>
+                            </OverlayTrigger>
+                            <OverlayTrigger
+                                key="map-picker-overlay"
+                                placement="bottom"
+                                overlay={
+                                    <Tooltip id={`tooltip-map-picker`}>
+                                        <Message msgId="signalement-management.tooltip.map_picker"/>
+                                    </Tooltip>
+                                }
+                            >
                                 <Button key="signalement-my-view" bsStyle={(this.props.state.layers.selected && this.props.state.layers.selected.includes("signalements")) ? 'success' : 'primary'}  className="square-button-md"
                                         onClick={ () => this.selectLayerSign()}>
                                     <Glyphicon glyph="exclamation-sign" />
                                 </Button>
-                            </Col>
+                            </OverlayTrigger>
                             {this.renderButtonAdmin()}
-
                         </Row>
                     </Grid>
                 </Form>
@@ -238,12 +256,10 @@ export class SignalementManagementPanelComponent extends React.Component {
     renderButtonAdmin(){
         if(this.props.user.roles.find(role => role === "ADMIN")){
             return(
-                <Col xs={4}>
-                    <Button key="signalement-tabular-view" bsStyle={(this.state.viewAdmin === true) ? 'success' : 'primary'} className="square-button-md"
-                            onClick={() => this.displayAdminView()}>
-                        <Glyphicon glyph="cog" />
-                    </Button>
-                </Col>
+                <Button key="signalement-tabular-view" bsStyle={(this.state.viewAdmin === true) ? 'success' : 'primary'} className="square-button-md"
+                        onClick={() => this.displayAdminView()}>
+                    <Glyphicon glyph="cog" />
+                </Button>
             )
         }
 
@@ -255,7 +271,7 @@ export class SignalementManagementPanelComponent extends React.Component {
     renderHeader() {
         return (
             <Grid fluid className="ms-header" style={this.props.styling || this.props.mode !== "list" ? { width: '100%', boxShadow: 'none'} : { width: '100%' }}>
-                <Row>
+                <Row className="ms-header-title">
                     <Col xs={2}>
                         <Button className="square-button no-events">
                             <Glyphicon glyph="exclamation-sign"/>
