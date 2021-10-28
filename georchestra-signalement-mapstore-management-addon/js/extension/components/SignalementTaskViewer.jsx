@@ -49,7 +49,7 @@ export class SignalementTaskViewer extends React.Component {
         let index = this.state.index;
         let id = this.props.response.features[index].properties.id;
         if(id){
-            console.log("sigm task  get");
+            window.signalementMgmt.debug("sigm task  get");
             this.props.getTask(id);
             this.setState({task: null});
         }
@@ -57,9 +57,9 @@ export class SignalementTaskViewer extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log("sigm task  recupered before");
+        window.signalementMgmt.debug("sigm task  recupered before");
         if (this.props.task !== null && this.state.task === null) {
-            console.log("sigm task  recupered");
+            window.signalementMgmt.debug("sigm task  recupered");
             this.state.task = this.props.task;
             this.setState(this.state);
         }
@@ -419,7 +419,7 @@ export class SignalementTaskViewer extends React.Component {
 
                 );
             default:
-                console.log("Type of definition undefined");
+                window.signalementMgmt.debug("Type of definition undefined");
         }
     }
 
@@ -611,7 +611,7 @@ export class SignalementTaskViewer extends React.Component {
         if(index < this.props.response.features.length -1){
             let id = this.props.response.features[index+1].properties.id;
             if(id){
-                console.log("sigm task  get");
+                window.signalementMgmt.debug("sigm task  get");
                 this.props.getTask(id);
                 this.setState({task: null, index : (index+1)});
             }
@@ -623,7 +623,7 @@ export class SignalementTaskViewer extends React.Component {
         if(index > 0){
             let id = this.props.response.features[index-1].properties.id;
             if(id){
-                console.log("sigm task  get");
+                window.signalementMgmt.debug("sigm task  get");
                 this.props.getTask(id);
                 this.setState({task: null, index : (index-1)});
             }

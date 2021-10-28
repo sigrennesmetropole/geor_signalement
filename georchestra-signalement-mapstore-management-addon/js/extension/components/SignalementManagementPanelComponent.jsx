@@ -90,17 +90,22 @@ export class SignalementManagementPanelComponent extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log("sigm constructor...");
+        
+        if (!this.props.debug_signalement_management) {
+            window.signalementMgmt.debug = () => {};
+        }
+
+        window.signalementMgmt.debug("sigm constructor...");
         this.handleContextChange = this.handleContextChange.bind(this);
 		this.props.initSignalementManagement(this.props.backendurl);
         this.state = {
             viewAdmin : false
         }
-        console.log("sigm constructor done.");
+        window.signalementMgmt.debug("sigm constructor done.");
     }
 
     componentWillMount() {
-        console.log("sigm willmount...");
+        window.signalementMgmt.debug("sigm willmount...");
         this.setState({initialized: false, currentContext: null});
         this.props.loadContexts();
         this.props.getMe();
@@ -120,12 +125,12 @@ export class SignalementManagementPanelComponent extends React.Component {
             closeIdentify: closeIdentify
         })(SignalementTaskViewer);
         setViewer("TaskViewer", Connected);
-        console.log("sigm willmount done.");
+        window.signalementMgmt.debug("sigm willmount done.");
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("sigm didUpdate...");
-        console.log(this.props);
+        window.signalementMgmt.debug("sigm didUpdate...");
+        window.signalementMgmt.debug(this.props);
         this.state.initialized = this.props.contexts !== null && 
             this.props.contexts.length > 0 && this.props.user !== null; 
 
@@ -133,8 +138,7 @@ export class SignalementManagementPanelComponent extends React.Component {
             this.state.currentContext = this.props.contexts[0];
             this.props.changeTypeView(viewType.MY,this.state.currentContext);
         }
-        //console.log("sigm viewer=>" + getViewer('TaskViewer'));
-        console.log("sigm didUpdate done.");
+        window.signalementMgmt.debug("sigm didUpdate done.");
     }
 
     /**
@@ -153,7 +157,7 @@ export class SignalementManagementPanelComponent extends React.Component {
     }
 	
     render() {
-        console.log("sigm render");
+        window.signalementMgmt.debug("sigm render", this.state.initialized);
 
         if( this.state.initialized) {
             return (<ContainerDimensions>

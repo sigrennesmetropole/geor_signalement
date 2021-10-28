@@ -28,7 +28,7 @@ let backendURLPrefix = "/signalement";
 export const initSignalementManagementEpic = (action$) =>
 action$.ofType(actions.INIT_SIGNALEMENT)
     .switchMap((action) => {
-        console.log("sig epics init:"+ action.url);
+        window.signalementMgmt.debug("sig epics init:"+ action.url);
         if( action.url ) {	        	
         	backendURLPrefix = action.url;
         }
@@ -38,11 +38,11 @@ action$.ofType(actions.INIT_SIGNALEMENT)
 export const loadContextsEpic = (action$) =>
     action$.ofType(actions.CONTEXTS_LOAD)
         .switchMap((action) => {
-            console.log("sigm epics load contexts");
+            window.signalementMgmt.debug("sigm epics load contexts");
             if (action.contexts) {
                 return Rx.Observable.of(loadedContexts(action.contexts)).delay(0);
             }
-            console.log("sigm back " + backendURLPrefix);
+            window.signalementMgmt.debug("sigm back " + backendURLPrefix);
             const url = backendURLPrefix + "/user/contexts";
             return Rx.Observable.defer(() => axios.get(url))
                 .switchMap((response) => Rx.Observable.of(loadedContexts(response.data)))
@@ -52,7 +52,7 @@ export const loadContextsEpic = (action$) =>
 export const loadManagementMeEpic = (action$) =>
     action$.ofType(actions.USER_ME_GET)
         .switchMap((action) => {
-            console.log("sigm epics me");
+            window.signalementMgmt.debug("sigm epics me");
             if (action.user) {
                 return Rx.Observable.of(gotMe(action.user)).delay(0);
             }
@@ -65,7 +65,7 @@ export const loadManagementMeEpic = (action$) =>
 export const loadTaskEpic = (action$) =>
     action$.ofType(actions.TASK_GET)
         .switchMap((action) => {
-            console.log("sigm epics task");
+            window.signalementMgmt.debug("sigm epics task");
 
             const url = backendURLPrefix + "/task/" + action.id ;
             return Rx.Observable.defer(() => axios.get(url))
@@ -76,7 +76,7 @@ export const loadTaskEpic = (action$) =>
 export const downloadAttachmentEpic = (action$) =>
     action$.ofType(actions.DOWNLOAD_ATTACHMENT)
         .switchMap((action) => {
-            console.log("sigm epics download attachment");
+            window.signalementMgmt.debug("sigm epics download attachment");
             const url = backendURLPrefix + "/reporting/" + action.attachment.uuid + "/download/" + action.attachment.id ;
             window.open(url);
            return Rx.Observable.empty();
@@ -85,7 +85,7 @@ export const downloadAttachmentEpic = (action$) =>
 export const claimTaskEpic = (action$) =>
     action$.ofType(actions.CLAIM_TASK)
         .switchMap((action) => {
-            console.log("sigm epics claim");
+            window.signalementMgmt.debug("sigm epics claim");
 
             const url = backendURLPrefix + "/task/claim/" + action.id ;
             return Rx.Observable.defer(() => axios.put(url))
@@ -97,7 +97,7 @@ export const updateAndDoActionEpic = (action$) =>
     action$.ofType(actions.UPDATE_DO_ACTION)
         .switchMap((action) => {
 
-            console.log("sigm epics update & do action");
+            window.signalementMgmt.debug("sigm epics update & do action");
 
             const urlUpdate = backendURLPrefix + "/task/update" ;
             const urlDoAction = backendURLPrefix + "/task/do/" + action.task.id + "/" + action.actionName;
@@ -113,7 +113,7 @@ export const updateAndDoActionEpic = (action$) =>
 export const updateTaskEpic = (action$) =>
     action$.ofType(actions.UPDATE_TASK)
         .switchMap((action) => {
-            console.log("sigm epics update task");
+            window.signalementMgmt.debug("sigm epics update task");
 
             const url = backendURLPrefix + "/task/update" ;
             return Rx.Observable.defer(() => axios.put(url, action.task))
@@ -124,7 +124,7 @@ export const updateTaskEpic = (action$) =>
 export const loadViewDataEpic = (action$) =>
     action$.ofType(actions.CHANGE_TYPE_VIEW)
         .switchMap((action) => {
-            console.log("sigm epics change type view");
+            window.signalementMgmt.debug("sigm epics change type view");
             const url = backendURLPrefix + "/task/search/geojson?contextName=" + action.context.name +
                 "&asAdmin=" + (action.viewType === viewType.MY ? "false":"true");
 
@@ -136,7 +136,7 @@ export const loadViewDataEpic = (action$) =>
 export const updateViewDataEpic = (action$, store) =>
     action$.ofType(actions.TYPE_VIEW_CHANGED)
         .switchMap((action) => {
-            console.log("sigm epics type view changed");
+            window.signalementMgmt.debug("sigm epics type view changed");
             // Affichage de la carte
             return Rx.Observable.of(displayMapView(action.data));
         });
@@ -171,7 +171,7 @@ export const displayMapViewDataEpic = (action$, store) =>
 export const openTabularViewEpic = (action$, store) =>
     action$.ofType(actions.OPEN_TABULAR_VIEW)
         .switchMap((action) => {
-            console.log("sigm epics open");
+            window.signalementMgmt.debug("sigm epics open");
             const url = backendURLPrefix + "/task/geojson/properties?contextName=" + action.context.name;
             const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === SIGNALEMENT_MANAGEMENT_LAYER_ID));
             if( signalementsLayer) {
@@ -199,7 +199,7 @@ export const openTabularViewEpic = (action$, store) =>
 export const closeTabularViewEpic = (action$, store) =>
     action$.ofType(actions.CLOSE_TABULAR_VIEW)
         .switchMap((action) => {
-            console.log("sigm epics close");
+            window.signalementMgmt.debug("sigm epics close");
             const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === SIGNALEMENT_MANAGEMENT_LAYER_ID));
             return Rx.Observable.from((signalementsLayer
                     ? [closeFeatureGrid()]

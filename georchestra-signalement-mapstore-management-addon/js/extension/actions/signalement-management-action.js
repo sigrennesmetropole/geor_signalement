@@ -151,8 +151,8 @@ export function displayMapView(data) {
 }
 
 function loadError(type, message, e){
-	console.log("message:" + message);
-	console.log(e);
+	window.signalementMgmt.debug("message:" + message);
+	window.signalementMgmt.debug(e);
 	return {
 		type: type,
 		error: {
