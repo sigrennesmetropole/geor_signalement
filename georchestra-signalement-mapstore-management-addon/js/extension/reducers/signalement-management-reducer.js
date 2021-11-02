@@ -48,6 +48,12 @@ export default (state = initialState, action) => {
         case actions.CHANGE_TYPE_VIEW: {
             return assign({}, state, {viewType: action.viewType});
         }
+        case actions.OPEN_TASK_VIEWER: {
+            return assign({}, state, {taskViewerOpen: true, features: action.features, clickedPoint: action.clickedPoint})
+        }
+        case actions.CLOSE_TASK_VIEWER: {
+            return assign({}, state, {taskViewerOpen: false, features: [], clickedPoint: {long: 0.0, lat: 0.0}})
+        }
         default: {
             return state;
         }
