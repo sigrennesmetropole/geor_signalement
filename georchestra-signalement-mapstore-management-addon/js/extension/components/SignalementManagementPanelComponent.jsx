@@ -12,16 +12,6 @@ import { setViewer, getViewer } from '@mapstore/utils/MapInfoUtils';
 import {closeIdentify} from '@mapstore/actions/mapInfo';
 import {SignalementTaskViewer} from './SignalementTaskViewer';
 import {
-    changeTypeView,
-    closeTabularView,
-    getMe,
-    getTask,
-    loadContexts,
-    openTabularView,
-    downloadAttachment,
-    claimTask,
-    updateTask,
-    updateDoAction,
     status,
     viewType
 } from '../actions/signalement-management-action';
@@ -29,11 +19,13 @@ import {
     signalementManagementContextsSelector,
     signalementManagementMeSelector, signalementManagementTaskSelector
 } from "../selectors/signalement-management-selector";
+import {SignalementViewer} from "@js/extension/components/SignalementViewer";
 
 export class SignalementManagementPanelComponent extends React.Component {
 	 static propTypes = {
         id: PropTypes.string,
         status: PropTypes.string,
+        active: PropTypes.bool,
         // config
         panelClassName: PropTypes.string,
         dockProps: PropTypes.object,
@@ -41,9 +33,13 @@ export class SignalementManagementPanelComponent extends React.Component {
         // data
 		contexts: PropTypes.array,
         user: PropTypes.object,
+        errorTask: PropTypes.object,
+        task: PropTypes.object,
         error: PropTypes.object,
         tabularViewOpen: PropTypes.bool,
         viewType: PropTypes.string,
+        features: PropTypes.array,
+        clickedPoint: PropTypes.object,
         // redux
 		initSignalementManagement: PropTypes.func,
         loadContexts: PropTypes.func,
@@ -51,21 +47,25 @@ export class SignalementManagementPanelComponent extends React.Component {
         openTabularView: PropTypes.func,
         closeTabularView: PropTypes.func,
         changeTypeView: PropTypes.func,
-        selectNode: PropTypes.func
+        selectNode: PropTypes.func,
+        loadTaskViewer: PropTypes.func,
+        closeViewer: PropTypes.func
     };
 
     static defaultProps = {
         id: "signalement-panel",
         status: status.NOOP,
+        active: false,
         // config
         panelClassName: "signalement-management-panel",
+        closeGlyph: "1-close",
         // side panel properties
         width: 660,
         dockProps: {
             dimMode: "none",
-            size: 0.2,
+            size: 0.3,
             fluid: true,
-            position: "top",
+            position: "right",
             zIndex: 1030,
             width:"25%"
         },
@@ -78,6 +78,10 @@ export class SignalementManagementPanelComponent extends React.Component {
         error: null,
         tabularViewOpen: false,
         viewType: null,
+        features: [],
+        clickedPoint: {lat: 0.0, lng: 0.0},
+        errorTask: null,
+        task: null,
         // misc
 		initSignalementManagement: ()=>{},
         loadContexts: ()=>{},
@@ -85,12 +89,13 @@ export class SignalementManagementPanelComponent extends React.Component {
         openTabularView: ()=>{},
         closeTabularView: ()=>{},
         changeTypeView: ()=>{},
-        selectNode: ()=>{}
+        selectNode: ()=>{},
+        getTask: ()=>{}
     };
 
     constructor(props) {
         super(props);
-        
+
         if (!this.props.debug_signalement_management) {
             window.signalementMgmt.debug = () => {};
         }
@@ -109,22 +114,6 @@ export class SignalementManagementPanelComponent extends React.Component {
         this.setState({initialized: false, currentContext: null});
         this.props.loadContexts();
         this.props.getMe();
-        const Connected = connect((state) => ({
-            task: signalementManagementTaskSelector(state),
-            user: signalementManagementMeSelector(state),
-            viewType: state.signalementManagement.viewType,
-            errorTask: state.signalementManagement.errorTask,
-            // debug
-            state : state
-        }), {
-            getTask: getTask,
-            downloadAttachment: downloadAttachment,
-            claimTask: claimTask,
-            updateTask: updateTask,
-            updateDoAction: updateDoAction,
-            closeIdentify: closeIdentify
-        })(SignalementTaskViewer);
-        setViewer("TaskViewer", Connected);
         window.signalementMgmt.debug("sigm willmount done.");
     }
 
@@ -160,7 +149,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         window.signalementMgmt.debug("sigm render", this.state.initialized);
 
         if( this.state.initialized) {
-            return (<ContainerDimensions>
+            return [<ContainerDimensions key="context-panel">
                         { ({ width }) =>
                             <span>
                                 <span className="ms-signalement-management-panel ">
@@ -177,11 +166,59 @@ export class SignalementManagementPanelComponent extends React.Component {
                                 </span>
                             </span>
                         }
+                    </ContainerDimensions>,
+                    <ContainerDimensions key="viewer-panel">
+                        { ({ width }) =>
+                            <span>
+                                <span className="react-dock-no-resize ms-absolute-dock ms-side-panel">
+                                    <Dock
+                                        dockStyle={this.props.dockStyle} {...this.props.dockProps}
+                                        isVisible={this.props.active}
+                                        size={this.props.width / width > 1 ? 1 : this.props.width / width} >
+                                        <div className={this.props.panelClassName}>
+                                            {
+                                                !this.state.initialized &&
+                                                this.renderLoading()
+                                            }
+                                            {
+                                                this.state.initialized &&
+                                                this.renderViewer()
+                                            }
+                                        </div>
+                                    </Dock>
+                                </span>
+                            </span>
+                        }
                     </ContainerDimensions>
-                );
+                ];
         } else {
             return null;
         }
+    }
+
+    /**
+     * La rendition du viewer parent
+     */
+    renderViewer() {
+        if (this.props.active) {
+            return (
+                <SignalementViewer features={this.props.features}
+                                   clickedPoint={this.props.clickedPoint}
+                                   closeViewer={this.props.closeViewer}
+                                   task={this.props.task}
+                                   user={this.props.user}
+                                   viewType={this.props.viewType}
+                                   errorTask={this.props.errorTask}
+                                   getTask={this.props.getTask}
+                                   downloadAttachment={this.props.downloadAttachment}
+                                   claimTask={this.props.claimTask}
+                                   updateTask={this.props.updateTask}
+                                   updateDoAction={this.props.updateDoAction}
+                                   closeIdentify={this.props.closeIdentify}
+                />
+            )
+        }
+        return null;
     }
 
     /**
@@ -320,4 +357,4 @@ export class SignalementManagementPanelComponent extends React.Component {
     selectLayerSign(){
         this.props.selectNode('signalements','layer', false);
     }
-};
+}
