@@ -8,22 +8,22 @@ import {SignalementManagementPanelComponent} from '../components/SignalementMana
 import * as epics from '../epics/signalement-management-epic';
 import signalementManagementReducer from '../reducers/signalement-management-reducer';
 import {
-    initSignalementManagement, 
-    loadContexts, 
-    getMe, 
-    openTabularView, 
-    closeTabularView, 
+    initSignalementManagement,
+    loadContexts,
+    getMe,
+    openTabularView,
+    closeTabularView,
     changeTypeView,
     getTask,
     downloadAttachment,
     claimTask,
     updateTask,
-    updateDoAction,
+    updateDoAction, loadTaskViewer, closeViewer,
 } from '../actions/signalement-management-action';
 import {closeIdentify} from '@mapstore/actions/mapInfo';
 import {
-    getSignalementManagement, 
-    signalementManagementContextsSelector, 
+    getSignalementManagement, isOpen, signalementManagementClickedPointSelector,
+    signalementManagementContextsSelector, signalementManagementFeaturesResponseSelector,
     signalementManagementMeSelector,
     signalementManagementTaskSelector
 } from '../selectors/signalement-management-selector';
@@ -37,12 +37,17 @@ import {SignalementTaskViewer} from '../components/SignalementTaskViewer';
 window.signalementMgmt = { debug: (obj) => console.log(obj) };
 
 const SignalementManagementPanelComponentConnected = connect((state) => ({
+    active: !!isOpen(state),
     contexts: signalementManagementContextsSelector(state),
     user: signalementManagementMeSelector(state),
     status: state.signalementManagement.status,
     error: state.signalementManagement.error,
     tabularViewOpen: state.signalementManagement.tabularViewOpen,
     viewType: state.signalementManagement.viewType,
+    features: signalementManagementFeaturesResponseSelector(state),
+    clickedPoint: signalementManagementClickedPointSelector(state),
+    task: signalementManagementTaskSelector(state),
+    errorTask: state.signalementManagement.errorTask,
     // debug
     state : state
 }), {
@@ -52,7 +57,15 @@ const SignalementManagementPanelComponentConnected = connect((state) => ({
     openTabularView: openTabularView,
     closeTabularView: closeTabularView,
     changeTypeView: changeTypeView,
-    selectNode: selectNode
+    selectNode: selectNode,
+    loadTaskViewer: loadTaskViewer,
+    closeViewer: closeViewer,
+    getTask: getTask,
+    downloadAttachment: downloadAttachment,
+    claimTask: claimTask,
+    updateTask: updateTask,
+    updateDoAction: updateDoAction,
+    closeIdentify: closeIdentify
 })(SignalementManagementPanelComponent);
 
 /*const SignalementTaskViewerConnected = connect((state) => ({

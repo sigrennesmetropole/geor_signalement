@@ -2,7 +2,7 @@ import * as Rx from 'rxjs';
 import axios from 'axios';
 import {head} from 'lodash';
 import {addLayer, changeLayerProperties, updateNode, browseData,selectNode} from '@mapstore/actions/layers';
-import {changeMapInfoState} from "@mapstore/actions/mapInfo";
+import {changeMapInfoState, closeIdentify} from "@mapstore/actions/mapInfo";
 import {
     actions,
     initSignalementManagementDone,
@@ -15,15 +15,40 @@ import {
     loadTaskActionError,
     typeViewChanged,
     changeTypeView,
-    viewType
+    loadTaskViewer,
+    viewType, closeViewer
 } from '../actions/signalement-management-action';
-import {closeFeatureGrid, openFeatureGrid, setLayer} from '@mapstore/actions/featuregrid';
-import {closeIdentify} from '@mapstore/actions/mapInfo';
+import {closeFeatureGrid, openFeatureGrid, SELECT_FEATURES, setLayer} from '@mapstore/actions/featuregrid';
+import {isSignalementManagementActivateAndSelected} from "@js/extension/selectors/signalement-management-selector";
+import {
+    backendURLPrefix,
+    SIGNALEMENT_MANAGEMENT_LAYER_ID,
+    SIGNALEMENT_MANAGEMENT_LAYER_NAME
+} from "../constants/signalement-management-constants";
 
-const SIGNALEMENT_MANAGEMENT_LAYER_ID = 'signalements';
-const SIGNALEMENT_MANAGEMENT_LAYER_NAME = 'Signalements';
 
-let backendURLPrefix = "/signalement";
+/**
+ * Catch GFI response on identify load event and close identify if Signalement identify tabs is selected
+ * TODO: take showIdentify pluginCfg param into account
+ * @param {*} action$
+ * @param {*} store
+ */
+export function loadTaskViewerEpic(action$, store) {
+    return action$.ofType(SELECT_FEATURES)
+        .filter((action) => isSignalementManagementActivateAndSelected(store.getState(), SIGNALEMENT_MANAGEMENT_LAYER_ID))
+        .switchMap((action) => {
+            let responses = (store.getState().mapInfo.responses?.length) ? store.getState().mapInfo.responses[0] : {};
+            // si features présentent dans la zone de clic
+            if (responses?.response && responses.response?.features && responses.response.features.length) {
+                let features = responses.response.features;
+                let clickedPoint = responses.queryParams;
+                return Rx.Observable.of(loadTaskViewer(features, clickedPoint)).concat(
+                    Rx.Observable.of(closeIdentify())
+                )
+            }
+            return  Rx.Observable.of(closeViewer());
+        });
+}
 
 export const initSignalementManagementEpic = (action$) =>
 action$.ofType(actions.INIT_SIGNALEMENT)
