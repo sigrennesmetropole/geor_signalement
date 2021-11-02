@@ -50,7 +50,7 @@ export class SignalementTaskViewer extends React.Component {
     }
 
     componentWillMount() {
-        console.log("sigm task  get");
+        window.signalementMgmt.debug("sigm task  get");
         let index = this.state.index;
         let id = this.props.features.length > 0 ? this.props.features[index]?.properties?.id : null;
         if(id){

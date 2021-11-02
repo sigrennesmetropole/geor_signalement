@@ -1,24 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import Dock from 'react-dock';
-import {pick} from 'lodash';
-import assign from 'object-assign';
 import ContainerDimensions from 'react-container-dimensions';
-import {connect} from 'react-redux';
 import {PropTypes} from 'prop-types';
 import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, Label, Tooltip, FormGroup, OverlayTrigger} from 'react-bootstrap';
-import Select from 'react-select';
 import Message from '@mapstore/components/I18N/Message';
-import { setViewer, getViewer } from '@mapstore/utils/MapInfoUtils';
-import {closeIdentify} from '@mapstore/actions/mapInfo';
-import {SignalementTaskViewer} from './SignalementTaskViewer';
 import {
     status,
     viewType
 } from '../actions/signalement-management-action';
-import {
-    signalementManagementContextsSelector,
-    signalementManagementMeSelector, signalementManagementTaskSelector
-} from "../selectors/signalement-management-selector";
 import {SignalementViewer} from "@js/extension/components/SignalementViewer";
 
 export class SignalementManagementPanelComponent extends React.Component {
@@ -157,7 +146,7 @@ export class SignalementManagementPanelComponent extends React.Component {
                                         {this.renderHeader()}
                                         <div className="signalement-panel-body">
                                             {
-                                                !this.state.initialized && false ?
+                                                !this.state.initialized ?
                                                     this.renderLoading() :
                                                     this.renderForm()
                                             }
