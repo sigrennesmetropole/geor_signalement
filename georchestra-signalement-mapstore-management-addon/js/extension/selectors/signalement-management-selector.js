@@ -28,12 +28,10 @@ export const signalementManagementTaskSelector = (state) => get(state, "signalem
  * @returns {boolean}
  */
 export function isSignalementManagementActivateAndSelected(state, signalementManagementLayerId) {
-  console.log("##state: ", state);
   if (signalementManagementLayerId != null) {
     let layers = state.layers?.flat;
     layers = layers != null ? layers.filter(layer => layer.id === signalementManagementLayerId) : null;
     let signalementManagementLayer = layers!= null && layers.length !== 0 ? layers[0] : null;
-    console.log("##signalementManagementLayer: ", signalementManagementLayer, signalementManagementLayer && signalementManagementLayer.visibility && state.layers.selected.includes(signalementManagementLayerId));
     return signalementManagementLayer && signalementManagementLayer.visibility && state.layers.selected.includes(signalementManagementLayerId);
   }
   return false;
