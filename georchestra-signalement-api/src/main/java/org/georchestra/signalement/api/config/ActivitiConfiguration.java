@@ -54,6 +54,7 @@ public class ActivitiConfiguration extends AbstractProcessEngineConfigurator {
 		processEngineConfiguration.setJdbcPassword(dataSourcePassword);
 		processEngineConfiguration.setJdbcDriver(dataSourceDriver);
 		processEngineConfiguration.setJdbcPingEnabled(true);
+		processEngineConfiguration.setJdbcPingQuery("select 1;");
 		processEngineConfiguration.setDatabaseSchemaUpdate(Boolean.TRUE.toString());
 	}
 

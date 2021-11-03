@@ -18,7 +18,9 @@ export const actions = {
 	DOWNLOAD_ATTACHMENT: 'SIGNALEMENT:MANAGEMENT:DOWNLOAD:ATTACHMENT',
 	CLAIM_TASK: 'SIGNALEMENT:MANAGEMENT:CLAIM:TASK',
     UPDATE_TASK: 'SIGNALEMENT:MANAGEMENT:UPDATE:TASK',
-    UPDATE_DO_ACTION: 'SIGNALEMENT:MANAGEMENT:UPDATE:DO:ACTION'
+    UPDATE_DO_ACTION: 'SIGNALEMENT:MANAGEMENT:UPDATE:DO:ACTION',
+	OPEN_TASK_VIEWER: 'SIGNALEMENT:MANAGEMENT:OPEN:TASK:VIEWER',
+	CLOSE_TASK_VIEWER: 'SIGNALEMENT:MANAGEMENT:CLOSE:TASK:VIEWER'
 };
 
 export const status = {
@@ -151,14 +153,28 @@ export function displayMapView(data) {
 }
 
 function loadError(type, message, e){
-	console.log("message:" + message);
-	console.log(e);
+	window.signalementMgmt.debug("message:" + message);
+	window.signalementMgmt.debug(e);
 	return {
 		type: type,
 		error: {
 			message: message,
 			e: e
 		}
+	}
+}
+
+export function loadTaskViewer(features, clickedPoint) {
+	return {
+		type: actions.OPEN_TASK_VIEWER,
+		features,
+		clickedPoint
+	}
+}
+
+export function closeViewer() {
+	return {
+		type: actions.CLOSE_TASK_VIEWER,
 	}
 }
 
