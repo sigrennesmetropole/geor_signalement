@@ -7,6 +7,7 @@ import {UserComponent} from './user/user.component';
 import {UserRoleContextComponent}
   from './userRoleContext/userRoleContext.component';
 import {WorkflowComponent} from './workflow/workflow.component';
+import {RoleComponent} from "./role/role.component";
 
 const appRoutes: Route[] = [
   {path: 'contexts',
