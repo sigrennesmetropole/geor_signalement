@@ -1,28 +1,32 @@
 import React from 'react';
 import {PropTypes} from 'prop-types';
-import {ControlLabel, Form, FormControl, FormGroup, Button, Col, Glyphicon} from "react-bootstrap";
+import {ControlLabel, Form, FormControl, FormGroup, Button, Col} from "react-bootstrap";
 import Message from '@mapstore/components/I18N/Message';
-
-
-export const TASKVIEWER = "TaskViewer";
-export const status = {
-    PENDING: "PENDING"
-};
+import LoadingSpinner from '@mapstore/components/misc/LoadingSpinner';
 
 export class SignalementTaskViewer extends React.Component {
 
 
     static propTypes = {
+        features: PropTypes.array,
         task: PropTypes.object,
+        user: PropTypes.object,
+        viewType: PropTypes.string,
+        errorTask: PropTypes.object,
         getTask: PropTypes.func,
-        claimTask: PropTypes.func,
         downloadAttachment: PropTypes.func,
+        claimTask: PropTypes.func,
         updateTask: PropTypes.func,
         updateDoAction: PropTypes.func,
+        closeIdentify: PropTypes.func,
     };
 
     static defaultProps = {
+        features: [],
         task: null,
+        user: {},
+        viewType: "",
+        errorTask: null,
         getTask: () => {
         },
         downloadAttachment: () => {
@@ -40,26 +44,27 @@ export class SignalementTaskViewer extends React.Component {
         super(props);
         this.state= {
             errorFields: {},
-            index: 0,
+            index: this.props.index,
             action: null
         }
     }
 
     componentWillMount() {
+        window.signalementMgmt.debug("sigm task  get");
         let index = this.state.index;
-        let id = this.props.response.features[index].properties.id;
+        let id = this.props.features.length > 0 ? this.props.features[index]?.properties?.id : null;
         if(id){
-            console.log("sigm task  get");
+            window.signalementMgmt.debug("sigm task  get");
             this.props.getTask(id);
             this.setState({task: null});
         }
 
     }
 
-    componentDidUpdate() {
-        console.log("sigm task  recupered before");
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        window.signalementMgmt.debug("sigm task  recupered before", );
         if (this.props.task !== null && this.state.task === null) {
-            console.log("sigm task  recupered");
+            window.signalementMgmt.debug("sigm task  recupered");
             this.state.task = this.props.task;
             this.setState(this.state);
         }
@@ -67,6 +72,15 @@ export class SignalementTaskViewer extends React.Component {
         if(this.state.task !== null){
             this.state.task = this.props.task;
         }
+
+        if (this.props.index !== prevState.index) {
+            let id = this.props.features.length > 0 ? this.props.features[this.props.index]?.properties?.id : null;
+            if(id){
+                this.props.getTask(id);
+                this.setState({task: null, index: this.props.index});
+            }
+        }
+
     }
 
 
@@ -74,7 +88,6 @@ export class SignalementTaskViewer extends React.Component {
         if (this.state.task) {
             return (
                 <Form model={this.state.task}>
-                    {this.renderSignalementNavigation()}
                     {this.renderMessage()}
                     {this.renderSignalementManagementInfo()}
                     {this.renderSignalementManagementForm()}
@@ -84,25 +97,18 @@ export class SignalementTaskViewer extends React.Component {
                 </Form>
             )
         } else {
-            return null;
+            return this.renderLoading();
         }
     }
 
-    renderSignalementNavigation(){
-        if(this.props.response.features.length > 1){
-            return(
-                <div className="button-navigation">
-                    <button  className="square-button-md btn btn-primary" onClick={() => this.handleClickButtonDisplayTaskBefore()}>
-                        <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
-                    </button>
-                    <button className="square-button-md btn btn-primary" onClick={() => this.handleClickButtonDisplayTaskAfter()}>
-                        <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
-                    </button>
-
+    renderLoading() {
+        return (
+            <div className="plui-loading-container">
+                <div className="plui-loading">
+                    <LoadingSpinner />
                 </div>
-
-            )
-        }
+            </div>
+        );
     }
 
     /**
@@ -236,7 +242,7 @@ export class SignalementTaskViewer extends React.Component {
     renderSignalementManagementValidate() {
         if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
             return (
-                <div>
+                <div className="validation-buttons">
                     <FormGroup controlId="signalement-management.info.cancel">
                         <Button className="cancelButton" bsStyle="default"
                                 onClick={() => this.handleClickButtonCancelTask()}>
@@ -419,7 +425,7 @@ export class SignalementTaskViewer extends React.Component {
 
                 );
             default:
-                console.log("Type of definition undefined");
+                window.signalementMgmt.debug("Type of definition undefined");
         }
     }
 
@@ -611,7 +617,7 @@ export class SignalementTaskViewer extends React.Component {
         if(index < this.props.response.features.length -1){
             let id = this.props.response.features[index+1].properties.id;
             if(id){
-                console.log("sigm task  get");
+                window.signalementMgmt.debug("sigm task  get");
                 this.props.getTask(id);
                 this.setState({task: null, index : (index+1)});
             }
@@ -623,7 +629,7 @@ export class SignalementTaskViewer extends React.Component {
         if(index > 0){
             let id = this.props.response.features[index-1].properties.id;
             if(id){
-                console.log("sigm task  get");
+                window.signalementMgmt.debug("sigm task  get");
                 this.props.getTask(id);
                 this.setState({task: null, index : (index-1)});
             }

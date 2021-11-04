@@ -1,0 +1,1 @@
+CREATE INDEX ABSTRACT_REPORTING_IDX1 ON abstract_reporting(uuid);

@@ -74,7 +74,7 @@ export function loadedAttachmentConfiguration(attachmentConfiguration) {
 }
 
 export function addAttachment(attachment) {
-	console.log('add file action: ' + attachment)
+	window.signalement.debug('add file action: ' + attachment)
 	return {
 		type: actions.ADD_ATTACHMENT,
 		attachment : attachment
@@ -82,7 +82,7 @@ export function addAttachment(attachment) {
 }
 
 export function addedAttachment(attachment) {
-	console.log('added file action: ' + attachment)
+	window.signalement.debug('added file action: ' + attachment)
 	return {
 		type: actions.ATTACHMENT_ADDED,
 		attachment : attachment
@@ -90,7 +90,7 @@ export function addedAttachment(attachment) {
 }
 
 export function removeAttachment(attachment) {
-	console.log('add file action: ' + attachment)
+	window.signalement.debug('add file action: ' + attachment)
 	return {
 		type: actions.REMOVE_ATTACHMENT,
 		attachment : attachment
@@ -98,7 +98,7 @@ export function removeAttachment(attachment) {
 }
 
 export function removedAttachment(attachmentIndex) {
-	console.log('remove file action: ' + attachmentIndex)
+	window.signalement.debug('remove file action: ' + attachmentIndex)
 	return {
 		type: actions.ATTACHMENT_REMOVED,
 		attachmentIndex : attachmentIndex
@@ -215,8 +215,8 @@ export function confirmClosing() {
 }
 
 function loadError(type, message, e){
-	console.log("message:" + message);
-	console.log(e);
+	window.signalement.debug("message:" + message);
+	window.signalement.debug(e);
 	return {
 		type: type,
 		error: {
