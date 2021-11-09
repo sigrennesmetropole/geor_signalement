@@ -4,6 +4,13 @@ MAINTAINER fni18300@open-groupe.com
 ENV TZ=Europe/Paris
 EXPOSE {{signalement_server_port}}
 
+# Jetty supplies Mail but not the activation dependency,
+# if you use JavaMail it uses Jetty's JavaMail
+# which then fails on Java >= 9 (even if we supply the
+# activation dependency in Maven, as Jetty's JavaMail
+# uses Jetty's classloader rather than ours)
+RUN rm -r /usr/local/jetty/lib/mail
+
 RUN mkdir -p /opt/signalement/data/models
 
 ADD signalement.war /var/lib/jetty/webapps/signalement.war
