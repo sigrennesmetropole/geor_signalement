@@ -1,3 +1,4 @@
 module.exports = {
-    name: "SignalementExtension"
+    name: "SignalementExtension",
+    env: "prod"
 };
