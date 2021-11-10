@@ -5,7 +5,6 @@ ENV TZ=Europe/Paris
 ADD /var/lib/jetty/webapps/signalement.war /var/lib/jetty/webapps/signalement.war
 #ADD etc/ /etc
 
-USER ROOT
 # Jetty supplies Mail but not the activation dependency,
 # if you use JavaMail it uses Jetty's JavaMail
 # which then fails on Java >= 9 (even if we supply the
