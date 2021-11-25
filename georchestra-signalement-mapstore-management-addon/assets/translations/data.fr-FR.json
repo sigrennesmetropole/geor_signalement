@@ -24,7 +24,7 @@
           "layer": "Couche ou thématique",
           "object": "Object",
           "files": "Pièces jointes",
-          "affect": "Assigner",
+          "affect": "S'assigner le signalement",
           "actions": "Etape suivante",
           "validate": "Valider",
           "cancel": "Annuler"
