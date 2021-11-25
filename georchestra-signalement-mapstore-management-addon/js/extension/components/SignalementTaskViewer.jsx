@@ -73,6 +73,15 @@ export class SignalementTaskViewer extends React.Component {
             this.state.task = this.props.task;
         }
 
+        // si on a de nouvelles features (nouveau click sur la map)
+        if (this.props.features.length > 0 && JSON.stringify(this.props.features) !== JSON.stringify(prevProps.features)) {
+            let id = this.props.features.length > 0 ? this.props.features[0]?.properties?.id : null;
+            if(id) {
+                this.props.getTask(id);
+                this.setState({task: null, index: this.props.index});
+            }
+        }
+
         if (this.props.index !== prevState.index) {
             let id = this.props.features.length > 0 ? this.props.features[this.props.index]?.properties?.id : null;
             if(id){

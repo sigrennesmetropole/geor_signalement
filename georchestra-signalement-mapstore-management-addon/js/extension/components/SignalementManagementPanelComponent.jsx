@@ -86,7 +86,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         super(props);
         
         if (this.props.debug_signalement_management) {
-            window.signalementMgmt.debug = (obj) => { console.log(obj) };
+            window.signalementMgmt.debug = (...args) => { console.log(...args) };
         }
 
         window.signalementMgmt.debug("sigm constructor...");
