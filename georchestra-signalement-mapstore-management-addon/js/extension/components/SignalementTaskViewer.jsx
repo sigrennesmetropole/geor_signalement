@@ -600,7 +600,7 @@ export class SignalementTaskViewer extends React.Component {
      * L'action pour fermer la view
      */
     handleClickButtonCancelTask() {
-        this.props.closeIdentify();
+        this.props.closeViewer();
     }
 
     /**
