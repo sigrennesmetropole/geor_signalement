@@ -137,15 +137,15 @@ export class SignalementTaskViewer extends React.Component {
                     <Col md={6}>
                         <FormGroup controlId="signalement-management.info.date">
                             <ControlLabel><Message msgId="signalement-management.date"/></ControlLabel>
-                            <FormControl type="text" readOnly
-                                         value={this.state.task.creationDate !== null ? this.state.task.creationDate : ''}/>
+                            <FormControl type="datetime-local" readOnly
+                                         value={this.state.task.creationDate !== null ? new Date(this.state.task.creationDate).toISOString().slice(0, -1) : ''}/>
                         </FormGroup>
                     </Col>
                     <Col md={6}>
                         <FormGroup controlId="signalement-management.info.statut">
                             <ControlLabel><Message msgId="signalement-management.statut"/></ControlLabel>
                             <FormControl type="text" readOnly
-                                         value={this.state.task.status !== null ? this.state.task.status : ''}/>
+                                         value={this.state.task.functionalStatus !== null ? this.state.task.functionalStatus : ''}/>
                         </FormGroup>
                     </Col>
                 </fieldset>
