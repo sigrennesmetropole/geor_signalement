@@ -204,7 +204,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition du bouton Assigner
      */
     renderSignalementManagementClaim(){
-        if(!this.props.task.assignee || this.props.user.roles.find(role => role === "ADMIN"))
+        if(!this.state.task.assignee || this.props.user.roles.find(role => role === "ADMIN"))
             return (
                 <div>
                     <FormGroup controlId="signalement-management.info.claim">
@@ -220,7 +220,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition d'etape suivante pour faire une action
      */
     renderSignalementManagementActions() {
-        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
             return (
                 <div className ="actionsList">
                     <Col md={12}>
@@ -249,7 +249,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition des buttons d'actions
      */
     renderSignalementManagementValidate() {
-        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
             return (
                 <div className="validation-buttons">
                     <FormGroup controlId="signalement-management.info.cancel">

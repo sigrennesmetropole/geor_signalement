@@ -129,11 +129,12 @@ export function closeTabularView() {
 	}
 }
 
-export function changeTypeView(viewType, context) {
+export function changeTypeView(viewType, context, taskFunctionalId) {
 	return {
 		type: actions.CHANGE_TYPE_VIEW,
 		viewType: viewType,
-		context: context
+		context: context,
+		taskFunctionalId: taskFunctionalId
 	}
 }
 
