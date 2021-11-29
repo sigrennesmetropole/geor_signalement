@@ -67,7 +67,8 @@ public abstract class ReportingMapper {
 			@Mapping(ignore = true, target = "functionalStatus"),
 			@Mapping(ignore = true, target = "initiator"), @Mapping(ignore = true, target = "geographicType"),
 			@Mapping(ignore = true, target = "creationDate"), @Mapping(ignore = true, target = "updatedDate"),
-			@Mapping(ignore = true, target = "contextDescription"), @Mapping(ignore = true, target = "datas") })
+			@Mapping(ignore = true, target = "contextDescription"), @Mapping(ignore = true, target = "datas"),
+			@Mapping(ignore = true, target = "assignee")})
 	public abstract void updateEntityFromDto(ReportingDescription reportingDescription,
 			@MappingTarget AbstractReportingEntity abstractReportingEntity);
 }
