@@ -16,7 +16,7 @@ import {
     typeViewChanged,
     changeTypeView,
     loadTaskViewer,
-    viewType, closeViewer
+    viewType, closeViewer, getTask
 } from '../actions/signalement-management-action';
 import {closeFeatureGrid, openFeatureGrid, SELECT_FEATURES, setLayer} from '@mapstore/actions/featuregrid';
 import {isSignalementManagementActivateAndSelected} from "@js/extension/selectors/signalement-management-selector";
@@ -25,6 +25,7 @@ import {
     SIGNALEMENT_MANAGEMENT_LAYER_ID,
     SIGNALEMENT_MANAGEMENT_LAYER_NAME
 } from "../constants/signalement-management-constants";
+import {error, success} from '@mapstore/actions/notifications';
 
 
 /**
@@ -129,9 +130,32 @@ export const updateAndDoActionEpic = (action$) =>
 
            return Rx.Observable.fromPromise(axios.put(urlUpdate, action.task)
                .then(() => axios.put(urlDoAction)))
-               .switchMap(() =>  {
-                   return  Rx.Observable.of( changeTypeView(action.viewType, action.task.asset.contextDescription), closeIdentify())})
-               .catch(e => Rx.Observable.of(loadTaskActionError("signalement-management.doIt.error", e)));;
+               .switchMap(() => {
+                   let switchActions = [
+                       changeTypeView(action.viewType, action.task.asset.contextDescription, action.task.functionalId),
+                       success({
+                           title: "signalement-management.do-action.success.title",
+                           message: "signalement-management.do-action.success.message",
+                           uid: "signalement-management.do-action.success.",
+                           position: "tr",
+                           autoDismiss: 5
+                   })];
+                   // fermer le viewer si on passe à done ou cancelled
+                   if (action.actionName !== 'handled') {
+                       switchActions.push(closeViewer());
+                   }
+                   return Rx.Observable.from(switchActions);
+               })
+               .catch(e => Rx.Observable.from([
+                   // loadTaskActionError("signalement-management.doIt.error", e),
+                   error({
+                       title: "signalement-management.do-action.fail.title",
+                       message: "signalement-management.do-action.fail.message",
+                       uid: "signalement-management.do-action.fail.",
+                       position: "tr",
+                       autoDismiss: 5
+                   })
+               ]));
 
         });
 
@@ -153,8 +177,28 @@ export const loadViewDataEpic = (action$) =>
             const url = backendURLPrefix + "/task/search/geojson?contextName=" + action.context.name +
                 "&asAdmin=" + (action.viewType === viewType.MY ? "false":"true");
 
-            return Rx.Observable.defer(() => axios.get(url))
-                .switchMap((response) => Rx.Observable.of(typeViewChanged(action.viewType, response.data)))
+            return Rx.Observable.fromPromise(axios.get(url))
+                .switchMap((response) => {
+                    // Parcours des nouvelles features pour vérifier si la task actuelle a été mise à jour
+                    let updateCurrentTask = null;
+                    window.signalementMgmt.debug('load view response', response.data.features);
+                    window.signalementMgmt.debug('currentFunctionalId', action.taskFunctionalId);
+                    if (response.data.features) {
+                        for (let i = 0; i < response.data.features.length; i++) {
+                            if (response.data.features[i].properties.functionalId === action.taskFunctionalId) {
+                                updateCurrentTask = response.data.features[i].properties.id;
+                                break;
+                            }
+                        }
+                    }
+                    window.signalementMgmt.debug('updateCurrentTask', updateCurrentTask);
+
+                    let switchActions = [typeViewChanged(action.viewType, response.data)];
+                    if (updateCurrentTask !== null) {
+                        switchActions.push(getTask(updateCurrentTask));
+                    }
+                    return Rx.Observable.from(switchActions);
+                })
                 .catch(e => Rx.Observable.of(loadActionError("signalement-management.load.searchTask.error", e)));
         });
 

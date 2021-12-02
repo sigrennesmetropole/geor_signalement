@@ -144,8 +144,8 @@ export class SignalementPanelComponent extends React.Component {
         }
 
         // disable custom logging function if debug_signalement is set to false in local config
-        if (!this.props.debug_signalement) {
-            window.signalement.debug = () => {};
+        if (this.props.debug_signalement) {
+            window.signalement.debug = (...args) => { console.log(...args) };
         }
 
 		this.props.initSignalement(this.props.backendurl);
