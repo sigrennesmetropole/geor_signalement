@@ -2267,6 +2267,9 @@
 				"description": {
 					"type": "string"
 				},
+				"assignee": {
+					"type": "string"
+				},
 				"localisation": {
 					"type": "array",
 					"items": {
