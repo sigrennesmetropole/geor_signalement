@@ -3,11 +3,11 @@ import {Route, RouterModule} from '@angular/router';
 import {ContextComponent} from './context/context.component';
 import {IsSignalementAdmin} from './guards/access.guard';
 import {HomePageComponent} from './home-page/home-page.component';
-import {RoleComponent} from './role/role.component';
 import {UserComponent} from './user/user.component';
 import {UserRoleContextComponent}
   from './userRoleContext/userRoleContext.component';
 import {WorkflowComponent} from './workflow/workflow.component';
+import {RoleComponent} from "./role/role.component";
 
 const appRoutes: Route[] = [
   {path: 'contexts',

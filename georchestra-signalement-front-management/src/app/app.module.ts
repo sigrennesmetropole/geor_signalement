@@ -170,6 +170,8 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     ContextItemMapper,
     UserItemMapper,
     WorkflowItemMapper,
+    UserItemMapper,
+    UserService,
     ToasterUtil,
     ContextDataSource,
     RoleDataSource,

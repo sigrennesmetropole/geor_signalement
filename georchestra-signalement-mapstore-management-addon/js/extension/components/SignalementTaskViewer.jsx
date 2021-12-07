@@ -73,6 +73,15 @@ export class SignalementTaskViewer extends React.Component {
             this.state.task = this.props.task;
         }
 
+        // si on a de nouvelles features (nouveau click sur la map)
+        if (this.props.features.length > 0 && JSON.stringify(this.props.features) !== JSON.stringify(prevProps.features)) {
+            let id = this.props.features.length > 0 ? this.props.features[0]?.properties?.id : null;
+            if(id) {
+                this.props.getTask(id);
+                this.setState({task: null, index: this.props.index});
+            }
+        }
+
         if (this.props.index !== prevState.index) {
             let id = this.props.features.length > 0 ? this.props.features[this.props.index]?.properties?.id : null;
             if(id){
@@ -137,15 +146,15 @@ export class SignalementTaskViewer extends React.Component {
                     <Col md={6}>
                         <FormGroup controlId="signalement-management.info.date">
                             <ControlLabel><Message msgId="signalement-management.date"/></ControlLabel>
-                            <FormControl type="text" readOnly
-                                         value={this.state.task.creationDate !== null ? this.state.task.creationDate : ''}/>
+                            <FormControl type="datetime-local" readOnly
+                                         value={this.state.task.creationDate !== null ? new Date(this.state.task.creationDate).toISOString().slice(0, -1) : ''}/>
                         </FormGroup>
                     </Col>
                     <Col md={6}>
                         <FormGroup controlId="signalement-management.info.statut">
                             <ControlLabel><Message msgId="signalement-management.statut"/></ControlLabel>
                             <FormControl type="text" readOnly
-                                         value={this.state.task.status !== null ? this.state.task.status : ''}/>
+                                         value={this.state.task.functionalStatus !== null ? this.state.task.functionalStatus : ''}/>
                         </FormGroup>
                     </Col>
                 </fieldset>
@@ -195,7 +204,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition du bouton Assigner
      */
     renderSignalementManagementClaim(){
-        if(!this.props.task.assignee || this.props.user.roles.find(role => role === "ADMIN"))
+        if(!this.state.task.asset.assignee || this.props.user.roles.find(role => role === "ADMIN"))
             return (
                 <div>
                     <FormGroup controlId="signalement-management.info.claim">
@@ -211,7 +220,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition d'etape suivante pour faire une action
      */
     renderSignalementManagementActions() {
-        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.asset.assignee && this.state.task.asset.assignee === this.props.user.login) {
             return (
                 <div className ="actionsList">
                     <Col md={12}>
@@ -240,7 +249,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition des buttons d'actions
      */
     renderSignalementManagementValidate() {
-        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.asset.assignee && this.state.task.asset.assignee === this.props.user.login) {
             return (
                 <div className="validation-buttons">
                     <FormGroup controlId="signalement-management.info.cancel">
@@ -600,7 +609,7 @@ export class SignalementTaskViewer extends React.Component {
      * L'action pour fermer la view
      */
     handleClickButtonCancelTask() {
-        this.props.closeIdentify();
+        this.props.closeViewer();
     }
 
     /**

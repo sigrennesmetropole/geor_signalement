@@ -43,7 +43,7 @@ import '../assets/signalement.css';
 const isEnabled = createControlEnabledSelector('signalement');
 
 // custom logging function inside plugin
-window.signalement = { debug: (obj) => console.log(obj) };
+window.signalement = { debug: (obj) => {} };
 
 const SignalementPanelComponentConnected = connect((state) => ({
     active: /*isEnabled(state) ||*/ !!isOpen(state),

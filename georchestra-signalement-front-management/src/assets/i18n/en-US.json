@@ -163,6 +163,44 @@
       "contextNameIndication" : "First letters of the contexts"
     }
   },
+  "role": {
+    "title": "Roles",
+    "table": {
+      "name": "Name",
+      "label": "Label",
+      "actions": "Actions"
+    },
+    "delete": {
+      "success": "Role successfully suppressed",
+      "error": "Role suppression failed"
+    },
+    "add": {
+      "title": "Add a role",
+      "success": "The role creation succeed",
+      "error": "The role creation failed",
+      "noName": "You must provide a name",
+      "noLabel": "You must provide a label"
+    }
+  },
+  "role": {
+    "title": "Roles",
+    "table": {
+      "name": "Name",
+      "label": "Label",
+      "actions": "Actions"
+    },
+    "delete": {
+      "success": "Role successfully suppressed",
+      "error": "Role suppression failed"
+    },
+    "add": {
+      "title": "Add a role",
+      "success": "The role creation succeed",
+      "error": "The role creation failed",
+      "noName": "You must provide a name",
+      "noLabel": "You must provide a label"
+    }
+  },
   "paginator": {
     "itemsPerPage": "Items per page",
     "nextPage": "Next page",
