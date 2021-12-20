@@ -63,7 +63,8 @@ export class SignalementTaskViewer extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         window.signalementMgmt.debug("sigm task  recupered before", );
-        if (this.props.task !== null && this.state.task === null) {
+        // on actualise l'état si le assignee de la task a changer (cas du clic sur <<S'assigner le signalement)
+        if (this.props.task !== null && (this.state.task === null || this.props.task.assignee !== this.state.task.assignee)) {
             window.signalementMgmt.debug("sigm task  recupered");
             this.state.task = this.props.task;
             this.setState(this.state);
