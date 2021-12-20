@@ -32,10 +32,10 @@ jobs:
       id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - name: "Build a docker image for front-office"
+    - name: "Build a docker image for back-office"
       run: mvn -B clean package -Pdocker,prod -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement:${{ steps.version.outputs.VERSION }}
 
-    - name: "Build a docker image for back-office"
+    - name: "Build a docker image for front-office"
       run: mvn -B clean package -Pdocker-front-management,prod -DskipTests -DskipDockerPush -DdockerImageName=sigrennesmetropole/geor_signalement_admin:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
