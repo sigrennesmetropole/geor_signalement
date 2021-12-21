@@ -30,14 +30,16 @@ export default (state = initialState, action) => {
         case actions.USER_ME_GOT: {
             return assign({}, state, {user: action.user});
         }
+        case actions.CLAIM_TASK:
+        case actions.UPDATE_TASK:
+        case actions.UPDATE_DO_ACTION: {
+            return assign({}, state, {task: action.task, actionInProgress: true});
+        }
         case actions.TASK_GET: {
             return assign({}, state, {task: null});
         }
         case actions.TASK_GOT: {
             return assign({}, state, {task: action.task, actionInProgress: false});
-        }
-        case actions.CLAIM_TASK: {
-            return assign({}, state, {actionInProgress: true});
         }
         case actions.OPEN_TABULAR_VIEW: {
             return assign({}, state, {tabularViewOpen: true});
@@ -52,10 +54,10 @@ export default (state = initialState, action) => {
             return assign({}, state, {viewType: action.viewType});
         }
         case actions.OPEN_TASK_VIEWER: {
-            return assign({}, state, {taskViewerOpen: true, features: action.features, clickedPoint: action.clickedPoint})
+            return assign({}, state, {taskViewerOpen: true, features: action.features, clickedPoint: action.clickedPoint, actionInProgress: false})
         }
         case actions.CLOSE_TASK_VIEWER: {
-            return assign({}, state, {taskViewerOpen: false, features: [], clickedPoint: {long: 0.0, lat: 0.0}})
+            return assign({}, state, {taskViewerOpen: false, features: [], clickedPoint: {long: 0.0, lat: 0.0}, actionInProgress: false})
         }
         default: {
             return state;
