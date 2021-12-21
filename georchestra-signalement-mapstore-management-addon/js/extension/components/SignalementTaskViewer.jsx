@@ -212,11 +212,13 @@ export class SignalementTaskViewer extends React.Component {
         if(!this.state.task.asset.assignee || this.props.user.roles.find(role => role === "ADMIN"))
             return (
                 <div>
-                    <FormGroup controlId="signalement-management.info.claim">
-                        <Button className="claimButton" key="claimer" bsStyle="info" onClick={() => this.handleClickButtonClaim()}>
-                            <Message msgId="signalement-management.affect"/>
-                        </Button>
-                    </FormGroup>
+                    <Col md={12} className="text-center">
+                        <FormGroup controlId="signalement-management.info.claim">
+                            <Button className="claimButton" key="claimer" bsStyle="info" onClick={() => this.handleClickButtonClaim()}>
+                                <Message msgId="signalement-management.affect"/>
+                            </Button>
+                        </FormGroup>
+                    </Col>
                 </div>
             )
     }
