@@ -26,6 +26,7 @@ export class SignalementViewer extends React.Component {
         user: PropTypes.object,
         viewType: PropTypes.string,
         errorTask: PropTypes.object,
+        actionInProgress: PropTypes.bool,
         getTask: PropTypes.func,
         downloadAttachment: PropTypes.func,
         claimTask: PropTypes.func,
@@ -45,6 +46,7 @@ export class SignalementViewer extends React.Component {
         user: {},
         viewType: "",
         errorTask: null,
+        actionInProgress: false,
         getTask: () => {},
         downloadAttachment: () => {},
         claimTask: () => {},
@@ -74,6 +76,7 @@ export class SignalementViewer extends React.Component {
                                            user={this.props.user}
                                            viewType={this.props.viewType}
                                            errorTask={this.props.errorTask}
+                                           actionInProgress={this.props.actionInProgress}
                                            getTask={this.props.getTask}
                                            downloadAttachment={this.props.downloadAttachment}
                                            claimTask={this.props.claimTask}

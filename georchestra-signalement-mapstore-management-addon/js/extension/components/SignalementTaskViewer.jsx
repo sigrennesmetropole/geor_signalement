@@ -3,6 +3,7 @@ import {PropTypes} from 'prop-types';
 import {ControlLabel, Form, FormControl, FormGroup, Button, Col} from "react-bootstrap";
 import Message from '@mapstore/components/I18N/Message';
 import LoadingSpinner from '@mapstore/components/misc/LoadingSpinner';
+import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 
 export class SignalementTaskViewer extends React.Component {
 
@@ -13,6 +14,7 @@ export class SignalementTaskViewer extends React.Component {
         user: PropTypes.object,
         viewType: PropTypes.string,
         errorTask: PropTypes.object,
+        actionInProgress: PropTypes.bool,
         getTask: PropTypes.func,
         downloadAttachment: PropTypes.func,
         claimTask: PropTypes.func,
@@ -27,6 +29,7 @@ export class SignalementTaskViewer extends React.Component {
         user: {},
         viewType: "",
         errorTask: null,
+        actionInProgress: false,
         getTask: () => {
         },
         downloadAttachment: () => {
@@ -101,6 +104,7 @@ export class SignalementTaskViewer extends React.Component {
                     {this.renderMessage()}
                     {this.renderSignalementManagementInfo()}
                     {this.renderSignalementManagementForm()}
+                    {this.renderInProgressSpinner()}
                     {this.renderSignalementManagementClaim()}
                     {this.renderSignalementManagementActions()}
                     {this.renderSignalementManagementValidate()}
@@ -244,6 +248,19 @@ export class SignalementTaskViewer extends React.Component {
                 </div>
             )
         }
+    }
+
+    /**
+     * La rendition du inline spinner d'action en progrès.
+     */
+    renderInProgressSpinner() {
+        return (
+            <div className="block-inline-spinner">
+                <Col md={12} className="text-center">
+                    <InlineSpinner loading={this.props.actionInProgress} className="inline-spinner"/>
+                </Col>
+            </div>
+        )
     }
 
     /**

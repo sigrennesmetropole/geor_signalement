@@ -34,7 +34,10 @@ export default (state = initialState, action) => {
             return assign({}, state, {task: null});
         }
         case actions.TASK_GOT: {
-            return assign({}, state, {task: action.task});
+            return assign({}, state, {task: action.task, actionInProgress: false});
+        }
+        case actions.CLAIM_TASK: {
+            return assign({}, state, {actionInProgress: true});
         }
         case actions.OPEN_TABULAR_VIEW: {
             return assign({}, state, {tabularViewOpen: true});
