@@ -66,8 +66,11 @@ export class SignalementTaskViewer extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         window.signalementMgmt.debug("sigm task  recupered before", );
-        // on actualise l'état si le assignee de la task a changer (cas du clic sur <<S'assigner le signalement)
-        if (this.props.task !== null && (this.state.task === null || this.props.task.assignee !== this.state.task.assignee)) {
+        // on actualise l'état si
+        // le assignee de la task a changer (cas du clic sur <<S'assigner le signalement)
+        // le statut de la task a changé
+        if (this.props.task !== null && (this.state.task === null || this.props.task.assignee !== this.state.task.assignee ||
+        this.props.task.status !== this.state.task.status)) {
             window.signalementMgmt.debug("sigm task  recupered");
             this.state.task = this.props.task;
             this.setState(this.state);
@@ -209,7 +212,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition du bouton Assigner
      */
     renderSignalementManagementClaim(){
-        if(!this.state.task.asset.assignee || this.props.user.roles.find(role => role === "ADMIN"))
+        if(!this.state.task.assignee || this.props.user.roles.find(role => role === "ADMIN"))
             return (
                 <div>
                     <Col md={12} className="text-center">
@@ -227,7 +230,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition d'etape suivante pour faire une action
      */
     renderSignalementManagementActions() {
-        if (this.state.task.actions && this.state.task.asset.assignee && this.state.task.asset.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
             return (
                 <div className ="actionsList">
                     <Col md={12}>
@@ -269,7 +272,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition des buttons d'actions
      */
     renderSignalementManagementValidate() {
-        if (this.state.task.actions && this.state.task.asset.assignee && this.state.task.asset.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
             return (
                 <div className="validation-buttons">
                     <FormGroup controlId="signalement-management.info.cancel">
