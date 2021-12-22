@@ -61,6 +61,14 @@
     margin-left: 5px;
 }
 
+.signalement-management-panel .block-inline-spinner div {
+    margin: 20px 0 0 0;
+}
+
+.signalement-management-panel .block-inline-spinner div .inline-spinner {
+    width: 20px;
+}
+
 span .error {
     color: red;
 }

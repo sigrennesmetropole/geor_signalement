@@ -48,6 +48,7 @@ const SignalementManagementPanelComponentConnected = connect((state) => ({
     clickedPoint: signalementManagementClickedPointSelector(state),
     task: signalementManagementTaskSelector(state),
     errorTask: state.signalementManagement.errorTask,
+    actionInProgress: state.signalementManagement.actionInProgress,
     // debug
     state : state
 }), {
