@@ -3,6 +3,7 @@ import {PropTypes} from 'prop-types';
 import {ControlLabel, Form, FormControl, FormGroup, Button, Col} from "react-bootstrap";
 import Message from '@mapstore/components/I18N/Message';
 import LoadingSpinner from '@mapstore/components/misc/LoadingSpinner';
+import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 
 export class SignalementTaskViewer extends React.Component {
 
@@ -13,6 +14,7 @@ export class SignalementTaskViewer extends React.Component {
         user: PropTypes.object,
         viewType: PropTypes.string,
         errorTask: PropTypes.object,
+        actionInProgress: PropTypes.bool,
         getTask: PropTypes.func,
         downloadAttachment: PropTypes.func,
         claimTask: PropTypes.func,
@@ -27,6 +29,7 @@ export class SignalementTaskViewer extends React.Component {
         user: {},
         viewType: "",
         errorTask: null,
+        actionInProgress: false,
         getTask: () => {
         },
         downloadAttachment: () => {
@@ -63,7 +66,11 @@ export class SignalementTaskViewer extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         window.signalementMgmt.debug("sigm task  recupered before", );
-        if (this.props.task !== null && this.state.task === null) {
+        // on actualise l'état si
+        // le assignee de la task a changer (cas du clic sur <<S'assigner le signalement)
+        // le statut de la task a changé
+        if (this.props.task !== null && (this.state.task === null || this.props.task.assignee !== this.state.task.assignee ||
+        this.props.task.status !== this.state.task.status)) {
             window.signalementMgmt.debug("sigm task  recupered");
             this.state.task = this.props.task;
             this.setState(this.state);
@@ -100,6 +107,7 @@ export class SignalementTaskViewer extends React.Component {
                     {this.renderMessage()}
                     {this.renderSignalementManagementInfo()}
                     {this.renderSignalementManagementForm()}
+                    {this.renderInProgressSpinner()}
                     {this.renderSignalementManagementClaim()}
                     {this.renderSignalementManagementActions()}
                     {this.renderSignalementManagementValidate()}
@@ -204,14 +212,16 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition du bouton Assigner
      */
     renderSignalementManagementClaim(){
-        if(!this.state.task.asset.assignee || this.props.user.roles.find(role => role === "ADMIN"))
+        if(!this.state.task.assignee || this.props.user.roles.find(role => role === "ADMIN"))
             return (
                 <div>
-                    <FormGroup controlId="signalement-management.info.claim">
-                        <Button className="claimButton" key="claimer" bsStyle="info" onClick={() => this.handleClickButtonClaim()}>
-                            <Message msgId="signalement-management.affect"/>
-                        </Button>
-                    </FormGroup>
+                    <Col md={12} className="text-center">
+                        <FormGroup controlId="signalement-management.info.claim">
+                            <Button className="claimButton" key="claimer" bsStyle="info" onClick={() => this.handleClickButtonClaim()}>
+                                <Message msgId="signalement-management.affect"/>
+                            </Button>
+                        </FormGroup>
+                    </Col>
                 </div>
             )
     }
@@ -220,7 +230,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition d'etape suivante pour faire une action
      */
     renderSignalementManagementActions() {
-        if (this.state.task.actions && this.state.task.asset.assignee && this.state.task.asset.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
             return (
                 <div className ="actionsList">
                     <Col md={12}>
@@ -246,10 +256,23 @@ export class SignalementTaskViewer extends React.Component {
     }
 
     /**
+     * La rendition du inline spinner d'action en progrès.
+     */
+    renderInProgressSpinner() {
+        return (
+            <div className="block-inline-spinner">
+                <Col md={12} className="text-center">
+                    <InlineSpinner loading={this.props.actionInProgress} className="inline-spinner"/>
+                </Col>
+            </div>
+        )
+    }
+
+    /**
      * La rendition des buttons d'actions
      */
     renderSignalementManagementValidate() {
-        if (this.state.task.actions && this.state.task.asset.assignee && this.state.task.asset.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
             return (
                 <div className="validation-buttons">
                     <FormGroup controlId="signalement-management.info.cancel">
