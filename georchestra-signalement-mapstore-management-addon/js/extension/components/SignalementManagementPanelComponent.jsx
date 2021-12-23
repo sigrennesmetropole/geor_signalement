@@ -25,6 +25,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         errorTask: PropTypes.object,
         task: PropTypes.object,
         error: PropTypes.object,
+        actionInProgress: PropTypes.bool,
         tabularViewOpen: PropTypes.bool,
         viewType: PropTypes.string,
         features: PropTypes.array,
@@ -65,6 +66,7 @@ export class SignalementManagementPanelComponent extends React.Component {
 		contexts: null,
         user: null,
         error: null,
+        actionInProgress: false,
         tabularViewOpen: false,
         viewType: null,
         features: [],
@@ -198,6 +200,7 @@ export class SignalementManagementPanelComponent extends React.Component {
                                    user={this.props.user}
                                    viewType={this.props.viewType}
                                    errorTask={this.props.errorTask}
+                                   actionInProgress={this.props.actionInProgress}
                                    getTask={this.props.getTask}
                                    downloadAttachment={this.props.downloadAttachment}
                                    claimTask={this.props.claimTask}
