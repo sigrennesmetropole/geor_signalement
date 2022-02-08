@@ -27,7 +27,7 @@
 			"attachment.error": "le fichier n'a pas été uploadé",
 			"attachment.select": "Sélectionner un document",
 			"attachment.delete": "Supprimer un document",
-			"localization": "Géolocalisation de l'anomalie",
+			"localization": "Géolocalisation du signalement",
 			"localization.tips": "Cliquer sur le bouton pour géolocaliser le signalement sur la carte",
 			"localization.drawn": "Signalement géolocalisé",
 			"localization.geolocate": "Géolocaliser",

@@ -1,5 +1,5 @@
 .signalement-panel {
-    margin: 0 20px;
+    margin: 5px;
 }
 
 .signalement-panel .form-group {
@@ -38,16 +38,43 @@
     margin-left: 5px;
 }
 
+.signalement-panel .block-valid-form button {
+    height: 30px;
+}
 .signalement-panel .block-inline-spinner .inline-spinner {
     width: 30px;
 }
 
-.info-glyph .glyphicon {
-    font-size: 25px;
+.signalement-panel .instructions .info-glyph {
+    font-size: 20px;
 }
 
-.instructions {
-    margin-top: 10px;
+.signalement-panel .instructions {
+    margin-top: 5px;
+}
+
+.signalement-panel .instructions .message-instructions {
+    font-size: 13px;
+}
+
+.signalement-panel fieldset legend {
+    margin-bottom: 0;
+    padding-bottom: 0px;
+}
+
+.signalement-panel .geometry-button {
+    float: right;
+}
+
+.signalement-panel .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.signalement-panel .row div[class^="col-"],
+.signalement-panel .row div[class*=" col-"] {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 span .error {
@@ -60,8 +87,4 @@ span .info {
 
 fieldset{
     margin: 0 25px 0 30px;
-}
-
-.localization-tips {
-    padding-top: 5px;
 }
