@@ -7,7 +7,10 @@
 }
 
 .signalement-panel legend {
-    font-size: 18px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .signalement-panel label {
@@ -54,12 +57,7 @@
 }
 
 .signalement-panel .instructions .message-instructions {
-    font-size: 13px;
-}
-
-.signalement-panel fieldset legend {
-    margin-bottom: 0;
-    padding-bottom: 0px;
+    font-size: 12px;
 }
 
 .signalement-panel .geometry-button {
@@ -77,6 +75,14 @@
     padding-right: 0;
 }
 
+.signalement-panel .help-block {
+    font-size: 12px;
+}
+
+.signalement-panel .localization-tips {
+    font-size: 12px;
+}
+
 span .error {
     color: red;
 }
@@ -86,5 +92,5 @@ span .info {
 }
 
 fieldset{
-    margin: 0 25px 0 30px;
+    margin: 0 5px !important;
 }
