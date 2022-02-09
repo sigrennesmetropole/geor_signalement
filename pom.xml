@@ -50,7 +50,7 @@
 		<geotools.version>16.1</geotools.version>
 
 		<activiti.version>7.1.0.M5</activiti.version>
-		<log4j.version>2.17.0</log4j.version>
+		<log4j.version>2.17.1</log4j.version>
 
 		<swagger.plugin.version>2.4.12</swagger.plugin.version>
 		<maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
