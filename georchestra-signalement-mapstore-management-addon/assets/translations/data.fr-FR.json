@@ -6,7 +6,7 @@
         },
         "signalement-management": {
           "loading": "En cours d'initialisation...",
-          "title": "Gestion des signalement",
+          "title": "Gestion des signalements",
           "select.label": "Sélectionner la couche ou la thématique :",
           "tooltip.tabular_view": "Afficher la vue en tableau",
           "tooltip.map_picker": "Sélectionner un signalement sur la carte",

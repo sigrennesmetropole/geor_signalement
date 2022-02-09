@@ -95,7 +95,7 @@ export class SignalementPanelComponent extends React.Component {
         deleteGlyph: "trash",
         infoGlyph: "info-sign",
         // side panel properties
-        width: 660,
+        width: 500,
         dockProps: {
             dimMode: "none",
             size: 0.30,
@@ -391,12 +391,12 @@ export class SignalementPanelComponent extends React.Component {
             <div>
                 <fieldset className="instructions">
                     <Row>
-                        <Col xs={1}>
+                        <Col xs={2}>
                             <Button className="square-button no-events info-glyph">
                                 <Glyphicon glyph={this.props.infoGlyph}/>
                             </Button>
                         </Col>
-                        <Col xs={11}>
+                        <Col className="message-instructions" xs={10}>
                             <Message msgId="signalement.instructions"/>
                         </Col>
                     </Row>
@@ -550,7 +550,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderGeometryDrawButton = ()=> {
         return (
-            <Button bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
+            <Button className="geometry-button" bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
                 <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
                 <Message msgId="signalement.localization.geolocate"/>
             </Button>
@@ -591,13 +591,13 @@ export class SignalementPanelComponent extends React.Component {
                 </div>
                 <div className="block-valid-form">
                     <Button bsStyle="warning"
-                            bsSize="large"
+                            bsSize="medium"
                             onClick={() => this.cancel()}>
                         <Message msgId="signalement.cancel"/>
                     </Button>
                     <Button className="validation-button"
                             bsStyle="primary"
-                            bsSize="large"
+                            bsSize="medium"
                             onClick={() => this.create()}>
                         <Message msgId="signalement.validate"/>
                     </Button>
