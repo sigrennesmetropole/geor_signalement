@@ -27,7 +27,7 @@ stages:
 # Build job with maven plugin execution policies define in parent pom
 .signalementapi:build:
   script:
-    - sh ./mvnw $MAVEN_CLI_OPTS -U package ${OPTS} -Pprod,mapfishapp-signalement
+    - mvn $MAVEN_CLI_OPTS -U clean package ${OPTS} -Pprod,mapfishapp-signalement
   stage: build
   artifacts:
     paths:
@@ -62,7 +62,7 @@ signalementapi:build:master:
   allow_failure: true
   script:
     - >
-      sh ./mvnw $MAVEN_CLI_OPTS -U compile sonar:sonar
+      mvn $MAVEN_CLI_OPTS -U compile sonar:sonar
       -Dsonar.host.url=$SONAR_URL
       -Dsonar.login=$SONAR_TOKEN
       -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA
