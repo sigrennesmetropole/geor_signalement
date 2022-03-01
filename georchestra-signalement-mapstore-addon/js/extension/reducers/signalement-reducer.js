@@ -20,7 +20,7 @@ export default (state = initialState, action) => {
             return assign({}, state, {error: action.error});
         }
         case actions.SIGNALEMENT_OPEN_PANEL: {
-            return assign({}, state, {currentLayer: action.currentLayer, open: true});
+            return assign({}, state, {currentLayer: action.currentLayer, open: true, attachments: []});
         }
         case actions.SIGNALEMENT_CLOSE_PANEL: {
             return assign({}, state, {currentLayer: null, open: false});
