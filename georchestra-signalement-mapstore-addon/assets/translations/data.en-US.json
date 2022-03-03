@@ -27,6 +27,7 @@
 			"attachment.error": "file has not been uploaded",
 			"attachment.select": "Select a file",
 			"attachment.delete": "Delete file",
+			"attachment.delete.error": "Deletion failure",
 			"localization": "Geolocalize report",
 			"localization.tips": "Click on button to geolocalize report on map",
 			"localization.drawn": "Report geolocalized",
