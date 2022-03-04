@@ -152,7 +152,7 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     componentWillMount() {
-        this.setState({initialized: false, loaded: false, task: null, currentLayer: null});
+        this.setState({initialized: false, loaded: false, task: null, currentLayer: null, errorAttachment: ""});
         this.props.loadAttachmentConfiguration();
         this.props.loadThemas();
         this.props.loadLayers();
@@ -195,9 +195,11 @@ export class SignalementPanelComponent extends React.Component {
             window.signalement.debug("sig draft canceled or task created");
             this.state.task = null;
             this.state.loaded = false;
+            this.state.errorAttachment = "";
             this.setState(this.state);
             this.props.stopDrawingSupport();
             this.props.toggleControl();
+            this.state.errorFields = {};
         }
         window.signalement.debug(this.state);
     }
