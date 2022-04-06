@@ -1,5 +1,8 @@
 package org.georchestra.signalement.service.helper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,22 +16,18 @@ import org.georchestra.signalement.core.entity.reporting.LineReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PointReportingEntity;
 import org.georchestra.signalement.core.entity.reporting.PolygonReportingEntity;
 import org.georchestra.signalement.service.helper.workflow.AssignmentHelper;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = StarterSpringBootTestApplication.class)
 @ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
 		"org.georchestra.signalement.core" })
@@ -68,8 +67,8 @@ public class AssignementHelperTest {
 		List<String> users = new ArrayList<>();
 		users.add("testadmin");
 
-		Assert.assertNotNull(recipients);
-		Assert.assertEquals(recipients, users);
+		assertNotNull(recipients);
+		assertEquals(recipients, users);
 
 	}
 
@@ -98,8 +97,8 @@ public class AssignementHelperTest {
 		List<String> users = new ArrayList<>();
 		users.add("testadmin");
 
-		Assert.assertNotNull(recipients);
-		Assert.assertEquals(recipients, users);
+		assertNotNull(recipients);
+		assertEquals(recipients, users);
 
 	}
 
@@ -126,8 +125,8 @@ public class AssignementHelperTest {
 		List<String> users = new ArrayList<>();
 		users.add("testadmin");
 
-		Assert.assertNotNull(recipients);
-		Assert.assertEquals(recipients, users);
+		assertNotNull(recipients);
+		assertEquals(recipients, users);
 
 	}
 }
