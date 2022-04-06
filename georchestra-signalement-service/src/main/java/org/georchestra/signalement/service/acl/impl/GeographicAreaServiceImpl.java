@@ -1,6 +1,7 @@
 package org.georchestra.signalement.service.acl.impl;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
+
 import org.georchestra.signalement.core.dao.acl.GeographicAreaCustumDao;
 import org.georchestra.signalement.core.dao.acl.GeographicAreaDao;
 import org.georchestra.signalement.core.dto.GeographicArea;
@@ -8,14 +9,13 @@ import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
 import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.georchestra.signalement.service.mapper.acl.GeographicAreaMapper;
+import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class GeographicAreaServiceImpl implements GeographicAreaService {

@@ -1,11 +1,11 @@
 package org.georchestra.signalement.core.dao.acl;
 
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
+
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
-
-import java.util.List;
+import org.locationtech.jts.geom.Geometry;
 
 
 public interface GeographicAreaCustumDao {

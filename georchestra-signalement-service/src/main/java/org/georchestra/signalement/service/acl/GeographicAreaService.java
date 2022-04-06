@@ -1,12 +1,12 @@
 package org.georchestra.signalement.service.acl;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
+
 import org.georchestra.signalement.core.dto.GeographicArea;
 import org.georchestra.signalement.core.dto.GeographicType;
+import org.locationtech.jts.geom.Geometry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 /**
  * Service des geographic area

@@ -7,8 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.vividsolutions.jts.geom.Geometry;
 import org.georchestra.signalement.core.dto.GeographicType;
+import org.locationtech.jts.geom.Geometry;
 
 import lombok.Data;
 
