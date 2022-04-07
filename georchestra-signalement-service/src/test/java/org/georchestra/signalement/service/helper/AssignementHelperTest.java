@@ -25,14 +25,16 @@ import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 
+@ActiveProfiles("test")
 @SpringBootTest(classes = StarterSpringBootTestApplication.class)
 @ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
 		"org.georchestra.signalement.core" })
 @TestPropertySource(value = { "classpath:signalement.properties", "classpath:signalement-common.properties" })
-public class AssignementHelperTest {
+class AssignementHelperTest {
 
 	@Autowired
 	private AssignmentHelper assignmentHelper;
@@ -41,7 +43,7 @@ public class AssignementHelperTest {
 	private ContextDescriptionCustomDao contextDescriptionCustomDao;
 
 	@Test
-	public void testComputeAssigneesPolygon() {
+	void testComputeAssigneesPolygon() {
 
 		Coordinate[] coordinates = new Coordinate[4];
 		coordinates[0] = new Coordinate(-1.7152564318682417, 48.136132343495014);
@@ -73,7 +75,7 @@ public class AssignementHelperTest {
 	}
 
 	@Test
-	public void testComputeAssigneesLine() {
+	void testComputeAssigneesLine() {
 
 		Coordinate[] coordinates = new Coordinate[2];
 		coordinates[0] = new Coordinate(-1.7152564318682417, 48.136132343495014);
@@ -103,7 +105,7 @@ public class AssignementHelperTest {
 	}
 
 	@Test
-	public void testComputeAssigneesPoint() {
+	void testComputeAssigneesPoint() {
 
 		Coordinate coordinate = new Coordinate(-1.6792075427081012, 48.11367358371706);
 		Point point = new GeometryFactory().createPoint(coordinate);

@@ -40,7 +40,7 @@ import org.springframework.test.context.TestPropertySource;
 @ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
 		"org.georchestra.signalement.core" })
 @TestPropertySource(value = { "classpath:signalement.properties", "classpath:signalement-common.properties" })
-public class GenerationConnectorTest {
+class GenerationConnectorTest {
 
 	@Autowired
 	private GenerationConnector generationConnector;
@@ -57,7 +57,7 @@ public class GenerationConnectorTest {
 	private String roleName = "Validator";
 
 	@Test
-	public void generateStringBody() {
+	void generateStringBody() {
 		try (InputStream is = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("models/initiator-mail.html")) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
