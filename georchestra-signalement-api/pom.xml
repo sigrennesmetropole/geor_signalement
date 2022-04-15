@@ -105,6 +105,16 @@
 		<dependency>
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-engine</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.mail</groupId>
+					<artifactId>javax.mail</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>de.odysseus.juel</groupId>
+					<artifactId>juel-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.activiti/activiti-spring -->
 		<dependency>
