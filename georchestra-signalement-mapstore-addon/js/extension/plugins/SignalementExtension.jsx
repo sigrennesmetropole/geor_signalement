@@ -19,7 +19,6 @@ import {
     createDraft,
     createTask,
     getMe,
-    initDrawingSupport,
     loadAttachmentConfiguration,
     loadLayers,
     loadThemas,
@@ -63,7 +62,6 @@ const SignalementPanelComponentConnected = connect((state) => ({
     state : state
 }), {
 	initSignalement: initSignalement,
-    initDrawingSupport: initDrawingSupport,
     stopDrawingSupport: stopDrawingSupport,
     startDrawing: startDrawing,
     stopDrawing: stopDrawing,

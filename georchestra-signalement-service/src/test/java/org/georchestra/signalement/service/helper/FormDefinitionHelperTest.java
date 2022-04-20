@@ -3,26 +3,25 @@
  */
 package org.georchestra.signalement.service.helper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.georchestra.signalement.StarterSpringBootTestApplication;
 import org.georchestra.signalement.core.dto.FieldDefinition;
 import org.georchestra.signalement.core.dto.FieldType;
 import org.georchestra.signalement.core.dto.FormDefinition;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
 import org.georchestra.signalement.service.helper.form.FormDefinitionHelper;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author FNI18300
  *
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = StarterSpringBootTestApplication.class)
 @ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
 		"org.georchestra.signalement.core" })
@@ -46,9 +45,9 @@ public class FormDefinitionHelperTest {
 		formDefinition.addFieldDefinitions(f1);
 		String s = formDefinitionHelper.deshydrateForm(formDefinition);
 		FormDefinition formDefinition2 = formDefinitionHelper.hydrateForm(s);
-		Assert.assertNotNull(formDefinition2);
-		Assert.assertNotNull(formDefinition2.getFieldDefinitions());
-		Assert.assertEquals(formDefinition2.getFieldDefinitions().size(), 1);
-		Assert.assertEquals(formDefinition2.getFieldDefinitions().get(0).getName(), "name1");
+		assertNotNull(formDefinition2);
+		assertNotNull(formDefinition2.getFieldDefinitions());
+		assertEquals(formDefinition2.getFieldDefinitions().size(), 1);
+		assertEquals(formDefinition2.getFieldDefinitions().get(0).getName(), "name1");
 	}
 }

@@ -1,14 +1,7 @@
 package org.georchestra.signalement.core.dao.acl.impl;
 
-import com.vividsolutions.jts.geom.Geometry;
-
-import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
-import org.georchestra.signalement.core.dao.acl.GeographicAreaCustumDao;
-import org.georchestra.signalement.core.dto.GeographicType;
-import org.georchestra.signalement.core.dto.SortCriteria;
-import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -16,8 +9,15 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.Map;
+
+import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
+import org.georchestra.signalement.core.dao.acl.GeographicAreaCustumDao;
+import org.georchestra.signalement.core.dto.GeographicType;
+import org.georchestra.signalement.core.dto.SortCriteria;
+import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
+import org.locationtech.jts.geom.Geometry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implements GeographicAreaCustumDao {
