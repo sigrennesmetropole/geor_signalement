@@ -20,7 +20,8 @@ import {
     setDrawing,
     taskCreated,
     updateLocalisation,
-    setTaskCreationFail
+    setTaskCreationFail,
+    initDrawingSupport
 } from '../actions/signalement-action';
 import {FeatureProjection, GeometryType} from "../constants/signalement-constants";
 
@@ -177,6 +178,17 @@ export const cancelDraftEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadActionError("signalement.generic.error", e)));
         });
 
+/**
+ * A l'ouverture de la fenetre signalement, on désactive l'IDENTIFIER
+ * @param action$
+ * @returns {*}
+ */
+export const openPanelEpic = (action$) =>
+    action$.ofType(actions.SIGNALEMENT_OPEN_PANEL)
+        .switchMap((action) => {
+            return Rx.Observable.from([initDrawingSupport()])
+        });
+
 export const initDrawingSupportEpic = action$ =>
     action$.ofType(actions.SIGNALEMENT_INIT_SUPPORT_DRAWING)
         .switchMap(() => {
@@ -312,6 +324,11 @@ export const stopDrawingEpic = (action$, store) =>
             ]);
         });
 
+/**
+ * Appelée pendant la fermeture de la fenetre, on réactive l'IDENTIFIER
+ * @param action$
+ * @returns {*}
+ */
 export const stopDrawingSupportEpic = action$ =>
     action$.ofType(actions.SIGNALEMENT_STOP_SUPPORT_DRAWING)
         .switchMap(() => {

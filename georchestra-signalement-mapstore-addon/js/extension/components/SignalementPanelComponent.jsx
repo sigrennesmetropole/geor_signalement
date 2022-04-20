@@ -53,7 +53,6 @@ export class SignalementPanelComponent extends React.Component {
         error: PropTypes.object,
         // redux
 		initSignalement: PropTypes.func,
-        initDrawingSupport: PropTypes.func,
         stopDrawingSupport: PropTypes.func,
         startDrawing: PropTypes.func,
         stopDrawing: PropTypes.func,
@@ -116,7 +115,6 @@ export class SignalementPanelComponent extends React.Component {
         attachements: [],
         // misc
 		initSignalement: ()=>{},
-        initDrawingSupport: ()=>{},
         stopDrawingSupport: ()=>{},
         startDrawing: ()=>{},
         stopDrawing: ()=>{},
@@ -156,7 +154,6 @@ export class SignalementPanelComponent extends React.Component {
         this.props.loadAttachmentConfiguration();
         this.props.loadThemas();
         this.props.loadLayers();
-        this.props.initDrawingSupport();
         this.props.getMe();
     }
 

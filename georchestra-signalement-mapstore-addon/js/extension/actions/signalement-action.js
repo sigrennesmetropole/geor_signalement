@@ -242,7 +242,7 @@ export function openPanel(currentLayer) {
 }
 
 export function closePanel(){
-	return {
+	return  {
 		type: actions.SIGNALEMENT_CLOSE_PANEL
 	}
 }
