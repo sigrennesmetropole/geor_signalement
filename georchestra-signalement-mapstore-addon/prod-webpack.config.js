@@ -48,6 +48,7 @@ module.exports = require('./MapStore2/build/buildConfig')(
     ],
     {
         "@mapstore": path.resolve(__dirname, "MapStore2", "web", "client"),
+        "@mapstore/patcher": path.resolve(__dirname, "node_modules", "@mapstore", "patcher"),
         "@js": path.resolve(__dirname, "js")
     }
 );
