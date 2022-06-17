@@ -93,7 +93,7 @@ signalementapi:sonar:master:
 
 .signalementapi:deploy:
   stage: deploy
-  image: ansible/ansible-runner:1.4.4
+  image: glregistry.boost.open.global/boost/docker/mvn-node-jdk11-ansible:latest
   cache: {}
   tags: 
    - cdp-rennes
