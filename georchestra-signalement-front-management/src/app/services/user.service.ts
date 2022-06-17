@@ -40,7 +40,7 @@ export class UserItemService {
       sortExpression ?: string):
       Observable<UserPageResult> {
     const searchParameters = {
-      login: loginFilter,
+      loginUser: loginFilter,
       email: mailFilter,
       offset: offset,
       limit: limit,
