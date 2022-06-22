@@ -8,7 +8,8 @@
       "operators": "Operators",
       "workflows": "Workflows",
       "users": "Users",
-      "context": "Contexts"
+      "context": "Contexts",
+      "styles": "Styles"
     },
     "connected": "Connected",
     "disconnected": "Disconnected"

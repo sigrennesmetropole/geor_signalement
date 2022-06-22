@@ -98,6 +98,7 @@ import {MatSelectInfiniteScrollModule} from 'ng-mat-select-infinite-scroll';
 // Translation imports
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { StyleComponent } from './style/style.component';
 
 
 @NgModule({
@@ -124,6 +125,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     ErrorComponent,
     UserComponent,
     ContextComponent,
+    StyleComponent,
   ],
   imports: [
     AppRoutingModule,
