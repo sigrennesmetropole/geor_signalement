@@ -25,7 +25,7 @@ public class StyleHelper {
      * @param definitionStyle
      * @return
      */
-    protected static JSONObject getDefinitionStyleObj(String definitionStyle) {
+    public static JSONObject getDefinitionStyleObj(String definitionStyle) {
         if (definitionStyle != null ) {
             JSONObject definitionStyleObj = new JSONObject(definitionStyle);
             return definitionStyleObj;
@@ -51,7 +51,7 @@ public class StyleHelper {
      *  create style for Point from json
      * @return
      */
-    protected static Style createPointStyle(String definitionStyle) {
+    public static Style createPointStyle(String definitionStyle) {
 
         Style style = createDefaultStylePoint();
 
@@ -148,7 +148,7 @@ public class StyleHelper {
      *  create style for line from json
      * @return
      */
-    protected static Style createLineStyle(String definitionStyle) {
+    public static Style createLineStyle(String definitionStyle) {
         Style style = createDefaultLineStyle();
 
         JSONObject definitionStyleObj = getDefinitionStyleObj(definitionStyle);
@@ -199,7 +199,7 @@ public class StyleHelper {
      *  create style for polygon from json
      * @return
      */
-    protected static Style createPolygonStyle(String definitionStyle) {
+    public static Style createPolygonStyle(String definitionStyle) {
         Style style = createDefaultPolygonStyle();
 
 
