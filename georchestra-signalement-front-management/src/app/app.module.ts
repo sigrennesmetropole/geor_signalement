@@ -108,7 +108,6 @@ import {StyleUpdateDialog} from "./style/style-update-dialog/style-update-dialog
 import {PointUpdateDialog} from "./style/style-update-dialog/style-update-type-dialog/point-update-dialog";
 import {LineUpdateDialog} from "./style/style-update-dialog/style-update-type-dialog/line-update-dialog";
 import {PolygonUpdateDialog} from "./style/style-update-dialog/style-update-type-dialog/polygon-update-dialog";
-import {StyleItemMapper} from "./mappers/style-item.mapper";
 import {StyleDeleteDialog} from "./style/style-delete-dialog/style-delete-dialog";
 import {PolygonAddDialog} from "./style/style-add-dialog/style-add-type-dialog/polygon-add-dialog";
 import {StyleAddDialog} from "./style/style-add-dialog/style-add-dialog";
@@ -216,7 +215,6 @@ import {StyleProcessDeleteDialog} from "./style/style-process-dialog/style-proce
     WorkflowDataSource,
     IsSignalementAdmin,
     StyleDataSource,
-    StyleItemMapper,
   ],
   bootstrap: [AppComponent],
 })
