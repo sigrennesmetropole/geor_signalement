@@ -1,0 +1,11 @@
+<mat-dialog-content align="center">
+    <p>{{'style.process.delete.asking' | translate}}</p>
+</mat-dialog-content>
+
+
+
+<div mat-dialog-actions align="center">
+    <button mat-flat-button color="warn" (click)='handleStyleClick()' *ngIf="!operationInProgress()">{{'common.buttons.delete' | translate}}</button>
+    <button mat-flat-button color="primary" (click)='handleCancelClick()' *ngIf="!operationInProgress()">{{'common.buttons.cancel' | translate}}</button>
+    <mat-spinner [diameter]="30" *ngIf="operationInProgress()"></mat-spinner>
+  </div>
