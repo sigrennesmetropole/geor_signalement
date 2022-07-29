@@ -73,18 +73,8 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 		if (!description.equals("")) {
 			searchCriteria.setDescription(description);
 		}
-
 		if (!workflow.equals("")) {
-			RepositoryService repository = processEngine.getRepositoryService();
-			List<org.activiti.engine.repository.ProcessDefinition> allWorkflows = repository.createProcessDefinitionQuery().list();
-			List<String> workflowKeys = allWorkflows.stream()
-					.filter(process -> process.getKey().toLowerCase().contains(workflow.toLowerCase()))
-					.map(org.activiti.engine.repository.ProcessDefinition::getKey)
-					.distinct().collect(Collectors.toList());
-			if (workflowKeys.isEmpty()) {
-				return new PageImpl<>(new ArrayList<>(), pageable, 0);
-			}
-			searchCriteria.setProcessDefinitionKeys(workflowKeys);
+			searchCriteria.setProcessDefinitionKey(workflow);
 		}
 		List<ContextDescriptionEntity> contexts;
 		try {
