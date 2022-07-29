@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {StylesContainerService} from '../api/services';
+import {StylesService} from '../api/services';
 import {StrictHttpResponse} from '../api/strict-http-response';
-import {StylePageResult} from '../api/models';
+import {StyleContainer, ProcessStyling, StylePageResult} from '../api/models';
 
 
 @Injectable({
@@ -16,7 +16,7 @@ export class StyleService {
      * Constructor of the StyleService
      * @param {StyleService} styleService The API service
      */
-    constructor(private styleService: StylesContainerService) {
+    constructor(private styleService: StylesService) {
     }
 
     /**
@@ -33,5 +33,37 @@ export class StyleService {
             limit: limit,
             sortExpression: sortCriteria
         });
+    }
+
+    updateStyle(style: StyleContainer, data: any) {
+        if(style.type !=null && style.type.toString() == data.type.toString()){
+            style.name = data.name;
+            style.style = data.style;
+        }
+        return this.styleService
+            .updateStyle(style);
+    }
+
+    postStyle(style:StyleContainer) : Observable<StyleContainer> {
+        return this.styleService
+            .createStyle(style);
+    }
+
+
+    deleteStyle(style: StyleContainer) : Observable<null> {
+        return this.styleService.deleteStyle(style.id as number);
+    }
+
+    getListProcessStyling(styleId: number) : Observable<Array<ProcessStyling>>{
+        return this.styleService.getStyleProcessById(styleId);
+    }
+
+    postStyleProcess(styleProcess: ProcessStyling) {
+        return this.styleService
+            .createProcessStyling(styleProcess);
+    }
+
+    deleteStyleProcess(style: ProcessStyling) : Observable<null> {
+        return this.styleService.deleteProcessStyling(style.id as number);
     }
 }
