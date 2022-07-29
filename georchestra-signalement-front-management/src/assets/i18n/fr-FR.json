@@ -46,6 +46,85 @@
     "title": "Workflow",
     "version": "Version"
   },
+  "style": {
+    "table": {
+      "id": "Identifiant",
+      "name": "Nom",
+      "type": "Type",
+      "description": "Description",
+      "actions": "Actions"
+    },
+    "champs": {
+      "id": "Identifiant",
+      "name": "Nom",
+      "type": "Type",
+      "iconGlyph": "Glyphicon",
+      "iconShape": "Forme de l'icône",
+      "iconColor": "Couleur de l'icône",
+      "iconAnchor": "Ancrage de l'icône",
+      "filtering": "Filtrage",
+      "color": "Couleur",
+      "opacity": "Opacité",
+      "weight": "Épaisseur",
+      "fillColor": "Couleur de remplissage",
+      "fillOpacity": "Opacité du remplissage",
+      "dashArray": "Motif de la ligne"
+    },
+    "read": {
+      "title": "Détails du style"
+    },
+    "update": {
+      "formErrors": {
+        "unknownError" :"Il y a une erreur dans le formulaire",
+        "fillOpacity" : "L'opacité du remplissage n'est ni null ni un double",
+        "opacity" : "L'opacité n'est ni null ni un double",
+        "weight" : "L'épaisseur n'est ni null ni un double"
+      },
+      "title": "Modification d'un style",
+      "success": "Le style a été mis à jour avec succès",
+      "error": "La mise à jour du style a échoué",
+      "unknownError": "Il y a une erreur dans le formulaire"
+    },
+    "add": {
+      "formErrors": {
+        "unknownError" :"Il y a une erreur dans le formulaire",
+        "fillOpacity" : "L'opacité du remplissage n'est ni null ni un double",
+        "opacity" : "L'opacité n'est ni null ni un double",
+        "weight" : "L'épaisseur n'est ni null ni un double"
+      },
+      "title": "Ajout d'un style",
+      "success": "Le style a été ajouté avec succès",
+      "error": "L'ajout du style a échoué"
+    },
+    "delete": {
+      "success": "Le style a été supprimée avec succès",
+      "error": "La suppression du style a échoué"
+    },
+    "title": "Style",
+    "process": {
+      "title": "Rattachement aux workflows",
+      "champs": {
+        "processDefinition": "Workflow",
+        "revision": "Version",
+        "userTask": "Tâche utilisateur",
+        "processDefinitionId":  "Clé du workflow",
+        "userTaskId":  "Tâche utilisateur du workflow"
+      },
+      "add": {
+        "formErrors": {
+          "unknownError" :"Il y a une erreur dans le formulaire"
+        },
+        "title": "Ajouter un workflow",
+        "success":"Liaison workflow ajouté avec succès",
+        "error":" L'ajout de la liaison workflow a échouée "
+      },
+      "delete": {
+        "asking": "Êtes vous sur de vouloir supprimer cette liaison?",
+        "success":"Suppression réussie",
+        "error":"Suppression échouée"
+      }
+    }
+  },
   "user": {
     "table": {
       "login": "Login",
