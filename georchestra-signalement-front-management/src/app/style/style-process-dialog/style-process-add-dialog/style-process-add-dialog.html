@@ -1,0 +1,32 @@
+<h2 class="text-center add-form-title">{{'style.process.add.title' | translate}}</h2>
+
+<form class="my-form" [formGroup]="StyleProcessAddForm">
+    <div class="link-add-form-group">
+        <div class="link-add-form-group">
+            <mat-form-field class="text-center">
+                <input matInput placeholder="{{'style.process.champs.processDefinitionId' | translate}}" [formControl]="processDefinitionIdControl" name="processDefinitionId"/>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="link-add-form-group">
+        <div class="link-add-form-group">
+            <mat-form-field class="text-center">
+                <input matInput placeholder="{{'style.process.champs.userTaskId' | translate}}" [formControl]="userTaskIdControl" name="userTaskId"/>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="link-add-form-group">
+        <div class="link-add-form-group">
+            <mat-form-field class="text-center">
+                <input matInput placeholder="{{'style.process.champs.revision' | translate}}" [formControl]="revisionControl" name="revisionControl"/>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div mat-dialog-action align="center" class="edit-form-group">
+        <button class="action-button" mat-flat-button color="primary" (click)='handleSubmitClick()'>{{'common.buttons.submit' | translate}}</button>
+        <button class="action-button" mat-flat-button color="warn">{{'common.buttons.cancel' | translate}}</button>
+    </div>
+</form>
