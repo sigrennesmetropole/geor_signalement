@@ -1,0 +1,28 @@
+<h2 class="text-center add-form-title">{{'style.update.title' | translate}}</h2>
+
+<form class="my-form" [formGroup]="StyleUpdateForm">
+    <div class="update-form-group">
+        <div class="update-form-group">
+            <mat-form-field class="text-center">
+                <input matInput placeholder="{{'style.champs.name' | translate}}" [formControl]="nameControl" name="name">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="update-form-group">
+        <div class="update-form-group">
+            <mat-form-field class="text-center">
+                <input matInput [readonly]="true" placeholder="{{'style.champs.type' | translate}}" [formControl]="typeControl" name="type">
+            </mat-form-field>
+        </div>
+    </div>
+
+
+    <point-update-dialog *ngIf="typeControl.value == 'POINT'"  [parentForm]="StyleUpdateForm"></point-update-dialog>
+    <line-update-dialog *ngIf="typeControl.value == 'LINE'"  [parentForm]="StyleUpdateForm"></line-update-dialog>
+    <polygon-update-dialog *ngIf="typeControl.value == 'POLYGON'"  [parentForm]="StyleUpdateForm"></polygon-update-dialog>
+
+    <div mat-dialog-action align="center" class="edit-form-group">
+        <button class="action-button" mat-flat-button color="primary" (click)='handleSubmitClick()'>{{'common.buttons.submit' | translate}}</button>
+        <button class="action-button" mat-flat-button color="warn">{{'common.buttons.cancel' | translate}}</button>
+    </div>
+</form>
