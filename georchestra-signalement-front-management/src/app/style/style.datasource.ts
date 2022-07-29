@@ -7,10 +7,16 @@ import {Observable,
 import {Injectable} from '@angular/core';
 import {ToasterUtil} from '../utils/toaster.util';
 import {TranslateService} from '@ngx-translate/core';
-import {StyleContainer} from '../api/models';
+import {GeographicType, Style, StyleContainer, ProcessStyling} from '../api/models';
 import {StyleService} from '../services/style.service';
+import {StyleProcessDialog} from "./style-process-dialog/style-process-dialog";
 
 
+export interface StyleItem {
+    name: string;
+    type: GeographicType;
+
+}
 @Injectable()
 /**
  * Data source for the Role view. This class should
@@ -45,7 +51,7 @@ export class StyleDataSource extends DataSource<StyleContainer> {
     /**
      * Connect this data source to the table. The table will only update when
      * the returned stream emits new items.
-     * @return {Observable<Role[]>} A stream of the items to be rendered.
+     * @return {Observable<StyleContainer[]>} A stream of the items to be rendered.
      */
     connect(): Observable<StyleContainer[]> {
         if (this.paginator && this.sort) {
@@ -84,10 +90,19 @@ export class StyleDataSource extends DataSource<StyleContainer> {
                 this.sortCriteria = '-';
             }
             switch (this.sort?.active) {
+                case 'id': {
+                    this.sortCriteria+='id';
+                    break;
+                }
                 case 'name': {
                     this.sortCriteria+='name';
                     break;
                 }
+                //difficult to sort on type, because type isn't existing in StylingEntity.
+                /*case 'type': {
+                    this.sortCriteria+='type';
+                    break;
+                }*/
                 default: this.sortCriteria='';
             }
         }
@@ -113,12 +128,106 @@ export class StyleDataSource extends DataSource<StyleContainer> {
             );
     }
 
+
     /**
      * Function called to ask a refresh of data
      */
     public refreshData() : void {
         this.paginator?.firstPage();
         this.actualize.next();
+    }
+
+    updateStyle(style: StyleContainer, data: any) {
+        this.styleService
+            .updateStyle(style, data)
+            .subscribe(
+                ()=>{
+                    this.toasterService
+                        .sendSuccessMessage('style.update.success');
+                },
+                (response)=>{
+                    this.toasterService
+                        .sendErrorMessage('style.update.error',
+                            response.error.code);
+                },
+                ()=>{
+                    this.refreshData();
+                },);
+    }
+    deleteStyle(target: StyleContainer) {
+        this.styleService.deleteStyle(target).subscribe(
+            ()=>{
+                this.toasterService
+                    .sendSuccessMessage('style.delete.success');
+            },
+            (response)=>{
+                this.toasterService
+                    .sendErrorMessage('style.delete.error',
+                        response.error.code);
+            },
+            ()=>{
+                this.refreshData();
+            },);
+    }
+
+    public postStyle(style :StyleContainer): void{
+        this.styleService
+            .postStyle(style).subscribe(
+            (result)=>{
+                if (result) {
+                    this.toasterService.sendSuccessMessage('style.add.success');
+                } else {
+                    this.toasterService.sendErrorMessage('style.add.error');
+                }
+            },
+            (response)=>{
+                this.toasterService
+                    .sendErrorMessage('style.add.error',
+                        response.error.code);
+
+            },
+
+            ()=>{
+                this.refreshData();
+            },
+        );
+    }
+
+    public postStyleProcess(processStyling: ProcessStyling, p: StyleProcessDialog): void{
+        this.styleService
+            .postStyleProcess(processStyling).subscribe(
+            (result)=>{
+                if (result) {
+                    this.toasterService.sendSuccessMessage('style.add.success');
+                } else {
+                    this.toasterService.sendErrorMessage('style.add.error');
+                }
+            },
+            (response)=>{
+                this.toasterService
+                    .sendErrorMessage('style.process.add.error',
+                        response.error.code);
+            },
+            ()=>{
+                p.refreshData();
+            },
+        );
+    }
+
+    deleteStyleProcess(target: ProcessStyling, p: StyleProcessDialog) {
+        this.styleService.deleteStyleProcess(target).subscribe(
+            ()=>{
+                this.toasterService
+                    .sendSuccessMessage('style.process.delete.success');
+            },
+            (response)=>{
+                this.toasterService
+                    .sendErrorMessage('style.process.delete.error',
+                        response.error.code);
+            },
+            ()=>{
+                p.refreshData();
+            },);
     }
 }
 

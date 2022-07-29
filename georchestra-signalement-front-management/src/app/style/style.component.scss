@@ -3,12 +3,12 @@
 }
 
 .top-bar{
-  margin-left: 24px;
+  float:right;
+  margin-right: 0.5em;
 }
 
-.top-bar-buttons{
-  float:inline-end;
-  margin: 1.5em 0;
+.top-bar-button{
+  margin: 0.1em 0.3em;
 }
 
 .top-bar-button{
