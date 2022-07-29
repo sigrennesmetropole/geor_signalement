@@ -1,0 +1,47 @@
+p{
+    text-align: center;
+}
+
+.actions{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.action-button{
+    margin: 0 0.5em;
+}
+
+.arrayLinkedTask{
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    align-items: center;
+}
+
+
+.actionSpan{
+    padding:10px !important;
+}
+.arrayLinkedTask>span, {
+    text-align: center;
+    border-bottom: 1px solid;
+    border-bottom-color: rgba(0,0,0,.12);
+    padding: 20px;
+}
+
+.top-bar{
+    float:right;
+    margin-right: 0.5em;
+}
+
+.top-bar-button{
+    margin: 0.1em 0.3em;
+}
+
+.top-bar-button{
+    margin-right: 0.6em;
+}
+
+.top-bar-filters{
+    float: inline-start;
+}

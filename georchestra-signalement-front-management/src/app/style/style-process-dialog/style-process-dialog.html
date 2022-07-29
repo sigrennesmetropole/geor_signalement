@@ -1,0 +1,20 @@
+<div class="top-bar" xmlns="http://www.w3.org/1999/html">
+    <button class="top-bar-button" mat-mini-fab color="primary" (click)="handleRefreshDataClick()"><mat-icon>refresh</mat-icon></button>
+    <button class="top-bar-button" mat-mini-fab color="primary" (click)="handleOpenAddDialogClick()" ><mat-icon>note_add</mat-icon></button>
+</div>
+<h2 class="text-center add-form-title">{{'style.process.title' | translate}}</h2>
+
+<div>
+    <div class="arrayLinkedTask">
+        <span> {{'style.process.champs.processDefinition' | translate}} </span>
+        <span> {{'style.process.champs.revision' | translate}} </span>
+        <span> {{'style.process.champs.userTask' | translate}} </span>
+        <span> {{'style.table.actions' | translate}} </span>
+    </div>
+    <div class="arrayLinkedTask" *ngFor="let task of (tasks | async)">
+        <span>{{ task.processDefinitionId }}</span>
+        <span>{{ task.revision === undefined?"null":task.revision }}</span>
+        <span>{{ task.userTaskId }}</span>
+        <span class="actionSpan"><button class="action-button" mat-mini-fab color="warn" (click)="handleOpenDeleteDialogClick(task)"><mat-icon>delete</mat-icon></button></span>
+    </div>
+</div>
