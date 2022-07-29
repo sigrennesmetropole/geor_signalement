@@ -98,7 +98,25 @@ import {MatSelectInfiniteScrollModule} from 'ng-mat-select-infinite-scroll';
 // Translation imports
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import { StyleComponent } from './style/style.component';
+import {StyleComponent} from './style/style.component';
+import {StyleDataSource} from "./style/style.datasource";
+import {StyleReadDialog} from "./style/style-read-dialog/style-read-dialog";
+import {PointReadDialog} from "./style/style-read-dialog/style-read-type-dialog/point-read-dialog";
+import {LineReadDialog} from "./style/style-read-dialog/style-read-type-dialog/line-read-dialog";
+import {PolygonReadDialog} from "./style/style-read-dialog/style-read-type-dialog/polygon-read-dialog";
+import {StyleUpdateDialog} from "./style/style-update-dialog/style-update-dialog";
+import {PointUpdateDialog} from "./style/style-update-dialog/style-update-type-dialog/point-update-dialog";
+import {LineUpdateDialog} from "./style/style-update-dialog/style-update-type-dialog/line-update-dialog";
+import {PolygonUpdateDialog} from "./style/style-update-dialog/style-update-type-dialog/polygon-update-dialog";
+import {StyleItemMapper} from "./mappers/style-item.mapper";
+import {StyleDeleteDialog} from "./style/style-delete-dialog/style-delete-dialog";
+import {PolygonAddDialog} from "./style/style-add-dialog/style-add-type-dialog/polygon-add-dialog";
+import {StyleAddDialog} from "./style/style-add-dialog/style-add-dialog";
+import {PointAddDialog} from "./style/style-add-dialog/style-add-type-dialog/point-add-dialog";
+import {LineAddDialog} from "./style/style-add-dialog/style-add-type-dialog/line-add-dialog";
+import {StyleProcessDialog} from "./style/style-process-dialog/style-process-dialog";
+import {StyleProcessAddDialog} from "./style/style-process-dialog/style-process-add-dialog/style-process-add-dialog";
+import {StyleProcessDeleteDialog} from "./style/style-process-dialog/style-process-delete-dialog/style-process-delete-dialog";
 
 
 @NgModule({
@@ -125,7 +143,23 @@ import { StyleComponent } from './style/style.component';
     ErrorComponent,
     UserComponent,
     ContextComponent,
+    StyleReadDialog,
+    PointReadDialog,
+    LineReadDialog,
+    PolygonReadDialog,
+    StyleUpdateDialog,
+    PointUpdateDialog,
+    LineUpdateDialog,
+    PolygonAddDialog,
+    StyleAddDialog,
+    PointAddDialog,
+    LineAddDialog,
+    PolygonUpdateDialog,
+    StyleDeleteDialog,
     StyleComponent,
+    StyleProcessDialog,
+    StyleProcessAddDialog,
+    StyleProcessDeleteDialog,
   ],
   imports: [
     AppRoutingModule,
@@ -181,6 +215,8 @@ import { StyleComponent } from './style/style.component';
     UserRoleContextDataSource,
     WorkflowDataSource,
     IsSignalementAdmin,
+    StyleDataSource,
+    StyleItemMapper,
   ],
   bootstrap: [AppComponent],
 })
