@@ -198,7 +198,7 @@
 		"/styles": {
 			"get": {
 				"tags": [
-					"stylesContainer"
+					"styles"
 				],
 				"summary": "Recherche de la liste des style.",
 				"description": "Récupération de la liste des styles disponibles qui respectent les filtres.",
@@ -242,6 +242,255 @@
 					},
 					"400": {
 						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"styles"
+				],
+				"summary": "Mise à jour d'un style.",
+				"description": "Mise à jour d' un style tel que stipulée dans le body de la requête, en fonction de l'id du style",
+				"operationId": "updateStyle",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "style",
+						"description": "Le nouveau stylé à appliquer",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/StyleContainer"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/StyleContainer"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+
+			"post": {
+			"tags": [
+				"styles"
+			],
+			"summary": "Création d'un style",
+			"description": "",
+			"operationId": "createStyle",
+			"produces": [
+				"application/json"
+			],
+			"parameters": [
+				{
+					"in": "body",
+					"name": "style",
+					"description": "Description du style",
+					"required": true,
+					"schema": {
+						"$ref": "#/definitions/StyleContainer"
+					}
+				}
+			],
+			"responses": {
+				"200": {
+					"description": "OK",
+					"schema": {
+						"$ref": "#/definitions/StyleContainer"
+					}
+				},
+				"400": {
+					"description": "Bad input parameter"
+				},
+				"500": {
+					"description": "Internal server error",
+					"schema": {
+						"$ref": "#/definitions/ApiError"
+					}
+				}
+			}
+		}
+
+		},
+		"/styles/{id}": {
+			"delete": {
+				"tags": [
+					"styles"
+				],
+				"summary": "Suppression d'un style.",
+				"description": "Suppression d'un style en fonction de son id",
+				"operationId": "deleteStyle",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"description": "id du style à supprimer",
+						"required": true,
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/styles/process": {
+			"post": {
+				"tags": [
+					"styles"
+				],
+				"summary": "Création d'une liaison (avec les tasks de workflow) associé à ce style",
+				"description": "",
+				"operationId": "createProcessStyling",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "processStyle",
+						"description": "Description de la liaison du style avec une task",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/ProcessStyling"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/ProcessStyling"
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			}
+		},
+		"/styles/process/{id}": {
+			"get": {
+				"tags": [
+					"styles"
+				],
+				"summary": "Récupération liaisons (avec les tasks de workflow) associé à ce style",
+				"description": "",
+				"operationId": "getStyleProcessById",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"description": "id du style dont les liaisons sont à récupérer",
+						"required": true,
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ProcessStyling"
+							}
+						}
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
+					},
+					"500": {
+						"description": "Internal server error",
+						"schema": {
+							"$ref": "#/definitions/ApiError"
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"styles"
+				],
+				"summary": "Suppression d'une liaison (avec les tasks de workflow) associé à ce style.",
+				"description": "Suppression d'un ProcessStyling en fonction de son id",
+				"operationId": "deleteProcessStyling",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"description": "id du ProcessStyling à supprimer",
+						"required": true,
+						"type": "integer",
+						"format": "int64"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"400": {
+						"description": "Bad input parameter"
+					},
+					"404": {
+						"description": "NOT FOUND"
 					},
 					"500": {
 						"description": "Internal server error",
@@ -2612,7 +2861,7 @@
 		},
 		"Style": {
 			"type": "object",
-			"description": "GeoJSon feature style",
+			"description": "GeoJSon feature style for frontend",
 			"properties": {
 				"color": {
 					"type": "string"
@@ -2666,28 +2915,17 @@
 				}
 			}
 		},
-		"StyleTMP": {
-			"type": "object",
-			"description": "GeoJSon feature style",
-			"properties": {
-				"definition": {
-					"type": "string"
-				},
-				"name": {
-					"type": "string"
-				}
-			}
-		},
 		"StyleContainer": {
 			"type": "object",
-			"description": "GeoJSon feature style",
+			"description": "GeoJSon feature style which make easier to go from database to backend",
 			"properties": {
 				"id": {
 					"type": "integer",
 					"format": "int64"
 				},
 				"type": {
-					"type": "string"
+					"type": "string",
+					"$ref": "#/definitions/GeographicType"
 				},
 				"style": {
 					"type": "object",
@@ -2695,6 +2933,29 @@
 				},
 				"name": {
 					"type": "string"
+				}
+			}
+		},
+		"ProcessStyling": {
+			"type": "object",
+			"description": "Link between a user task and GeoJSon feature style",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"processDefinitionId": {
+					"type": "string"
+				},
+				"revision": {
+					"type": "integer"
+				},
+				"userTaskId": {
+					"type": "string"
+				},
+				"stylingId": {
+					"type": "integer",
+					"format": "int64"
 				}
 			}
 		},
@@ -2710,6 +2971,22 @@
 					"items": {
 						"type": "object",
 						"$ref": "#/definitions/StyleContainer"
+					}
+				}
+			}
+		},
+		"ProcessStylingPageResult": {
+			"type": "object",
+			"properties": {
+				"totalItems": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"results": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/ProcessStyling"
 					}
 				}
 			}
