@@ -4,6 +4,7 @@
 package org.georchestra.signalement.core.dao.styling.impl;
 
 import org.georchestra.signalement.core.dao.acl.impl.ContextDescriptionCustomDaoImpl;
+import org.georchestra.signalement.core.dao.styling.StylingDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * @author FNI18300
@@ -39,19 +42,25 @@ public class StylingCustomDaoImpl extends AbstractCustomDaoImpl implements Styli
 	@Autowired
 	private EntityManager entityManager;
 
+	@Autowired
+	private StylingDao stylingDao;
+
+
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public Page<StylingEntity> searchStyling(StylingSearchCriteria searchCriteria, Pageable pageable,
-											 SortCriteria sortCriteria) {
+	public Page<StylingEntity> searchStyling(StylingSearchCriteria searchCriteria, Pageable pageable) {
 		List<StylingEntity> results = null;
 
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<StylingEntity> searchQuery = builder.createQuery(StylingEntity.class);
 		Root<StylingEntity> searchRoot = searchQuery.from(StylingEntity.class);
+		searchQuery.select(searchRoot).distinct(true)
+				.orderBy(QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
 
 		buildQuery(searchCriteria, builder, searchQuery, searchRoot);
-		applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
+		//applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
 
 		TypedQuery<StylingEntity> typedQuery = entityManager.createQuery(searchQuery);
 		results = typedQuery.getResultList();

@@ -1,11 +1,6 @@
 package org.georchestra.signalement.service.mapper.acl;
 
-import org.georchestra.signalement.core.dto.Role;
 import org.georchestra.signalement.core.dto.StyleContainer;
-import org.georchestra.signalement.core.dto.StyleTMP;
-import org.georchestra.signalement.core.dto.User;
-import org.georchestra.signalement.core.entity.acl.RoleEntity;
-import org.georchestra.signalement.core.entity.acl.UserEntity;
 import org.georchestra.signalement.core.entity.styling.StylingEntity;
 import org.georchestra.signalement.service.helper.geojson.GeoJSonHelper;
 import org.georchestra.signalement.service.mapper.AbstractMapper;
@@ -29,5 +24,5 @@ public interface StylingMapper extends AbstractMapper<StylingEntity, StyleContai
     void dtoToEntity(StyleContainer dto, @MappingTarget StylingEntity entity);
 
     @IterableMapping(qualifiedByName = "entityToDto")
-    List<StyleContainer> entitiesToDtos(Collection<UserEntity> entities);
+    List<StyleContainer> entitiesToDtos(Collection<StylingEntity> entities);
 }
