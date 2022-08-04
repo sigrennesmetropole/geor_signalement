@@ -21,14 +21,7 @@ export class PointReadDialog implements AfterViewInit{
     public iconGlyphControl = new FormControl('', [Validators.required]);
     public iconColorControl = new FormControl('', [Validators.required]);
     public iconShapeControl = new FormControl('', [Validators.required]);
-
-    /*public StyleReadForm = new FormGroup({
-        iconGlyph: this.iconGlyphControl,
-        iconColor: this.iconColorControl,
-        iconShape: this.iconShapeControl,
-    });*/
-
-
+    
     constructor(
         private dialogRef: MatDialogRef<PointReadDialog>,
         private toaster: ToasterUtil,
