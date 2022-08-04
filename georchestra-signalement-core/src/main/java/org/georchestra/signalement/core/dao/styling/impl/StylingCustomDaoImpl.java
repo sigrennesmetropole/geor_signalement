@@ -3,6 +3,7 @@
  */
 package org.georchestra.signalement.core.dao.styling.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.core.dao.acl.impl.ContextDescriptionCustomDaoImpl;
 import org.georchestra.signalement.core.dao.styling.StylingDao;
 import org.slf4j.Logger;
@@ -74,8 +75,8 @@ public class StylingCustomDaoImpl extends AbstractCustomDaoImpl implements Styli
 							CriteriaQuery<StylingEntity> criteriaQuery, Root<StylingEntity> root) {
 		if (searchCriteria != null) {
 			List<Predicate> predicates = new ArrayList<>();
-			if (StringUtils.isNotEmpty((CharSequence) searchCriteria.getNames())) {
-				predicates.add(builder.or(builder.equal(root.get(NAME), searchCriteria.getNames())));
+			if (CollectionUtils.isNotEmpty(searchCriteria.getNames())) {
+				predicates.add(builder.equal(root.get(NAME), searchCriteria.getNames()));
 			}
 		}
 	}
