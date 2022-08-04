@@ -2,6 +2,7 @@ package org.georchestra.signalement.service.acl.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.acl.GeographicAreaCustomDao;
 import org.georchestra.signalement.core.dao.acl.GeographicAreaDao;
 import org.georchestra.signalement.core.dto.GeographicArea;
@@ -48,17 +49,13 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
         GeographicAreaSearchCriteria searchCriteria = new GeographicAreaSearchCriteria();
         SortCriteria sort = new SortCriteria();
 
-        if(name != null && !name.equals("")){
+        if(StringUtils.isNotEmpty(name)){
             searchCriteria.setNom(name);
         }
 
         Page<GeographicAreaEntity> geographicAreas;
-        try {
-            geographicAreas = geographicAreaCustomDao
-                    .searchGeographicAreas(searchCriteria,pageable, sort);
-        } catch (java.lang.IllegalArgumentException exception) {
-            throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
-        }
+        geographicAreas = geographicAreaCustomDao
+                .searchGeographicAreas(searchCriteria,pageable, sort);
         return geographicAreas.map(geographicAreaMapper::entityToDto);
     }
 

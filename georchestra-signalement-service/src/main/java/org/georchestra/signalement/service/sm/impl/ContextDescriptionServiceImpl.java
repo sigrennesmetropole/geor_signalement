@@ -77,12 +77,8 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 			searchCriteria.setProcessDefinitionKey(workflow);
 		}
 		List<ContextDescriptionEntity> contexts;
-		try {
-			contexts = contextDescriptionCustomDao
-					.searchContextDescriptions(searchCriteria, sortCriteria);
-		} catch (java.lang.IllegalArgumentException exception) {
-			throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
-		}
+		contexts = contextDescriptionCustomDao
+				.searchContextDescriptions(searchCriteria, sortCriteria);
 		if (pageable.getOffset() > contexts.size()) {
 			return new PageImpl<>(new ArrayList<>(), pageable, contexts.size());
 		} else {
