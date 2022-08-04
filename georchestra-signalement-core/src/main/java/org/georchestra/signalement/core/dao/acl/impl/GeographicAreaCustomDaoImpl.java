@@ -83,7 +83,7 @@ public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implement
     }
 
     @Override
-    public Page<GeographicAreaEntity> searchGeographicArea(GeographicAreaSearchCriteria searchCriteria, Pageable pageable, SortCriteria sortCriteria) {
+    public Page<GeographicAreaEntity> searchGeographicAreas(GeographicAreaSearchCriteria searchCriteria, Pageable pageable, SortCriteria sortCriteria) {
         List<GeographicAreaEntity> results = null;
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();

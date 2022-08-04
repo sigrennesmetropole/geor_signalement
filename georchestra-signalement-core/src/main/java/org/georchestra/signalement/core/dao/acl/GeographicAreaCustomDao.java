@@ -24,5 +24,5 @@ public interface GeographicAreaCustomDao {
      */
     public List<GeographicAreaEntity> searchGeographicAreaIntersections(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole);
 
-    Page<GeographicAreaEntity> searchGeographicArea(GeographicAreaSearchCriteria searchCriteria, Pageable pageable, SortCriteria sortCriteria);
+    Page<GeographicAreaEntity> searchGeographicAreas(GeographicAreaSearchCriteria searchCriteria, Pageable pageable, SortCriteria sortCriteria);
 }

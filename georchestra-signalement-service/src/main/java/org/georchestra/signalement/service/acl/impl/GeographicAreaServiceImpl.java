@@ -55,7 +55,7 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
         Page<GeographicAreaEntity> geographicAreas;
         try {
             geographicAreas = geographicAreaCustomDao
-                    .searchGeographicArea(searchCriteria,pageable, sort);
+                    .searchGeographicAreas(searchCriteria,pageable, sort);
         } catch (java.lang.IllegalArgumentException exception) {
             throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
         }
