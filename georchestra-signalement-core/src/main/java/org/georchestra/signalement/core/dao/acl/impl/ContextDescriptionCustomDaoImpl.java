@@ -51,7 +51,6 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 																	SortCriteria sortCriteria) {
 		List<ContextDescriptionEntity> result;
 
-		System.out.println(searchCriteria);
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<ContextDescriptionEntity> searchQuery = builder.createQuery(ContextDescriptionEntity.class);
