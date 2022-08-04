@@ -76,7 +76,8 @@ public class StylingCustomDaoImpl extends AbstractCustomDaoImpl implements Styli
 		if (searchCriteria != null) {
 			List<Predicate> predicates = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(searchCriteria.getNames())) {
-				predicates.add(builder.equal(root.get(NAME), searchCriteria.getNames()));
+				for(String name: searchCriteria.getNames())
+					predicates.add(builder.or(builder.equal(root.get(NAME), name)));
 			}
 		}
 	}
