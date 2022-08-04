@@ -144,7 +144,7 @@ public class StyleServiceImpl  implements StyleService {
     private Page<StyleContainer> getStyles(Pageable pageable) {
 
         //Get data from StylingCustomDao
-        Page<StylingEntity> result = styleCustomDao.searchStyling(null,pageable);
+        Page<StylingEntity> result = styleCustomDao.searchStylings(null,pageable);
         return result.map(styleHelper::mappingStyleToDto);
 
     }

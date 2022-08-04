@@ -50,7 +50,7 @@ public class StylingCustomDaoImpl extends AbstractCustomDaoImpl implements Styli
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public Page<StylingEntity> searchStyling(StylingSearchCriteria searchCriteria, Pageable pageable) {
+	public Page<StylingEntity> searchStylings(StylingSearchCriteria searchCriteria, Pageable pageable) {
 		List<StylingEntity> results = null;
 
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();

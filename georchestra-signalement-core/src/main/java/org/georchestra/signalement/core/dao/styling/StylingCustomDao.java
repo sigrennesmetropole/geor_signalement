@@ -17,7 +17,6 @@ public interface StylingCustomDao{
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    Page<StylingEntity> searchStyling(StylingSearchCriteria searchCriteria, Pageable pageable
-                                      );
+    Page<StylingEntity> searchStylings(StylingSearchCriteria searchCriteria, Pageable pageable);
 
 }
