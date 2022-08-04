@@ -332,22 +332,22 @@ public class StyleHelper {
     public StyleContainer mappingStyleToDto(StylingEntity entity){
         Style style = new Style();
 
-        String def = entity.getDefinition();
+        String definition = entity.getDefinition();
         String dashArrayValues = "";
         String iconAnchorValues = "";
 
-        Matcher m = dashArrayPattern.matcher(def);
-        Matcher m2 = iconAnchorPattern.matcher(def);
+        Matcher m = dashArrayPattern.matcher(definition);
+        Matcher m2 = iconAnchorPattern.matcher(definition);
         if (m2.find()) {
             String iconAnchorString = m2.group(0);
-            def = def.replace(iconAnchorString,"");
+            definition = definition.replace(iconAnchorString,"");
             iconAnchorValues = m2.group(1);
         }else if(m.find()) {
             String dashArrayString = m.group(0);
-            def = def.replace(dashArrayString,"");
+            definition = definition.replace(dashArrayString,"");
             dashArrayValues = m.group(1);
         }
-        JSONObject description = new JSONObject(def);
+        JSONObject description = new JSONObject(definition);
         String type = description.keys().hasNext() ? description.keys().next() : null;
 
 
@@ -356,7 +356,7 @@ public class StyleHelper {
         //Create a style from the type of the style (Line, Point or Polygon)
         if (GeographicType.fromValue(type) == GeographicType.POLYGON) {
 
-            style = StyleHelper.createPolygonStyle(def);
+            style = StyleHelper.createPolygonStyle(definition);
             List<Double> dashArray = new LinkedList<>();
             for (String value : dashArrayValues.split(",")){
                 try {
@@ -370,7 +370,7 @@ public class StyleHelper {
         } else if (GeographicType.fromValue(type) == GeographicType.LINE) {
 
 
-            style = (StyleHelper.createLineStyle(def));
+            style = (StyleHelper.createLineStyle(definition));
             List<Double> iconAnchor = new LinkedList<>();
             for (String value : iconAnchorValues.split(",")){
                 try {
