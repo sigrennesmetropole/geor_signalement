@@ -71,7 +71,7 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 	public Page<ContextDescription> searchPageContextDescriptions(Pageable pageable, SortCriteria sortCriteria,
 																  String description, String workflow) {
 		ContextDescriptionSearchCriteria searchCriteria = new ContextDescriptionSearchCriteria();
-		if (!description.equals("")) {
+		if (!StringUtils.isNotEmpty(description)){
 			searchCriteria.setDescription(description);
 		}
 		if (!StringUtils.isNotEmpty(workflow)) {
