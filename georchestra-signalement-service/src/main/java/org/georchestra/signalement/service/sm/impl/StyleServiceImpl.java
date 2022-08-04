@@ -10,13 +10,9 @@ import org.georchestra.signalement.core.entity.styling.StylingEntity;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.common.ErrorMessageConstants;
 import org.georchestra.signalement.service.exception.InvalidDataException;
-import org.georchestra.signalement.service.helper.geojson.GeoJSonHelper;
 import org.georchestra.signalement.service.helper.geojson.StyleHelper;
 import org.georchestra.signalement.service.mapper.acl.ProcessStylingMapper;
-import org.georchestra.signalement.service.mapper.acl.StylingMapper;
 import org.georchestra.signalement.service.sm.StyleService;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,10 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 @Transactional(readOnly = true)
