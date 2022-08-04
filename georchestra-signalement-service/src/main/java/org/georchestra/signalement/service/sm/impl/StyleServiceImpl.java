@@ -88,7 +88,7 @@ public class StyleServiceImpl  implements StyleService {
         StyleContainer oldContainer;
         if(oldEntity != null) {
             oldContainer = styleHelper.mappingStyleToDto(oldEntity);
-            if (oldContainer.getType().toString().equals(style.getType().toString())) {
+            if (oldContainer.getType() == style.getType()) {
                 StylingEntity res = styleHelper.mappingStyleToEntity(style);
                 styleDao.save(res);
                 return style;
