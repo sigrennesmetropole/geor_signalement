@@ -113,7 +113,7 @@ public class StyleServiceImpl  implements StyleService {
         if (processStyling == null) {
             throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
         }
-        ProcessStylingEntity s = processMapper.dtoToEntity(processStyling);
+        ProcessStylingEntity processStylingEntity = processMapper.dtoToEntity(processStyling);
 
         //Verify if the processStyling already exist
         ProcessStylingSearchCriteria searchCriteria = new ProcessStylingSearchCriteria();
@@ -128,8 +128,8 @@ public class StyleServiceImpl  implements StyleService {
         }
 
         //Save
-        s.setStyling(styleDao.getById(processStyling.getStylingId()));
-        processStylingDao.save(s);
+        processStylingEntity.setStyling(styleDao.getById(processStyling.getStylingId()));
+        processStylingDao.save(processStylingEntity);
         return processStyling;
     }
 
