@@ -15,7 +15,6 @@ import java.util.List;
     @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
     public interface ProcessStylingMapper extends AbstractMapper<ProcessStylingEntity, ProcessStyling> {
 
-        GeoJSonHelper helper = new GeoJSonHelper();
         @Override
         @InheritInverseConfiguration
         ProcessStylingEntity dtoToEntity(ProcessStyling dto);
