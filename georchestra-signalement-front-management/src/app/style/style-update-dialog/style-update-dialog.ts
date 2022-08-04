@@ -122,55 +122,6 @@ export class StyleUpdateDialog{ public nameControl = new FormControl('', [Valida
             this.StyleUpdateForm.controls['dashArray'].updateValueAndValidity();
 
         }
-
-        // @ts-ignore
-        /*this.StyleUpdateForm.get('type').valueChanges.subscribe(val => {
-            if (val == "POINT") {
-                this.StyleUpdateForm.controls['iconGlyph'].setValidators([Validators.required]);
-                this.StyleUpdateForm.controls['iconColor'].setValidators([Validators.required]);
-                this.StyleUpdateForm.controls['iconShape'].setValidators([Validators.required]);
-            } else {
-                this.StyleUpdateForm.controls['iconGlyph'].clearValidators();
-                this.StyleUpdateForm.controls['iconColor'].clearValidators();
-                this.StyleUpdateForm.controls['iconShape'].clearValidators();
-            }
-            this.StyleUpdateForm.controls['iconGlyph'].updateValueAndValidity();
-            this.StyleUpdateForm.controls['iconColor'].updateValueAndValidity();
-            this.StyleUpdateForm.controls['iconShape'].updateValueAndValidity();
-
-            if (val == "POLYGON" || val == "LINE") {
-                this.StyleUpdateForm.controls['color'].setValidators([Validators.required]);
-                this.StyleUpdateForm.controls['opacity'].setValidators([Validators.required]);
-                this.StyleUpdateForm.controls['weight'].setValidators([Validators.required]);
-            } else {
-                this.StyleUpdateForm.controls['color'].clearValidators();
-                this.StyleUpdateForm.controls['opacity'].clearValidators();
-                this.StyleUpdateForm.controls['weight'].clearValidators();
-            }
-            this.StyleUpdateForm.controls['color'].updateValueAndValidity();
-            this.StyleUpdateForm.controls['opacity'].updateValueAndValidity();
-            this.StyleUpdateForm.controls['weight'].updateValueAndValidity();
-
-            if (val == "LINE") {
-                this.StyleUpdateForm.controls['iconAnchor'].setValidators([Validators.required]);
-            } else {
-                this.StyleUpdateForm.controls['iconAnchor'].clearValidators();
-            }
-            this.StyleUpdateForm.controls['iconAnchor'].updateValueAndValidity();
-
-            if (val == "POLYGON") {
-                this.StyleUpdateForm.controls['fillColor'].setValidators([Validators.required]);
-                this.StyleUpdateForm.controls['fillOpacity'].setValidators([Validators.required]);
-                this.StyleUpdateForm.controls['dashArray'].setValidators([Validators.required]);
-            } else {
-                this.StyleUpdateForm.controls['fillColor'].clearValidators();
-                this.StyleUpdateForm.controls['fillOpacity'].clearValidators();
-                this.StyleUpdateForm.controls['dashArray'].clearValidators();
-            }
-            this.StyleUpdateForm.controls['fillColor'].updateValueAndValidity();
-            this.StyleUpdateForm.controls['fillOpacity'].updateValueAndValidity();
-            this.StyleUpdateForm.controls['dashArray'].updateValueAndValidity();
-        });*/
     }
 
     private isNumberOrNull(value: string | number): boolean
