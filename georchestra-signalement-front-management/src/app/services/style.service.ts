@@ -28,7 +28,7 @@ export class StyleService {
      */
     getStyles(offset: number, limit: number, sortCriteria: string)
         : Observable<StrictHttpResponse<StylePageResult>> {
-        return this.styleService.searchStyleResponse({
+        return this.styleService.searchStylesResponse({
             offset: offset,
             limit: limit,
             sortExpression: sortCriteria
