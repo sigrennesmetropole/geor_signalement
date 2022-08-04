@@ -26,6 +26,10 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class StyleServiceImpl  implements StyleService {
 
+    private static final GeographicType POLYGON = GeographicType.POLYGON;
+    private static final GeographicType LINE = GeographicType.LINE;
+    private static final GeographicType POINT = GeographicType.POINT;
+    
     @Autowired
     StylingDao styleDao;
 
@@ -46,9 +50,6 @@ public class StyleServiceImpl  implements StyleService {
 
     private StyleHelper styleHelper = new StyleHelper();
 
-    private static final GeographicType POLYGON = GeographicType.POLYGON;
-    private static final GeographicType LINE = GeographicType.LINE;
-    private static final GeographicType POINT = GeographicType.POINT;
     public Page<StyleContainer> searchStyles(Pageable pageable) {
         Page<StyleContainer> results = getStyles(pageable);
         return results;
