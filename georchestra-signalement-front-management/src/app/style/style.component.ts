@@ -90,7 +90,7 @@ export class StyleComponent implements AfterViewInit {
     }).afterClosed().subscribe(
         (data)=>{
           if (data) {
-            this.dataSource.postStyle(data);
+            this.dataSource.createStyle(data);
           }
         },
     );

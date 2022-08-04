@@ -170,9 +170,9 @@ export class StyleDataSource extends DataSource<StyleContainer> {
             },);
     }
 
-    public postStyle(style :StyleContainer): void{
+    public createStyle(style :StyleContainer): void{
         this.styleService
-            .postStyle(style).subscribe(
+            .createStyle(style).subscribe(
             (result)=>{
                 if (result) {
                     this.toasterService.sendSuccessMessage('style.add.success');

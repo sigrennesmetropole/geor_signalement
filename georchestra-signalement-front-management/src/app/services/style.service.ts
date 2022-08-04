@@ -44,7 +44,7 @@ export class StyleService {
             .updateStyle(style);
     }
 
-    postStyle(style:StyleContainer) : Observable<StyleContainer> {
+    createStyle(style:StyleContainer) : Observable<StyleContainer> {
         return this.styleService
             .createStyle(style);
     }
