@@ -56,7 +56,7 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
         Page<GeographicAreaEntity> geographicAreas;
         geographicAreas = geographicAreaCustomDao
                 .searchGeographicAreas(searchCriteria,pageable, sort);
-        return geographicAreas.map(geographicAreaMapper::entityToDto);
+        return geographicAreaMapper.entitiesToDto(geographicAreas,pageable);
     }
 
     @Override
