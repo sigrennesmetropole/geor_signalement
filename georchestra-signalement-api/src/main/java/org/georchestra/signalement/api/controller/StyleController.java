@@ -51,7 +51,7 @@ public class StyleController  implements StylesApi {
     }
 
     @Override
-    public ResponseEntity<StylePageResult> searchStyle(Integer offset, Integer limit, String sortCriteria) throws Exception {
+    public ResponseEntity<StylePageResult> searchStyles(Integer offset, Integer limit, String sortCriteria) throws Exception {
         Pageable pageable = utilPageable.getPageable(offset, limit, sortCriteria);
         Page<StyleContainer> pageResult = styleService.searchStyles(pageable);
         StylePageResult resultObject = new StylePageResult();

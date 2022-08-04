@@ -202,7 +202,7 @@
 				],
 				"summary": "Recherche de la liste des style.",
 				"description": "Récupération de la liste des styles disponibles qui respectent les filtres.",
-				"operationId": "searchStyle",
+				"operationId": "searchStyles",
 				"produces": [
 					"application/json"
 				],
