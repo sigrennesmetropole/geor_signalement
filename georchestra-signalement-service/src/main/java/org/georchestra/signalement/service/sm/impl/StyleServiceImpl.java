@@ -29,7 +29,7 @@ public class StyleServiceImpl  implements StyleService {
     private static final GeographicType POLYGON = GeographicType.POLYGON;
     private static final GeographicType LINE = GeographicType.LINE;
     private static final GeographicType POINT = GeographicType.POINT;
-    
+
     @Autowired
     StylingDao styleDao;
 
@@ -51,7 +51,9 @@ public class StyleServiceImpl  implements StyleService {
     private StyleHelper styleHelper = new StyleHelper();
 
     public Page<StyleContainer> searchStyles(Pageable pageable) {
-        Page<StyleContainer> results = getStyles(pageable);
+        //Get data from StylingCustomDao
+        Page<StylingEntity> result = styleCustomDao.searchStylings(null,pageable);
+        Page<StyleContainer> results = result.map(styleHelper::mappingStyleToDto);
         return results;
     }
 
@@ -139,14 +141,5 @@ public class StyleServiceImpl  implements StyleService {
             throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
         }
         processStylingDao.delete(styleProcess);
-    }
-
-
-    private Page<StyleContainer> getStyles(Pageable pageable) {
-
-        //Get data from StylingCustomDao
-        Page<StylingEntity> result = styleCustomDao.searchStylings(null,pageable);
-        return result.map(styleHelper::mappingStyleToDto);
-
     }
 }
