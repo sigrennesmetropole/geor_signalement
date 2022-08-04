@@ -2,6 +2,7 @@ package org.georchestra.signalement.service.sm.impl;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionCustomDao;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
@@ -73,7 +74,7 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 		if (!description.equals("")) {
 			searchCriteria.setDescription(description);
 		}
-		if (!workflow.equals("")) {
+		if (!StringUtils.isNotEmpty(workflow)) {
 			searchCriteria.setProcessDefinitionKey(workflow);
 		}
 		List<ContextDescriptionEntity> contexts;
