@@ -17,7 +17,7 @@ public interface StyleService {
 
     StyleContainer updateStyle(StyleContainer style) throws Exception;
 
-    List<ProcessStyling> getLinkById(Long id) throws Exception;
+    List<ProcessStyling> getProcessStyling(Long id) throws Exception;
 
     ProcessStyling createStyleProcess(ProcessStyling processStyling);
 

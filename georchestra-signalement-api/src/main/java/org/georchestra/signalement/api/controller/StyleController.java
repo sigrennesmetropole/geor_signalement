@@ -47,7 +47,7 @@ public class StyleController  implements StylesApi {
 
     @Override
     public ResponseEntity<List<ProcessStyling>> getStyleProcessById(Long id) throws Exception {
-        return ResponseEntity.ok(styleService.getLinkById(id));
+        return ResponseEntity.ok(styleService.getProcessStyling(id));
     }
 
     @Override
