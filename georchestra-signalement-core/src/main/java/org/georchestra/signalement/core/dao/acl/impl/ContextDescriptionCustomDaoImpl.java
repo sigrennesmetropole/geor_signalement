@@ -36,7 +36,6 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 	private static final String FIELD_CONTEXT_TYPE = "contextType";
 	private static final String FIELD_GEOGRAPHIC = "geographicType";
 	private static final String FIELD_LABEL = "label";
-	//private static final String FIELD_PROCESS_DEFINITIONKEY = "processDefinitionKey";
 	private static final String FIELD_PROCESS_DEFINITIONKEY = "processDefinitionKey";
 
 
