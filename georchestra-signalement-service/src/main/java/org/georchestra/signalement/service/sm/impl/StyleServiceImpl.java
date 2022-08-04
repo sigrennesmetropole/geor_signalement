@@ -25,11 +25,6 @@ import java.util.List;
 @Component
 @Transactional(readOnly = true)
 public class StyleServiceImpl  implements StyleService {
-
-    private static final GeographicType POLYGON = GeographicType.POLYGON;
-    private static final GeographicType LINE = GeographicType.LINE;
-    private static final GeographicType POINT = GeographicType.POINT;
-
     @Autowired
     StylingDao styleDao;
 
