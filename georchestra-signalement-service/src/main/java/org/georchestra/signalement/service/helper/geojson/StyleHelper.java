@@ -1,5 +1,6 @@
 package org.georchestra.signalement.service.helper.geojson;
 
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.Style;
 import org.georchestra.signalement.core.dto.StyleContainer;
@@ -292,41 +293,71 @@ public class StyleHelper {
         switch (type){
             case "POINT":
                 Style defaultPointStyle = createDefaultStylePoint();
-                descriptionType.put("iconGlyph",description.has("iconGlyph")&& !description.getString("iconGlyph").equals("")?description.get("iconGlyph"):defaultPointStyle.getIconGlyph());
-                descriptionType.put("iconShape",description.has("iconShape")&& !description.getString("iconShape").equals("")?description.get("iconShape"):defaultPointStyle.getIconShape());
-                descriptionType.put("iconColor",description.has("iconColor")&& !description.getString("iconColor").equals("")?description.get("iconColor"):defaultPointStyle.getIconColor());
+                assignPoint(descriptionType,description,defaultPointStyle);
                 break;
 
             case "LINE":
                 Style defaultLineStyle = createDefaultLineStyle();
-                descriptionType.put("filtering",description.has("filtering")?description.get("filtering"):null);
-                descriptionType.put("weight",description.has("weight")?description.get("weight"):defaultLineStyle.getWeight());
-                descriptionType.put("opacity",description.has("opacity")?description.get("opacity"):defaultLineStyle.getFillColor());
-                if(iconAnchor.toList().contains(null)){
-                    descriptionType.put("iconAnchor",defaultLineStyle.getIconAnchor());
-                }else{
-                    descriptionType.put("iconAnchor",iconAnchor);
-                }
-                descriptionType.put("color",description.has("color")&& !description.getString("color").equals("")?description.get("color"):defaultLineStyle.getColor());
+                assignLine(descriptionType,description,iconAnchor, defaultLineStyle);
                 break;
 
             case "POLYGON":
                 Style defaultPolygonStyle = createDefaultPolygonStyle();
-                descriptionType.put("weight",description.has("weight")?description.get("weight"):defaultPolygonStyle.getWeight());
-                descriptionType.put("fillColor",description.has("fillColor")&& !description.getString("color").equals("")?description.get("fillColor"):defaultPolygonStyle.getFillColor());
-                descriptionType.put("fillOpacity",description.has("fillOpacity")?description.get("fillOpacity"):defaultPolygonStyle.getFillOpacity());
-                if(dashArray.toList().contains(null)){
-                    descriptionType.put("dashArray",defaultPolygonStyle.getDashArray());
-                }else{
-                    descriptionType.put("dashArray",dashArray);
-                }
-                descriptionType.put("opacity",description.has("opacity")?description.get("opacity"):defaultPolygonStyle.getOpacity());
-                descriptionType.put("color",description.has("color")&& !description.getString("color").equals("")?description.get("color"):defaultPolygonStyle.getColor());
+                assignPolygon(descriptionType,description,dashArray, defaultPolygonStyle);
                 break;
         }
         arr.put(type, descriptionType);
         res.setDefinition(arr.toString());
         return res;
+    }
+
+    private void assignPoint(JSONObject descriptionType, JSONObject descriptionOrigine, Style defaultPointStyle){
+        assignValueString(descriptionType,descriptionOrigine,"iconGlyph",defaultPointStyle.getIconGlyph());
+        assignValueString(descriptionType,descriptionOrigine,"iconShape",defaultPointStyle.getIconShape());
+        assignValueString(descriptionType,descriptionOrigine,"iconColor",defaultPointStyle.getIconColor());
+        
+    }
+
+    private void assignLine(JSONObject descriptionType, JSONObject descriptionOrigine, JSONArray iconAnchor, Style defaultLineStyle){
+        assignValueDouble(descriptionType,descriptionOrigine,"weight",defaultLineStyle.getWeight());
+        assignValueString(descriptionType,descriptionOrigine,"filtering",defaultLineStyle.getFillColor());
+
+        assignValueDouble(descriptionType,descriptionOrigine,"opacity",defaultLineStyle.getOpacity());
+        assignValueString(descriptionType,descriptionOrigine,"color",defaultLineStyle.getColor());
+        if(iconAnchor.toList().contains(null)){
+            descriptionType.put("iconAnchor",defaultLineStyle.getIconAnchor());
+        }else{
+            descriptionType.put("iconAnchor",iconAnchor);
+        }
+    }
+    private void assignPolygon(JSONObject descriptionType, JSONObject descriptionOrigine, JSONArray dashArray, Style defaultPolygonStyle){
+        assignValueDouble(descriptionType,descriptionOrigine,"weight",defaultPolygonStyle.getWeight());
+        assignValueString(descriptionType,descriptionOrigine,"fillColor",defaultPolygonStyle.getFillColor());
+        assignValueDouble(descriptionType,descriptionOrigine,"fillOpacity",defaultPolygonStyle.getFillOpacity());
+
+        assignValueDouble(descriptionType,descriptionOrigine,"opacity",defaultPolygonStyle.getOpacity());
+        assignValueString(descriptionType,descriptionOrigine,"color",defaultPolygonStyle.getColor());
+        if(dashArray.toList().contains(null)){
+            descriptionType.put("dashArray",defaultPolygonStyle.getDashArray());
+        }else{
+            descriptionType.put("dashArray",dashArray);
+        }
+    }
+
+    private void assignValueString(JSONObject descriptionType, JSONObject descriptionOrigine, String propertyName, String defaultValue){
+        if (descriptionOrigine.has(propertyName)&& StringUtils.isNotEmpty(descriptionOrigine.getString(propertyName))){
+            descriptionType.put(propertyName,descriptionOrigine.getString(propertyName));
+        } else {
+            descriptionType.put(propertyName,defaultValue);
+        }
+    }
+
+    private void assignValueDouble(JSONObject descriptionType, JSONObject descriptionOrigine, String propertyName, Double defaultValue){
+        if (descriptionOrigine.has(propertyName)){
+            descriptionType.put(propertyName,descriptionOrigine.getDouble(propertyName));
+        } else {
+            descriptionType.put(propertyName,defaultValue);
+        }
     }
 
     public StyleContainer mappingStyleToDto(StylingEntity entity){
@@ -368,7 +399,6 @@ public class StyleHelper {
             style.setDashArray(dashArray);
 
         } else if (GeographicType.fromValue(type) == GeographicType.LINE) {
-
 
             style = (StyleHelper.createLineStyle(definition));
             List<Double> iconAnchor = new LinkedList<>();
