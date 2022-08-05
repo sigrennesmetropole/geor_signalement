@@ -159,18 +159,18 @@ export class StyleUpdateDialog{ public nameControl = new FormControl('', [Valida
             let errorType = false;
 
             if(type == "POLYGON" || type == "LINE"){
-                if(this.isNumberOrNull(weight)){
+                if(!this.isNumberOrNull(weight)){
                     this.toaster.sendErrorMessage('style.update.formErrors.weight');
                     errorType = true;
                 }
-                if(this.isNumberOrNull(opacity) && !errorType){
+                if(!this.isNumberOrNull(opacity) && !errorType){
                     this.toaster.sendErrorMessage('style.update.formErrors.opacity');
                     errorType = true;
                 }
             }
 
             if(type == "POLYGON"){
-                if(this.isNumberOrNull(fillOpacity) && !errorType){
+                if(!this.isNumberOrNull(fillOpacity) && !errorType){
                     this.toaster.sendErrorMessage('style.update.formErrors.fillOpacity');
                     errorType = true;
                 }
