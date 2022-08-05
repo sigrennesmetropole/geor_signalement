@@ -5,10 +5,8 @@ import {MatTable} from "@angular/material/table";
 import {StyleDataSource} from "../style/style.datasource";
 import {MatDialog} from "@angular/material/dialog";
 import {StyleContainer} from "../api/models/style-container";
-import {StyleReadDialog} from "./style-read-dialog/style-read-dialog";
-import {StyleUpdateDialog} from "./style-update-dialog/style-update-dialog";
+import {StyleDialog} from "./style-dialog/style-dialog";
 import {StyleDeleteDialog} from "./style-delete-dialog/style-delete-dialog";
-import {StyleAddDialog} from "./style-add-dialog/style-add-dialog";
 import {StyleProcessDialog} from "./style-process-dialog/style-process-dialog";
 @Component({
   selector: 'app-style',
@@ -41,13 +39,13 @@ export class StyleComponent implements AfterViewInit {
   }
 
   handleOpenReadDialogClick(target: StyleContainer) {
-    this.dialog.open(StyleReadDialog, {
+    this.dialog.open(StyleDialog, {
       width: 'auto',
       height: 'auto',
-      data: { target: target},
+      data: { action : "read", target: target},
     });
   }
-  handleOpenLinkDialogClick(target: StyleContainer) {
+  handleOpenProcessStylingDialogClick(target: StyleContainer) {
     this.dialog.open(StyleProcessDialog, {
       width: 'auto',
       height: 'auto',
@@ -56,10 +54,10 @@ export class StyleComponent implements AfterViewInit {
   }
 
   handleOpenUpdateDialogClick(target: StyleContainer) {
-    this.dialog.open(StyleUpdateDialog, {
+    this.dialog.open(StyleDialog, {
       width: 'auto',
       height: 'auto',
-      data: {target: target},
+      data: {action : "update", target: target},
     }).afterClosed().subscribe(
         (data)=>{
           if (data) {
@@ -84,9 +82,10 @@ export class StyleComponent implements AfterViewInit {
   }
 
   handleOpenAddDialogClick() {
-    this.dialog.open(StyleAddDialog, {
+    this.dialog.open(StyleDialog, {
       width: 'auto',
       height: 'auto',
+      data: { action : "create"},
     }).afterClosed().subscribe(
         (data)=>{
           if (data) {

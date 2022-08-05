@@ -25,9 +25,9 @@
     </div>
 
 
-    <point-update-dialog *ngIf="typeControl.value == 'POINT'" [action]="this.action" [parentForm]="StyleForm"></point-update-dialog>
-    <line-update-dialog *ngIf="typeControl.value == 'LINE'" [action]="this.action"  [parentForm]="StyleForm"></line-update-dialog>
-    <polygon-update-dialog *ngIf="typeControl.value == 'POLYGON'" [action]="this.action"  [parentForm]="StyleForm"></polygon-update-dialog>
+    <point-dialog *ngIf="typeControl.value == 'POINT'" [action]="this.action" [parentForm]="StyleForm"></point-dialog>
+    <line-dialog *ngIf="typeControl.value == 'LINE'" [action]="this.action"  [parentForm]="StyleForm"></line-dialog>
+    <polygon-dialog *ngIf="typeControl.value == 'POLYGON'" [action]="this.action"  [parentForm]="StyleForm"></polygon-dialog>
 
     <div mat-dialog-action align="center" class="edit-form-group">
         <button class="action-button" mat-flat-button color="primary" *ngIf="this.action == 'update'" (click)='handleSubmitUpdateClick()'>{{'common.buttons.submit' | translate}}</button>

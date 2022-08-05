@@ -9,15 +9,15 @@ import {ToasterUtil} from "../../../utils/toaster.util";
 
 
  @Component({
-   selector: 'polygon-update-dialog',
-   templateUrl: 'polygon-update-dialog.html',
-   styleUrls: ['polygon-update-dialog.scss'],
+   selector: 'polygon-dialog',
+   templateUrl: 'polygon-dialog.html',
+   styleUrls: ['polygon-dialog.scss'],
  })
 
 /**
   * The dialog window to add a context
   */
-export class PolygonUpdateDialog implements AfterContentInit{
+export class PolygonDialog implements AfterContentInit{
     @Input() parentForm!: FormGroup;
     @Input() action!: String;
 
@@ -31,7 +31,7 @@ export class PolygonUpdateDialog implements AfterContentInit{
 
 
     constructor(
-        private dialogRef: MatDialogRef<PolygonUpdateDialog>,
+        private dialogRef: MatDialogRef<PolygonDialog>,
         private toaster: ToasterUtil,
         private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) private data:any

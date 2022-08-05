@@ -9,15 +9,15 @@ import {ToasterUtil} from "../../../utils/toaster.util";
 
 
  @Component({
-   selector: 'point-update-dialog',
-   templateUrl: 'point-update-dialog.html',
-   styleUrls: ['point-update-dialog.scss'],
+   selector: 'point-dialog',
+   templateUrl: 'point-dialog.html',
+   styleUrls: ['point-dialog.scss'],
  })
 
 /**
   * The dialog window to add a context
   */
-export class PointUpdateDialog  implements AfterContentInit{
+export class PointDialog implements AfterContentInit{
 
     @Input() parentForm!: FormGroup;
     @Input() action!: String;
@@ -27,7 +27,7 @@ export class PointUpdateDialog  implements AfterContentInit{
     public iconShapeControl!: FormControl;
 
     constructor(
-        private dialogRef: MatDialogRef<PointUpdateDialog>,
+        private dialogRef: MatDialogRef<PointDialog>,
         private toaster: ToasterUtil,
         private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) private data:any

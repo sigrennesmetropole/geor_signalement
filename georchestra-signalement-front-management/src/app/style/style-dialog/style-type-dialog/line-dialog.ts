@@ -9,15 +9,15 @@ import {ToasterUtil} from "../../../utils/toaster.util";
 
 
  @Component({
-   selector: 'line-update-dialog',
-   templateUrl: 'line-update-dialog.html',
-   styleUrls: ['line-update-dialog.scss'],
+   selector: 'line-dialog',
+   templateUrl: 'line-dialog.html',
+   styleUrls: ['line-dialog.scss'],
  })
 
 /**
   * The dialog window to add a context
   */
-export class LineUpdateDialog implements AfterContentInit {
+export class LineDialog implements AfterContentInit {
     @Input() parentForm!: FormGroup;
     @Input() action!: String;
 
@@ -27,7 +27,7 @@ export class LineUpdateDialog implements AfterContentInit {
     public iconAnchorControl !:FormControl;
 
     constructor(
-        private dialogRef: MatDialogRef<LineUpdateDialog>,
+        private dialogRef: MatDialogRef<LineDialog>,
         private toaster: ToasterUtil,
         private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) private data:any
