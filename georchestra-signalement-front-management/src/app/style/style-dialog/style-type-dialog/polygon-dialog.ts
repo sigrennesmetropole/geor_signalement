@@ -1,20 +1,25 @@
-import {AfterContentInit, Component, Inject, Input} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, Inject, Input} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {TranslateService} from "@ngx-translate/core";
-import {FormControl, FormGroup} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ToasterUtil} from "../../../utils/toaster.util";
+/**
+ * @title Dialog Overview
+ */
+
 
  @Component({
-   selector: 'polygon-add-dialog',
-   templateUrl: 'polygon-add-dialog.html',
-   styleUrls: ['polygon-add-dialog.scss'],
+   selector: 'polygon-update-dialog',
+   templateUrl: 'polygon-update-dialog.html',
+   styleUrls: ['polygon-update-dialog.scss'],
  })
 
 /**
-  * Part for Polygon in the windows to add a style
+  * The dialog window to add a context
   */
-export class PolygonAddDialog implements AfterContentInit {
+export class PolygonUpdateDialog implements AfterContentInit{
     @Input() parentForm!: FormGroup;
+    @Input() action!: String;
 
     public colorControl !:FormControl;
     public opacityControl !:FormControl;
@@ -23,8 +28,10 @@ export class PolygonAddDialog implements AfterContentInit {
     public fillOpacityControl !:FormControl;
     public dashArrayControl !:FormControl;
 
+
+
     constructor(
-        private dialogRef: MatDialogRef<PolygonAddDialog>,
+        private dialogRef: MatDialogRef<PolygonUpdateDialog>,
         private toaster: ToasterUtil,
         private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) private data:any
@@ -32,7 +39,7 @@ export class PolygonAddDialog implements AfterContentInit {
     {
     }
 
-    private addGroupToParent(): void {
+    private updateGroupToParent(): void {
         // @ts-ignore
         this.colorControl = this.parentForm.get("color") as FormControl;
         this.opacityControl = this.parentForm.get("opacity") as FormControl;
@@ -40,9 +47,10 @@ export class PolygonAddDialog implements AfterContentInit {
         this.fillColorControl = this.parentForm.get("fillColor") as FormControl;
         this.fillOpacityControl = this.parentForm.get("fillOpacity") as FormControl;
         this.dashArrayControl = this.parentForm.get("dashArray") as FormControl;
+
     }
 
     ngAfterContentInit(): void {
-        this.addGroupToParent();
+        this.updateGroupToParent();
     }
 }

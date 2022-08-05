@@ -9,41 +9,41 @@ import {ToasterUtil} from "../../../utils/toaster.util";
 
 
  @Component({
-   selector: 'line-update-dialog',
-   templateUrl: 'line-update-dialog.html',
-   styleUrls: ['line-update-dialog.scss'],
+   selector: 'point-update-dialog',
+   templateUrl: 'point-update-dialog.html',
+   styleUrls: ['point-update-dialog.scss'],
  })
 
 /**
   * The dialog window to add a context
   */
-export class LineUpdateDialog implements AfterContentInit {
-    @Input() parentForm!: FormGroup;
+export class PointUpdateDialog  implements AfterContentInit{
 
-    public colorControl !:FormControl;
-    public opacityControl !:FormControl;
-    public weightControl !:FormControl;
-    public iconAnchorControl !:FormControl;
+    @Input() parentForm!: FormGroup;
+    @Input() action!: String;
+
+    public iconGlyphControl!:FormControl;
+    public iconColorControl!: FormControl;
+    public iconShapeControl!: FormControl;
 
     constructor(
-        private dialogRef: MatDialogRef<LineUpdateDialog>,
+        private dialogRef: MatDialogRef<PointUpdateDialog>,
         private toaster: ToasterUtil,
         private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) private data:any
     )
     {
-    }
 
+    }
     private updateGroupToParent(): void {
-        // @ts-ignore
-        this.colorControl = this.parentForm.get("color") as FormControl;
-        this.opacityControl = this.parentForm.get("opacity") as FormControl;
-        this.weightControl = this.parentForm.get("weight") as FormControl;
-        this.iconAnchorControl = this.parentForm.get("iconAnchor") as FormControl;
+        this.iconGlyphControl = this.parentForm.get("iconGlyph") as FormControl;
+        this.iconColorControl = this.parentForm.get("iconColor") as FormControl;
+        this.iconShapeControl = this.parentForm.get("iconShape") as FormControl;
 
     }
 
     ngAfterContentInit(): void {
         this.updateGroupToParent();
+        console.log(this.action);
     }
 }
