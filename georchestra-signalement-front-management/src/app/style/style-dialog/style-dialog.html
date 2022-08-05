@@ -33,6 +33,6 @@
         <button class="action-button" mat-flat-button color="primary" *ngIf="this.action == 'update'" (click)='handleSubmitUpdateClick()'>{{'common.buttons.submit' | translate}}</button>
         <button class="action-button" mat-flat-button color="primary" *ngIf="this.action == 'create'" (click)='handleSubmitCreateClick()'>{{'common.buttons.submit' | translate}}</button>
 
-        <button class="action-button" mat-flat-button color="warn">{{'common.buttons.cancel' | translate}}</button>
+        <button class="action-button" *ngIf="this.action == 'update' || this.action == 'create'" mat-flat-button color="warn" (click)='handleCancelClick()'>{{'common.buttons.cancel' | translate}}</button>
     </div>
 </form>

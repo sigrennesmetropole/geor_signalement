@@ -247,4 +247,11 @@ export class StyleDialog {
             }
         }
     }
+
+    /**
+     * On click on the cancel button, close the window
+     */
+    handleCancelClick(): void {
+        this.dialogRef.close();
+    }
 }

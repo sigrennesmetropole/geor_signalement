@@ -53,4 +53,12 @@ export class StyleProcessAddDialog{
          }
 
      }
+
+     /**
+      * On click on the cancel button, close the window
+      */
+     handleCancelClick(): void {
+         this.dialogRef.close();
+     }
+     
  }
