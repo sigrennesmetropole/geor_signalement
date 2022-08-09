@@ -109,9 +109,10 @@ export class ContextComponent implements AfterViewInit {
     this.dialog.open(ContextEditDialog, {
       width: 'auto',
       height: 'auto',
+      panelClass: ['custom-map-dialog-container'],
       data: {workflows: this.workflows,
         target: target},
-    }).afterClosed().subscribe(
+        }).afterClosed().subscribe(
         (data)=>{
           if (data) {
             this.dataSource.updateContext(target, data);
