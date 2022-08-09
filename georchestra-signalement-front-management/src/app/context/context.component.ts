@@ -12,6 +12,7 @@ import {ContextDeleteDialog}
   from './context-delete-dialog/context-delete-dialog';
 import {ContextEditDialog} from './context-edit-dialog/context-edit-dialog';
 import {ContextDataSource, ContextItem} from './context.datasource';
+import {ContextMapDialog} from "./context-map-dialog/context-map-dialog.component";
 
 
 @Component({
@@ -124,6 +125,14 @@ export class ContextComponent implements AfterViewInit {
    */
   handleRefreshDataClick(): void {
     this.dataSource.refreshData();
+  }
+
+  handleOpenMapDialogClick(target: ContextItem): void {
+    this.dialog.open(ContextMapDialog, {
+      width: 'auto',
+      height: 'auto',
+      data: {target: target},
+    })
   }
 
   /**

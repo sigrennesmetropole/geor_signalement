@@ -61,6 +61,7 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>{{"context.table.actions" | translate}}</th>
         <td mat-cell *matCellDef="let row">
+          <button class="action-button" mat-mini-fab color="primary" (click)='handleOpenMapDialogClick(row)'><mat-icon>map</mat-icon></button>
           <button class="action-button" mat-mini-fab color="primary" (click)='handleOpenEditDialogClick(row)'><mat-icon>edit</mat-icon></button>
           <button mat-mini-fab color="warn" (click)='handleOpenSupressDialogClick(row)'><mat-icon>delete</mat-icon></button>
         </td>
