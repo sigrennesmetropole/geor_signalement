@@ -1,0 +1,36 @@
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Feature} from "ol";
+
+@Component({
+  selector: 'map-info',
+  templateUrl: './map-info.component.html',
+  styleUrls: ['./map-info.component.scss']
+})
+export class MapInfo implements OnChanges {
+  @Input() feature?: Feature
+  @Output()
+
+  firstNameOperator?:string
+  lastNameOperator?:string
+  roleOperator?:string
+  nameContext?:string
+  nameArea?:string
+
+  close: EventEmitter<any> = new EventEmitter<any>();
+
+
+  constructor() { }
+
+
+  onClose() {
+    this.close.emit(true);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.firstNameOperator = this.feature?.getProperties()["first_name"]
+    this.lastNameOperator = this.feature?.getProperties()["last_name"]
+    this.roleOperator = this.feature?.getProperties()["role_name"]
+    this.nameContext = this.feature?.getProperties()["context_name"]
+    this.nameArea = this.feature?.getProperties()["area_name"]
+  }
+}
