@@ -109,7 +109,6 @@ export class ContextComponent implements AfterViewInit {
     this.dialog.open(ContextEditDialog, {
       width: 'auto',
       height: 'auto',
-      panelClass: ['custom-map-dialog-container'],
       data: {workflows: this.workflows,
         target: target},
         }).afterClosed().subscribe(
@@ -132,6 +131,7 @@ export class ContextComponent implements AfterViewInit {
     this.dialog.open(ContextMapDialog, {
       width: 'auto',
       height: 'auto',
+      panelClass: 'custom-map-dialog-container',
       data: {target: target},
     })
   }
