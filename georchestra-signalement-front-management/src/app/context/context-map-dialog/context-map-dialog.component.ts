@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './context-map-dialog.component.html',
   styleUrls: ['./context-map-dialog.component.scss']
 })
-export class ContextMapDialogComponent implements OnInit {
+export class ContextMapDialog implements OnInit {
 
   constructor() { }
 

@@ -98,6 +98,7 @@ import {MatSelectInfiniteScrollModule} from 'ng-mat-select-infinite-scroll';
 // Translation imports
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { ContextMapDialogComponent } from './context/context-map-dialog/context-map-dialog.component';
 import {StyleComponent} from './style/style.component';
 import {StyleDataSource} from "./style/style.datasource";
 import {StyleDeleteDialog} from "./style/style-delete-dialog/style-delete-dialog";
@@ -108,7 +109,6 @@ import {StyleDialog} from "./style/style-dialog/style-dialog";
 import {PointDialog} from "./style/style-dialog/style-type-dialog/point-dialog";
 import {LineDialog} from "./style/style-dialog/style-type-dialog/line-dialog";
 import {PolygonDialog} from "./style/style-dialog/style-type-dialog/polygon-dialog";
-
 
 @NgModule({
   declarations: [
@@ -143,6 +143,7 @@ import {PolygonDialog} from "./style/style-dialog/style-type-dialog/polygon-dial
     StyleProcessDialog,
     StyleProcessAddDialog,
     StyleProcessDeleteDialog,
+    ContextMapDialogComponent,
   ],
   imports: [
     AppRoutingModule,
