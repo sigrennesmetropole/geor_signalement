@@ -10,10 +10,9 @@ import org.georchestra.signalement.service.mapper.acl.StylingMapperImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StyleHelper {
@@ -29,24 +28,17 @@ public class StyleHelper {
     private static final String FILLCOLOR = "fillColor";
     private static final String FILLOPACITY = "fillOpacity";
     private static final String DASHARRAY = "dashArray";
-
-    //Pattern in order to detect in a string a dashArray, example : ,"dashArray":[0.2,3]
-    private static final Pattern dashArrayPattern = Pattern.compile(",\\\"dashArray\\\":\\[((([0-9]*(\\.[0-9]*)?(,[0-9]*(\\.[0-9]*)?)))|(null))\\]");
-
-    //Pattern in order to detect in a string an iconAnchor example : "iconANCHOR":[0.2,3]?
-    private static final Pattern iconAnchorPattern = Pattern.compile("\\\"iconAnchor\\\":\\[((([0-9]*(\\.[0-9]*)?(,[0-9]*(\\.[0-9]*)?)))|(null))\\],");
-    //The comma could become a problem if the order of data are updated
-
-    private StylingMapper styleMapper = new StylingMapperImpl();
+    private final StylingMapper styleMapper = new StylingMapperImpl();
 
 
     /**
-     *  Get definition style object
+     * Get definition style object
+     *
      * @param definitionStyle
      * @return
      */
     public static JSONObject getDefinitionStyleObj(String definitionStyle) {
-        if (definitionStyle != null ) {
+        if (definitionStyle != null) {
             JSONObject definitionStyleObj = new JSONObject(definitionStyle);
             return definitionStyleObj;
         }
@@ -54,7 +46,8 @@ public class StyleHelper {
     }
 
     /**
-     *  create default style for Point
+     * create default style for Point
+     *
      * @return
      */
     private static Style createDefaultStylePoint() {
@@ -68,7 +61,8 @@ public class StyleHelper {
     }
 
     /**
-     *  create style for Point from json
+     * create style for Point from json
+     *
      * @return
      */
     public static Style createPointStyle(String definitionStyle) {
@@ -79,22 +73,22 @@ public class StyleHelper {
 
         if (definitionStyleObj != null && definitionStyleObj.has("POINT")) {
             JSONObject point = definitionStyleObj.getJSONObject("POINT");
-            if(point.has(ICONGLYPH)){
+            if (point.has(ICONGLYPH)) {
                 style.setIconGlyph(point.getString(ICONGLYPH));
             }
-            if(point.has(ICONSHAPE)){
+            if (point.has(ICONSHAPE)) {
                 style.setIconShape(point.getString(ICONSHAPE));
             }
-            if(point.has(ICONCOLOR)){
+            if (point.has(ICONCOLOR)) {
                 style.setIconColor(point.getString(ICONCOLOR));
             }
         }
-
         return style;
     }
 
     /**
-     *  create default style for terminal point
+     * create default style for terminal point
+     *
      * @return
      */
     private static Style createDefaultTerminalPointStyle(boolean start) {
@@ -114,7 +108,8 @@ public class StyleHelper {
     }
 
     /**
-     *  create style for terminal Point from json
+     * create style for terminal Point from json
+     *
      * @return
      */
     protected static Style createTerminalPointStyle(boolean start, String definitionStyle) {
@@ -125,22 +120,21 @@ public class StyleHelper {
         if (definitionStyleObj != null) {
 
             JSONObject terminalPoint = definitionStyleObj.getJSONObject("LINE").getJSONObject("terminalPoint");
-            if(terminalPoint != null) {
-                if(terminalPoint.has(FILTERING)){
+            if (terminalPoint != null) {
+                if (terminalPoint.has(FILTERING)) {
                     style.setFiltering(terminalPoint.getBoolean(FILTERING));
                 }
-                if(terminalPoint.has(ICONCOLOR)) {
+                if (terminalPoint.has(ICONCOLOR)) {
                     style.setIconColor(terminalPoint.getString(ICONCOLOR));
                 }
-                if(terminalPoint.has(ICONGLYPH)) {
+                if (terminalPoint.has(ICONGLYPH)) {
                     style.setIconGlyph(terminalPoint.getString(ICONGLYPH));
                 }
-                if(terminalPoint.has(ICONSHAPE)) {
+                if (terminalPoint.has(ICONSHAPE)) {
                     style.setIconShape(terminalPoint.getString(ICONSHAPE));
                 }
-                if(terminalPoint.has(ICONANCHOR)) {
-                    style.setIconAnchor(Arrays.asList(terminalPoint.getJSONObject(ICONANCHOR).getDouble("x"),
-                            terminalPoint.getJSONObject(ICONANCHOR).getDouble("y")));
+                if (terminalPoint.has(ICONANCHOR)) {
+                    style.setIconAnchor(Arrays.asList(terminalPoint.getJSONObject(ICONANCHOR).getDouble("x"), terminalPoint.getJSONObject(ICONANCHOR).getDouble("y")));
                 }
 
             }
@@ -150,7 +144,8 @@ public class StyleHelper {
     }
 
     /**
-     *  create default style for line
+     * create default style for line
+     *
      * @return
      */
     private static Style createDefaultLineStyle() {
@@ -165,7 +160,8 @@ public class StyleHelper {
     }
 
     /**
-     *  create style for line from json
+     * create style for line from json
+     *
      * @return
      */
     public static Style createLineStyle(String definitionStyle) {
@@ -176,30 +172,34 @@ public class StyleHelper {
         if (definitionStyleObj != null && definitionStyleObj.has("LINE")) {
             JSONObject line = definitionStyleObj.getJSONObject("LINE");
 
-            if(line.has(COLOR)) {
+            if (line.has(COLOR)) {
                 style.setColor(line.getString(COLOR));
 
             }
-            if(line.has(OPACITY)) {
+            if (line.has(OPACITY)) {
                 style.setOpacity(line.getDouble(OPACITY));
 
             }
-            if(line.has(WEIGHT)) {
+            if (line.has(WEIGHT)) {
                 style.setWeight(line.getDouble(WEIGHT));
 
             }
-            if(line.has(ICONANCHOR)) {
-                style.setIconAnchor(Arrays.asList(line.getJSONObject(ICONANCHOR).getDouble("x"),
-                        line.getJSONObject(ICONANCHOR).getDouble("y")));
+            if (line.has(ICONANCHOR)) {
+
+                JSONArray iconAnchor = line.getJSONArray(DASHARRAY);
+                List<Double> resIconAnchor = new ArrayList<>(iconAnchor.length());
+                for (int i = 0; i < iconAnchor.length(); i++) {
+                    resIconAnchor.add(iconAnchor.optDouble(i));
+                }
+                style.setDashArray(resIconAnchor);
             }
         }
-
-
         return style;
     }
 
     /**
-     *  create default style for polygone
+     * create default style for polygone
+     *
      * @return
      */
     private static Style createDefaultPolygonStyle() {
@@ -216,7 +216,8 @@ public class StyleHelper {
     }
 
     /**
-     *  create style for polygon from json
+     * create style for polygon from json
+     *
      * @return
      */
     public static Style createPolygonStyle(String definitionStyle) {
@@ -228,41 +229,44 @@ public class StyleHelper {
         if (definitionStyleObj != null && definitionStyleObj.has("POLYGON")) {
             JSONObject polygon = definitionStyleObj.getJSONObject("POLYGON");
 
-            if(polygon.has(COLOR)) {
+            if (polygon.has(COLOR)) {
                 style.setColor(polygon.getString(COLOR));
             }
-            if(polygon.has(OPACITY)) {
+            if (polygon.has(OPACITY)) {
                 style.setOpacity(polygon.getDouble(OPACITY));
             }
-            if(polygon.has(FILLCOLOR)) {
+            if (polygon.has(FILLCOLOR)) {
                 style.setFillColor(polygon.getString(FILLCOLOR));
             }
-            if(polygon.has(FILLOPACITY)) {
+            if (polygon.has(FILLOPACITY)) {
                 style.setFillOpacity(polygon.getDouble(FILLOPACITY));
             }
-            if(polygon.has(WEIGHT)) {
+            if (polygon.has(WEIGHT)) {
                 style.setWeight(polygon.getDouble(WEIGHT));
             }
-            if(polygon.has(DASHARRAY)) {
-                style.setDashArray(Arrays.asList(polygon.getJSONObject(DASHARRAY).getDouble("x"),
-                        polygon.getJSONObject(DASHARRAY).getDouble("y")));
+            if (polygon.has(DASHARRAY)) {
+                JSONArray dashArray = polygon.getJSONArray(DASHARRAY);
+                List<Double> resDashArray = new ArrayList<>(dashArray.length());
+                for (int i = 0; i < dashArray.length(); i++) {
+                    resDashArray.add(dashArray.optDouble(i));
+                }
+                style.setDashArray(resDashArray);
             }
-
         }
-
-
         return style;
     }
 
-    private String getTypeFromEntity(StylingEntity entity){
+    private String getTypeFromEntity(StylingEntity entity) {
         JSONObject description = new JSONObject(entity.getDefinition());
         return getTypeFromJson(description);
     }
-    private String getTypeFromJson(JSONObject description){
+
+    private String getTypeFromJson(JSONObject description) {
         return description.keys().hasNext() ? description.keys().next() : null;
     }
 
-    /** Intern parsing and mapping function for this special case
+    /**
+     * Intern parsing and mapping function for this special case
      * Problem solved : The data in the database are mostly JSON and could have different formats.
      * We need to parse them and then map them.  Default mapper cannot map all data.
      */
@@ -274,12 +278,12 @@ public class StyleHelper {
         String type = styleContainer.getType().toString();
 
         //In case of type is a Polygon or a Line we need to remove the arrays before JsonObject conversion
-        if(type == "POLYGON"){
+        if (type == "POLYGON") {
             dashArray = new JSONArray(styleContainer.getStyle().getDashArray());
             styleContainer.getStyle().setDashArray(null);
         }
 
-        if(type == "LINE"){
+        if (type == "LINE") {
             iconAnchor = new JSONArray(styleContainer.getStyle().getIconAnchor());
             styleContainer.getStyle().setIconAnchor(null);
         }
@@ -290,20 +294,20 @@ public class StyleHelper {
 
         //Final description which follow the type
         JSONObject descriptionType = new JSONObject();
-        switch (type){
+        switch (type) {
             case "POINT":
                 Style defaultPointStyle = createDefaultStylePoint();
-                assignPoint(descriptionType,description,defaultPointStyle);
+                assignPoint(descriptionType, description, defaultPointStyle);
                 break;
 
             case "LINE":
                 Style defaultLineStyle = createDefaultLineStyle();
-                assignLine(descriptionType,description,iconAnchor, defaultLineStyle);
+                assignLine(descriptionType, description, iconAnchor, defaultLineStyle);
                 break;
 
             case "POLYGON":
                 Style defaultPolygonStyle = createDefaultPolygonStyle();
-                assignPolygon(descriptionType,description,dashArray, defaultPolygonStyle);
+                assignPolygon(descriptionType, description, dashArray, defaultPolygonStyle);
                 break;
         }
         arr.put(type, descriptionType);
@@ -311,106 +315,70 @@ public class StyleHelper {
         return res;
     }
 
-    private void assignPoint(JSONObject descriptionType, JSONObject descriptionOrigine, Style defaultPointStyle){
-        assignValueString(descriptionType,descriptionOrigine,"iconGlyph",defaultPointStyle.getIconGlyph());
-        assignValueString(descriptionType,descriptionOrigine,"iconShape",defaultPointStyle.getIconShape());
-        assignValueString(descriptionType,descriptionOrigine,"iconColor",defaultPointStyle.getIconColor());
-        
+    private void assignPoint(JSONObject descriptionType, JSONObject descriptionOrigine, Style defaultPointStyle) {
+        assignValueString(descriptionType, descriptionOrigine, "iconGlyph", defaultPointStyle.getIconGlyph());
+        assignValueString(descriptionType, descriptionOrigine, "iconShape", defaultPointStyle.getIconShape());
+        assignValueString(descriptionType, descriptionOrigine, "iconColor", defaultPointStyle.getIconColor());
+
     }
 
-    private void assignLine(JSONObject descriptionType, JSONObject descriptionOrigine, JSONArray iconAnchor, Style defaultLineStyle){
-        assignValueDouble(descriptionType,descriptionOrigine,"weight",defaultLineStyle.getWeight());
-        assignValueString(descriptionType,descriptionOrigine,"filtering",defaultLineStyle.getFillColor());
+    private void assignLine(JSONObject descriptionType, JSONObject descriptionOrigine, JSONArray iconAnchor, Style defaultLineStyle) {
+        assignValueDouble(descriptionType, descriptionOrigine, "weight", defaultLineStyle.getWeight());
+        assignValueString(descriptionType, descriptionOrigine, "filtering", defaultLineStyle.getFillColor());
 
-        assignValueDouble(descriptionType,descriptionOrigine,"opacity",defaultLineStyle.getOpacity());
-        assignValueString(descriptionType,descriptionOrigine,"color",defaultLineStyle.getColor());
-        if(iconAnchor.toList().contains(null)){
-            descriptionType.put("iconAnchor",defaultLineStyle.getIconAnchor());
-        }else{
-            descriptionType.put("iconAnchor",iconAnchor);
-        }
-    }
-    private void assignPolygon(JSONObject descriptionType, JSONObject descriptionOrigine, JSONArray dashArray, Style defaultPolygonStyle){
-        assignValueDouble(descriptionType,descriptionOrigine,"weight",defaultPolygonStyle.getWeight());
-        assignValueString(descriptionType,descriptionOrigine,"fillColor",defaultPolygonStyle.getFillColor());
-        assignValueDouble(descriptionType,descriptionOrigine,"fillOpacity",defaultPolygonStyle.getFillOpacity());
-
-        assignValueDouble(descriptionType,descriptionOrigine,"opacity",defaultPolygonStyle.getOpacity());
-        assignValueString(descriptionType,descriptionOrigine,"color",defaultPolygonStyle.getColor());
-        if(dashArray.toList().contains(null)){
-            descriptionType.put("dashArray",defaultPolygonStyle.getDashArray());
-        }else{
-            descriptionType.put("dashArray",dashArray);
-        }
-    }
-
-    private void assignValueString(JSONObject descriptionType, JSONObject descriptionOrigine, String propertyName, String defaultValue){
-        if (descriptionOrigine.has(propertyName)&& StringUtils.isNotEmpty(descriptionOrigine.getString(propertyName))){
-            descriptionType.put(propertyName,descriptionOrigine.getString(propertyName));
+        assignValueDouble(descriptionType, descriptionOrigine, "opacity", defaultLineStyle.getOpacity());
+        assignValueString(descriptionType, descriptionOrigine, "color", defaultLineStyle.getColor());
+        if (iconAnchor.toList().contains(null)) {
+            descriptionType.put("iconAnchor", defaultLineStyle.getIconAnchor());
         } else {
-            descriptionType.put(propertyName,defaultValue);
+            descriptionType.put("iconAnchor", iconAnchor);
         }
     }
 
-    private void assignValueDouble(JSONObject descriptionType, JSONObject descriptionOrigine, String propertyName, Double defaultValue){
-        if (descriptionOrigine.has(propertyName)){
-            descriptionType.put(propertyName,descriptionOrigine.getDouble(propertyName));
+    private void assignPolygon(JSONObject descriptionType, JSONObject descriptionOrigine, JSONArray dashArray, Style defaultPolygonStyle) {
+        assignValueDouble(descriptionType, descriptionOrigine, "weight", defaultPolygonStyle.getWeight());
+        assignValueString(descriptionType, descriptionOrigine, "fillColor", defaultPolygonStyle.getFillColor());
+        assignValueDouble(descriptionType, descriptionOrigine, "fillOpacity", defaultPolygonStyle.getFillOpacity());
+
+        assignValueDouble(descriptionType, descriptionOrigine, "opacity", defaultPolygonStyle.getOpacity());
+        assignValueString(descriptionType, descriptionOrigine, "color", defaultPolygonStyle.getColor());
+        if (dashArray.toList().contains(null)) {
+            descriptionType.put("dashArray", defaultPolygonStyle.getDashArray());
         } else {
-            descriptionType.put(propertyName,defaultValue);
+            descriptionType.put("dashArray", dashArray);
         }
     }
 
-    public StyleContainer mappingStyleToDto(StylingEntity entity){
+    private void assignValueString(JSONObject descriptionType, JSONObject descriptionOrigine, String propertyName, String defaultValue) {
+        if (descriptionOrigine.has(propertyName) && StringUtils.isNotEmpty(descriptionOrigine.getString(propertyName))) {
+            descriptionType.put(propertyName, descriptionOrigine.getString(propertyName));
+        } else {
+            descriptionType.put(propertyName, defaultValue);
+        }
+    }
+
+    private void assignValueDouble(JSONObject descriptionType, JSONObject descriptionOrigine, String propertyName, Double defaultValue) {
+        if (descriptionOrigine.has(propertyName)) {
+            descriptionType.put(propertyName, descriptionOrigine.getDouble(propertyName));
+        } else {
+            descriptionType.put(propertyName, defaultValue);
+        }
+    }
+
+    public StyleContainer mappingStyleToDto(StylingEntity entity) {
         Style style = new Style();
 
         String definition = entity.getDefinition();
-        String dashArrayValues = "";
-        String iconAnchorValues = "";
-
-        Matcher m = dashArrayPattern.matcher(definition);
-        Matcher m2 = iconAnchorPattern.matcher(definition);
-        if (m2.find()) {
-            String iconAnchorString = m2.group(0);
-            definition = definition.replace(iconAnchorString,"");
-            iconAnchorValues = m2.group(1);
-        }else if(m.find()) {
-            String dashArrayString = m.group(0);
-            definition = definition.replace(dashArrayString,"");
-            dashArrayValues = m.group(1);
-        }
-        JSONObject description = new JSONObject(definition);
+        JSONObject description = getDefinitionStyleObj(definition);
         String type = description.keys().hasNext() ? description.keys().next() : null;
-
 
         //Map with the default mapper
         StyleContainer res = styleMapper.entityToDto(entity);
         //Create a style from the type of the style (Line, Point or Polygon)
         if (GeographicType.fromValue(type) == GeographicType.POLYGON) {
-
             style = StyleHelper.createPolygonStyle(definition);
-            List<Double> dashArray = new LinkedList<>();
-            for (String value : dashArrayValues.split(",")){
-                try {
-                    dashArray.add(Double.parseDouble(value));
-                }catch (NumberFormatException e){
-                    dashArray.add(null);
-                }
-            }
-            style.setDashArray(dashArray);
-
         } else if (GeographicType.fromValue(type) == GeographicType.LINE) {
-
             style = (StyleHelper.createLineStyle(definition));
-            List<Double> iconAnchor = new LinkedList<>();
-            for (String value : iconAnchorValues.split(",")){
-                try {
-                    iconAnchor.add(Double.parseDouble(value));
-                }catch (NumberFormatException e){
-                    iconAnchor.add(null);
-                }
-            }
-            style.setIconAnchor(iconAnchor);
-
         } else if (GeographicType.fromValue(type) == GeographicType.POINT) {
             style = (StyleHelper.createPointStyle(entity.getDefinition()));
         }
