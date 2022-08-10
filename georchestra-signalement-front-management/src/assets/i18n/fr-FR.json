@@ -194,6 +194,11 @@
       "point": "Point",
       "line": "Ligne",
       "polygon": "Zone"
+    },
+    "map": {
+      "nameContext" : "Contexte",
+      "operator" : "Operateur",
+      "role" : "Role"
     }
   },
   "role": {
