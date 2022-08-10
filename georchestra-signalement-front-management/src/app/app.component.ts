@@ -131,6 +131,10 @@ export class AppComponent {
       path: 'workflows',
     },
     {
+      name: 'menu.items.styles',
+      path: 'styles',
+    },
+    {
       name: 'menu.items.context',
       path: 'contexts',
     },

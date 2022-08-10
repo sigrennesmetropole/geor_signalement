@@ -8,6 +8,7 @@ import {UserRoleContextComponent}
   from './userRoleContext/userRoleContext.component';
 import {WorkflowComponent} from './workflow/workflow.component';
 import {RoleComponent} from "./role/role.component";
+import {StyleComponent} from "./style/style.component";
 
 const appRoutes: Route[] = [
   {path: 'contexts',
@@ -36,6 +37,12 @@ const appRoutes: Route[] = [
 
   {path: 'operators',
     component: UserRoleContextComponent,
+    canActivate: [
+      IsSignalementAdmin,
+    ]},
+
+  {path: 'styles',
+    component: StyleComponent,
     canActivate: [
       IsSignalementAdmin,
     ]},

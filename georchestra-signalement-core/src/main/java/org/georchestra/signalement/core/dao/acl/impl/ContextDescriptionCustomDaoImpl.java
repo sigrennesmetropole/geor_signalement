@@ -49,7 +49,7 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ContextDescriptionEntity> searchContextDescriptions(ContextDescriptionSearchCriteria searchCriteria,
 																	SortCriteria sortCriteria) {
-		List<ContextDescriptionEntity> result = null;
+		List<ContextDescriptionEntity> result;
 
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -96,12 +96,12 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 					predicates.add(builder.equal(root.get(FIELD_LABEL), searchCriteria.getDescription()));
 				}
 			}
-			if (CollectionUtils.isNotEmpty(searchCriteria.getProcessDefinitionKeys())) {
-				if (isWildCarded(searchCriteria.getDescription())) {
+			if (StringUtils.isNotEmpty(searchCriteria.getProcessDefinitionKey())) {
+				if (isWildCarded(searchCriteria.getProcessDefinitionKey())) {
 					predicates.add(
-							builder.like(builder.lower(root.get(FIELD_PROCESS_DEFINITIONKEY)), wildcard(searchCriteria.getDescription())));
+							builder.like(builder.lower(root.get(FIELD_PROCESS_DEFINITIONKEY)), wildcard(searchCriteria.getProcessDefinitionKey())));
 				} else {
-					predicates.add(builder.equal(root.get(FIELD_PROCESS_DEFINITIONKEY), searchCriteria.getDescription()));
+					predicates.add(builder.equal(root.get(FIELD_PROCESS_DEFINITIONKEY), searchCriteria.getProcessDefinitionKey()));
 				}
 			}
 			if (CollectionUtils.isNotEmpty(predicates)) {

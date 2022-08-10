@@ -2,6 +2,7 @@ package org.georchestra.signalement.service.sm.impl;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
+import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionCustomDao;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
@@ -70,29 +71,15 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 	public Page<ContextDescription> searchPageContextDescriptions(Pageable pageable, SortCriteria sortCriteria,
 																  String description, String workflow) {
 		ContextDescriptionSearchCriteria searchCriteria = new ContextDescriptionSearchCriteria();
-		if (!description.equals("")) {
+		if (!StringUtils.isNotEmpty(description)){
 			searchCriteria.setDescription(description);
 		}
-
-		if (!workflow.equals("")) {
-			RepositoryService repository = processEngine.getRepositoryService();
-			List<org.activiti.engine.repository.ProcessDefinition> allWorkflows = repository.createProcessDefinitionQuery().list();
-			List<String> workflowKeys = allWorkflows.stream()
-					.filter(process -> process.getKey().toLowerCase().contains(workflow.toLowerCase()))
-					.map(org.activiti.engine.repository.ProcessDefinition::getKey)
-					.distinct().collect(Collectors.toList());
-			if (workflowKeys.isEmpty()) {
-				return new PageImpl<>(new ArrayList<>(), pageable, 0);
-			}
-			searchCriteria.setProcessDefinitionKeys(workflowKeys);
+		if (!StringUtils.isNotEmpty(workflow)) {
+			searchCriteria.setProcessDefinitionKey(workflow);
 		}
 		List<ContextDescriptionEntity> contexts;
-		try {
-			contexts = contextDescriptionCustomDao
-					.searchContextDescriptions(searchCriteria, sortCriteria);
-		} catch (java.lang.IllegalArgumentException exception) {
-			throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
-		}
+		contexts = contextDescriptionCustomDao
+				.searchContextDescriptions(searchCriteria, sortCriteria);
 		if (pageable.getOffset() > contexts.size()) {
 			return new PageImpl<>(new ArrayList<>(), pageable, contexts.size());
 		} else {

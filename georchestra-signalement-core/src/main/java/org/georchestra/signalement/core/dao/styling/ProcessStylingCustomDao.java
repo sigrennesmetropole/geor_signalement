@@ -28,4 +28,7 @@ public interface ProcessStylingCustomDao {
 	 * @return le plus proche
 	 */
 	ProcessStylingEntity findBestProcessStyling(ProcessStylingSearchCriteria searchCriteria);
+
+
+	void deleteByStylingId(long aLong);
 }

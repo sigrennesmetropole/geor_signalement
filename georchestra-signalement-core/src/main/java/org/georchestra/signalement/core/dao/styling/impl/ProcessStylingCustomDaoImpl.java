@@ -20,9 +20,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
 import org.georchestra.signalement.core.dao.styling.ProcessStylingCustomDao;
+import org.georchestra.signalement.core.dao.styling.ProcessStylingDao;
 import org.georchestra.signalement.core.dto.ProcessStylingSearchCriteria;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.SortCriterion;
+import org.georchestra.signalement.core.dto.ProcessStyling;
 import org.georchestra.signalement.core.entity.styling.ProcessStylingEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -40,6 +42,9 @@ public class ProcessStylingCustomDaoImpl extends AbstractCustomDaoImpl implement
 
 	@Autowired
 	private EntityManager entityManager;
+
+	@Autowired
+	private ProcessStylingDao processStylingDao;
 
 	@Override
 	public List<ProcessStylingEntity> searchProcessStylings(ProcessStylingSearchCriteria searchCriteria,
@@ -134,6 +139,15 @@ public class ProcessStylingCustomDaoImpl extends AbstractCustomDaoImpl implement
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public void deleteByStylingId(long id) {
+		List<ProcessStylingEntity> needToBeDelete = processStylingDao.findByStylingId(id);
+		for (ProcessStylingEntity processStyling : needToBeDelete){
+			processStylingDao.delete(processStyling);
+		}
+
 	}
 
 }

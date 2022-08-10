@@ -5,8 +5,6 @@ package org.georchestra.signalement.core.dto;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author FNI18300
  */
@@ -19,6 +17,6 @@ public class ContextDescriptionSearchCriteria {
 
 	private String description;
 
-	private List<String> processDefinitionKeys;
+	private String processDefinitionKey;
 
 }
