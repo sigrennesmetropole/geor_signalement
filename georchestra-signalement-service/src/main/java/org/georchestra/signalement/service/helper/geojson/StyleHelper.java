@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class StyleHelper {
 
@@ -134,12 +133,7 @@ public class StyleHelper {
                     style.setIconShape(terminalPoint.getString(ICONSHAPE));
                 }
                 if (terminalPoint.has(ICONANCHOR)) {
-                    JSONArray iconAnchor = terminalPoint.getJSONArray(DASHARRAY);
-                    List<Double> resIconAnchor = new ArrayList<>(iconAnchor.length());
-                    for (int i = 0; i < iconAnchor.length(); i++) {
-                        resIconAnchor.add(iconAnchor.optDouble(i));
-                    }
-                    style.setIconAnchor(resIconAnchor);
+                    style.setIconAnchor(jsonArrayToDoubleList(terminalPoint.getJSONArray(ICONANCHOR)));
                 }
 
             }
@@ -162,6 +156,15 @@ public class StyleHelper {
         style.setIconAnchor(Arrays.asList(0.5, 0.5));
 
         return style;
+    }
+
+
+    private static List<Double> jsonArrayToDoubleList(JSONArray array) {
+        List<Double> res = new ArrayList<>(array.length());
+        for (int i = 0; i < array.length(); i++) {
+            res.add(array.optDouble(i));
+        }
+        return res;
     }
 
     /**
@@ -190,16 +193,12 @@ public class StyleHelper {
 
             }
             if (line.has(ICONANCHOR)) {
-                JSONArray iconAnchor = line.getJSONArray(DASHARRAY);
-                List<Double> resIconAnchor = new ArrayList<>(iconAnchor.length());
-                for (int i = 0; i < iconAnchor.length(); i++) {
-                    resIconAnchor.add(iconAnchor.optDouble(i));
-                }
-                style.setIconAnchor(resIconAnchor);
+                style.setIconAnchor(jsonArrayToDoubleList(line.getJSONArray(ICONANCHOR)));
             }
         }
         return style;
     }
+
 
     /**
      * create default style for polygone
@@ -249,12 +248,7 @@ public class StyleHelper {
                 style.setWeight(polygon.getDouble(WEIGHT));
             }
             if (polygon.has(DASHARRAY)) {
-                JSONArray dashArray = polygon.getJSONArray(DASHARRAY);
-                List<Double> resDashArray = new ArrayList<>(dashArray.length());
-                for (int i = 0; i < dashArray.length(); i++) {
-                    resDashArray.add(dashArray.optDouble(i));
-                }
-                style.setDashArray(resDashArray);
+                style.setIconAnchor(jsonArrayToDoubleList(polygon.getJSONArray(DASHARRAY)));
             }
         }
         return style;
@@ -374,21 +368,21 @@ public class StyleHelper {
 
         String definition = entity.getDefinition();
         JSONObject description = getDefinitionStyleObj(definition);
-        String type = description.keys().hasNext() ? description.keys().next() : null;
+        GeographicType type = GeographicType.fromValue(description.getString("type"));
 
         //Map with the default mapper
         StyleContainer res = styleMapper.entityToDto(entity);
         //Create a style from the type of the style (Line, Point or Polygon)
-        if (GeographicType.fromValue(type) == GeographicType.POLYGON) {
+        if (type == GeographicType.POLYGON) {
             style = StyleHelper.createPolygonStyle(definition);
-        } else if (GeographicType.fromValue(type) == GeographicType.LINE) {
+        } else if (type == GeographicType.LINE) {
             style = (StyleHelper.createLineStyle(definition));
-        } else if (GeographicType.fromValue(type) == GeographicType.POINT) {
+        } else if (type == GeographicType.POINT) {
             style = (StyleHelper.createPointStyle(entity.getDefinition()));
         }
         //Finnish mapping style and type from StyleContainer
         res.setStyle(style);
-        res.setType(GeographicType.valueOf(type));
+        res.setType(type);
         return res;
     }
 }
