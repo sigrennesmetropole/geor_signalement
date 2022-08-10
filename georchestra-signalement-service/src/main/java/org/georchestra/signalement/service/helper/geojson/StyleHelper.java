@@ -273,15 +273,15 @@ public class StyleHelper {
         StylingEntity res = styleMapper.dtoToEntity(styleContainer);
         JSONArray dashArray = null;
         JSONArray iconAnchor = null;
-        String type = styleContainer.getType().toString();
+        GeographicType type = styleContainer.getType();
 
         //In case of type is a Polygon or a Line we need to remove the arrays before JsonObject conversion
-        if (type == "POLYGON") {
+        if (type == GeographicType.POLYGON) {
             dashArray = new JSONArray(styleContainer.getStyle().getDashArray());
             styleContainer.getStyle().setDashArray(null);
         }
 
-        if (type == "LINE") {
+        if (type == GeographicType.LINE) {
             iconAnchor = new JSONArray(styleContainer.getStyle().getIconAnchor());
             styleContainer.getStyle().setIconAnchor(null);
         }
@@ -293,22 +293,22 @@ public class StyleHelper {
         //Final description which follow the type
         JSONObject descriptionType = new JSONObject();
         switch (type) {
-            case "POINT":
+            case POINT:
                 Style defaultPointStyle = createDefaultStylePoint();
                 assignPoint(descriptionType, description, defaultPointStyle);
                 break;
 
-            case "LINE":
+            case LINE:
                 Style defaultLineStyle = createDefaultLineStyle();
                 assignLine(descriptionType, description, iconAnchor, defaultLineStyle);
                 break;
 
-            case "POLYGON":
+            case POLYGON:
                 Style defaultPolygonStyle = createDefaultPolygonStyle();
                 assignPolygon(descriptionType, description, dashArray, defaultPolygonStyle);
                 break;
         }
-        arr.put(type, descriptionType);
+        arr.put(type.name(), descriptionType);
         res.setDefinition(arr.toString());
         return res;
     }
@@ -368,7 +368,8 @@ public class StyleHelper {
 
         String definition = entity.getDefinition();
         JSONObject description = getDefinitionStyleObj(definition);
-        GeographicType type = GeographicType.fromValue(description.getString("type"));
+        String typeString = description.keys().hasNext() ? description.keys().next() : null;
+        GeographicType type = GeographicType.fromValue(typeString);
 
         //Map with the default mapper
         StyleContainer res = styleMapper.entityToDto(entity);

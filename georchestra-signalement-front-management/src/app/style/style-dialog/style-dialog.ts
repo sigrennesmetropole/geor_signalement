@@ -57,8 +57,6 @@ export class StyleDialog {
         fillColor: this.fillColorControl,
         fillOpacity: this.fillOpacityControl,
         dashArray: this.dashArrayControl,
-
-
     });
 
     public styleTypeEnum = GeographicType;
@@ -155,7 +153,6 @@ export class StyleDialog {
                     dashArray: dashArray.split(','),
                     fillColor: fillColor,
                     fillOpacity: fillOpacity,
-                    filtering: true,
                     geometry: "",
                     iconAnchor: iconAnchor.split(','),
                     iconColor: iconColor,
@@ -227,7 +224,6 @@ export class StyleDialog {
                     dashArray: dashArray.split(','),
                     fillColor: fillColor,
                     fillOpacity: fillOpacity,
-                    filtering: true,
                     geometry: "",
                     iconAnchor: iconAnchor.split(','),
                     iconColor: iconColor,
