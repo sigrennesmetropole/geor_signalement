@@ -134,7 +134,12 @@ public class StyleHelper {
                     style.setIconShape(terminalPoint.getString(ICONSHAPE));
                 }
                 if (terminalPoint.has(ICONANCHOR)) {
-                    style.setIconAnchor(Arrays.asList(terminalPoint.getJSONObject(ICONANCHOR).getDouble("x"), terminalPoint.getJSONObject(ICONANCHOR).getDouble("y")));
+                    JSONArray iconAnchor = terminalPoint.getJSONArray(DASHARRAY);
+                    List<Double> resIconAnchor = new ArrayList<>(iconAnchor.length());
+                    for (int i = 0; i < iconAnchor.length(); i++) {
+                        resIconAnchor.add(iconAnchor.optDouble(i));
+                    }
+                    style.setIconAnchor(resIconAnchor);
                 }
 
             }
@@ -185,13 +190,12 @@ public class StyleHelper {
 
             }
             if (line.has(ICONANCHOR)) {
-
                 JSONArray iconAnchor = line.getJSONArray(DASHARRAY);
                 List<Double> resIconAnchor = new ArrayList<>(iconAnchor.length());
                 for (int i = 0; i < iconAnchor.length(); i++) {
                     resIconAnchor.add(iconAnchor.optDouble(i));
                 }
-                style.setDashArray(resIconAnchor);
+                style.setIconAnchor(resIconAnchor);
             }
         }
         return style;
