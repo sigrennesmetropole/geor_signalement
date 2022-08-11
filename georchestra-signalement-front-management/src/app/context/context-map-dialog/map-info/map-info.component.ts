@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Feature} from "ol";
+import {Feature, Overlay} from "ol";
+import {MatDialogRef} from "@angular/material/dialog";
+import {Select} from "ol/interaction";
 
 @Component({
   selector: 'map-info',
@@ -8,6 +10,8 @@ import {Feature} from "ol";
 })
 export class MapInfo implements OnChanges {
   @Input() feature?: Feature
+  @Input() popUp?: Overlay
+  @Input() select?: Select
   @Output()
 
   firstNameOperator?:string
@@ -19,11 +23,12 @@ export class MapInfo implements OnChanges {
   close: EventEmitter<any> = new EventEmitter<any>();
 
 
-  constructor() { }
+  constructor(public dialogRef: MatDialogRef<MapInfo>) { }
 
 
   onClose() {
-    this.close.emit(true);
+    this.popUp?.setMap(null);
+    this.select?.getFeatures().clear();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

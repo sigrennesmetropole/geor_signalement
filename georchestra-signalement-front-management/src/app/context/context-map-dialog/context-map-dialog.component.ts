@@ -12,7 +12,7 @@ import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {Geometry} from "ol/geom";
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import Text from 'ol/style/Text';
-import {click} from "ol/events/condition";
+import {click, pointerMove} from "ol/events/condition";
 import {Select} from "ol/interaction";
 
 @Component({
@@ -27,9 +27,10 @@ export class ContextMapDialog implements OnInit {
   vectorLayer?: VectorLayer<VectorSource<Geometry>>
   popUp?: Overlay;
   currentFeature?: Feature
+  clickInteraction?: Select
 
-  defaultFillColor = 'rgba(25, 165, 240, 0.2)';
-  defaultStrokeColor = '#3399CC';
+  defaultFillColor = 'rgba(80,80,80,0.3)';
+  defaultStrokeColor = '#28282888';
   defaultWidth = 3
 
   constructor(@Inject(MAT_DIALOG_DATA) data:any) {
@@ -48,24 +49,32 @@ export class ContextMapDialog implements OnInit {
       },
       offset: [9, 9]
     });
-    this.map?.addOverlay(this.popUp);
 
     // Style sélectionné
     const selectStyleFunc = (feature: Feature) => {
       return new Style({
         text: this.getLibelle(feature),
         fill: new Fill({
-          color: 'rgba(255,109,119,1)',
+          color: 'rgba(40,40,40,0.7)',
         }),
         stroke: new Stroke({
-          color: '#3399CC',
+          color: '#282828FF',
           width: this.defaultWidth + 1,
         }),
       });
     };
 
-    const clickInteraction = new Select({
+    this.clickInteraction = new Select({
       condition: click,
+      // @ts-ignore
+      style: selectStyleFunc,
+      toggleCondition: null!,
+      multi:false,
+      layers: [this.vectorLayer!],
+    });
+
+    const HoverInteraction = new Select({
+      condition: pointerMove,
       // @ts-ignore
       style: selectStyleFunc,
       toggleCondition: null!,
@@ -76,7 +85,6 @@ export class ContextMapDialog implements OnInit {
     const onClickCallback = (feature: Feature, selected: boolean, mouseCoordinate: any) => {
       if (selected) {
         // Affichage de la popup
-        console.log(feature)
         this.currentFeature = feature;
         this.currentFeature.set("olLayer", this.vectorLayer);
         this.openPopup(mouseCoordinate);
@@ -84,9 +92,10 @@ export class ContextMapDialog implements OnInit {
     };
 
     //this.vectorLayer._clickInteraction = clickInteraction;
-    this.map?.addInteraction(clickInteraction);
+    this.map?.addInteraction(this.clickInteraction);
+    this.map?.addInteraction(HoverInteraction);
 
-    clickInteraction.on('select', (e) => {
+    this.clickInteraction.on('select', (e) => {
       // Récupération de la feature sélectionné OU déselectionné
       const featureClicked = e.selected[0] || e.deselected[0];
 
@@ -159,6 +168,7 @@ export class ContextMapDialog implements OnInit {
   }
 
   public openPopup(mouseCoordinate: any) {
+    this.map?.addOverlay(this.popUp!);
     this.popUp?.setPositioning('bottom-right');
 
     // Affichage de la popup
