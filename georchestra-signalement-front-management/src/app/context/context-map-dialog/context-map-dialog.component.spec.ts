@@ -1,25 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ContextMapDialog } from './context-map-dialog.component';
+import {ContextMapDialog} from './context-map-dialog.component';
 
 describe('ContextMapDialogComponent', () => {
-  let component: ContextMapDialog;
-  let fixture: ComponentFixture<ContextMapDialog>;
+    let component: ContextMapDialog;
+    let fixture: ComponentFixture<ContextMapDialog>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ContextMapDialog ]
-    })
-    .compileComponents();
-  });
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [ContextMapDialog]
+        })
+            .compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ContextMapDialog);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(ContextMapDialog);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

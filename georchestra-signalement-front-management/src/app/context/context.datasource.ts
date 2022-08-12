@@ -8,7 +8,7 @@ import {ContextService} from '../services/context.service';
 import {Injectable} from '@angular/core';
 import {ToasterUtil} from '../utils/toaster.util';
 import {TranslateService} from '@ngx-translate/core';
-import {ContextType, GeographicType} from '../api/models';
+import {ConfigurationData, ContextType, GeographicType} from '../api/models';
 import {ContextItemMapper} from '../mappers/context-item.mapper';
 
 
@@ -237,6 +237,10 @@ export class ContextDataSource extends DataSource<ContextItem> {
     this.workflowFilter = workflowFilter;
     this.paginator?.firstPage();
     this.refreshData();
+  }
+
+  getBackgroundMapFlow(): Observable<ConfigurationData>{
+      return this.contextService.getBackgroundMapFlow();
   }
 }
 

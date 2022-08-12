@@ -13,6 +13,9 @@ import {ContextDeleteDialog}
 import {ContextEditDialog} from './context-edit-dialog/context-edit-dialog';
 import {ContextDataSource, ContextItem} from './context.datasource';
 import {ContextMapDialog} from "./context-map-dialog/context-map-dialog.component";
+import {FlowMapConfiguration} from "../api/models/flow-map-configuration";
+import {ViewMapConfiguration} from "../api/models/view-map-configuration";
+import {ColorEasement} from "../api/models/color-easement";
 
 
 @Component({
@@ -38,6 +41,10 @@ export class ContextComponent implements AfterViewInit {
   labelFilter : string = '';
   workflowFilter : string = '';
 
+  flowMap ?: FlowMapConfiguration
+  viewMap ?: ViewMapConfiguration
+  colorEasement ?: ColorEasement
+
   /**
    * Constructor for the context component
    * @param {ContextDataSource} contextDataSource Datasource for the component
@@ -53,6 +60,13 @@ export class ContextComponent implements AfterViewInit {
           this.workflows = data ?? [];
         },
     );
+    this.dataSource.getBackgroundMapFlow().subscribe(
+        (result)=>{
+          this.flowMap = result.flowMapConfiguration
+          this.viewMap = result.viewMapConfiguration
+          this.colorEasement = result.colorEasementMapConfiguration
+        }
+    )
     this.labelFilter = this.dataSource.labelFilter;
     this.workflowFilter = this.dataSource.workflowFilter;
   }
@@ -132,7 +146,7 @@ export class ContextComponent implements AfterViewInit {
       width: 'auto',
       height: 'auto',
       panelClass: 'custom-map-dialog-container',
-      data: {target: target},
+      data: {target: target, flowMap: this.flowMap, viewMap: this.viewMap, colorEasement: this.colorEasement},
     })
   }
 

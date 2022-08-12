@@ -2218,6 +2218,82 @@
 				},
 				"roleAdministrator": {
 					"type": "string"
+				},
+				"flowMapConfiguration": {
+					"type": "object",
+					"$ref": "#/definitions/FlowMapConfiguration"
+				},
+				"viewMapConfiguration": {
+					"type": "object",
+					"$ref": "#/definitions/ViewMapConfiguration"
+				},
+				"colorEasementMapConfiguration": {
+					"type": "object",
+					"$ref": "#/definitions/ColorEasement"
+				}
+			}
+		},
+
+		"FlowMapConfiguration": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"layer": {
+					"type": "string"
+				},
+				"matrixSet": {
+					"type": "string"
+				},
+				"version": {
+					"type": "string"
+				},
+				"format": {
+					"type": "string"
+				},
+				"projection": {
+					"type": "string"
+				},
+				"style": {
+					"type": "string"
+				},
+				"matrixId": {
+					"type": "string"
+				}
+			}
+		},
+		"ColorEasement": {
+			"type": "object",
+			"properties": {
+				"byDefault": {
+					"type": "string"
+				},
+				"hover": {
+					"type": "string"
+				},
+				"strokeByDefault": {
+					"type": "string"
+				},
+				"strokeHover": {
+					"type": "string"
+				}
+			}
+		},
+		"ViewMapConfiguration": {
+			"type": "object",
+			"properties": {
+				"zoom": {
+					"type": "string"
+				},
+				"x": {
+					"type": "string"
+				},
+				"y": {
+					"type": "string"
 				}
 			}
 		},
