@@ -2227,9 +2227,9 @@
 					"type": "object",
 					"$ref": "#/definitions/ViewMapConfiguration"
 				},
-				"colorEasementMapConfiguration": {
+				"styleMapConfiguration": {
 					"type": "object",
-					"$ref": "#/definitions/ColorEasement"
+					"$ref": "#/definitions/StyleMapConfiguration"
 				}
 			}
 		},
@@ -2266,19 +2266,19 @@
 				}
 			}
 		},
-		"ColorEasement": {
+		"StyleMapConfiguration": {
 			"type": "object",
 			"properties": {
-				"byDefault": {
+				"fill-color": {
 					"type": "string"
 				},
-				"hover": {
+				"fill-color-hover": {
 					"type": "string"
 				},
-				"strokeByDefault": {
+				"stoke-color": {
 					"type": "string"
 				},
-				"strokeHover": {
+				"stroke-color-hover": {
 					"type": "string"
 				}
 			}

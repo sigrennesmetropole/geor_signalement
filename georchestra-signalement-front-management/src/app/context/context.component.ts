@@ -15,7 +15,7 @@ import {ContextDataSource, ContextItem} from './context.datasource';
 import {ContextMapDialog} from "./context-map-dialog/context-map-dialog.component";
 import {FlowMapConfiguration} from "../api/models/flow-map-configuration";
 import {ViewMapConfiguration} from "../api/models/view-map-configuration";
-import {ColorEasement} from "../api/models/color-easement";
+import {StyleMapConfiguration} from "../api/models/style-map-configuration";
 
 
 @Component({
@@ -43,7 +43,7 @@ export class ContextComponent implements AfterViewInit {
 
   flowMap ?: FlowMapConfiguration
   viewMap ?: ViewMapConfiguration
-  colorEasement ?: ColorEasement
+  styleMap ?: StyleMapConfiguration
 
   /**
    * Constructor for the context component
@@ -64,7 +64,7 @@ export class ContextComponent implements AfterViewInit {
         (result)=>{
           this.flowMap = result.flowMapConfiguration
           this.viewMap = result.viewMapConfiguration
-          this.colorEasement = result.colorEasementMapConfiguration
+          this.styleMap = result.styleMapConfiguration
         }
     )
     this.labelFilter = this.dataSource.labelFilter;
@@ -146,7 +146,7 @@ export class ContextComponent implements AfterViewInit {
       width: 'auto',
       height: 'auto',
       panelClass: 'custom-map-dialog-container',
-      data: {target: target, flowMap: this.flowMap, viewMap: this.viewMap, colorEasement: this.colorEasement},
+      data: {target: target, flowMap: this.flowMap, viewMap: this.viewMap, colorEasement: this.styleMap},
     })
   }
 

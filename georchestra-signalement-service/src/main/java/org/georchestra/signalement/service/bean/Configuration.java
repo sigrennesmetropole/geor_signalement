@@ -1,7 +1,7 @@
 package org.georchestra.signalement.service.bean;
 
 import lombok.Data;
-import org.georchestra.signalement.core.dto.ColorEasement;
+import org.georchestra.signalement.core.dto.StyleMapConfiguration;
 import org.georchestra.signalement.core.dto.FlowMapConfiguration;
 import org.georchestra.signalement.core.dto.ViewMapConfiguration;
 
@@ -24,7 +24,7 @@ public class Configuration {
 	private ViewMapConfiguration viewMapConfiguration;
 
 	// couleur des emprises de carte du contexte
-	private ColorEasement colorEasementMapConfiguration;
+	private StyleMapConfiguration styleMapConfiguration;
 	
 	/**
 	 * Constructeur par defaut A conserver pour l'utilisation des mapper mapStruct
@@ -38,12 +38,12 @@ public class Configuration {
 	 * @param version
 	 * @param role
 	 */
-	public Configuration(String version, String role, FlowMapConfiguration flowMapConfiguration, ViewMapConfiguration viewMapConfiguration, ColorEasement color) {
+	public Configuration(String version, String role, FlowMapConfiguration flowMapConfiguration, ViewMapConfiguration viewMapConfiguration, StyleMapConfiguration style) {
 		this.version = version;
 		this.roleAdministrator = role;
 		this.flowMapConfiguration = flowMapConfiguration;
 		this.viewMapConfiguration = viewMapConfiguration;
-		this.colorEasementMapConfiguration = color;
+		this.styleMapConfiguration = style;
 	}
 
 }

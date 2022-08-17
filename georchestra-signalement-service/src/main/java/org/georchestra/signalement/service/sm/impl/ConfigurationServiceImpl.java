@@ -1,7 +1,7 @@
 package org.georchestra.signalement.service.sm.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.georchestra.signalement.core.dto.ColorEasement;
+import org.georchestra.signalement.core.dto.StyleMapConfiguration;
 import org.georchestra.signalement.core.dto.FlowMapConfiguration;
 import org.georchestra.signalement.core.dto.ViewMapConfiguration;
 import org.georchestra.signalement.service.bean.Configuration;
@@ -56,17 +56,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Value("${view.y}")
     private String viewY;
 
-    @Value("${color.fill.default}")
-    private String defaultColor;
+    @Value("${color.fill}")
+    private String fill;
 
-    @Value("${color.fill.hover}")
-    private String hoverColor;
+    @Value("${color.fill-hover}")
+    private String fillHover;
 
-    @Value("${color.stroke.hover}")
+    @Value("${color.stroke-hover}")
     private String strokeHover;
 
-    @Value("${color.stroke.default}")
-    private String strokeDefault;
+    @Value("${color.stroke}")
+    private String stroke;
 
     @Autowired
     ConfigurationMapper configMapper;
@@ -89,12 +89,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         resView.setX(viewX);
         resView.setY(viewY);
 
-        ColorEasement color = new ColorEasement();
-        color.setByDefault(defaultColor);
-        color.setHover(hoverColor);
-        color.setStrokeByDefault(strokeDefault);
-        color.setStrokeHover(strokeHover);
+        StyleMapConfiguration style = new StyleMapConfiguration();
+        style.setFillColor(fill);
+        style.setFillColorHover(fillHover);
+        style.setStokeColor(stroke);
+        style.setStrokeColorHover(strokeHover);
 
-        return configMapper.entityToDto(new Configuration(version, roleAdministrator, resFlow, resView, color));
+        return configMapper.entityToDto(new Configuration(version, roleAdministrator, resFlow, resView, style));
     }
 }

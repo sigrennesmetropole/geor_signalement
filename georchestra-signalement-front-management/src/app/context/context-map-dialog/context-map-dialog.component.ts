@@ -18,7 +18,7 @@ import WMTSTileGrid from "ol/tilegrid/WMTS";
 import {getTopLeft, getWidth} from "ol/extent";
 import {FlowMapConfiguration} from "../../api/models/flow-map-configuration";
 import {ViewMapConfiguration} from "../../api/models/view-map-configuration";
-import {ColorEasement} from "../../api/models/color-easement";
+import {StyleMapConfiguration} from "../../api/models/style-map-configuration";
 
 @Component({
     selector: 'context-map-dialog',
@@ -35,7 +35,7 @@ export class ContextMapDialog implements OnInit {
     clickInteraction?: Select
     flowMap ?: FlowMapConfiguration
     viewMap ?: ViewMapConfiguration
-    colorEasement ?: ColorEasement
+    styleMap ?: StyleMapConfiguration
 
     defaultFillColor = 'rgba(80,80,80,0.3)';
     defaultStrokeColor = '#28282888';
@@ -45,10 +45,10 @@ export class ContextMapDialog implements OnInit {
 
         this.viewMap = data.viewMap;
         this.flowMap = data.flowMap;
-        this.colorEasement = data.colorEasement;
+        this.styleMap = data.colorEasement;
         this.data = data.target;
-        this.defaultFillColor = this.colorEasement?.byDefault!;
-        this.defaultStrokeColor = this.colorEasement?.strokeByDefault!;
+        this.defaultFillColor = this.styleMap?.["fill-color"]!;
+        this.defaultStrokeColor = this.styleMap?.["stoke-color"]!;
     }
 
     ngOnInit(): void {
@@ -63,10 +63,10 @@ export class ContextMapDialog implements OnInit {
             return new Style({
                 text: this.getLibelle(feature),
                 fill: new Fill({
-                    color: this.colorEasement?.hover,
+                    color: this.styleMap?.["fill-color-hover"],
                 }),
                 stroke: new Stroke({
-                    color: this.colorEasement?.strokeHover,
+                    color: this.styleMap?.["stroke-color-hover"],
                     width: this.defaultWidth + 1,
                 }),
             });
