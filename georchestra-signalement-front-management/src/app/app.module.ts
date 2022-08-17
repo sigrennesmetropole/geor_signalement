@@ -201,6 +201,7 @@ import {PolygonDialog} from "./style/style-dialog/style-type-dialog/polygon-dial
     UserRoleContextDataSource,
     WorkflowDataSource,
     IsSignalementAdmin,
+    StyleDataSource,
   ],
   bootstrap: [AppComponent],
 })
