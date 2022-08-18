@@ -12,6 +12,10 @@ import {ContextDeleteDialog}
   from './context-delete-dialog/context-delete-dialog';
 import {ContextEditDialog} from './context-edit-dialog/context-edit-dialog';
 import {ContextDataSource, ContextItem} from './context.datasource';
+import {ContextMapDialog} from "./context-map-dialog/context-map-dialog.component";
+import {FlowMapConfiguration} from "../api/models/flow-map-configuration";
+import {ViewMapConfiguration} from "../api/models/view-map-configuration";
+import {StyleMapConfiguration} from "../api/models/style-map-configuration";
 
 
 @Component({
@@ -37,6 +41,10 @@ export class ContextComponent implements AfterViewInit {
   labelFilter : string = '';
   workflowFilter : string = '';
 
+  flowMap ?: FlowMapConfiguration
+  viewMap ?: ViewMapConfiguration
+  styleMap ?: StyleMapConfiguration
+
   /**
    * Constructor for the context component
    * @param {ContextDataSource} contextDataSource Datasource for the component
@@ -52,6 +60,13 @@ export class ContextComponent implements AfterViewInit {
           this.workflows = data ?? [];
         },
     );
+    this.dataSource.getBackgroundMapFlow().subscribe(
+        (result)=>{
+          this.flowMap = result.flowMapConfiguration
+          this.viewMap = result.viewMapConfiguration
+          this.styleMap = result.styleMapConfiguration
+        }
+    )
     this.labelFilter = this.dataSource.labelFilter;
     this.workflowFilter = this.dataSource.workflowFilter;
   }
@@ -110,7 +125,7 @@ export class ContextComponent implements AfterViewInit {
       height: 'auto',
       data: {workflows: this.workflows,
         target: target},
-    }).afterClosed().subscribe(
+        }).afterClosed().subscribe(
         (data)=>{
           if (data) {
             this.dataSource.updateContext(target, data);
@@ -124,6 +139,15 @@ export class ContextComponent implements AfterViewInit {
    */
   handleRefreshDataClick(): void {
     this.dataSource.refreshData();
+  }
+
+  handleOpenMapDialogClick(target: ContextItem): void {
+    this.dialog.open(ContextMapDialog, {
+      width: 'auto',
+      height: 'auto',
+      panelClass: 'custom-map-dialog-container',
+      data: {target: target, flowMap: this.flowMap, viewMap: this.viewMap, colorEasement: this.styleMap},
+    })
   }
 
   /**

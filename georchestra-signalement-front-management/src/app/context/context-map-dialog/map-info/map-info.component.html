@@ -1,0 +1,12 @@
+<div class="ol-popup">
+    <h1 mat-dialog-title>{{nameArea}}
+        <a (click)="onClose()" class="ol-popup-closer" id="popup-closer"></a>
+    </h1>
+    <div mat-dialog-content>
+        <ul>
+            <li>{{"context.map.nameContext" | translate}} : {{nameContext}}</li>
+            <li>{{"context.map.operator" | translate}} : {{firstNameOperator}} {{lastNameOperator}}</li>
+            <li>{{"context.map.role" | translate}} : {{roleOperator}}</li>
+        </ul>
+    </div>
+</div>
