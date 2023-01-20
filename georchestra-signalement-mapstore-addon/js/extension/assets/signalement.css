@@ -1,3 +1,10 @@
+#ms-signalement-panel .container-fluid {
+    padding-left: 0;
+    padding-right: 0
+}
+.signalement-dock-container {
+    z-index: 1050;
+}
 .signalement-panel {
     margin: 5px;
 }
@@ -93,4 +100,8 @@ span .info {
 
 fieldset{
     margin: 0 5px !important;
+}
+
+.error-box {
+    min-height: 20px;
 }

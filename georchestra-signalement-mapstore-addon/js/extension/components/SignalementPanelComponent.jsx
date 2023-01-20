@@ -1,6 +1,4 @@
 import React from 'react';
-import Dock from 'react-dock';
-import ContainerDimensions from 'react-container-dimensions';
 import {PropTypes} from 'prop-types';
 import {
     Button,
@@ -18,8 +16,9 @@ import {
 import Message from '@mapstore/components/I18N/Message';
 import ConfirmDialog from '@mapstore/components/misc/ConfirmDialog';
 import {status} from '../actions/signalement-action';
-import {GeometryType} from '../constants/signalement-constants';
+import {GeometryType, SIGNALEMENT_PANEL_WIDTH} from '../constants/signalement-constants';
 import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
+import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -40,7 +39,7 @@ export class SignalementPanelComponent extends React.Component {
         infoGlyph: PropTypes.string,
         buttonStyle: PropTypes.object,
         style: PropTypes.object,
-        dockProps: PropTypes.object,
+        dockStyle:PropTypes.object,
         width: PropTypes.number,
         // data
         attachmentConfiguration: PropTypes.object,
@@ -95,14 +94,7 @@ export class SignalementPanelComponent extends React.Component {
         deleteGlyph: "trash",
         infoGlyph: "info-sign",
         // side panel properties
-        width: 500,
-        dockProps: {
-            dimMode: "none",
-            size: 0.30,
-            fluid: true,
-            position: "right",
-            zIndex: 1050
-        },
+        width: SIGNALEMENT_PANEL_WIDTH,
         dockStyle: {
             zIndex: 100,
         },
@@ -249,28 +241,31 @@ export class SignalementPanelComponent extends React.Component {
         if( this.props.active ){
             // le panel est ouvert
             return (
-                <ContainerDimensions>
-                    { ({ width }) =>
-                        <span>
-                            <span className="ms-signalement-panel react-dock-no-resize ms-absolute-dock ms-side-panel">
-                                <Dock
-                                    dockStyle={this.props.dockStyle} {...this.props.dockProps}
-                                    isVisible={this.props.active}
-                                    size={this.props.width / width > 1 ? 1 : this.props.width / width} >
-                                    <div className={this.props.panelClassName}>
-                                        {this.renderHeader()}
-                                        {
-                                            !this.state.initialized || !this.state.loaded ?
-                                                this.renderLoading() :
-                                                this.renderForm()
-                                        }
-                                    </div>
-                                </Dock>
-                            </span>
-                            {this.renderModelClosing()}
-                        </span>
-                    }
-                </ContainerDimensions>
+                <ResponsivePanel
+                    containerStyle={this.props.dockStyle}
+                    style={this.props.dockStyle}
+                    containerId="ms-signalement-panel"
+                    containerClassName="signalement-dock-container"
+                    className={this.props.panelClassName}
+                    open={this.props.active}
+                    position="right"
+                    size={this.props.width}
+                    bsStyle="primary"
+                    title={<Message msgId="signalement.title"/>}
+                    glyph="exclamation-sign"
+                    onClose={() => this.cancel()}>
+                    <span>
+                        <div>
+                            {this.renderHeader()}
+                            {
+                                !this.state.initialized || !this.state.loaded ?
+                                    this.renderLoading() :
+                                    this.renderForm()
+                            }
+                            </div>
+                        {this.renderModelClosing()}
+                    </span>
+                </ResponsivePanel>
             );
         } else {
             return null;
@@ -333,16 +328,8 @@ export class SignalementPanelComponent extends React.Component {
     renderHeader() {
         return (
             <Grid fluid className="ms-header" style={this.props.styling || this.props.mode !== "list" ? { width: '100%', boxShadow: 'none'} : { width: '100%' }}>
-                <Row>
-                    <Col xs={2}>
-                        <Button className="square-button no-events">
-                            <Glyphicon glyph="exclamation-sign"/>
-                        </Button>
-                    </Col>
-                    <Col xs={8}>
-                        <h4><Message msgId="signalement.msgBox.title"/></h4>
-                        {this.renderMessage()}
-                    </Col>
+                <Row className="error-box">
+                    {this.renderMessage()}
                 </Row>
             </Grid>
         );
@@ -593,13 +580,13 @@ export class SignalementPanelComponent extends React.Component {
                 </div>
                 <div className="block-valid-form">
                     <Button bsStyle="warning"
-                            bsSize="medium"
+                            bsSize="sm"
                             onClick={() => this.cancel()}>
                         <Message msgId="signalement.cancel"/>
                     </Button>
                     <Button className="validation-button"
                             bsStyle="primary"
-                            bsSize="medium"
+                            bsSize="sm"
                             onClick={() => this.create()}>
                         <Message msgId="signalement.validate"/>
                     </Button>
@@ -972,7 +959,7 @@ export class SignalementPanelComponent extends React.Component {
      * L'action d'abandon
      */
     cancel() {
-        if(  this.state.task != null && this.state.task.asset.uuid) {
+        if(this.state.task != null && this.state.task.asset.uuid) {
             window.signalement.debug("Cancel and close:"+this.state.task.asset.uuid);
             this.props.requestClosing();
         } else {

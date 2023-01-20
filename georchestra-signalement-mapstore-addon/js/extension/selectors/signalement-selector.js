@@ -17,3 +17,5 @@ export const signalementLayersSelector = (state) => get(state, "signalement.cont
 export const signalementThemasSelector = (state) => get(state, "signalement.contextThemas");
 
 export const signalementMeSelector = (state) => get(state, "signalement.user");
+
+export const signalementSidebarControlSelector = (state) => get(state, "controls.signalement.enabled")
