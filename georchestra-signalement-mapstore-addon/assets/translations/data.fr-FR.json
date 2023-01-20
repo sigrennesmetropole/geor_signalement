@@ -5,6 +5,7 @@
             "message": "Message!"
 		},
 		"signalement": {
+			"title": "Signalement",
             "close": "Fermer",
 			"cancel": "Annuler",
 			"validate": "Valider",

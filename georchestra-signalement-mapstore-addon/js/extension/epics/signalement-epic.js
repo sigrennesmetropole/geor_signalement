@@ -20,11 +20,24 @@ import {
     setDrawing,
     taskCreated,
     updateLocalisation,
-    setTaskCreationFail
+    setTaskCreationFail, openPanel, closePanel
 } from '../actions/signalement-action';
-import {FeatureProjection, GeometryType} from "../constants/signalement-constants";
+import {
+    FeatureProjection,
+    GeometryType, RIGHT_SIDEBAR_MARGIN_LEFT,
+    SIGNALEMENT_PANEL_WIDTH
+} from "../constants/signalement-constants";
+import {
+    FORCE_UPDATE_MAP_LAYOUT,
+    UPDATE_MAP_LAYOUT,
+    updateDockPanelsList,
+    updateMapLayout
+} from "@mapstore/actions/maplayout";
+import {TOGGLE_CONTROL, toggleControl} from "@mapstore/actions/controls";
+import {signalementSidebarControlSelector} from "@js/extension/selectors/signalement-selector";
 
 let backendURLPrefix = "/signalement";
+let currentLayout;
 
 export const initSignalementEpic = (action$) =>
 	action$.ofType(actions.INIT_SIGNALEMENT)
@@ -34,7 +47,61 @@ export const initSignalementEpic = (action$) =>
 	        	backendURLPrefix = action.url;
 	        }
 	        return Rx.Observable.of(initSignalementDone()).delay(0);
-	    });        
+	    });
+
+export const openSignalementPanelEpic = (action$, store) =>
+    action$.ofType(TOGGLE_CONTROL)
+        .filter(action => action.control === "signalement" && !!store.getState() && !!signalementSidebarControlSelector(store.getState()))
+        .switchMap(() => {
+
+            let layout = store.getState().maplayout;
+            layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: false, ...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH+RIGHT_SIDEBAR_MARGIN_LEFT, boundingMapRect: {...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH+RIGHT_SIDEBAR_MARGIN_LEFT}, boundingSidebarRect: layout.boundingSidebarRect}
+            window.signalement.debug("sig panel signalement added to right dockpanels list");
+            currentLayout = layout;
+            return Rx.Observable.from([updateDockPanelsList('signalement', 'add', 'right'), openPanel(null), updateMapLayout(layout)]);
+        });
+
+export const closeSignalementPanelEpic = (action$, store) =>
+    action$.ofType(TOGGLE_CONTROL, actions.SIGNALEMENT_DRAFT_CANCELED)
+        .filter(action => action.type === actions.SIGNALEMENT_DRAFT_CANCELED || (action.control === "signalement" && !!store.getState() && !signalementSidebarControlSelector(store.getState())))
+        .switchMap((action) => {
+            const actionsList = [updateDockPanelsList('signalement', 'remove', 'right')]
+            if (action.type === actions.SIGNALEMENT_DRAFT_CANCELED) {
+                actionsList.push(toggleControl('signalement'))
+            } else {
+                actionsList.push(closePanel())
+            }
+            let layout = store.getState().maplayout;
+            layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: false, ...layout.boundingMapRect, right: layout.boundingSidebarRect.right, boundingMapRect: {...layout.boundingMapRect, right: layout.boundingSidebarRect.right}, boundingSidebarRect: layout.boundingSidebarRect}
+            window.signalement.debug("sig panel signalement removed from right dockpanels list");
+            currentLayout = layout;
+            return Rx.Observable.from(actionsList).concat(Rx.Observable.of(updateMapLayout(layout)));
+        });
+
+export function onOpeningAnotherRightPanel(action$, store) {
+    return action$.ofType(TOGGLE_CONTROL)
+        .filter((action) => store && store.getState() &&
+            action.control !== 'signalement' &&
+            store.getState().maplayout.dockPanels.right.includes("signalement") &&
+            store.getState().maplayout.dockPanels.right.includes(action.control))
+        .switchMap((action) => {
+            return Rx.Observable.of(updateDockPanelsList("signalement", "remove", "right"))
+                .concat(Rx.Observable.of(closePanel()));
+        })
+}
+
+export function onUpdatingLayoutWhenPluiPanelOpened(action$, store) {
+    return action$.ofType(UPDATE_MAP_LAYOUT, FORCE_UPDATE_MAP_LAYOUT)
+        .filter((action) => store && store.getState() &&
+            !!signalementSidebarControlSelector(store.getState()) &&
+            currentLayout?.right !== action?.layout?.right)
+        .switchMap((action) => {
+            let layout = store.getState().maplayout;
+            layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: layout.layout.leftPanel, ...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT, boundingMapRect: {...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT}, boundingSidebarRect: layout.boundingSidebarRect};
+            currentLayout = layout;
+            return Rx.Observable.of(updateMapLayout(layout));
+        });
+}
 
 export const loadAttachmentConfigurationEpic = (action$) =>
     action$.ofType(actions.ATTACHMENT_CONFIGURATION_LOAD)
