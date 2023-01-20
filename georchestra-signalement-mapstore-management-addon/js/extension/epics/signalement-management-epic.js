@@ -2,7 +2,7 @@ import * as Rx from 'rxjs';
 import axios from 'axios';
 import {head} from 'lodash';
 import {addLayer, changeLayerProperties, updateNode, browseData,selectNode} from '@mapstore/actions/layers';
-import {changeMapInfoState, closeIdentify} from "@mapstore/actions/mapInfo";
+import {changeMapInfoState, closeIdentify, FEATURE_INFO_CLICK} from "@mapstore/actions/mapInfo";
 import {
     actions,
     initSignalementManagementDone,
@@ -18,15 +18,23 @@ import {
     loadTaskViewer,
     viewType, closeViewer, getTask
 } from '../actions/signalement-management-action';
-import {closeFeatureGrid, openFeatureGrid, SELECT_FEATURES, setLayer} from '@mapstore/actions/featuregrid';
+import {closeFeatureGrid, openFeatureGrid, setLayer} from '@mapstore/actions/featuregrid';
 import {isSignalementManagementActivateAndSelected} from "@js/extension/selectors/signalement-management-selector";
 import {
-    backendURLPrefix,
+    backendURLPrefix, RIGHT_SIDEBAR_MARGIN_LEFT,
     SIGNALEMENT_MANAGEMENT_LAYER_ID,
-    SIGNALEMENT_MANAGEMENT_LAYER_NAME
+    SIGNALEMENT_MANAGEMENT_LAYER_NAME, SIGNALEMENT_TASK_VIEWER_WIDTH
 } from "../constants/signalement-management-constants";
 import {error, success} from '@mapstore/actions/notifications';
+import {
+    FORCE_UPDATE_MAP_LAYOUT, forceUpdateMapLayout,
+    UPDATE_MAP_LAYOUT,
+    updateDockPanelsList,
+    updateMapLayout
+} from "@mapstore/actions/maplayout";
+import {TOGGLE_CONTROL} from "@mapstore/actions/controls";
 
+let currentLayout;
 
 /**
  * Catch GFI response on identify load event and close identify if Signalement identify tabs is selected
@@ -35,19 +43,61 @@ import {error, success} from '@mapstore/actions/notifications';
  * @param {*} store
  */
 export function loadTaskViewerEpic(action$, store) {
-    return action$.ofType(SELECT_FEATURES)
-        .filter((action) => isSignalementManagementActivateAndSelected(store.getState(), SIGNALEMENT_MANAGEMENT_LAYER_ID))
+    return action$.ofType(FEATURE_INFO_CLICK)
+        .filter((action) => action.layer === 'signalements' || isSignalementManagementActivateAndSelected(store.getState(), SIGNALEMENT_MANAGEMENT_LAYER_ID))
         .switchMap((action) => {
             let responses = (store.getState().mapInfo.responses?.length) ? store.getState().mapInfo.responses[0] : {};
             // si features présentent dans la zone de clic
             if (responses?.response && responses.response?.features && responses.response.features.length) {
                 let features = responses.response.features;
                 let clickedPoint = responses.queryParams;
-                return Rx.Observable.of(loadTaskViewer(features, clickedPoint)).concat(
-                    Rx.Observable.of(closeIdentify())
-                )
+                let layout = store.getState().maplayout;
+                layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: layout.layout.leftPanel, ...layout.boundingMapRect, right: SIGNALEMENT_TASK_VIEWER_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT, boundingMapRect: {...layout.boundingMapRect, right: RIGHT_SIDEBAR_MARGIN_LEFT + 38}, boundingSidebarRect: layout.boundingSidebarRect}
+                currentLayout = layout;
+                return Rx.Observable.of(loadTaskViewer(features, clickedPoint))
+                    .concat(Rx.Observable.of(updateDockPanelsList("signalement_task_viewer", "add", "right")))
+                    .concat(Rx.Observable.of(updateMapLayout(layout)))
+                    .concat(Rx.Observable.of(closeIdentify()));
             }
-            return  Rx.Observable.of(closeViewer());
+            return  Rx.Observable.of(closeViewer()).concat(Rx.Observable.of(forceUpdateMapLayout()).delay(0));
+        });
+}
+
+export function closeTaskViewerEpic(action$, store) {
+    return action$.ofType(actions.CLOSE_TASK_VIEWER)
+        .filter((action) => store && store.getState() &&
+            store.getState().signalementManagement.taskViewerOpen)
+        .switchMap((action) => {
+            let layout = store.getState().maplayout;
+            layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: layout.layout.leftPanel, ...layout.boundingMapRect, right: layout.boundingSidebarRect.right, boundingMapRect: {...layout.boundingMapRect, right: layout.boundingSidebarRect.right}, boundingSidebarRect: layout.boundingSidebarRect}
+            currentLayout = layout;
+            return Rx.Observable.of(updateDockPanelsList("signalement_task_viewer", "remove", "right"))
+                .concat(Rx.Observable.of(updateMapLayout(layout)))
+        })
+}
+
+export function onOpeningAnotherRightPanel(action$, store) {
+    return action$.ofType(TOGGLE_CONTROL)
+        .filter((action) => store && store.getState() &&
+            action.control !== 'signalement_task_viewer' &&
+            store.getState().maplayout.dockPanels.right.includes("signalement_task_viewer") &&
+            store.getState().maplayout.dockPanels.right.includes(action.control))
+        .switchMap((action) => {
+            return Rx.Observable.of(updateDockPanelsList("signalement_task_viewer", "remove", "right"))
+                .concat(Rx.Observable.of(closeViewer()));
+        })
+}
+
+export function onUpdatingLayoutWhenPluiPanelOpened(action$, store) {
+    return action$.ofType(UPDATE_MAP_LAYOUT, FORCE_UPDATE_MAP_LAYOUT)
+        .filter((action) => store && store.getState() &&
+            !!store.getState().taskViewerOpen &&
+            currentLayout?.right !== action?.layout?.right)
+        .switchMap((action) => {
+            let layout = store.getState().maplayout;
+            layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: layout.layout.leftPanel, ...layout.boundingMapRect, right: RIGHT_SIDEBAR_MARGIN_LEFT + RIGHT_SIDEBAR_MARGIN_LEFT, boundingMapRect: {...layout.boundingMapRect, right: RIGHT_SIDEBAR_MARGIN_LEFT + RIGHT_SIDEBAR_MARGIN_LEFT}, boundingSidebarRect: layout.boundingSidebarRect};
+            currentLayout = layout;
+            return Rx.Observable.of(updateMapLayout(layout));
         });
 }
 
