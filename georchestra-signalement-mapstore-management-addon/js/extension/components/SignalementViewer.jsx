@@ -66,7 +66,6 @@ export class SignalementViewer extends React.Component {
         return (
             <div className="signalement-management-viewer">
                 <Form>
-                    {this.renderHeader()}
                     {this.renderCoordinates()}
                     {this.props.viewType===viewType.MY && this.renderPluiRequestsNavigation()}
                     <SignalementTaskViewer features={this.props.features}

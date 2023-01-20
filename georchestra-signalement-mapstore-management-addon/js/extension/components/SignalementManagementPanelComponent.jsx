@@ -1,5 +1,4 @@
 import React from 'react';
-import Dock from 'react-dock';
 import ContainerDimensions from 'react-container-dimensions';
 import {PropTypes} from 'prop-types';
 import {Grid, Col, Row, Glyphicon, Button, Form, FormControl, Label, Tooltip, FormGroup, OverlayTrigger} from 'react-bootstrap';
@@ -9,6 +8,8 @@ import {
     viewType
 } from '../actions/signalement-management-action';
 import {SignalementViewer} from "@js/extension/components/SignalementViewer";
+import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
+import {SIGNALEMENT_TASK_VIEWER_WIDTH} from "@js/extension/constants/signalement-management-constants";
 
 export class SignalementManagementPanelComponent extends React.Component {
 	 static propTypes = {
@@ -18,6 +19,7 @@ export class SignalementManagementPanelComponent extends React.Component {
         // config
         panelClassName: PropTypes.string,
         dockProps: PropTypes.object,
+        dockStyle: PropTypes.object,
         width: PropTypes.number,
         // data
 		contexts: PropTypes.array,
@@ -50,14 +52,15 @@ export class SignalementManagementPanelComponent extends React.Component {
         panelClassName: "signalement-management-panel",
         closeGlyph: "1-close",
         // side panel properties
-        width: 660,
+        width: SIGNALEMENT_TASK_VIEWER_WIDTH,
         dockProps: {
             dimMode: "none",
             size: 0.3,
             fluid: true,
             position: "right",
             zIndex: 1030,
-            width:"25%"
+            width:"25%",
+            resizable: false
         },
         dockStyle: {
             zIndex: 1030,
@@ -158,29 +161,30 @@ export class SignalementManagementPanelComponent extends React.Component {
                             </span>
                         }
                     </ContainerDimensions>,
-                    <ContainerDimensions key="viewer-panel">
-                        { ({ width }) =>
-                            <span>
-                                <span className="react-dock-no-resize ms-absolute-dock ms-side-panel">
-                                    <Dock
-                                        dockStyle={this.props.dockStyle} {...this.props.dockProps}
-                                        isVisible={this.props.active}
-                                        size={this.props.width / width > 1 ? 1 : this.props.width / width} >
-                                        <div className={this.props.panelClassName}>
-                                            {
-                                                !this.state.initialized &&
-                                                this.renderLoading()
-                                            }
-                                            {
-                                                this.state.initialized &&
-                                                this.renderViewer()
-                                            }
-                                        </div>
-                                    </Dock>
-                                </span>
-                            </span>
-                        }
-                    </ContainerDimensions>
+                    <ResponsivePanel key="viewer-panel"
+                            containerId="ms-signalement-management-viewer"
+                            containerStyle={this.props.dockStyle}
+                            style={this.props.dockStyle}
+                            dockStyle={this.props.dockStyle}
+                            open={this.props.active}
+                            containerClassName={this.props.panelClassName}
+                            size={this.props.width}
+                            position="right"
+                            bsStyle="primary"
+                            glyph="map-marker"
+                            onClose={() => this.props.closeViewer()}
+                        >
+                            <div>
+                                {
+                                    !this.state.initialized &&
+                                    this.renderLoading()
+                                }
+                                {
+                                    this.state.initialized &&
+                                    this.renderViewer()
+                                }
+                            </div>
+                    </ResponsivePanel>
                 ];
         } else {
             return null;

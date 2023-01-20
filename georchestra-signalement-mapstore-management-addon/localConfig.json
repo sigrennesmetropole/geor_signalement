@@ -284,7 +284,7 @@
             "name":"SignalementManagementExtension",
             "cfg": {
               "backend_url": "http://localhost:8082",
-              "debug_signalement_management": false
+              "debug_signalement_management": true
             }
           },
           {
@@ -406,7 +406,7 @@
                 }
             }, {
               "name": "About",
-              "showIn": ["BurgerMenu"]
+              "showIn": ["SidebarMenu"]
             }
             , {
               "name": "MousePosition",
@@ -478,7 +478,7 @@
                 "declineUrl" : "http://www.google.com"
                 }
             },
-            "OmniBar", "Login", "Save", "SaveAs", "BurgerMenu", "Expander", "Undo", "Redo", "FullScreen", "GlobeViewSwitcher", "SearchServicesConfig", "SearchByBookmark", "WidgetsBuilder", "Widgets",
+            "OmniBar", "Login", "Save", "SaveAs", "SidebarMenu", "Expander", "Undo", "Redo", "FullScreen", "GlobeViewSwitcher", "SearchServicesConfig", "SearchByBookmark", "WidgetsBuilder", "Widgets",
             "WidgetsTray",
             "Timeline",
             "Playback",
