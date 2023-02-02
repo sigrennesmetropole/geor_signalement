@@ -20,7 +20,10 @@ import {
     setDrawing,
     taskCreated,
     updateLocalisation,
-    setTaskCreationFail, openPanel, closePanel
+    setTaskCreationFail,
+    initDrawingSupport,
+    openPanel,
+    closePanel
 } from '../actions/signalement-action';
 import {
     FeatureProjection,
@@ -58,7 +61,7 @@ export const openSignalementPanelEpic = (action$, store) =>
             layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: false, ...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH+RIGHT_SIDEBAR_MARGIN_LEFT, boundingMapRect: {...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH+RIGHT_SIDEBAR_MARGIN_LEFT}, boundingSidebarRect: layout.boundingSidebarRect}
             window.signalement.debug("sig panel signalement added to right dockpanels list");
             currentLayout = layout;
-            return Rx.Observable.from([updateDockPanelsList('signalement', 'add', 'right'), openPanel(null), updateMapLayout(layout)]);
+            return Rx.Observable.from([updateDockPanelsList('signalement', 'add', 'right'), openPanel(null), updateMapLayout(layout), initDrawingSupport()]);
         });
 
 export const closeSignalementPanelEpic = (action$, store) =>
@@ -379,6 +382,11 @@ export const stopDrawingEpic = (action$, store) =>
             ]);
         });
 
+/**
+ * Appelée pendant la fermeture de la fenetre, on réactive l'IDENTIFIER
+ * @param action$
+ * @returns {*}
+ */
 export const stopDrawingSupportEpic = action$ =>
     action$.ofType(actions.SIGNALEMENT_STOP_SUPPORT_DRAWING)
         .switchMap(() => {
