@@ -119,7 +119,7 @@ signalementapi:deploy:
     refs:
       - open/develop
   variables:
-    SERVER: "10.50.1.21"
+    SERVER: "ren1vml0096"
     ANSIBLE_VAR_FILE: signalement_dev_var.yml
 
 signalementapi:deploy:master:
@@ -130,6 +130,5 @@ signalementapi:deploy:master:
     refs:
       - open/master
   variables:
-    SERVER: "194.2.68.134"
+    SERVER: "ren1vml0095"
     ANSIBLE_VAR_FILE: signalement_rct_var.yml
-   
