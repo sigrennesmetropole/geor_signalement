@@ -1,5 +1,4 @@
 import React from 'react';
-import {connect} from 'react-redux';
 import {PropTypes} from 'prop-types';
 import {Button, Glyphicon, Tooltip} from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
@@ -23,14 +22,14 @@ export class SignalementLayerToolButton extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log("sig create layer tool button");
-        console.log(this.props);
+        window.signalement.debug("sig create layer tool button");
+        window.signalement.debug(this.props);
     }
 
     render() {
-        console.log("sig render layer tool button");
-        console.log(this.props);
-        console.log(this.state);
+        window.signalement.debug("sig render layer tool button");
+        window.signalement.debug(this.props);
+        window.signalement.debug(this.state);
 
         const signalableLayer = this.props.selectedLayers != null && 
             this.props.selectedLayers.length == 1 &&

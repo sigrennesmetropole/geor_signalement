@@ -98,7 +98,18 @@ import {MatSelectInfiniteScrollModule} from 'ng-mat-select-infinite-scroll';
 // Translation imports
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-
+import { ContextMapDialog } from './context/context-map-dialog/context-map-dialog.component';
+import { MapInfo } from './context/context-map-dialog/map-info/map-info.component';
+import {StyleComponent} from './style/style.component';
+import {StyleDataSource} from "./style/style.datasource";
+import {StyleDeleteDialog} from "./style/style-delete-dialog/style-delete-dialog";
+import {StyleProcessDialog} from "./style/style-process-dialog/style-process-dialog";
+import {StyleProcessAddDialog} from "./style/style-process-dialog/style-process-add-dialog/style-process-add-dialog";
+import {StyleProcessDeleteDialog} from "./style/style-process-dialog/style-process-delete-dialog/style-process-delete-dialog";
+import {StyleDialog} from "./style/style-dialog/style-dialog";
+import {PointDialog} from "./style/style-dialog/style-type-dialog/point-dialog";
+import {LineDialog} from "./style/style-dialog/style-type-dialog/line-dialog";
+import {PolygonDialog} from "./style/style-dialog/style-type-dialog/polygon-dialog";
 
 @NgModule({
   declarations: [
@@ -124,6 +135,17 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     ErrorComponent,
     UserComponent,
     ContextComponent,
+    StyleDialog,
+    PointDialog,
+    LineDialog,
+    PolygonDialog,
+    StyleDeleteDialog,
+    StyleComponent,
+    StyleProcessDialog,
+    StyleProcessAddDialog,
+    StyleProcessDeleteDialog,
+    ContextMapDialog,
+    MapInfo,
   ],
   imports: [
     AppRoutingModule,
@@ -170,6 +192,8 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     ContextItemMapper,
     UserItemMapper,
     WorkflowItemMapper,
+    UserItemMapper,
+    UserService,
     ToasterUtil,
     ContextDataSource,
     RoleDataSource,
@@ -177,6 +201,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     UserRoleContextDataSource,
     WorkflowDataSource,
     IsSignalementAdmin,
+    StyleDataSource,
   ],
   bootstrap: [AppComponent],
 })

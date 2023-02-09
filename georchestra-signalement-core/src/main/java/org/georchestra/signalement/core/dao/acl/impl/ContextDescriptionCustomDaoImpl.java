@@ -33,6 +33,12 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContextDescriptionCustomDaoImpl.class);
 
+	private static final String FIELD_CONTEXT_TYPE = "contextType";
+	private static final String FIELD_GEOGRAPHIC = "geographicType";
+	private static final String FIELD_LABEL = "label";
+	private static final String FIELD_PROCESS_DEFINITIONKEY = "processDefinitionKey";
+
+
 	@Autowired
 	private EntityManager entityManager;
 
@@ -43,7 +49,7 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ContextDescriptionEntity> searchContextDescriptions(ContextDescriptionSearchCriteria searchCriteria,
 																	SortCriteria sortCriteria) {
-		List<ContextDescriptionEntity> result = null;
+		List<ContextDescriptionEntity> result;
 
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -74,18 +80,29 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 		if (searchCriteria != null) {
 			List<Predicate> predicates = new ArrayList<>();
 			if (searchCriteria.getContextType() != null) {
-				predicates.add(builder.equal(root.get("contextType"), searchCriteria.getContextType()));
+				predicates.add(builder.equal(root.get(FIELD_CONTEXT_TYPE), searchCriteria.getContextType()));
 			}
 			if (searchCriteria.getGeographicType() != null) {
-				predicates.add(builder.equal(root.get("geographicType"), searchCriteria.getGeographicType()));
+				predicates.add(builder.equal(root.get(FIELD_GEOGRAPHIC), searchCriteria.getGeographicType()));
+			}
+			if (searchCriteria.getGeographicType() != null) {
+				predicates.add(builder.equal(root.get(FIELD_GEOGRAPHIC), searchCriteria.getGeographicType()));
 			}
 			if (StringUtils.isNotEmpty(searchCriteria.getDescription())) {
-				predicates.add(builder.like(builder.lower(root.get("label")),
-						"%" + searchCriteria.getDescription().toLowerCase() + "%"));
+				if (isWildCarded(searchCriteria.getDescription())) {
+					predicates.add(
+							builder.like(builder.lower(root.get(FIELD_LABEL)), wildcard(searchCriteria.getDescription())));
+				} else {
+					predicates.add(builder.equal(root.get(FIELD_LABEL), searchCriteria.getDescription()));
+				}
 			}
-			if (CollectionUtils.isNotEmpty(searchCriteria.getProcessDefinitionKeys())) {
-				predicates.add(root.get("processDefinitionKey")
-						.in(searchCriteria.getProcessDefinitionKeys()));
+			if (StringUtils.isNotEmpty(searchCriteria.getProcessDefinitionKey())) {
+				if (isWildCarded(searchCriteria.getProcessDefinitionKey())) {
+					predicates.add(
+							builder.like(builder.lower(root.get(FIELD_PROCESS_DEFINITIONKEY)), wildcard(searchCriteria.getProcessDefinitionKey())));
+				} else {
+					predicates.add(builder.equal(root.get(FIELD_PROCESS_DEFINITIONKEY), searchCriteria.getProcessDefinitionKey()));
+				}
 			}
 			if (CollectionUtils.isNotEmpty(predicates)) {
 				criteriaQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));

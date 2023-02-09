@@ -1,5 +1,12 @@
+#ms-signalement-panel .container-fluid {
+    padding-left: 0;
+    padding-right: 0
+}
+.signalement-dock-container {
+    z-index: 1050;
+}
 .signalement-panel {
-    margin: 0 20px;
+    margin: 5px;
 }
 
 .signalement-panel .form-group {
@@ -7,7 +14,10 @@
 }
 
 .signalement-panel legend {
-    font-size: 18px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .signalement-panel label {
@@ -38,16 +48,46 @@
     margin-left: 5px;
 }
 
+.signalement-panel .block-valid-form button {
+    height: 30px;
+}
 .signalement-panel .block-inline-spinner .inline-spinner {
     width: 30px;
 }
 
-.info-glyph .glyphicon {
-    font-size: 25px;
+.signalement-panel .instructions .info-glyph {
+    font-size: 20px;
 }
 
-.instructions {
-    margin-top: 10px;
+.signalement-panel .instructions {
+    margin-top: 5px;
+}
+
+.signalement-panel .instructions .message-instructions {
+    font-size: 12px;
+}
+
+.signalement-panel .geometry-button {
+    float: right;
+}
+
+.signalement-panel .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.signalement-panel .row div[class^="col-"],
+.signalement-panel .row div[class*=" col-"] {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.signalement-panel .help-block {
+    font-size: 12px;
+}
+
+.signalement-panel .localization-tips {
+    font-size: 12px;
 }
 
 span .error {
@@ -59,9 +99,9 @@ span .info {
 }
 
 fieldset{
-    margin: 0 25px 0 30px;
+    margin: 0 5px !important;
 }
 
-.localization-tips {
-    padding-top: 5px;
+.error-box {
+    min-height: 20px;
 }

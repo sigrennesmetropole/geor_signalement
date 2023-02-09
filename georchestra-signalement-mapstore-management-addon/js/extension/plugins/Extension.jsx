@@ -28,7 +28,7 @@ export default {
     epics: {
         logCounterValue: (action$, store) => action$.ofType('INCREASE_COUNTER').switchMap(() => {
             /* eslint-disable */
-            console.log('CURRENT VALUE: ' + store.getState().sampleExtension.value);
+            window.signalementMgmt.debug('CURRENT VALUE: ' + store.getState().sampleExtension.value);
             /* eslint-enable */
             return Rx.Observable.empty();
         })

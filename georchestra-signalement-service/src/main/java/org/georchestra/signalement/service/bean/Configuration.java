@@ -1,6 +1,9 @@
 package org.georchestra.signalement.service.bean;
 
 import lombok.Data;
+import org.georchestra.signalement.core.dto.StyleMapConfiguration;
+import org.georchestra.signalement.core.dto.FlowMapConfiguration;
+import org.georchestra.signalement.core.dto.ViewMapConfiguration;
 
 /**
  * Classe contenant les élements de configuration
@@ -13,6 +16,15 @@ public class Configuration {
 
 	// Nom du rôle d'administrateur de signalement
 	private String roleAdministrator;
+
+	// Type du flux du fond de carte du contexte
+	private FlowMapConfiguration flowMapConfiguration;
+
+	// Url du flux du fond de carte du contexte
+	private ViewMapConfiguration viewMapConfiguration;
+
+	// couleur des emprises de carte du contexte
+	private StyleMapConfiguration styleMapConfiguration;
 	
 	/**
 	 * Constructeur par defaut A conserver pour l'utilisation des mapper mapStruct
@@ -26,9 +38,12 @@ public class Configuration {
 	 * @param version
 	 * @param role
 	 */
-	public Configuration(String version, String role) {
+	public Configuration(String version, String role, FlowMapConfiguration flowMapConfiguration, ViewMapConfiguration viewMapConfiguration, StyleMapConfiguration style) {
 		this.version = version;
 		this.roleAdministrator = role;
+		this.flowMapConfiguration = flowMapConfiguration;
+		this.viewMapConfiguration = viewMapConfiguration;
+		this.styleMapConfiguration = style;
 	}
 
 }

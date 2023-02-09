@@ -6,7 +6,10 @@
         },
         "signalement-management": {
           "loading": "En cours d'initialisation...",
-          "title": "Gestion des signalement",
+          "title": "Gestion des signalements",
+          "select.label": "Sélectionner la couche ou la thématique :",
+          "tooltip.tabular_view": "Afficher la vue en tableau",
+          "tooltip.map_picker": "Sélectionner un signalement sur la carte",
           "init.me.error": "Impossible de récupérer l'utilisation courant",
           "init.contexts.error": "Impossible de récupérer les contexts de l'utilisateur courant",
           "load.searchTask.error": "Impossible de récupérer les tâches",
@@ -21,10 +24,20 @@
           "layer": "Couche ou thématique",
           "object": "Object",
           "files": "Pièces jointes",
-          "affect": "Assigner",
+          "affect": "S'assigner le signalement",
           "actions": "Etape suivante",
           "validate": "Valider",
-          "cancel": "Annuler"
+          "cancel": "Annuler",
+          "do-action": {
+            "success": {
+              "title": "Succès",
+              "message": "La mise à jour du signalement a été effectuée"
+            },
+            "fail": {
+              "title": "Echec",
+              "message": "La mise à jour du signalement n'a pas été effectuée"
+            }
+          }
         }
     }
 }

@@ -3,12 +3,14 @@
  */
 package org.georchestra.signalement.st.generator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Date;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import org.apache.commons.io.IOUtils;
 import org.georchestra.signalement.StarterSpringBootTestApplication;
 import org.georchestra.signalement.core.common.DocumentContent;
@@ -23,25 +25,22 @@ import org.georchestra.signalement.service.sm.UserService;
 import org.georchestra.signalement.service.st.generator.GenerationConnector;
 import org.georchestra.signalement.service.st.generator.GenerationConnectorConstants;
 import org.georchestra.signalement.service.st.generator.datamodel.GenerationFormat;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-
 /**
  * @author FNI18300
  *
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = StarterSpringBootTestApplication.class)
 @ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
 		"org.georchestra.signalement.core" })
 @TestPropertySource(value = { "classpath:signalement.properties", "classpath:signalement-common.properties" })
-public class GenerationConnectorTest {
+class GenerationConnectorTest {
 
 	@Autowired
 	private GenerationConnector generationConnector;
@@ -58,7 +57,7 @@ public class GenerationConnectorTest {
 	private String roleName = "Validator";
 
 	@Test
-	public void generateStringBody() {
+	void generateStringBody() {
 		try (InputStream is = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("models/initiator-mail.html")) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -73,11 +72,11 @@ public class GenerationConnectorTest {
 			EmailDataModel emailDataModel = new EmailDataModel(userService, assignmentHelper, null, entity, roleName,
 					GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX + "test:" + baos.toString());
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -86,11 +85,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("initiator-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -99,11 +98,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("assignee-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -112,11 +111,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("initiator-cancelled-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -125,11 +124,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("initiator-completed-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -138,11 +137,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("initiator-handled-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -154,11 +153,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -167,11 +166,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_assignee-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -180,11 +179,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-cancelled-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -193,11 +192,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-completed-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 
@@ -206,11 +205,11 @@ public class GenerationConnectorTest {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-handled-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
-			Assert.assertNotNull(document);
-			Assert.assertNotNull(document.getFile());
-			Assert.assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
+			assertNotNull(document);
+			assertNotNull(document.getFile());
+			assertEquals(document.getContentType(), GenerationFormat.HTML.getTypeMime());
 		} catch (Exception e) {
-			Assert.fail("failed to generate:" + e.getMessage());
+			fail("failed to generate:" + e.getMessage());
 		}
 	}
 

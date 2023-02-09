@@ -6,10 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { createPlugin } from "@mapstore/utils/PluginsUtils";
 import Extension from './extension/plugins/SignalementExtension';
 import { name } from '../config';
 
 export default {
-    [name]: createPlugin(name, Extension)
+    [name]: Extension
 };

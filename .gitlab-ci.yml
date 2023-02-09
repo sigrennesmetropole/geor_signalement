@@ -27,7 +27,7 @@ stages:
 # Build job with maven plugin execution policies define in parent pom
 .signalementapi:build:
   script:
-    - sh ./mvnw $MAVEN_CLI_OPTS -U package ${OPTS} -Pprod,mapfishapp-signalement
+    - mvn $MAVEN_CLI_OPTS -U clean package ${OPTS} -Pprod,mapfishapp-signalement
   stage: build
   artifacts:
     paths:
@@ -62,7 +62,7 @@ signalementapi:build:master:
   allow_failure: true
   script:
     - >
-      sh ./mvnw $MAVEN_CLI_OPTS -U compile sonar:sonar
+      mvn $MAVEN_CLI_OPTS -U compile sonar:sonar
       -Dsonar.host.url=$SONAR_URL
       -Dsonar.login=$SONAR_TOKEN
       -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA
@@ -93,7 +93,7 @@ signalementapi:sonar:master:
 
 .signalementapi:deploy:
   stage: deploy
-  image: ansible/ansible-runner:1.4.4
+  image: glregistry.boost.open.global/boost/docker/mvn-node-jdk11-ansible:latest
   cache: {}
   tags: 
    - cdp-rennes
@@ -119,7 +119,7 @@ signalementapi:deploy:
     refs:
       - open/develop
   variables:
-    SERVER: "10.50.1.21"
+    SERVER: "ren1vml0096"
     ANSIBLE_VAR_FILE: signalement_dev_var.yml
 
 signalementapi:deploy:master:
@@ -130,6 +130,5 @@ signalementapi:deploy:master:
     refs:
       - open/master
   variables:
-    SERVER: "194.2.68.134"
+    SERVER: "ren1vml0095"
     ANSIBLE_VAR_FILE: signalement_rct_var.yml
-   

@@ -8,6 +8,7 @@
 
 import { checkForMissingPlugins } from '@mapstore/utils/DebugUtils';
 import main from '@mapstore/product/main';
+
 const ConfigUtils = require('@mapstore/utils/ConfigUtils').default;
 /**
  * Add custom (overriding) translations with:

@@ -8,7 +8,7 @@
             <input matInput class="filter-input" name="labelFilter" (input)="updateFilters()" [(ngModel)]="labelFilter">
           </mat-form-field>
           <mat-form-field class="text-center">
-            <label for="emailFilter">{{'context.table.processDefinition' | translate}} :</label>
+            <label >{{'context.table.processDefinition' | translate}} :</label>
             <input matInput class="filter-input" name="workflowFilter" (input)="updateFilters()" [(ngModel)]="workflowFilter">  
           </mat-form-field>  
         </form>
@@ -49,7 +49,7 @@
       <!-- ProcessDefinition Column -->
       <ng-container matColumnDef="processDefinition">
         <th mat-header-cell *matHeaderCellDef>{{"context.table.processDefinition" | translate}}</th>
-        <td mat-cell *matCellDef="let row">{{getWorkflowName(row.processDefinition)}}</td>
+        <td mat-cell *matCellDef="let row">{{row.processDefinition}}</td>
       </ng-container>
 
       <!-- Version Column -->
@@ -61,6 +61,7 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>{{"context.table.actions" | translate}}</th>
         <td mat-cell *matCellDef="let row">
+          <button class="action-button" mat-mini-fab color="primary" (click)='handleOpenMapDialogClick(row)'><mat-icon>map</mat-icon></button>
           <button class="action-button" mat-mini-fab color="primary" (click)='handleOpenEditDialogClick(row)'><mat-icon>edit</mat-icon></button>
           <button mat-mini-fab color="warn" (click)='handleOpenSupressDialogClick(row)'><mat-icon>delete</mat-icon></button>
         </td>

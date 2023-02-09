@@ -8,7 +8,8 @@
       "operators": "Operators",
       "workflows": "Workflows",
       "users": "Users",
-      "context": "Contexts"
+      "context": "Contexts",
+      "styles": "Styles"
     },
     "connected": "Connected",
     "disconnected": "Disconnected"
@@ -45,6 +46,85 @@
     "title": "Workflow",
     "version": "Version"
   },
+  "style": {
+    "table": {
+      "id": "Identifiant",
+      "name": "Nom",
+      "type": "Type",
+      "description": "Description",
+      "actions": "Actions"
+    },
+    "champs": {
+      "id": "ID",
+      "name": "Name",
+      "type": "Type",
+      "iconGlyph": "Icon's glyph",
+      "iconShape": "Icon's shape",
+      "iconColor": "Icon's color",
+      "iconAnchor": "Icon's anchor",
+      "filtering": "Filtering",
+      "color": "Color",
+      "opacity": "Opacity",
+      "weight": "Weight",
+      "fillColor": "Fill color",
+      "fillOpacity": "Fill opacity",
+      "dashArray": "DashArray"
+    },
+    "read": {
+      "title": "Style's details"
+    },
+    "update": {
+      "formErrors": {
+        "unknownError" :"There is an error in the form",
+        "fillOpacity" : "The fill opacity is nor null nor a double",
+        "opacity" : "The opacity is nor null nor a double",
+        "weight" : "The weight is nor null nor a double"
+      },
+      "title": "Update style",
+      "success": "The style update succeed",
+      "error": "The style update failed",
+      "unknownError": "There is an error in the form"
+    },
+    "add": {
+      "formErrors": {
+        "unknownError" :"There is an error in the form",
+        "fillOpacity" : "The fill opacity is nor null nor a double",
+        "opacity" : "The opacity is nor null nor a double",
+        "weight" : "The weight is nor null nor a double"
+      },
+      "title": "Add style",
+      "success": "Style successfully added",
+      "error": "Style insertion failed"
+    },
+    "delete": {
+      "success": "The style successfully suppressed",
+      "error": "The suppression failed"
+    },
+    "title": "Style",
+    "process": {
+      "title": "User task's links",
+      "champs": {
+        "processDefinition": "Workflow",
+        "revision": "Version",
+        "userTask": "User's task",
+        "processDefinitionId":  "workflow's key",
+        "userTaskId":  "User's task"
+      },
+      "add": {
+        "formErrors": {
+          "unknownError" :"There is an error in the form"
+        },
+        "title": "add a workflow",
+        "success":"Workflow's link successfully added",
+        "error":"Workflow's link insertion failed"
+      },
+      "delete": {
+        "asking": "Are you sure you want to delete this link??",
+        "success":"link successfully suppressed",
+        "error":"link  suppression failed"
+      }
+    }
+  },
   "user": {
     "table": {
       "login": "Login",
@@ -57,7 +137,7 @@
     },
     "delete": {
       "success": "User successfully suppressed",
-      "error": "User suprpression failed"
+      "error": "User suppression failed"
     },
     "add": {
       "title": "Add an user",
@@ -114,6 +194,11 @@
       "point": "Point",
       "line": "Line",
       "polygon": "Area"
+    },
+    "map": {
+      "nameContext" : "Context",
+      "operator" : "Operator",
+      "role" : "Role"
     }
   },
   "role": {
@@ -161,6 +246,44 @@
       "userLoginIndication" : "First letters of the login",
       "geographicNameIndication" : "First letters of the area",
       "contextNameIndication" : "First letters of the contexts"
+    }
+  },
+  "role": {
+    "title": "Roles",
+    "table": {
+      "name": "Name",
+      "label": "Label",
+      "actions": "Actions"
+    },
+    "delete": {
+      "success": "Role successfully suppressed",
+      "error": "Role suppression failed"
+    },
+    "add": {
+      "title": "Add a role",
+      "success": "The role creation succeed",
+      "error": "The role creation failed",
+      "noName": "You must provide a name",
+      "noLabel": "You must provide a label"
+    }
+  },
+  "role": {
+    "title": "Roles",
+    "table": {
+      "name": "Name",
+      "label": "Label",
+      "actions": "Actions"
+    },
+    "delete": {
+      "success": "Role successfully suppressed",
+      "error": "Role suppression failed"
+    },
+    "add": {
+      "title": "Add a role",
+      "success": "The role creation succeed",
+      "error": "The role creation failed",
+      "noName": "You must provide a name",
+      "noLabel": "You must provide a label"
     }
   },
   "paginator": {

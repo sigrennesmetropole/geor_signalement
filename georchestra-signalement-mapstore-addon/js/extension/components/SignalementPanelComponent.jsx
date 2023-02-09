@@ -1,6 +1,4 @@
 import React from 'react';
-import Dock from 'react-dock';
-import ContainerDimensions from 'react-container-dimensions';
 import {PropTypes} from 'prop-types';
 import {
     Button,
@@ -18,8 +16,9 @@ import {
 import Message from '@mapstore/components/I18N/Message';
 import ConfirmDialog from '@mapstore/components/misc/ConfirmDialog';
 import {status} from '../actions/signalement-action';
-import {GeometryType} from '../constants/signalement-constants';
+import {GeometryType, SIGNALEMENT_PANEL_WIDTH} from '../constants/signalement-constants';
 import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
+import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -40,7 +39,7 @@ export class SignalementPanelComponent extends React.Component {
         infoGlyph: PropTypes.string,
         buttonStyle: PropTypes.object,
         style: PropTypes.object,
-        dockProps: PropTypes.object,
+        dockStyle:PropTypes.object,
         width: PropTypes.number,
         // data
         attachmentConfiguration: PropTypes.object,
@@ -53,7 +52,6 @@ export class SignalementPanelComponent extends React.Component {
         error: PropTypes.object,
         // redux
 		initSignalement: PropTypes.func,
-        initDrawingSupport: PropTypes.func,
         stopDrawingSupport: PropTypes.func,
         startDrawing: PropTypes.func,
         stopDrawing: PropTypes.func,
@@ -95,14 +93,7 @@ export class SignalementPanelComponent extends React.Component {
         deleteGlyph: "trash",
         infoGlyph: "info-sign",
         // side panel properties
-        width: 660,
-        dockProps: {
-            dimMode: "none",
-            size: 0.30,
-            fluid: true,
-            position: "right",
-            zIndex: 1050
-        },
+        width: SIGNALEMENT_PANEL_WIDTH,
         dockStyle: {
             zIndex: 100,
         },
@@ -116,7 +107,6 @@ export class SignalementPanelComponent extends React.Component {
         attachements: [],
         // misc
 		initSignalement: ()=>{},
-        initDrawingSupport: ()=>{},
         stopDrawingSupport: ()=>{},
         startDrawing: ()=>{},
         stopDrawing: ()=>{},
@@ -142,22 +132,25 @@ export class SignalementPanelComponent extends React.Component {
             errorAttachment: "",
             errorFields: {}
         }
+
+        // disable custom logging function if debug_signalement is set to false in local config
+        if (this.props.debug_signalement) {
+            window.signalement.debug = (...args) => { console.log(...args) };
+        }
+
 		this.props.initSignalement(this.props.backendurl);
-        //console.log(this.state);
-        //console.log(this.props);
     }
 
     componentWillMount() {
-        this.setState({initialized: false, loaded: false, task: null, currentLayer: null});
+        this.setState({initialized: false, loaded: false, task: null, currentLayer: null, errorAttachment: ""});
         this.props.loadAttachmentConfiguration();
         this.props.loadThemas();
         this.props.loadLayers();
-        this.props.initDrawingSupport();
         this.props.getMe();
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("sig didUpdate...");
+        window.signalement.debug("sig didUpdate...");
         // Tout est-il initialisé ?
         this.state.initialized = this.props.contextLayers !== null && this.props.contextThemas !== null &&
             this.props.attachmentConfiguration !== null && this.props.user !== null;
@@ -166,7 +159,7 @@ export class SignalementPanelComponent extends React.Component {
 
         if( this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED ){
             // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"
-            console.log("sig draft created");
+            window.signalement.debug("sig draft created");
             this.state.task = this.props.task;
             this.state.loaded = true;
             this.setState(this.state);
@@ -182,20 +175,22 @@ export class SignalementPanelComponent extends React.Component {
         if( this.state.task !== null && this.state.task.asset !== null && this.state.task.asset.uuid &&
             this.props.status === status.REQUEST_UNLOAD_TASK){
             // on a une tâche et on demande son annulation => on lancer l'annulation
-            console.log("sig draft cancel");
+            window.signalement.debug("sig draft cancel");
             this.props.cancelDraft(this.state.task.asset.uuid);
         }
 
         if( (this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) && this.state.loaded === true){
             // on a demandé l'annulation et on l'a obtenue => on ferme le panel
-            console.log("sig draft canceled or task created");
+            window.signalement.debug("sig draft canceled or task created");
             this.state.task = null;
             this.state.loaded = false;
+            this.state.errorAttachment = "";
             this.setState(this.state);
             this.props.stopDrawingSupport();
             this.props.toggleControl();
+            this.state.errorFields = {};
         }
-        console.log(this.state);
+        window.signalement.debug(this.state);
     }
 
     /**
@@ -223,7 +218,7 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     render() {
-        console.log("sig render");
+        window.signalement.debug("sig render");
         if( this.props.active ){
             // si le panel est ouvert
             if( this.state.initialized && (this.props.contextThemas.length > 0 || this.props.currentLayer) ){
@@ -234,7 +229,7 @@ export class SignalementPanelComponent extends React.Component {
                         || this.props.status === status.TASK_CREATED)) {
                     // il n'y a pas de tâche dans les props et on a rien fait ou a vient de créer un tâche avec succès
                     // on lance la création d'une tâche draft avec le context par défaut
-                    console.log("sig create draft");
+                    window.signalement.debug("sig create draft");
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
                     this.props.createDraft(initContext);
                 }
@@ -243,28 +238,31 @@ export class SignalementPanelComponent extends React.Component {
         if( this.props.active ){
             // le panel est ouvert
             return (
-                <ContainerDimensions>
-                    { ({ width }) =>
-                        <span>
-                            <span className="ms-signalement-panel react-dock-no-resize ms-absolute-dock ms-side-panel">
-                                <Dock
-                                    dockStyle={this.props.dockStyle} {...this.props.dockProps}
-                                    isVisible={this.props.active}
-                                    size={this.props.width / width > 1 ? 1 : this.props.width / width} >
-                                    <div className={this.props.panelClassName}>
-                                        {this.renderHeader()}
-                                        {
-                                            !this.state.initialized || !this.state.loaded ?
-                                                this.renderLoading() :
-                                                this.renderForm()
-                                        }
-                                    </div>
-                                </Dock>
-                            </span>
-                            {this.renderModelClosing()}
-                        </span>
-                    }
-                </ContainerDimensions>
+                <ResponsivePanel
+                    containerStyle={this.props.dockStyle}
+                    style={this.props.dockStyle}
+                    containerId="ms-signalement-panel"
+                    containerClassName="signalement-dock-container"
+                    className={this.props.panelClassName}
+                    open={this.props.active}
+                    position="right"
+                    size={this.props.width}
+                    bsStyle="primary"
+                    title={<Message msgId="signalement.title"/>}
+                    glyph="exclamation-sign"
+                    onClose={() => this.cancel()}>
+                    <span>
+                        <div>
+                            {this.renderHeader()}
+                            {
+                                !this.state.initialized || !this.state.loaded ?
+                                    this.renderLoading() :
+                                    this.renderForm()
+                            }
+                            </div>
+                        {this.renderModelClosing()}
+                    </span>
+                </ResponsivePanel>
             );
         } else {
             return null;
@@ -277,7 +275,7 @@ export class SignalementPanelComponent extends React.Component {
     renderModelClosing(){
         if (this.props.closing ) {
             // si closing == true on demande l'abandon
-            console.log("sig closing");
+            window.signalement.debug("sig closing");
             return (<ConfirmDialog
                 show
                 modal
@@ -327,16 +325,8 @@ export class SignalementPanelComponent extends React.Component {
     renderHeader() {
         return (
             <Grid fluid className="ms-header" style={this.props.styling || this.props.mode !== "list" ? { width: '100%', boxShadow: 'none'} : { width: '100%' }}>
-                <Row>
-                    <Col xs={2}>
-                        <Button className="square-button no-events">
-                            <Glyphicon glyph="exclamation-sign"/>
-                        </Button>
-                    </Col>
-                    <Col xs={8}>
-                        <h4><Message msgId="signalement.msgBox.title"/></h4>
-                        {this.renderMessage()}
-                    </Col>
+                <Row className="error-box">
+                    {this.renderMessage()}
                 </Row>
             </Grid>
         );
@@ -387,12 +377,12 @@ export class SignalementPanelComponent extends React.Component {
             <div>
                 <fieldset className="instructions">
                     <Row>
-                        <Col xs={1}>
+                        <Col xs={2}>
                             <Button className="square-button no-events info-glyph">
                                 <Glyphicon glyph={this.props.infoGlyph}/>
                             </Button>
                         </Col>
-                        <Col xs={11}>
+                        <Col className="message-instructions" xs={10}>
                             <Message msgId="signalement.instructions"/>
                         </Col>
                     </Row>
@@ -546,7 +536,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderGeometryDrawButton = ()=> {
         return (
-            <Button bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
+            <Button className="geometry-button" bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
                 <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
                 <Message msgId="signalement.localization.geolocate"/>
             </Button>
@@ -587,13 +577,13 @@ export class SignalementPanelComponent extends React.Component {
                 </div>
                 <div className="block-valid-form">
                     <Button bsStyle="warning"
-                            bsSize="large"
+                            bsSize="sm"
                             onClick={() => this.cancel()}>
                         <Message msgId="signalement.cancel"/>
                     </Button>
                     <Button className="validation-button"
                             bsStyle="primary"
-                            bsSize="large"
+                            bsSize="sm"
                             onClick={() => this.create()}>
                         <Message msgId="signalement.validate"/>
                     </Button>
@@ -765,7 +755,7 @@ export class SignalementPanelComponent extends React.Component {
 
                 );
             default:
-                console.log("Type of definition undefined");
+                window.signalement.debug("Type of definition undefined");
         }
     }
 
@@ -966,8 +956,8 @@ export class SignalementPanelComponent extends React.Component {
      * L'action d'abandon
      */
     cancel() {
-        if(  this.state.task != null && this.state.task.asset.uuid) {
-            console.log("Cancel and close:"+this.state.task.asset.uuid);
+        if(this.state.task != null && this.state.task.asset.uuid) {
+            window.signalement.debug("Cancel and close:"+this.state.task.asset.uuid);
             this.props.requestClosing();
         } else {
             this.props.toggleControl();
@@ -979,7 +969,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     create() {
         if( this.state.task != null && this.state.task.asset.uuid && !this.props.creating) {
-            console.log("Create and close:"+this.state.task.asset.uuid);
+            window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
             this.props.createTask(this.state.task);
         }
     }

@@ -8,5 +8,4 @@ ADD httpd.conf /usr/local/apache2/conf
 RUN cd /usr/local/apache2/htdocs &&\
     unzip front.zip &&\
     rm front.zip &&\
-    mv front-management/* . &&\
-    rm -rf front-management
+    mv front-management signalement-admin

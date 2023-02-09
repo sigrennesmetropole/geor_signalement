@@ -97,8 +97,9 @@ public class UserServiceImpl implements UserService {
 		UserEntity userEntity = userDao.findByLogin(login);
 		if (user != null && userEntity != null) {
 			contexts = new HashSet<>();
-			if (CollectionUtils.isNotEmpty(userEntity.getUserRoles())) {
-				for (UserRoleContextEntity userRoleContextEntity : userEntity.getUserRoles()) {
+			Set<UserRoleContextEntity> userRoleContextEntities = userEntity.getUserRoles();
+			if (CollectionUtils.isNotEmpty(userRoleContextEntities)) {
+				for (UserRoleContextEntity userRoleContextEntity : userRoleContextEntities) {
 					if (userRoleContextEntity.getContextDescription() != null) {
 						// le contexte n'est pas encore dans la liste on l'ajoute
 						contexts.add(userRoleContextEntity.getContextDescription());

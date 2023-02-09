@@ -9,4 +9,6 @@ public interface StylingDao  extends QueryDslDao<StylingEntity, Long> {
 
 	StylingEntity findByName(String name);
 
+	StylingEntity findById(long id);
+
 }

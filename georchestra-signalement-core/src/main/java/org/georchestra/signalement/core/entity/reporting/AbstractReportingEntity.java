@@ -20,11 +20,11 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.vividsolutions.jts.geom.Geometry;
 import org.georchestra.signalement.core.common.LongId;
 import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.Status;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
+import org.locationtech.jts.geom.Geometry;
 
 import lombok.Data;
 

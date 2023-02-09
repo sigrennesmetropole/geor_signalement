@@ -1,28 +1,35 @@
 import React from 'react';
 import {PropTypes} from 'prop-types';
-import {ControlLabel, Form, FormControl, FormGroup, Button, Col, Glyphicon} from "react-bootstrap";
+import {ControlLabel, Form, FormControl, FormGroup, Button, Col} from "react-bootstrap";
 import Message from '@mapstore/components/I18N/Message';
-
-
-export const TASKVIEWER = "TaskViewer";
-export const status = {
-    PENDING: "PENDING"
-};
+import LoadingSpinner from '@mapstore/components/misc/LoadingSpinner';
+import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 
 export class SignalementTaskViewer extends React.Component {
 
 
     static propTypes = {
+        features: PropTypes.array,
         task: PropTypes.object,
+        user: PropTypes.object,
+        viewType: PropTypes.string,
+        errorTask: PropTypes.object,
+        actionInProgress: PropTypes.bool,
         getTask: PropTypes.func,
-        claimTask: PropTypes.func,
         downloadAttachment: PropTypes.func,
+        claimTask: PropTypes.func,
         updateTask: PropTypes.func,
         updateDoAction: PropTypes.func,
+        closeIdentify: PropTypes.func,
     };
 
     static defaultProps = {
+        features: [],
         task: null,
+        user: {},
+        viewType: "",
+        errorTask: null,
+        actionInProgress: false,
         getTask: () => {
         },
         downloadAttachment: () => {
@@ -40,26 +47,31 @@ export class SignalementTaskViewer extends React.Component {
         super(props);
         this.state= {
             errorFields: {},
-            index: 0,
+            index: this.props.index,
             action: null
         }
     }
 
     componentWillMount() {
+        window.signalementMgmt.debug("sigm task  get");
         let index = this.state.index;
-        let id = this.props.response.features[index].properties.id;
+        let id = this.props.features.length > 0 ? this.props.features[index]?.properties?.id : null;
         if(id){
-            console.log("sigm task  get");
+            window.signalementMgmt.debug("sigm task  get");
             this.props.getTask(id);
             this.setState({task: null});
         }
 
     }
 
-    componentDidUpdate() {
-        console.log("sigm task  recupered before");
-        if (this.props.task !== null && this.state.task === null) {
-            console.log("sigm task  recupered");
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        window.signalementMgmt.debug("sigm task  recupered before", );
+        // on actualise l'état si
+        // le assignee de la task a changer (cas du clic sur <<S'assigner le signalement)
+        // le statut de la task a changé
+        if (this.props.task !== null && (this.state.task === null || this.props.task.assignee !== this.state.task.assignee ||
+        this.props.task.status !== this.state.task.status)) {
+            window.signalementMgmt.debug("sigm task  recupered");
             this.state.task = this.props.task;
             this.setState(this.state);
         }
@@ -67,6 +79,24 @@ export class SignalementTaskViewer extends React.Component {
         if(this.state.task !== null){
             this.state.task = this.props.task;
         }
+
+        // si on a de nouvelles features (nouveau click sur la map)
+        if (this.props.features.length > 0 && JSON.stringify(this.props.features) !== JSON.stringify(prevProps.features)) {
+            let id = this.props.features.length > 0 ? this.props.features[0]?.properties?.id : null;
+            if(id) {
+                this.props.getTask(id);
+                this.setState({task: null, index: this.props.index});
+            }
+        }
+
+        if (this.props.index !== prevState.index) {
+            let id = this.props.features.length > 0 ? this.props.features[this.props.index]?.properties?.id : null;
+            if(id){
+                this.props.getTask(id);
+                this.setState({task: null, index: this.props.index});
+            }
+        }
+
     }
 
 
@@ -74,35 +104,28 @@ export class SignalementTaskViewer extends React.Component {
         if (this.state.task) {
             return (
                 <Form model={this.state.task}>
-                    {this.renderSignalementNavigation()}
                     {this.renderMessage()}
                     {this.renderSignalementManagementInfo()}
                     {this.renderSignalementManagementForm()}
+                    {this.renderInProgressSpinner()}
                     {this.renderSignalementManagementClaim()}
                     {this.renderSignalementManagementActions()}
                     {this.renderSignalementManagementValidate()}
                 </Form>
             )
         } else {
-            return null;
+            return this.renderLoading();
         }
     }
 
-    renderSignalementNavigation(){
-        if(this.props.response.features.length > 1){
-            return(
-                <div className="button-navigation">
-                    <button  className="square-button-md btn btn-primary" onClick={() => this.handleClickButtonDisplayTaskBefore()}>
-                        <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
-                    </button>
-                    <button className="square-button-md btn btn-primary" onClick={() => this.handleClickButtonDisplayTaskAfter()}>
-                        <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
-                    </button>
-
+    renderLoading() {
+        return (
+            <div className="plui-loading-container">
+                <div className="plui-loading">
+                    <LoadingSpinner />
                 </div>
-
-            )
-        }
+            </div>
+        );
     }
 
     /**
@@ -131,15 +154,15 @@ export class SignalementTaskViewer extends React.Component {
                     <Col md={6}>
                         <FormGroup controlId="signalement-management.info.date">
                             <ControlLabel><Message msgId="signalement-management.date"/></ControlLabel>
-                            <FormControl type="text" readOnly
-                                         value={this.state.task.creationDate !== null ? this.state.task.creationDate : ''}/>
+                            <FormControl type="datetime-local" readOnly
+                                         value={this.state.task.creationDate !== null ? new Date(this.state.task.creationDate).toISOString().slice(0, -1) : ''}/>
                         </FormGroup>
                     </Col>
                     <Col md={6}>
                         <FormGroup controlId="signalement-management.info.statut">
                             <ControlLabel><Message msgId="signalement-management.statut"/></ControlLabel>
                             <FormControl type="text" readOnly
-                                         value={this.state.task.status !== null ? this.state.task.status : ''}/>
+                                         value={this.state.task.functionalStatus !== null ? this.state.task.functionalStatus : ''}/>
                         </FormGroup>
                     </Col>
                 </fieldset>
@@ -189,14 +212,16 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition du bouton Assigner
      */
     renderSignalementManagementClaim(){
-        if(!this.props.task.assignee || this.props.user.roles.find(role => role === "ADMIN"))
+        if(!this.state.task.assignee || this.props.user.roles.find(role => role === "ADMIN"))
             return (
                 <div>
-                    <FormGroup controlId="signalement-management.info.claim">
-                        <Button className="claimButton" key="claimer" bsStyle="info" onClick={() => this.handleClickButtonClaim()}>
-                            <Message msgId="signalement-management.affect"/>
-                        </Button>
-                    </FormGroup>
+                    <Col md={12} className="text-center">
+                        <FormGroup controlId="signalement-management.info.claim">
+                            <Button className="claimButton" key="claimer" bsStyle="info" onClick={() => this.handleClickButtonClaim()}>
+                                <Message msgId="signalement-management.affect"/>
+                            </Button>
+                        </FormGroup>
+                    </Col>
                 </div>
             )
     }
@@ -205,7 +230,7 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition d'etape suivante pour faire une action
      */
     renderSignalementManagementActions() {
-        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
             return (
                 <div className ="actionsList">
                     <Col md={12}>
@@ -231,12 +256,25 @@ export class SignalementTaskViewer extends React.Component {
     }
 
     /**
+     * La rendition du inline spinner d'action en progrès.
+     */
+    renderInProgressSpinner() {
+        return (
+            <div className="block-inline-spinner">
+                <Col md={12} className="text-center">
+                    <InlineSpinner loading={this.props.actionInProgress} className="inline-spinner"/>
+                </Col>
+            </div>
+        )
+    }
+
+    /**
      * La rendition des buttons d'actions
      */
     renderSignalementManagementValidate() {
-        if (this.state.task.actions && this.props.task.assignee && this.props.task.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
             return (
-                <div>
+                <div className="validation-buttons">
                     <FormGroup controlId="signalement-management.info.cancel">
                         <Button className="cancelButton" bsStyle="default"
                                 onClick={() => this.handleClickButtonCancelTask()}>
@@ -419,7 +457,7 @@ export class SignalementTaskViewer extends React.Component {
 
                 );
             default:
-                console.log("Type of definition undefined");
+                window.signalementMgmt.debug("Type of definition undefined");
         }
     }
 
@@ -594,7 +632,7 @@ export class SignalementTaskViewer extends React.Component {
      * L'action pour fermer la view
      */
     handleClickButtonCancelTask() {
-        this.props.closeIdentify();
+        this.props.closeViewer();
     }
 
     /**
@@ -611,7 +649,7 @@ export class SignalementTaskViewer extends React.Component {
         if(index < this.props.response.features.length -1){
             let id = this.props.response.features[index+1].properties.id;
             if(id){
-                console.log("sigm task  get");
+                window.signalementMgmt.debug("sigm task  get");
                 this.props.getTask(id);
                 this.setState({task: null, index : (index+1)});
             }
@@ -623,7 +661,7 @@ export class SignalementTaskViewer extends React.Component {
         if(index > 0){
             let id = this.props.response.features[index-1].properties.id;
             if(id){
-                console.log("sigm task  get");
+                window.signalementMgmt.debug("sigm task  get");
                 this.props.getTask(id);
                 this.setState({task: null, index : (index-1)});
             }
