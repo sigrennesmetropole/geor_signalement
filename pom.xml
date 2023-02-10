@@ -45,7 +45,7 @@
 		<lombok.version>1.18.6</lombok.version>
 		<minidev.version>2.3</minidev.version>
 		<json.version>20200518</json.version>
-		<jsoup.version>1.12.1</jsoup.version>
+		<jsoup.version>1.15.3</jsoup.version>
 		<itextpdf.version>5.5.13.1</itextpdf.version>
 		<flyingsauver.version>9.1.19</flyingsauver.version>
 		<jtidy.version>r938</jtidy.version>
