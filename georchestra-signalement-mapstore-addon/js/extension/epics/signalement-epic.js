@@ -23,7 +23,8 @@ import {
     setTaskCreationFail,
     initDrawingSupport,
     openPanel,
-    closePanel
+    closePanel,
+    stopDrawingSupport
 } from '../actions/signalement-action';
 import {
     FeatureProjection,
@@ -53,15 +54,14 @@ export const initSignalementEpic = (action$) =>
 	    });
 
 export const openSignalementPanelEpic = (action$, store) =>
-    action$.ofType(TOGGLE_CONTROL)
-        .filter(action => action.control === "signalement" && !!store.getState() && !!signalementSidebarControlSelector(store.getState()))
-        .switchMap(() => {
-
+    action$.ofType(TOGGLE_CONTROL, actions.SIGNALEMENT_LAYER_OPEN_PANEL)
+        .filter(action => action.type === actions.SIGNALEMENT_LAYER_OPEN_PANEL || (action.control === "signalement" && !!store.getState() && !!signalementSidebarControlSelector(store.getState())))
+        .switchMap((action) => {
             let layout = store.getState().maplayout;
             layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: false, ...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH+RIGHT_SIDEBAR_MARGIN_LEFT, boundingMapRect: {...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH+RIGHT_SIDEBAR_MARGIN_LEFT}, boundingSidebarRect: layout.boundingSidebarRect}
             window.signalement.debug("sig panel signalement added to right dockpanels list");
             currentLayout = layout;
-            return Rx.Observable.from([updateDockPanelsList('signalement', 'add', 'right'), openPanel(null), updateMapLayout(layout), initDrawingSupport()]);
+            return Rx.Observable.from([updateDockPanelsList('signalement', 'add', 'right'), openPanel(action?.currentLayer), updateMapLayout(layout), initDrawingSupport()]);
         });
 
 export const closeSignalementPanelEpic = (action$, store) =>
@@ -78,7 +78,7 @@ export const closeSignalementPanelEpic = (action$, store) =>
             layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: false, ...layout.boundingMapRect, right: layout.boundingSidebarRect.right, boundingMapRect: {...layout.boundingMapRect, right: layout.boundingSidebarRect.right}, boundingSidebarRect: layout.boundingSidebarRect}
             window.signalement.debug("sig panel signalement removed from right dockpanels list");
             currentLayout = layout;
-            return Rx.Observable.from(actionsList).concat(Rx.Observable.of(updateMapLayout(layout)));
+            return Rx.Observable.from(actionsList).concat(Rx.Observable.from([updateMapLayout(layout), stopDrawingSupport()]));
         });
 
 export function onOpeningAnotherRightPanel(action$, store) {

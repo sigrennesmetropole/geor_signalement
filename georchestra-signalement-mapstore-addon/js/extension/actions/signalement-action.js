@@ -10,6 +10,7 @@ export const actions = {
 	USER_ME_GET: 'SIGNALEMENT:USER:GET',
 	USER_ME_GOT: 'SIGNALEMENT:USER:GOT',
 	SIGNALEMENT_OPEN_PANEL: 'SIGNALEMENT:PANEL:OPEN',
+	SIGNALEMENT_LAYER_OPEN_PANEL: 'SIGNALEMENT:LAYER:PANEL_OPEN',
 	SIGNALEMENT_CLOSE_PANEL: 'SIGNALEMENT:PANEL:CLOSE',
 	SIGNALEMENT_DRAFT_CREATE: 'SIGNALEMENT:DRAFT:CREATE',
 	SIGNALEMENT_DRAFT_CREATED: 'SIGNALEMENT:DRAFT:CREATED',
@@ -237,6 +238,13 @@ export function loadInitError(message, e) {
 export function openPanel(currentLayer) {
 	return {
 		type: actions.SIGNALEMENT_OPEN_PANEL,
+		currentLayer: currentLayer
+	}
+}
+
+export function openPanelFromLayer(currentLayer) {
+	return {
+		type: actions.SIGNALEMENT_LAYER_OPEN_PANEL,
 		currentLayer: currentLayer
 	}
 }

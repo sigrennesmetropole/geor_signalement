@@ -9,6 +9,7 @@ export class SignalementLayerToolButton extends React.Component {
     static propTypes = {
         contextLayers : PropTypes.array,
         selectedLayer: PropTypes.object,
+        selectedLayers: PropTypes.array,
         isOpen: PropTypes.bool,
         onClick: PropTypes.func,
     };
@@ -16,6 +17,7 @@ export class SignalementLayerToolButton extends React.Component {
     static defaultProps = {
         contextLayers: null,
         selectedLayer: null,
+        selectedLayers: [],
         isOpen: false,
         onClick: () =>{},
     };
@@ -36,7 +38,6 @@ export class SignalementLayerToolButton extends React.Component {
             this.props.contextLayers && this.props.contextLayers.length > 0;
         let selectableLayers = signalableLayer ? 
             this.props.contextLayers.filter( layer => layer.name === this.props.selectedLayers[0].name): [];
-
         if( signalableLayer && selectableLayers.length > 0 ) {
             return (
                 <OverlayTrigger

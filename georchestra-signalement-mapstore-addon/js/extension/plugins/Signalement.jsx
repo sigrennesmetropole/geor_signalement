@@ -22,7 +22,7 @@ import {
     loadAttachmentConfiguration,
     loadLayers,
     loadThemas,
-    openPanel,
+    openPanelFromLayer,
     removeAttachment,
     requestClosing,
     startDrawing,
@@ -46,7 +46,6 @@ const isEnabled = createControlEnabledSelector('signalement');
 
 // custom logging function inside plugin
 window.signalement = { debug: (obj) => {} };
-
 const SignalementPanelComponentConnected = connect((state) => ({
     active: /*isEnabled(state) ||*/ !!isOpen(state),
     attachmentConfiguration: signalementAttachmentConfigurationSelector(state),
@@ -91,7 +90,7 @@ const SignalementLayerToolButtonConnected = connect((state) => ({
     isOpen: isOpen(state),
     state: state
 }), {
-    onClick: openPanel
+    onClick: openPanelFromLayer
 })(SignalementLayerToolButton);
 
 export default createPlugin(name, {
@@ -113,6 +112,8 @@ export default createPlugin(name, {
             action: toggleControl.bind(null, 'signalement', 'enabled')
         },
         TOC: {
+            priority: 1,
+            doNotHide: true,
             name: "signalement",
             target: "toolbar",
             //In case of target: toolbar, selector determine to show or not show the tool (returning true or false).
@@ -123,6 +124,6 @@ export default createPlugin(name, {
             selector: ({ status }) => status === 'LAYER',
             // The component to render. It receives as props the same object passed to the selector function.
             Component: SignalementLayerToolButtonConnected
-        },
+        }
     }
 });
