@@ -44,8 +44,7 @@ signalementapi:build:
     refs:
       - master
       - open/master  
-  tags: 
-   - cdp-rennes  
+
       
 signalementapi:build:master:
   extends: .signalementapi:build
