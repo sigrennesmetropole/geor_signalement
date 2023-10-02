@@ -94,8 +94,7 @@ signalementapi:sonar:master:
   stage: deploy
   image: glregistry.boost.open.global/boost/docker/mvn-node-jdk11-ansible:latest
   cache: {}
-  tags: 
-   - cdp-rennes
+
   script:
     - ls $CI_PROJECT_DIR/georchestra-signalement-api/target/
     - ls $CI_PROJECT_DIR/georchestra-signalement-mapstore*
