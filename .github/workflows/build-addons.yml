@@ -1,0 +1,96 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Create the signalements addons
+on:
+  push:
+    branches: [feature/update_github-workflows]
+  pull_request:
+    branches: [master]
+
+
+jobs:
+  build-mapstore-addon:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./georchestra-signalement-mapstore-addon
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "true"
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12.x"
+        ############
+        # CACHING
+        ##########
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+      - run: npm install
+      - run: npm run ext:build
+      - run: ls 
+      - run: ls dist/
+      - run: ls 
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: Artifacts
+          path: ./georchestra-signalement-mapstore-addon/dist/SignalementExtension.zip
+          retention-days: 365
+
+
+
+
+  build-mapstore-management-addon:
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: ./georchestra-signalement-mapstore-management-addon
+
+      strategy:
+        matrix:
+          node-version: [12.x]
+          # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            submodules: "true"
+        - name: Use Node.js 12.x
+          uses: actions/setup-node@v2
+          with:
+            node-version: "12.x"
+          ############
+          # CACHING
+          ##########
+        - name: Cache dependencies
+          uses: actions/cache@v2
+          with:
+            path: ~/.npm
+            key: npm-${{ hashFiles('package-lock.json') }}
+            restore-keys: npm-
+        - run: npm install
+          working-directory: ./georchestra-signalement-mapstore-management-addon/MapStore2
+        - run: npm install
+        - run: npm run ext:build
+        - run: ls 
+        - run: ls dist/
+        - run: ls 
+        - name: "Upload Artifact"
+          uses: actions/upload-artifact@v3
+          with:
+            name: Artifacts
+            path: ./georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip
+            retention-days: 365
