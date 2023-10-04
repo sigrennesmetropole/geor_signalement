@@ -29,6 +29,8 @@ stages:
   script:
     - mvn $MAVEN_CLI_OPTS -U clean package ${OPTS} -Pprod,mapfishapp-signalement
   stage: build
+  tags: 
+    - iaas
   artifacts:
     paths:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
@@ -44,8 +46,7 @@ signalementapi:build:
     refs:
       - master
       - open/master  
-  tags: 
-   - cdp-rennes  
+
       
 signalementapi:build:master:
   extends: .signalementapi:build
@@ -59,6 +60,8 @@ signalementapi:build:master:
 # Sonar code quality analysis - note a full test coverage report through a jacoco.exec merged file in base project folder
 .signalementapi:sonar:
   stage: test
+  tags: 
+    - iaas  
   allow_failure: true
   script:
     - >
@@ -94,9 +97,10 @@ signalementapi:sonar:master:
 .signalementapi:deploy:
   stage: deploy
   image: glregistry.boost.open.global/boost/docker/mvn-node-jdk11-ansible:latest
-  cache: {}
   tags: 
-   - cdp-rennes
+    - iaas
+  cache: {}
+
   script:
     - ls $CI_PROJECT_DIR/georchestra-signalement-api/target/
     - ls $CI_PROJECT_DIR/georchestra-signalement-mapstore*
