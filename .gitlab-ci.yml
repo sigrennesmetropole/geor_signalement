@@ -60,6 +60,8 @@ signalementapi:build:master:
 # Sonar code quality analysis - note a full test coverage report through a jacoco.exec merged file in base project folder
 .signalementapi:sonar:
   stage: test
+  tags: 
+    - iaas  
   allow_failure: true
   script:
     - >
@@ -95,6 +97,8 @@ signalementapi:sonar:master:
 .signalementapi:deploy:
   stage: deploy
   image: glregistry.boost.open.global/boost/docker/mvn-node-jdk11-ansible:latest
+  tags: 
+    - iaas
   cache: {}
 
   script:
