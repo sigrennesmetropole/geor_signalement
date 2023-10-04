@@ -29,6 +29,8 @@ stages:
   script:
     - mvn $MAVEN_CLI_OPTS -U clean package ${OPTS} -Pprod,mapfishapp-signalement
   stage: build
+  tags: 
+    - iaas
   artifacts:
     paths:
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
