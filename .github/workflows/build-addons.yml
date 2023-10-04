@@ -4,7 +4,7 @@
 name: Create the signalements addons
 on:
   push:
-    branches: [feature/update_github-workflows]
+    branches:
   pull_request:
     branches: [master]
 
