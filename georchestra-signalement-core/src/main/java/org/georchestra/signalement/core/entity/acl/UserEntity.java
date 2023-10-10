@@ -17,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.georchestra.signalement.core.common.AbstractNamedLongId;
 import org.georchestra.signalement.core.common.LongId;
 import org.georchestra.signalement.core.entity.ListToStringConverter;
 
