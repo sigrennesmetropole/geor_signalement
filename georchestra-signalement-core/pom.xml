@@ -48,8 +48,23 @@
 		</dependency>
 
 		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-models</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
 		</dependency>
 
 		<dependency>
@@ -101,21 +116,22 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>io.swagger</groupId>
-				<artifactId>swagger-codegen-maven-plugin</artifactId>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<configuration>
 					<modelPackage>org.georchestra.signalement.core.dto</modelPackage>
 					<inputSpec>resources/swagger/georchestra-signalement.json</inputSpec>
-					<language>spring</language>
-					<library>spring-mvc</library>
-					<generateModelTests>false</generateModelTests>
-					<generateModelDocumentation>false</generateModelDocumentation>
+					<library>spring-boot</library>
+					<generatorName>spring</generatorName>
+					<generateModelTests>true</generateModelTests>
+					<generateModelDocumentation>true</generateModelDocumentation>
 					<generateSupportingFiles>false</generateSupportingFiles>
 					<generateApiDocumentation>false</generateApiDocumentation>
 					<generateApis>false</generateApis>
 					<generateModels>true</generateModels>
 					<configOptions>
 						<dateLibrary>legacy</dateLibrary>
+						<useSwaggerUI>true</useSwaggerUI>
 					</configOptions>
 				</configuration>
 				<executions>
