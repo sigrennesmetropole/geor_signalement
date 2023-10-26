@@ -679,7 +679,7 @@
 				],
 				"summary": "Lister les contextes",
 				"description": "Listes les contexts selon le type",
-				"operationId": "searchContextDescriptions",
+				"operationId": "searchReportingContextDescriptions",
 				"produces": [
 					"application/json"
 				],
@@ -1872,7 +1872,6 @@
 						"description": "Le User à précréé",
 						"required": true,
 						"schema": {
-							"type": "object",
 							"$ref": "#/definitions/User"
 						}
 					}
@@ -2082,7 +2081,6 @@
 						"description": "Les infos sur le UserRoleContext à créer",
 						"required": true,
 						"schema": {
-							"type": "object",
 							"$ref": "#/definitions/UserRoleContext"
 						}
 					}

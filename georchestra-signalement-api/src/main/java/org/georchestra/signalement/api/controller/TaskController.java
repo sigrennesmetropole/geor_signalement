@@ -6,8 +6,6 @@ package org.georchestra.signalement.api.controller;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.Valid;
-
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.api.TaskApi;
 import org.georchestra.signalement.core.dto.ContextType;
@@ -42,7 +40,7 @@ public class TaskController implements TaskApi {
 	}
 
 	@Override
-	public ResponseEntity<Task> createDraft(@Valid ReportingDescription reportingDescription) throws Exception {
+	public ResponseEntity<Task> createDraft(ReportingDescription reportingDescription) throws Exception {
 		return ResponseEntity.ok(taskService.createDraft(reportingDescription));
 	}
 
@@ -53,26 +51,26 @@ public class TaskController implements TaskApi {
 	}
 
 	@Override
-	public ResponseEntity<List<Task>> searchTasks(@Valid String contextName, @Valid String contextType,
-			@Valid String geographicType, @Valid Boolean asAdmin) throws Exception {
+	public ResponseEntity<List<Task>> searchTasks(String contextName, String contextType,
+			String geographicType, Boolean asAdmin) throws Exception {
 		return ResponseEntity
 				.ok(taskService.searchTasks(computeSearchCriteria(contextName, contextType, geographicType, asAdmin)));
 	}
 
 	@Override
-	public ResponseEntity<FeatureCollection> searchGeoJSonTasks(@Valid String contextName, @Valid String contextType,
-			@Valid String geographicType, @Valid Boolean asAdmin) throws Exception {
+	public ResponseEntity<FeatureCollection> searchGeoJSonTasks(String contextName, String contextType,
+			String geographicType, Boolean asAdmin) throws Exception {
 		return ResponseEntity.ok(taskService
 				.searchGeoJSonTasks(computeSearchCriteria(contextName, contextType, geographicType, asAdmin)));
 	}
 
 	@Override
-	public ResponseEntity<FeatureTypeDescription> getGeoJSonTaskProperties(@Valid String contextName) throws Exception {
+	public ResponseEntity<FeatureTypeDescription> getGeoJSonTaskProperties(String contextName) throws Exception {
 		return ResponseEntity.ok(taskService.getGeoJSonTaskFeatureTypeDescription(contextName));
 	}
 
 	@Override
-	public ResponseEntity<Task> startTask(@Valid Task task) throws Exception {
+	public ResponseEntity<Task> startTask(Task task) throws Exception {
 		return ResponseEntity.ok(taskService.startTask(task));
 	}
 
@@ -88,7 +86,7 @@ public class TaskController implements TaskApi {
 	}
 
 	@Override
-	public ResponseEntity<Task> updateTask(@Valid Task task) throws Exception {
+	public ResponseEntity<Task> updateTask(Task task) throws Exception {
 		return ResponseEntity.ok(taskService.updateTask(task));
 	}
 

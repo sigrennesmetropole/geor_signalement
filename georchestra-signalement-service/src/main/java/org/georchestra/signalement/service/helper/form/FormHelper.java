@@ -13,6 +13,7 @@ import java.util.Map;
 import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.form.ProcessFormDefinitionCustomDao;
@@ -206,7 +207,7 @@ public class FormHelper {
 
 	private void fillField(Field field, Object value) {
 		if (value != null) {
-			if (FieldType.LIST == field.getDefinition().getType() && field.getDefinition().isMultiple()) {
+			if (FieldType.LIST == field.getDefinition().getType() && BooleanUtils.isTrue(field.getDefinition().getMultiple())) {
 				fillFieldList(field, value);
 			} else {
 				field.addValuesItem(value.toString());
@@ -246,7 +247,7 @@ public class FormHelper {
 	private void fillMap(FieldDefinition fieldDefinition, Map<String, Object> datas, List<String> values)
 			throws FormConvertException {
 		if (CollectionUtils.isNotEmpty(values)) {
-			if (FieldType.LIST == fieldDefinition.getType() && fieldDefinition.isMultiple()) {
+			if (FieldType.LIST == fieldDefinition.getType() && BooleanUtils.isTrue(fieldDefinition.getMultiple())) {
 				datas.put(fieldDefinition.getName(), values);
 			} else {
 				// il n'y a qu'une valeur car on gère le multiple que pour les listes à choix
