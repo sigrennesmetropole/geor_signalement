@@ -2,7 +2,7 @@ import * as Rx from 'rxjs';
 import axios from 'axios';
 import {head} from 'lodash';
 import {addLayer, changeLayerProperties, updateNode, browseData,selectNode} from '@mapstore/actions/layers';
-import {changeMapInfoState, closeIdentify, FEATURE_INFO_CLICK} from "@mapstore/actions/mapInfo";
+import {changeMapInfoState, closeIdentify, LOAD_FEATURE_INFO} from "@mapstore/actions/mapInfo";
 import {
     actions,
     initSignalementManagementDone,
@@ -43,8 +43,10 @@ let currentLayout;
  * @param {*} store
  */
 export function loadTaskViewerEpic(action$, store) {
-    return action$.ofType(FEATURE_INFO_CLICK)
-        .filter((action) => action.layer === 'signalements' || isSignalementManagementActivateAndSelected(store.getState(), SIGNALEMENT_MANAGEMENT_LAYER_ID))
+    return action$.ofType(LOAD_FEATURE_INFO)
+        .filter((action) => {
+            return action.layer === 'signalements' || isSignalementManagementActivateAndSelected(store.getState(), SIGNALEMENT_MANAGEMENT_LAYER_ID)
+            })
         .switchMap((action) => {
             let responses = (store.getState().mapInfo.responses?.length) ? store.getState().mapInfo.responses[0] : {};
             // si features présentent dans la zone de clic
