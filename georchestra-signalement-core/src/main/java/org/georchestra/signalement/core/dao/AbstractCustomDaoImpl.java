@@ -47,7 +47,7 @@ public abstract class AbstractCustomDaoImpl {
 					path = root;
 				}
 				Expression<String> expression = translateExpression(property, path, builder);
-				if (Boolean.TRUE.equals(sortCriterion.isAsc())) {
+				if (Boolean.TRUE.equals(sortCriterion.getAsc())) {
 					orders.add(builder.asc(expression));
 				} else {
 					orders.add(builder.desc(expression));

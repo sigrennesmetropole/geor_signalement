@@ -12,6 +12,4 @@ import org.georchestra.signalement.service.exception.EMailException;
 public interface MailService {
 
 	void sendMail(MailDescription mailDescription) throws EMailException;
-
-	String getDefaultFrom();
 }

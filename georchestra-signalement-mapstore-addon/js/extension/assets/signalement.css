@@ -20,13 +20,18 @@
     padding-bottom: 0;
 }
 
+.geOrchestra .signalement-panel label,
 .signalement-panel label {
     width: 30%;
 }
 
+.geOrchestra .signalement-panel input,
 .signalement-panel input {
     width: 65%;
     display: inline-block;
+}
+.geOrchestra .signalement-panel input[type=checkbox] {
+    height: 20px;
 }
 
 .signalement-panel .input-group {

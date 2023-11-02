@@ -7,27 +7,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.service.exception.EMailException;
+import org.georchestra.signalement.service.st.mail.EMailConfiguration;
 import org.georchestra.signalement.service.st.mail.MailDescription;
 import org.georchestra.signalement.service.st.mail.MailService;
 import org.jsoup.Jsoup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
@@ -36,37 +31,12 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
-	@Value("${mail.transport.protocol}")
-	private String protocol;
+	private final EMailConfiguration eMailConfiguration;
 
-	@Value("${mail.smtp.host}")
-	private String host;
-
-	@Value("${mail.smtp.auth:false}")
-	private boolean authentification;
-
-	@Value("${mail.smtp.port:25}")
-	private int port;
-
-	@Value("${mail.smtp.user}")
-	private String user;
-
-	@Value("${mail.smtp.password}")
-	private String password;
-
-	@Value("${mail.from}")
-	private String defaultFrom;
-
-	@Value("${mail.smtp.starttls.enable:false}")
-	private boolean ttlsEnable;
-
-	@Value("${mail.debug:false}")
-	private boolean debug;
-
-	@Autowired
-	public JavaMailSender emailSender;
+	private final JavaMailSender emailSender;
 
 	@Override
 	public void sendMail(MailDescription mailDescription) throws EMailException {
@@ -75,7 +45,7 @@ public class MailServiceImpl implements MailService {
 		}
 
 		if (StringUtils.isEmpty(mailDescription.getFrom())) {
-			mailDescription.setFrom(getDefaultFrom());
+			mailDescription.setFrom(eMailConfiguration.getDefaultFrom());
 		}
 		try {
 			MimeMessage message = emailSender.createMimeMessage();
@@ -141,34 +111,8 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 
-	@Override
-	public String getDefaultFrom() {
-		return defaultFrom;
-	}
-
 	private String extractPlainText(String text) {
 		return Jsoup.parse(text).wholeText();
 	}
 
-	@Bean
-	public JavaMailSender getJavaMailSender() {
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setProtocol(protocol);
-		mailSender.setHost(host);
-		mailSender.setPort(port);
-		mailSender.setDefaultEncoding(StandardCharsets.UTF_8.name());
-
-		if (authentification) {
-			mailSender.setUsername(user);
-			mailSender.setPassword(password);
-		}
-
-		Properties props = mailSender.getJavaMailProperties();
-		props.put("mail.transport.protocol", protocol);
-		props.put("mail.smtp.auth", Boolean.toString(authentification));
-		props.put("mail.smtp.starttls.enable", Boolean.toString(ttlsEnable));
-		props.put("mail.debug", Boolean.toString(debug));
-
-		return mailSender;
-	}
 }
