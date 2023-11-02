@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.georchestra.signalement.api.listener;
+package org.georchestra.signalement.service.listener;
 
 import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;

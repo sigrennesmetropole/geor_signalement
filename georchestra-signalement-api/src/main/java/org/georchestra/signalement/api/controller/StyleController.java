@@ -2,7 +2,9 @@ package org.georchestra.signalement.api.controller;
 
 import io.swagger.annotations.Api;
 import org.georchestra.signalement.api.StylesApi;
-import org.georchestra.signalement.core.dto.*;
+import org.georchestra.signalement.core.dto.ProcessStyling;
+import org.georchestra.signalement.core.dto.StyleContainer;
+import org.georchestra.signalement.core.dto.StylePageResult;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.sm.StyleService;
 import org.springframework.beans.factory.annotation.Autowired;

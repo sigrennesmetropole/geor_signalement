@@ -23,16 +23,15 @@ import org.springframework.test.context.TestPropertySource;
  *
  */
 @SpringBootTest(classes = StarterSpringBootTestApplication.class)
-@ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
-		"org.georchestra.signalement.core" })
+@ComponentScan({ "org.georchestra.signalement.service", "org.georchestra.signalement.core" })
 @TestPropertySource(value = { "classpath:signalement.properties", "classpath:signalement-common.properties" })
-public class FormDefinitionHelperTest {
+class FormDefinitionHelperTest {
 
 	@Autowired
 	private FormDefinitionHelper formDefinitionHelper;
 
 	@Test
-	public void testDehydrateHydrate() throws FormDefinitionException {
+	void testDehydrateHydrate() throws FormDefinitionException {
 		FormDefinition formDefinition = new FormDefinition();
 		FieldDefinition f1 = new FieldDefinition();
 		f1.setType(FieldType.STRING);

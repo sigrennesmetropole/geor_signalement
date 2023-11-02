@@ -32,13 +32,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.TestPropertySource;
+
 /**
  * @author FNI18300
  *
  */
 @SpringBootTest(classes = StarterSpringBootTestApplication.class)
-@ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
-		"org.georchestra.signalement.core" })
+@ComponentScan({ "org.georchestra.signalement.service", "org.georchestra.signalement.core" })
 @TestPropertySource(value = { "classpath:signalement.properties", "classpath:signalement-common.properties" })
 class GenerationConnectorTest {
 
@@ -81,7 +81,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateInitiator() {
+	void generateFileBodyTemplateInitiator() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("initiator-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -94,7 +94,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateAssigneMail() {
+	void generateFileBodyTemplateAssigneMail() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("assignee-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -107,7 +107,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateInitiatorCancelled() {
+	void generateFileBodyTemplateInitiatorCancelled() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("initiator-cancelled-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -120,7 +120,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateInitiatorCompletedMail() {
+	void generateFileBodyTemplateInitiatorCompletedMail() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("initiator-completed-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -133,7 +133,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateInitiatorHandledMail() {
+	void generateFileBodyTemplateInitiatorHandledMail() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("initiator-handled-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -145,11 +145,10 @@ class GenerationConnectorTest {
 		}
 	}
 
-
 	//////////////////////////
 
 	@Test
-	public void generateFileBodyTemplateRVA_Initiator() {
+	void generateFileBodyTemplateRVA_Initiator() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -162,7 +161,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateRVA_AssigneMail() {
+	void generateFileBodyTemplateRVA_AssigneMail() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_assignee-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -175,7 +174,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateRVA_InitiatorCancelled() {
+	void generateFileBodyTemplateRVA_InitiatorCancelled() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-cancelled-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -188,7 +187,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateRVA_InitiatorCompletedMail() {
+	void generateFileBodyTemplateRVA_InitiatorCompletedMail() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-completed-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -201,7 +200,7 @@ class GenerationConnectorTest {
 	}
 
 	@Test
-	public void generateFileBodyTemplateRVA_InitiatorHandledMail() {
+	void generateFileBodyTemplateRVA_InitiatorHandledMail() {
 		try {
 			EmailDataModel emailDataModel = getEmailDataModel("RVA_initiator-handled-mail.html");
 			DocumentContent document = generationConnector.generateDocument(emailDataModel);
@@ -212,7 +211,6 @@ class GenerationConnectorTest {
 			fail("failed to generate:" + e.getMessage());
 		}
 	}
-
 
 	private EmailDataModel getEmailDataModel(String template) {
 		PointReportingEntity entity = new PointReportingEntity();

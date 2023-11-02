@@ -18,7 +18,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.common.DocumentContent;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.reporting.ReportingDao;
-import org.georchestra.signalement.core.dto.*;
+import org.georchestra.signalement.core.dto.Attachment;
+import org.georchestra.signalement.core.dto.AttachmentConfiguration;
+import org.georchestra.signalement.core.dto.Feature;
+import org.georchestra.signalement.core.dto.FeatureCollection;
+import org.georchestra.signalement.core.dto.FeatureTypeDescription;
+import org.georchestra.signalement.core.dto.Form;
+import org.georchestra.signalement.core.dto.GeographicType;
+import org.georchestra.signalement.core.dto.ReportingDescription;
+import org.georchestra.signalement.core.dto.Status;
+import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity;
 import org.georchestra.signalement.service.dto.TaskSearchCriteria;
@@ -104,9 +113,6 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	@Autowired
 	private GeoJSonHelper geoJSonHelper;
-
-	@Autowired
-	private TaskService me;
 
 	@Override
 	public Form lookupDrafForm(String contextDescriptionName) throws FormDefinitionException {
@@ -576,7 +582,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	@PostConstruct
 	public void initialize() {
-		processEngine.getRuntimeService().addEventListener((ActivitiEventListener) me);
+		processEngine.getRuntimeService().addEventListener(this);
 	}
 
 	@Override

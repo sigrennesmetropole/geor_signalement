@@ -4,11 +4,9 @@
 package org.georchestra.signalement.service.helper;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.georchestra.signalement.StarterSpringBootTestApplication;
 import org.georchestra.signalement.service.helper.geojson.StyleHelper;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
  *
  */
 @SpringBootTest(classes = StarterSpringBootTestApplication.class)
-@ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
+@ComponentScan({ "org.georchestra.signalement.service",
 		"org.georchestra.signalement.core" })
 @TestPropertySource(value = { "classpath:signalement.properties", "classpath:signalement-common.properties" })
 class StyleHelperTest {

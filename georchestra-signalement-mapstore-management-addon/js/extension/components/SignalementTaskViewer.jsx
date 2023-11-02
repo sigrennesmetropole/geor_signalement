@@ -5,8 +5,15 @@ import Message from '@mapstore/components/I18N/Message';
 import LoadingSpinner from '@mapstore/components/misc/LoadingSpinner';
 import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 
+const SignalementFormField = (props) => {
+    const {index, indexField, children} = props;
+    return (
+        <div key={`div.section.${index}.field.${indexField}`} className="row form-field">
+            {children}
+        </div>
+    )
+}
 export class SignalementTaskViewer extends React.Component {
-
 
     static propTypes = {
         features: PropTypes.array,
@@ -107,9 +114,9 @@ export class SignalementTaskViewer extends React.Component {
                     {this.renderMessage()}
                     {this.renderSignalementManagementInfo()}
                     {this.renderSignalementManagementForm()}
-                    {this.renderInProgressSpinner()}
                     {this.renderSignalementManagementClaim()}
                     {this.renderSignalementManagementActions()}
+                    {this.renderInProgressSpinner()}
                     {this.renderSignalementManagementValidate()}
                 </Form>
             )
@@ -230,9 +237,9 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition d'etape suivante pour faire une action
      */
     renderSignalementManagementActions() {
-        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.isTaskAssignToCurrentUser()) {
             return (
-                <div className ="actionsList">
+                <div className="actionsList row">
                     <Col md={12}>
                         <FormGroup controlId="signalement-management.info.actions">
                             <ControlLabel className="col-sm-4"><Message msgId="signalement-management.actions"/></ControlLabel>
@@ -272,49 +279,54 @@ export class SignalementTaskViewer extends React.Component {
      * La rendition des buttons d'actions
      */
     renderSignalementManagementValidate() {
-        if (this.state.task.actions && this.state.task.assignee && this.state.task.assignee === this.props.user.login) {
+        if (this.state.task.actions && this.isTaskAssignToCurrentUser()) {
             return (
                 <div className="validation-buttons">
-                    <FormGroup controlId="signalement-management.info.cancel">
                         <Button className="cancelButton" bsStyle="default"
                                 onClick={() => this.handleClickButtonCancelTask()}>
                             <Message msgId="signalement-management.cancel"/>
                         </Button>
-                    </FormGroup>
 
-                    <FormGroup controlId="signalement-management.info.update">
                         <Button className="updateButton" bsStyle="info"
                                 onClick={() => this.handleClickButtonUpdateTask()}>
                             <Message msgId="signalement-management.validate"/>
                         </Button>
-                    </FormGroup>
                 </div>
             )
         }
     }
 
 
+    /**
+    * isTaskAssignToCurrentUser, méthode utilisée pour vérifier si la tâche est assignée à l'utilisateur courant
+    */
+    isTaskAssignToCurrentUser() {
+        return this.state.task.assignee && this.state.task.assignee === this.props.user.login;
+    }
+
+    /**
+    * isSectionsAvailable, méthode utilisée pour vérifier si une ou plusieurs sections est disponible pour une tâche
+    */
+    isSectionsAvailable() {
+        return this.state.task && this.state.task.form && this.state.task.form.sections;
+    }
 
     /**
      * La rendition du formulaire du signalement
      */
     renderSignalementManagementForm() {
-        if(this.state.task && this.state.task.form && this.state.task.form.sections) {
+        if(this.isSectionsAvailable() && this.isTaskAssignToCurrentUser() && this.state.task.actions) {
             return (
                 <div>
-                    <fieldset>
-                        <div>
-                            {this.state.task.form.sections.map((section, index) => {
-                                return (
-                                    <fieldset key={index}>
-                                        <legend>{section.label} </legend>
-                                        {this.renderSection(section, index)}
-                                    </fieldset>
-                                )
-                            })}
-                        </div>
-                    </fieldset>
-                </div>
+                    {this.state.task.form.sections.map((section, index) => {
+                        return (
+                            <fieldset key={index}>
+                                <legend>{section.label} </legend>
+                                {this.renderSection(section, index)}
+                            </fieldset>
+                        )
+                    })}
+·                </div>
             )
         }
     }
@@ -342,7 +354,7 @@ export class SignalementTaskViewer extends React.Component {
 
             case 'LONG':
                 return (
-                    <div key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                    <SignalementFormField index={index} indexField={indexField}>
                         <FormGroup controlId={`section.${index}.field.${indexField}`} >
                             <ControlLabel className="col-sm-4">{field.definition.label} {field.definition.required ? "*" : ""}
                             </ControlLabel>
@@ -367,11 +379,11 @@ export class SignalementTaskViewer extends React.Component {
                                 </div>
                             </div>
                         </FormGroup>
-                    </div>
+                    </SignalementFormField>
                 );
             case 'DOUBLE':
                 return (
-                    <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                    <SignalementFormField index={index} indexField={indexField}>
                         <FormGroup controlId={`section.${index}.field.${indexField}`}>
                             <ControlLabel className="col-sm-4">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                             <div className="col-sm-5">
@@ -394,13 +406,13 @@ export class SignalementTaskViewer extends React.Component {
                                 }
                             </div>
                         </div>
-                    </div>
+                    </SignalementFormField>
                 );
             case 'STRING':
                 return (this.renderFieldString(field, index, indexField, sectionReadOnly))
             case 'DATE':
                 return (
-                    <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                    <SignalementFormField index={index} indexField={indexField}>
                         <FormGroup controlId={`section.${index}.field.${indexField}`}>
                             <ControlLabel className="col-sm-4">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                             <div className="col-sm-5">
@@ -413,11 +425,11 @@ export class SignalementTaskViewer extends React.Component {
                                 />
                             </div>
                         </FormGroup>
-                    </div>
+                    </SignalementFormField>
                 );
             case 'BOOLEAN':
                 return (
-                    <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                    <SignalementFormField index={index} indexField={indexField}>
                         <FormGroup controlId={`section.${index}.field.${indexField}`}>
                             <ControlLabel className="col-sm-4">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                             <div className="col-sm-5">
@@ -430,11 +442,11 @@ export class SignalementTaskViewer extends React.Component {
                                 />
                             </div>
                         </FormGroup>
-                    </div>
+                    </SignalementFormField>
                 );
             case 'LIST':
                 return (
-                    <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                    <SignalementFormField index={index} indexField={indexField}>
                         <FormGroup controlId={`section.${index}.field.${indexField}`}>
                             <ControlLabel className="col-sm-4">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                             <div className="col-sm-5">
@@ -453,7 +465,7 @@ export class SignalementTaskViewer extends React.Component {
                                 </FormControl>
                             </div>
                         </FormGroup>
-                    </div>
+                    </SignalementFormField>
 
                 );
             default:
@@ -468,7 +480,7 @@ export class SignalementTaskViewer extends React.Component {
 
         if (field.definition.extendedType === "textarea") {
             return (
-                <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                <SignalementFormField index={index} indexField={indexField}>
                     <FormGroup controlId={`section.${index}.field.${indexField}`}>
                         <ControlLabel className="col-sm-4">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                         <div className="col-sm-7">
@@ -492,11 +504,11 @@ export class SignalementTaskViewer extends React.Component {
                             </div>
                         </div>
                     </FormGroup>
-                </div>
+                </SignalementFormField>
             )
         } else {
             return (
-                <div  key={`div.section.${index}.field.${indexField}`} className="form-group row">
+                <SignalementFormField index={index} indexField={indexField}>
                     <FormGroup controlId={`section.${index}.field.${indexField}`}>
                         <ControlLabel className="col-sm-4">{field.definition.label} {field.definition.required ? "*" : ""}</ControlLabel>
                         <div className="col-sm-5">
@@ -519,7 +531,7 @@ export class SignalementTaskViewer extends React.Component {
                             </div>
                         </div>
                     </FormGroup>
-                </div>
+                </SignalementFormField>
             )
         }
     }

@@ -14,7 +14,21 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.core.dao.acl.ContextDescriptionDao;
 import org.georchestra.signalement.core.dao.styling.ProcessStylingCustomDao;
 import org.georchestra.signalement.core.dto.*;
+import org.georchestra.signalement.core.dto.Feature;
+import org.georchestra.signalement.core.dto.FeatureCollection;
 import org.georchestra.signalement.core.dto.FeatureCollection.TypeEnum;
+import org.georchestra.signalement.core.dto.FeatureProperty;
+import org.georchestra.signalement.core.dto.FeatureType;
+import org.georchestra.signalement.core.dto.FeatureTypeDescription;
+import org.georchestra.signalement.core.dto.GeographicType;
+import org.georchestra.signalement.core.dto.Geometry;
+import org.georchestra.signalement.core.dto.GeometryType;
+import org.georchestra.signalement.core.dto.LineString;
+import org.georchestra.signalement.core.dto.Point;
+import org.georchestra.signalement.core.dto.PointG;
+import org.georchestra.signalement.core.dto.Polygon;
+import org.georchestra.signalement.core.dto.Style;
+import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.styling.ProcessStylingEntity;
 import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
@@ -79,7 +93,7 @@ public class GeoJSonHelper {
         } else {
             geometry = new Point();
             geometry.setType(GeometryType.POINT);
-            List<Point2D> points2D = convertPoints(type, points);
+            List<List<BigDecimal>> points2D = convertPoints(type, points);
             if (CollectionUtils.isNotEmpty(points2D)) {
                 ((Point) geometry).setCoordinates(points2D.get(0));
             }
@@ -149,12 +163,12 @@ public class GeoJSonHelper {
 
 
 
-    protected List<Point2D> convertPoints(GeographicType type, List<PointG> points) {
-        List<Point2D> result = null;
+    protected List<List<BigDecimal>> convertPoints(GeographicType type, List<PointG> points) {
+        List<List<BigDecimal>> result = null;
         if (CollectionUtils.isNotEmpty(points)) {
             result = new ArrayList<>();
             for (PointG point : points) {
-                Point2D point2D = new Point2D();
+                List<BigDecimal> point2D = new ArrayList<>();
                 point2D.add(new BigDecimal(point.getX()));
                 point2D.add(new BigDecimal(point.getY()));
                 result.add(point2D);

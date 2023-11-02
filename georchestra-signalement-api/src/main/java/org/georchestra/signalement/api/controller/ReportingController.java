@@ -8,8 +8,6 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.Valid;
-
 import org.apache.commons.io.FileUtils;
 import org.georchestra.signalement.api.ReportingApi;
 import org.georchestra.signalement.core.common.DocumentContent;
@@ -52,7 +50,7 @@ public class ReportingController implements ReportingApi {
 	private ContextDescriptionService contextDescriptionService;
 
 	@Override
-	public ResponseEntity<Attachment> uploadDocument(UUID uuid, @Valid MultipartFile file) throws Exception {
+	public ResponseEntity<Attachment> uploadDocument(UUID uuid, MultipartFile file) throws Exception {
 		File document = java.io.File.createTempFile("upload", ".doc");
 		FileUtils.copyInputStreamToFile(file.getInputStream(), document);
 		DocumentContent content = new DocumentContent(file.getOriginalFilename(), file.getContentType(), document);
@@ -72,8 +70,8 @@ public class ReportingController implements ReportingApi {
 	}
 
 	@Override
-	public ResponseEntity<List<ContextDescription>> searchContextDescriptions(@Valid String contextType,
-			@Valid String geographicType) throws Exception {
+	public ResponseEntity<List<ContextDescription>> searchReportingContextDescriptions(String contextType,
+			String geographicType) throws Exception {
 		ContextDescriptionSearchCriteria searchCriteria = new ContextDescriptionSearchCriteria();
 		if (contextType != null) {
 			searchCriteria.setContextType(ContextType.valueOf(contextType));
@@ -96,7 +94,7 @@ public class ReportingController implements ReportingApi {
 	}
 	
 	@Override
-	public ResponseEntity<Form> lookupDrafForm(@Valid String contextDescriptionName) throws Exception {
+	public ResponseEntity<Form> lookupDrafForm(String contextDescriptionName) throws Exception {
 		return ResponseEntity.ok(taskService.lookupDrafForm(contextDescriptionName));
 	}
 
