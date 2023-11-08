@@ -17,11 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -62,7 +60,7 @@ public class AdministrationController implements AdministrationApi {
 
 	@PreAuthorize("@authentificationHelper.isAdmin()")
 	@Override
-	public ResponseEntity<Boolean> updateProcessDefinition(String deploymentName, @Valid MultipartFile file)
+	public ResponseEntity<Boolean> updateProcessDefinition(String deploymentName, MultipartFile file)
 			throws Exception {
 		File document = java.io.File.createTempFile("upload", ".bpmn");
 		FileUtils.copyInputStreamToFile(file.getInputStream(), document);
@@ -102,7 +100,7 @@ public class AdministrationController implements AdministrationApi {
 	 * @throws URISyntaxException
 	 */
 	@RequestMapping(value = "/proxy", method = RequestMethod.GET)
-	public ResponseEntity<Void> proxy(@RequestParam(value = "url", required = false) String url)
+	public ResponseEntity<Void> proxy(String url)
 			throws URISyntaxException {
 		URI frontURI = new URI(url);
 		HttpHeaders httpHeaders = new HttpHeaders();
