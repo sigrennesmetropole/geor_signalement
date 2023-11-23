@@ -9,7 +9,8 @@ const initialState = {
     user: null,
     context: [],
     status: status.NOOP,
-    tabularViewOpen: false
+    tabularViewOpen: false,
+    taskViewerOpen: false
 }
 
 export default (state = initialState, action) => {
