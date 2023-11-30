@@ -1,10 +1,34 @@
-# addon-signalement
+# Addon-signalement
 
-## I - Construction de l'application
+## I - Généralités
 
-Le projet _git_ est construit comme suit :
+Le présent projet est destiné à permettre la gestion des signalements "spacialisés" et leur suivi au travers de workflow.
 
-- `docker` : ce répertoire contient des propositions de fichiers Dockerfile pour la construction/modification des images dockers ainsi  qu'une proposition pour le fichier _docker-compose.yml_
+"Spacialisé" signifie ici que les signalements sont dessinés sous forme d'un polygone d'une ligne ou d'un point.
+
+Les signalements peuvent être réalisés :
+
+- Sur une couche : dans ce cas on rattache le signalement à un objet de la couche
+- Sur un thème : dans ce cas le signalement n'est pas rattaché à une couche.
+
+**/!\ Remarque :** un exemple de configuration d'un nouveau contexte est disponible [ici](readme/README_EXEMPLE.md)
+
+Le présent projet met à disposition :
+
+* Un **backend** ('signalement-api')
+* Une **application back-office** ('front-management' mais ce composant est souvent appelé 'signalement-admin' ou 'signalement-bo')
+
+  * Le manuel d'utilisation du back-office est accessible [ici](readme/README_BACKOFFICE.md)
+  
+* Un **plugin MapStore pour la déclaration des signalements** ('mapstore-addon')
+* Un **plugin MapStore pour le suivi de ces déclarations** ('mapstore-management-addon')
+
+
+## II - Construction de l'application
+
+Le projet *git* est construit comme suit :
+
+- `docker` : ce répertoire contient des propositions de fichiers Dockerfile pour la construction/modification des images dockers ainsi  qu'une proposition pour le fichier *docker-compose.yml*
 - `georchestra-signalement-api` : il s'agit du sous-projet maven contenant l'application et les controleurs
 - `georchestra-signalement-core` : il s'agit du sous-projet maven contenant les entités et les DAO
 - `georchestra-signalement-service` : il s'agit du sous-projet maven contenant les services métiers, les services techniques
@@ -16,6 +40,7 @@ Le projet _git_ est construit comme suit :
   - `swagger`qui contient le fichier swagger permettant de générer l'ensemble des services REST du back-office
   
 Le back-office est construit à partir de la commande maven
+
 `mvn -DskipTest package`
 
 Le résultat de cette construction est :
@@ -24,19 +49,27 @@ Le résultat de cette construction est :
 * Un fichier `[projet]/georchestra-signalement-api/target/georchestra-signalement-api-1.0-SNAPSHOT-addon.zip`contenant l'addon MapfishApp
 * Un fichier `[projet]/georchestra-signalement-api/target/georchestra-signalement-api-1.0-SNAPSHOT-extension.zip`contenant l'addon Mapstore
 
-## II - Installation
+## III - Installation
 
 L'addon signalement est conçu pour s'installer au sein d'une installation GeOrchestra existante mais la partie "backend" est indépendante de GeOrchestra.
 
-#### II.1 - Base de données
+### III.1 - Intégration *gitHub Rennes métropole*
 
-##### II.1.a Initialisation
+Lors de la mise à jour du repository git `https://github.com/sigrennesmetropole/geor_signalement`, des actions Gits sont déclenchées afin :
+
+- De builder les différents composants
+- De pousser sur `https://hub.docker.com/r/sigrennesmetropole/geor_signalement` les images dockers du backend et de l'application back-office
+- De déposer dans les artifacts les plugins MapStore sous forme de fichier zip téléchargeable
+
+### III.1 - Base de données
+
+#### III.1.a Initialisation
 
 L'installation peut être réalisée soit :
 * Dans une base de données dédiée
 * Dans un schéma d'une base de données existantes
 
-Dans tous les cas, il faut en premier lieu créer un utilisateur Postgres _signalement_.
+Dans tous les cas, il faut en premier lieu créer un utilisateur Postgres *signalement*.
 
 ```sql
 CREATE USER signalement WITH
@@ -64,8 +97,8 @@ CREATE DATABASE signalement
 Il faut ensuite exécuter le script `[projet]/resources/sql/signalement-initialisation.sql` en tant qu'administrateur postgres.
 
 Ce script réalise les opérations suivantes :
-* Création d'un schéma _signalement_
-* Modification du user _signalement_ afin de lui affecter un search_path à _signalement,public_
+* Création d'un schéma *signalement*
+* Modification du user *signalement* afin de lui affecter un search_path à _signalement,public_
 * Création des extensions geospatiales nécessaires dans le schéma _signalement_
 * Création des tables, index, séquences dans le schéma
 
@@ -73,13 +106,14 @@ Ce script réalise les opérations suivantes :
 
 **Remarque 2**: il peut survenir au démarrage des erreurs "activity" (mention de l'absence de la colonne _version_ dans une table donnée par exemple). Ces erreurs proviennent en général des montées successives de schémas de la librairie. Il suffit donc de redémarrer l'application jusqu'à disparition de ces erreurs.
 
-###### II.1.b Migration 1.3
+#### III.1.b Migration 1.3
 
-Si un version inférieure à la 1.3 est déjà installée, il est nécessaire de jouer le script `[projet]/resources/sql/signalemen
-t-1.3.sql` afin de mettre à jour le schéma.
-*### II.2 - Déploiement de l'application _back-office_
+Si un version inférieure à la 1.3 est déjà installée, il est nécessaire de jouer le script `[projet]/resources/sql/signalement-1.3.sql` afin de mettre à jour le schéma.
+
+### III.2 - Déploiement de l'application *backend*
 
 Le back-office peut être démarrer :
+
 * Soit dans un container Tomcat 9.
 
 Il suffit alors de déposer le fichier WAR produit dans le répertoire webapps de Tomcat.
@@ -102,11 +136,14 @@ java -Djava.io.tmpdir=/tmp/jetty \
 java -jar signalement.jar
 ```
 
-**Remarque**: attention comme indiqué plus haut, l'application utilise la librairie "activity" qui créé ses propres tables au démarrage de l'application. Faut d'une configuration adéquate, ces tables peuvent atterrir dans le mauvais schéma. Il est donc important de dérouler le chapitre **II.1** avant toute chose.
+**Remarque**: attention comme indiqué plus haut, l'application utilise la librairie "activity" qui créé ses propres tables au démarrage de l'application. Faut d'une configuration adéquate, ces tables peuvent atterrir dans le mauvais schéma. Il est donc important de dérouler le chapitre **III.1** avant toute chose.
 
 La configuration du back-office de trouve dans le fichier `signalement.properties`. Les principales propriétés sont :
 
 ```java
+## Version de l'application
+application.version=V0.0.1
+
 # TEMPORARY DIRECTORY
 temporary.directory=${java.io.tmpdir}/signalement
 
@@ -115,22 +152,34 @@ logging.level.org.springframework=DEBUG
 logging.level.org.georchestra=DEBUG
 
 # SERVER 
-server.port=<port applicatif pour l'exécution en springboot>
+server.port={{signalement_server_port}}
+#spring.main.web-application-type=none
 
 # BDD
-spring.datasource.url=jdbc:postgresql://localhost:5432/signalement?ApplicationName=signalement
-spring.datasource.username=signalement
-spring.datasource.password=signalement
+spring.datasource.url=jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?ApplicationName=signalement
+spring.datasource.username={{signalement_db_user}}
+spring.datasource.password={{signalement_db_password}}
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.properties.hibernate.dialect = org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+#spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults = false
 
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=false
+# Hibernate ddl auto (create, create-drop, validate, update)
+spring.jpa.hibernate.ddl-auto=update
+
+# SECURITY
+server.servlet.session.cookie.secure=true
+#server.servlet.session.cookie.http-only=true
+#server.servlet.session.tracking-modes=cookie
+
 spring.security.user.name=admin
-spring.security.user.password={noop}<mot de passe admin>
+spring.security.user.password={noop}{{signalement_admin_password}}
 spring.security.user.roles=USER
 
-georchesta.role.administrator=ROLE_ADMINISTRATOR
+georchestra.role.administrator=ROLE_ADMINISTRATOR
 
 # UPLOAD
 # Taille maximum des fichiers à importer
@@ -144,22 +193,22 @@ attachment.mime-types=image/png,image/jpeg,image/tiff,application/pdf,text/plain
 
 # EMAIL
 mail.transport.protocol=smtp
-mail.smtp.host=<host>
+mail.smtp.host=${smtpHost}
 mail.smtp.auth=false
-mail.smtp.port=<port>
+mail.smtp.port=${smtpPort}
 mail.smtp.user=
 mail.smtp.password=
 mail.smtp.starttls.enable=true
 mail.debug=false
-mail.from=signalement@rennesmetropole.fr
+mail.from=${administratorEmail}
 
 #LDAP
-spring.ldap.urls=ldap://<host georchestra ldap>:<port>
-spring.ldap.base=<la racine dn par exemple dc=georchestra,dc=org>
-spring.ldap.username=<dn d'un compte ayant de droit de lecture sur le ldap par exemple cn=admin,dc=georchestra,dc=org>
-spring.ldap.password=<mot de passe>
+spring.ldap.urls=${ldapScheme}://${ldapHost}:${ldapPort}
+spring.ldap.base=${ldapBaseDn}
+spring.ldap.username=${ldapAdminDn}
+spring.ldap.password=${ldapAdminPassword}
 
-ldap.user.searchBase=ou=users
+ldap.user.searchBase=${ldapUsersRdn}
 ldap.objectClass=person
 ldap.attribute.login=cn
 ldap.attribute.firstName=givenname
@@ -174,9 +223,36 @@ freemarker.basePackage=models
 freemarker.cssFile=
 freemarker.fontsPath=fonts
 
+## CONTEXT FRONT CONFIGURATION ##
+
+#MAP FLOW
+flow.url=https://public.sig.rennesmetropole.fr/geowebcache/service/wmts
+flow.matrixSet=EPSG:3857
+flow.version=1.0.0
+flow.format=image/png
+flow.projection=EPSG:3857
+flow.layer=ref_fonds:pvci
+flow.style=
+flow.matrixId=EPSG:3857
+
+#MAP START VIEW
+view.zoom=11
+
+#CENTER OF THE VIEW
+view.x=-1.651
+view.y=48.119
+
+#COLOR HEXADECIMAL(RED,GREEN,BLUE,ALPHA/OPACITY)
+color.fill=#2828284D
+color.fill-hover=#565656B3
+color.stroke=#28282888
+color.stroke-hover=#282828FF
+
+## END OF CONTEXT FRONT CONFIGURATION ##
+
 ```
 
-#### II.3 - Déploiement de l'addon MapfishApp
+### III.3 - Déploiement de l'addon MapfishApp
 
 Le déploiement de l'addon MapfishApp est réalisé en dézippant le fichier `georchestra-signalement-api-1.0-SNAPSHOT-extension.zip` dans le répertoire `[georchestra]/config/mapfishapp/addons`.
 
@@ -188,13 +264,14 @@ Il faut ensuite modifier la propriété `signalementURL` présente dans fichier 
 	},
 ```
 
-#### II.4 - Déploiement de l'addon Mapstore`
+### III.4 - Déploiement des addons Mapstore
 
-*TODO*
+Le déploiement des plugins MapStore est réalisé en utilisant l'interface d'administration de MapStore permettant de créer des contextes en déposant les zip buildés.
+
 
 ## III - Configuration
 
-#### III.1 - Gestion des droits 
+### III.1 - Gestion des droits 
 
 ![Gestion des contextes et des droits](readme/UserRole.png)
 
@@ -210,7 +287,7 @@ Un utilisateur peut être associé par le biais de la classe _UserRoleContext_ :
 * A une liste de couples (rôle, context)
 * A une liste de triplets (rôle, context, aire géographique)
 
-#### III.2 - Configuration des champs de formulaire d'une étape
+### III.2 - Configuration des champs de formulaire d'une étape
 
 ![Gestion des formulaires](readme/FormDefinition.png)
 
