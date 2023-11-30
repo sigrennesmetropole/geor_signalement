@@ -8,8 +8,8 @@ Le présent projet est destiné à permettre la gestion des signalements "spacia
 
 Les signalements peuvent être réalisés :
 
-- Sur une couche : dans ce cas on rattache le signalement à un objet de la couche
-- Sur un thème : dans ce cas le signalement n'est pas rattaché à une couche.
+* Sur une couche : dans ce cas on rattache le signalement à un objet de la couche
+* Sur un thème : dans ce cas le signalement n'est pas rattaché à une couche.
 
 **/!\ Remarque :** un exemple de configuration d'un nouveau contexte est disponible [ici](readme/README_EXEMPLE.md)
 
@@ -18,8 +18,8 @@ Le présent projet met à disposition :
 * Un **backend** ('signalement-api')
 * Une **application back-office** ('front-management' mais ce composant est souvent appelé 'signalement-admin' ou 'signalement-bo')
 
-  * Le manuel d'utilisation du back-office est accessible [ici](readme/README_BACKOFFICE.md)
-  
+    * Le manuel d'utilisation du back-office est accessible [ici](readme/README_BACKOFFICE.md)
+    
 * Un **plugin MapStore pour la déclaration des signalements** ('mapstore-addon')
 * Un **plugin MapStore pour le suivi de ces déclarations** ('mapstore-management-addon')
 
@@ -28,16 +28,16 @@ Le présent projet met à disposition :
 
 Le projet *git* est construit comme suit :
 
-- `docker` : ce répertoire contient des propositions de fichiers Dockerfile pour la construction/modification des images dockers ainsi  qu'une proposition pour le fichier *docker-compose.yml*
-- `georchestra-signalement-api` : il s'agit du sous-projet maven contenant l'application et les controleurs
-- `georchestra-signalement-core` : il s'agit du sous-projet maven contenant les entités et les DAO
-- `georchestra-signalement-service` : il s'agit du sous-projet maven contenant les services métiers, les services techniques
-- `mapfish-addon` : il s'agit des sources de l'addon pour mapfishapp
-- `mapstore-addon` :  il s'agit des sources de l'addon pour mapstore
-- `readme` : les données nécessaires au présent document
-- `resources` :  les resources avec notamment :
-  - `sql` qui contient les fichiers SQL d'initialisation
-  - `swagger`qui contient le fichier swagger permettant de générer l'ensemble des services REST du back-office
+* `docker` : ce répertoire contient des propositions de fichiers Dockerfile pour la construction/modification des images dockers ainsi  qu'une proposition pour le fichier *docker-compose.yml*
+* `georchestra-signalement-api` : il s'agit du sous-projet maven contenant l'application et les controleurs
+* `georchestra-signalement-core` : il s'agit du sous-projet maven contenant les entités et les DAO
+* `georchestra-signalement-service` : il s'agit du sous-projet maven contenant les services métiers, les services techniques
+* `mapfish-addon` : il s'agit des sources de l'addon pour mapfishapp
+* `mapstore-addon` :  il s'agit des sources de l'addon pour mapstore
+* `readme` : les données nécessaires au présent document
+* `resources` :  les resources avec notamment :
+    * `sql` qui contient les fichiers SQL d'initialisation
+    * `swagger` qui contient le fichier swagger permettant de générer l'ensemble des services REST du back-office
   
 Le back-office est construit à partir de la commande maven
 
