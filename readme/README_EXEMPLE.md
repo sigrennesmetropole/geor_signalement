@@ -12,7 +12,7 @@ Cet attendu pourra être ensuite traduit en actions de configuration.
 
 Il s'agit ici de créer les différents rôles nécessaires au processus qui sera associé au contexte.
 
-Ceci peut se faire grâce au back-office en suivant [back-office "Rôles création"](README_BACKOFFICE.md#Rôles-création)
+Ceci peut se faire grâce au back-office en suivant [back-office "Rôles création"](README_BACKOFFICE.md#role-creation)
 
 ## Préparer le processus
 
@@ -23,7 +23,7 @@ En suivant les règles décrites [ici](README_CONFIGURATION_WORKFLOW.md) modéli
 
 **/!\ Remarque :** n'oubliez pas de changer l'id dans le fichier XML représentant le procesuss afin de ne pas écraser un processus existant.
 
-Il faut ensuite se rendre dans l'application back-office et téléverser le processus en suivant [back-office "Workflow"](README_BACKOFFICE.md#Workflows)
+Il faut ensuite se rendre dans l'application back-office et téléverser le processus en suivant [back-office "Workflow"](README_BACKOFFICE.md#workflow-upload)
 
 ## Ajouter les formulaires liés au processus
 
@@ -39,8 +39,13 @@ Pour ce faire vous pouvez vous référer à [Configuration formulaire](README_CO
 
 Il s'agit ici d'associer des utilisateurs à des rôles, des zones géographiques et un processus.
 
-Ceci peut se faire grâce au back-office en suivant [back-office "Opérateurs création"](README_BACKOFFICE.md#Opérateurs)
+Ceci peut se faire grâce au back-office en suivant [back-office "Opérateurs création"](README_BACKOFFICE.md#operateur-creation)
 
+## Création du contexte
+
+Il s'agit ici de créer le contexte proprement dit. Cette création s'appuie sur les différents éléments configurés ou créés précédemment.
+
+Ceci peut se faire grâce au back-office en suivant [back-office "Contexte création"](README_BACKOFFICE.md#contexte-creation)
 
 
 

@@ -57,7 +57,7 @@ Cette page permet :
 En Sélectionnant la corbeille sur une ligne du tableau, il est possible après confirmation de supprimer une version de workflow.
 Si un workflow est encore actif sur une version, il n'est pas possible de la supprimer.
 
-### Workflow téléversement
+### Workflow téléversement <a name="workflow-upload">&lt;&gt;</a>
 
 En cliquant sur le bouton en haut à droite du formulaire une popin s'affiche et permet de sélectionner un fichier et un nom pour le téléchargement.
 
@@ -92,7 +92,7 @@ Cette page permet :
 
 En Sélectionnant la corbeille sur une ligne du tableau, il est possible après confirmation de supprimer un contexte.
 
-### Contexte création
+### Contexte création <a name="contexte-create">&lt;&gt;</a>
 
 En cliquant sur le bouton en haut à droite du formulaire une popin s'affiche et permet de créer un contexte.
 
@@ -167,7 +167,7 @@ En Sélectionnant la corbeille sur une ligne du tableau, il est possible après 
 
 Il n'est pas possible supprimer un rôle présent dans la page "Operateurs".
 
-### Rôles création
+### Rôles création <a name="role-creation">&lt;&gt;</a>
 
 En cliquant sur le bouton en haut à droite du formulaire une popin s'affiche et permet de créer un rôle en saisissant son nom et son libellé.
 
@@ -196,8 +196,8 @@ Cette page permet :
 
 En Sélectionnant la corbeille sur une ligne du tableau, il est possible après confirmation de supprimer une association.
 
-### Opérateur création
-
+### Opérateur création <a name="operateur-creation">&lt;&gt;</a>
+ 
 En cliquant sur le bouton en haut à droite du formulaire une popin s'affiche et permet de créer une association en saisissant les différents éléments
 
 
