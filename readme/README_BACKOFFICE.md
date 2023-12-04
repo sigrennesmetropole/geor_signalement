@@ -4,12 +4,10 @@
 
 L'application **Signalement Back-Office** permet de réaliser un certain nombre de configuraton à partir d'une interface WEB.
 
-**/!\ Remarques:**
-
-* Le backoffice ne permet pas :
-    * De configurer les zones géographiques - les zones géographiques sont les différentes communes de la métropole aux quelles vient s'ajouter la métropole dans son ensemble
-    * De configurer les formulaires associés aux différentes étapes du workflow
-    * De configurer les courriels envoyés aux différentes étapes du workflow
+**![](warn.png)Remarque:** Le backoffice ne permet pas :
+* De configurer les zones géographiques - les zones géographiques sont les différentes communes de la métropole aux quelles vient s'ajouter la métropole dans son ensemble
+* De configurer les formulaires associés aux différentes étapes du workflow
+* De configurer les courriels envoyés aux différentes étapes du workflow
 
 ## Accueil
 
@@ -68,6 +66,65 @@ Si la clé contenu dans le fichier téléversée existe déjà, la version est i
 
 ## Styles
 
+Cette page permet :
+
+* De lister les styles existants avec pagination et tri avec pour chacun d'eux :
+
+    * Identifiant: l'id du style
+    * Type : le type du style (POINT, LINE ou POLYGON)
+    * Nom : le nom du processus
+    * Actions : les actions possibles
+
+* De créer un style
+* De modifier un style
+* De supprimer un style
+* D'associer un style à un processus et une étape
+
+<img src="backoffice/styles.png" width="75%" alt="Configuration des workflows" title="Configuration des styles"/>
+
+### Style consultation
+
+En sélectionnant l'oeil sur une ligne du tableau, il est possible de consulter un style avec une popin identique à celle visible en édition mais sans bouton de validation.
+
+### Style edition
+
+En sélectionnant le crayon sur une ligne du tableau, il est possible de modifier un style avec une popin identique à celle visible en création.
+
+**![](warn.png)Remarque:** le type de style (POINT, LINE ou POLYGON) n'est pas modifiable.
+
+### Style suppression
+
+En sélectionnant la corbeille sur une ligne du tableau, il est possible après confirmation de supprimer un style.
+
+**![](warn.png)Remarque:** si un processus est associé à ce style, la suppression est impossible.
+
+### Style association
+
+En sélectionnant le maillon sur une ligne du tableau, il est possible d'associer un style à un processus au travers d'une popin listant les associations avec pour chacune d'elle :
+
+* Workflow : le nom unique du processus
+* Version : la version du processus à prendre en compte (ou null)
+* Tâche utilisateur : l'étape dans le workflow 
+* Actions : les actions
+
+![Styles association](backoffice/style-associations.png)
+
+En cliquant sur le bouton d'ajout de la popin, une seconde popin s'ouvre pour permettre l'association du style avec un processus.
+
+![Styles association création](backoffice/style-association-create.png)
+
+En cliquant sur la corbeille présente sur chaque association il est possible, après confirmation de supprimer une association.
+
+
+### Style création
+
+En cliquant sur le bouton en haut à droite du formulaire une popin s'affiche et permet de créer un style.
+En sélectionnant le type du style (POINT, LINE ou POLYGON) un formulaire dédié s'affiche.
+
+![Styles](backoffice/style-create-point.png)
+![Styles](backoffice/style-create-line.png)
+![Styles](backoffice/style-create-polygon.png)
+
 ## Contextes
 
 Cette page permet :
@@ -104,7 +161,7 @@ En cliquant sur le crayon sur une ligne du tableau, il est possible de modifier 
 
 ![Création d'un contexte](backoffice/contexte-update.png)
 
-**/!\ Remarque :** il n'est pas possible de modifier le type et la géométrie d'un contexte apprès sa création.
+**![](readme/warn.png)Remarque:** il n'est pas possible de modifier le type et la géométrie d'un contexte apprès sa création.
 
 ### Contexte visualisation cartographique
 
@@ -145,7 +202,7 @@ Les autres données sont récupérées à la première connexion de l'utilisateu
 
 ## Rôles
 
-**/!\ Remarques:** on désigne par "rôle" les rôles utilisés dans les workflows.
+**![](readme/warn.png)Remarque:** on désigne par "rôle" les rôles utilisés dans les workflows.
 
 Cette page permet :
 
@@ -171,12 +228,11 @@ Il n'est pas possible supprimer un rôle présent dans la page "Operateurs".
 
 En cliquant sur le bouton en haut à droite du formulaire une popin s'affiche et permet de créer un rôle en saisissant son nom et son libellé.
 
-
 ![Création d'un rôle](backoffice/role-create.png)
 
 ## Opérateurs
 
-**/!\ Remarques:** on désigne par "Opérateur" le lien entre un utilisateur, un rôle, une zone géographique et un contexte.
+**![](readme/warn.png)Remarque:** on désigne par "Opérateur" le lien entre un utilisateur, un rôle, une zone géographique et un contexte.
 
 Cette page permet :
 
