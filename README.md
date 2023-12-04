@@ -11,7 +11,7 @@ Les signalements peuvent être réalisés :
 * Sur une couche : dans ce cas on rattache le signalement à un objet de la couche
 * Sur un thème : dans ce cas le signalement n'est pas rattaché à une couche.
 
-**/!\ Remarque :** un exemple de configuration d'un nouveau contexte est disponible [ici](readme/README_EXEMPLE.md)
+**![](readme/warn.png)Remarque:** un exemple de configuration d'un nouveau contexte est disponible **[ici](readme/README_EXEMPLE.md)**
 
 Le présent projet met à disposition :
 
