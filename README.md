@@ -18,7 +18,7 @@ Le présent projet met à disposition :
 * Un **backend** ('signalement-api')
 * Une **application back-office** ('front-management' mais ce composant est souvent appelé 'signalement-admin' ou 'signalement-bo')
 
-    * Le manuel d'utilisation du back-office est accessible [ici](readme/README_BACKOFFICE.md)
+    * Le manuel d'utilisation du back-office est accessible **[ici](readme/README_BACKOFFICE.md)**
     
 * Un **plugin MapStore pour la déclaration des signalements** ('mapstore-addon')
 * Un **plugin MapStore pour le suivi de ces déclarations** ('mapstore-management-addon')
