@@ -18,6 +18,7 @@ import {
     loadTaskActionError,
     loadTaskViewer,
     typeViewChanged,
+    signalementManagementUpdateMapLayout,
     viewType
 } from '../actions/signalement-management-action';
 import {closeFeatureGrid, openFeatureGrid, setLayer} from '@mapstore/actions/featuregrid';
@@ -34,8 +35,7 @@ import {
     FORCE_UPDATE_MAP_LAYOUT,
     forceUpdateMapLayout,
     UPDATE_MAP_LAYOUT,
-    updateDockPanelsList,
-    updateMapLayout
+    updateDockPanelsList
 } from "@mapstore/actions/maplayout";
 import {TOGGLE_CONTROL} from "@mapstore/actions/controls";
 
@@ -71,7 +71,7 @@ export function loadTaskViewerEpic(action$, store) {
                     },
                     boundingSidebarRect: layout.boundingSidebarRect,
                 };
-                return Rx.Observable.from([closeIdentify(), loadTaskViewer(features, clickedPoint), updateDockPanelsList("signalement_task_viewer", "add", "right"), updateMapLayout(currentLayout)]);
+                return Rx.Observable.from([closeIdentify(), loadTaskViewer(features, clickedPoint), updateDockPanelsList("signalement_task_viewer", "add", "right"), signalementManagementUpdateMapLayout(currentLayout)]);
             }
             return Rx.Observable.of(closeViewer()).concat(Rx.Observable.of(forceUpdateMapLayout()).delay(0));
         });
@@ -92,7 +92,7 @@ export function closeTaskViewerEpic(action$, store) {
             }
             currentLayout = layout;
             return Rx.Observable.of(updateDockPanelsList("signalement_task_viewer", "remove", "right"))
-                .concat(Rx.Observable.of(updateMapLayout(layout)))
+                .concat(Rx.Observable.of(signalementManagementUpdateMapLayout(layout)))
         })
 }
 
@@ -108,10 +108,11 @@ export function onOpeningAnotherRightPanel(action$, store) {
         })
 }
 
-export function onUpdatingLayoutWhenPluiPanelOpened(action$, store) {
+export function onUpdatingLayoutWhenSignalementManagementPanelOpened(action$, store) {
     return action$.ofType(UPDATE_MAP_LAYOUT, FORCE_UPDATE_MAP_LAYOUT)
         .filter((action) => store && store.getState() &&
             !!store.getState().signalementManagement.taskViewerOpen &&
+            (action.source === "signalementManagementExtension" || action.source === undefined) &&
             currentLayout?.right !== action?.layout?.right)
         .switchMap((action) => {
             let layout = store.getState().maplayout;
@@ -127,7 +128,7 @@ export function onUpdatingLayoutWhenPluiPanelOpened(action$, store) {
                 },
                 boundingSidebarRect: layout.boundingSidebarRect
             };
-            return Rx.Observable.of(updateMapLayout(currentLayout));
+            return Rx.Observable.of(signalementManagementUpdateMapLayout(currentLayout));
         });
 }
 
@@ -179,7 +180,7 @@ export const loadTaskEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadTaskActionError("signalement-management.get.task.error", e)));
         });
 
-export const downloadAttachmentEpic = (action$) =>
+export const downloadAttachmentEpicSignalement = (action$) =>
     action$.ofType(actions.DOWNLOAD_ATTACHMENT)
         .switchMap((action) => {
             window.signalementMgmt.debug("sigm epics download attachment");
