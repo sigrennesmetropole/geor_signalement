@@ -1,3 +1,18 @@
+#ms-signalement-management-viewer {
+  z-index: 1040;
+}
+
+.signalement-management-panel.react-draggable {
+  width: 300px;
+  background-color: white;
+  box-shadow: -1px 1px 5px 1px #5e5e5e;
+  position: absolute;
+  left: 300px;
+  z-index: 1050;
+}
+.signalement-management-panel.react-draggable .ms-header-title {
+  cursor: move;
+}
 
 .ms-signalement-management-panel .signalement-management-panel {
   position: absolute;
