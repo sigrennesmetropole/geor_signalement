@@ -24,7 +24,8 @@ import {
     initDrawingSupport,
     openPanel,
     closePanel,
-    stopDrawingSupport
+    stopDrawingSupport,
+    signalementUpdateMapLayout
 } from '../actions/signalement-action';
 import {
     FeatureProjection,
@@ -35,7 +36,6 @@ import {
     FORCE_UPDATE_MAP_LAYOUT,
     UPDATE_MAP_LAYOUT,
     updateDockPanelsList,
-    updateMapLayout
 } from "@mapstore/actions/maplayout";
 import {TOGGLE_CONTROL, toggleControl} from "@mapstore/actions/controls";
 import {signalementSidebarControlSelector} from "@js/extension/selectors/signalement-selector";
@@ -47,7 +47,7 @@ export const initSignalementEpic = (action$) =>
 	action$.ofType(actions.INIT_SIGNALEMENT)
 	    .switchMap((action) => {
             window.signalement.debug("sig epics init:"+ action.url);
-	        if( action.url ) {	        	
+	        if( action.url ) {
 	        	backendURLPrefix = action.url;
 	        }
 	        return Rx.Observable.of(initSignalementDone()).delay(0);
@@ -58,11 +58,24 @@ export const openSignalementPanelEpic = (action$, store) =>
         .filter(action => action.type === actions.SIGNALEMENT_LAYER_OPEN_PANEL || (action.control === "signalement" && !!store.getState() && !!signalementSidebarControlSelector(store.getState())))
         .switchMap((action) => {
             let layout = store.getState().maplayout;
-            layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: false, ...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH+RIGHT_SIDEBAR_MARGIN_LEFT, boundingMapRect: {...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH+RIGHT_SIDEBAR_MARGIN_LEFT}, boundingSidebarRect: layout.boundingSidebarRect}
-            window.signalement.debug("sig panel signalement added to right dockpanels list");
+            layout = {
+                transform: layout.layout.transform,
+                height: layout.layout.height,
+                rightPanel: true,
+                leftPanel: layout.layout.leftPanel,
+                ...layout.boundingMapRect,
+                right: SIGNALEMENT_PANEL_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT,
+                boundingMapRect: {
+                    ...layout.boundingMapRect,
+                    right: SIGNALEMENT_PANEL_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT
+                },
+                boundingSidebarRect: layout.boundingSidebarRect
+            };
             currentLayout = layout;
-            return Rx.Observable.from([updateDockPanelsList('signalement', 'add', 'right'), openPanel(action?.currentLayer), updateMapLayout(layout), initDrawingSupport()]);
+            window.signalement.debug("sig panel signalement added to right dockpanels list");
+            return Rx.Observable.from([updateDockPanelsList('signalement', 'add', 'right'),  signalementUpdateMapLayout(layout), initDrawingSupport(), openPanel(action?.currentLayer)]);
         });
+
 
 export const closeSignalementPanelEpic = (action$, store) =>
     action$.ofType(TOGGLE_CONTROL, actions.SIGNALEMENT_DRAFT_CANCELED)
@@ -78,11 +91,11 @@ export const closeSignalementPanelEpic = (action$, store) =>
             layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: false, ...layout.boundingMapRect, right: layout.boundingSidebarRect.right, boundingMapRect: {...layout.boundingMapRect, right: layout.boundingSidebarRect.right}, boundingSidebarRect: layout.boundingSidebarRect}
             window.signalement.debug("sig panel signalement removed from right dockpanels list");
             currentLayout = layout;
-            return Rx.Observable.from(actionsList).concat(Rx.Observable.from([updateMapLayout(layout), stopDrawingSupport()]));
+            return Rx.Observable.from(actionsList).concat(Rx.Observable.from([signalementUpdateMapLayout(layout), stopDrawingSupport()]));
         });
 
-export function onOpeningAnotherRightPanel(action$, store) {
-    return action$.ofType(TOGGLE_CONTROL)
+export const onOpeningAnotherRightPanelSignalement = (action$, store) =>
+    action$.ofType(TOGGLE_CONTROL)
         .filter((action) => store && store.getState() &&
             action.control !== 'signalement' &&
             store.getState().maplayout.dockPanels.right.includes("signalement") &&
@@ -90,23 +103,36 @@ export function onOpeningAnotherRightPanel(action$, store) {
         .switchMap((action) => {
             return Rx.Observable.of(updateDockPanelsList("signalement", "remove", "right"))
                 .concat(Rx.Observable.of(closePanel()));
-        })
-}
+        });
 
-export function onUpdatingLayoutWhenPluiPanelOpened(action$, store) {
+
+export function onUpdatingLayoutWhenSignalementPanelOpened(action$, store) {
     return action$.ofType(UPDATE_MAP_LAYOUT, FORCE_UPDATE_MAP_LAYOUT)
         .filter((action) => store && store.getState() &&
             !!signalementSidebarControlSelector(store.getState()) &&
+            (action.source === "signalement" || action.source === undefined) &&
             currentLayout?.right !== action?.layout?.right)
         .switchMap((action) => {
             let layout = store.getState().maplayout;
-            layout = {transform: layout.layout.transform, height: layout.layout.height, rightPanel: true, leftPanel: layout.layout.leftPanel, ...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT, boundingMapRect: {...layout.boundingMapRect, right: SIGNALEMENT_PANEL_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT}, boundingSidebarRect: layout.boundingSidebarRect};
+            layout = {
+                transform: layout.layout.transform,
+                height: layout.layout.height,
+                rightPanel: true,
+                leftPanel: layout.layout.leftPanel,
+                ...layout.boundingMapRect,
+                right: SIGNALEMENT_PANEL_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT,
+                boundingMapRect: {
+                    ...layout.boundingMapRect,
+                    right: SIGNALEMENT_PANEL_WIDTH + RIGHT_SIDEBAR_MARGIN_LEFT
+                },
+                boundingSidebarRect: layout.boundingSidebarRect
+            };
             currentLayout = layout;
-            return Rx.Observable.of(updateMapLayout(layout));
+            return Rx.Observable.of(signalementUpdateMapLayout(layout));
         });
 }
 
-export const loadAttachmentConfigurationEpic = (action$) =>
+export const loadAttachmentConfigurationSignalementEpic = (action$) =>
     action$.ofType(actions.ATTACHMENT_CONFIGURATION_LOAD)
         .switchMap((action) => {
             window.signalement.debug("sig epics attachment config");
@@ -120,7 +146,7 @@ export const loadAttachmentConfigurationEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.attattachmentConfiguration.error", e)));
         });
 
-export const addAttachmentEpic = (action$) =>
+export const addAttachmentSignalementEpic = (action$) =>
     action$.ofType(actions.ADD_ATTACHMENT)
         .switchMap((action) => {
             window.signalement.debug("sig epics add attachement");
@@ -133,7 +159,7 @@ export const addAttachmentEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadActionError("signalement.attachment.error", e)));
         });
 
-export const removeAttachmentEpic = (action$) =>
+export const removeAttachmentSignalementEpic = (action$) =>
     action$.ofType(actions.REMOVE_ATTACHMENT)
         .switchMap((action) => {
             window.signalement.debug("sig epics remove attachement");
@@ -144,7 +170,7 @@ export const removeAttachmentEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadActionError("signalement.attachment.delete.error", e)));
         });
 
-export const loadThemasEpic = (action$, store) =>
+export const loadThemasSignalementEpic = (action$, store) =>
     action$.ofType(actions.THEMAS_LOAD)
         .switchMap((action) => {
             window.signalement.debug("sig epics themas");
@@ -157,7 +183,7 @@ export const loadThemasEpic = (action$, store) =>
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.themas.error", e)));
         });
 
-export const loadLayersEpic = (action$) =>
+export const loadLayersSignalementEpic = (action$) =>
     action$.ofType(actions.LAYERS_LOAD)
         .switchMap((action) => {
             window.signalement.debug("sig epics layers");
@@ -170,7 +196,7 @@ export const loadLayersEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.layers.error", e)));
         });
 
-export const loadMeEpic = (action$) =>
+export const loadMeSignalementEpic = (action$) =>
     action$.ofType(actions.USER_ME_GET)
         .switchMap((action) => {
             window.signalement.debug("sig epics me");
@@ -183,7 +209,7 @@ export const loadMeEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadInitError("signalement.init.me.error", e)));
         });
 
-export const createDraftEpic = (action$) =>
+export const createDraftSignalementEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_DRAFT_CREATE)
         .switchMap((action) => {
             window.signalement.debug("sig epics draft");
@@ -199,7 +225,7 @@ export const createDraftEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadActionError("signalement.draf.error", e)));
         });
 
-export const createTaskEpic = (action$) =>
+export const createTaskSignalementEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_TASK_CREATE)
         .switchMap((action) => {
             window.signalement.debug("sig epics draft");
@@ -236,7 +262,7 @@ export const createTaskEpic = (action$) =>
                 ]));
         });
 
-export const cancelDraftEpic = (action$) =>
+export const cancelDraftSignalementEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_DRAFT_CANCEL)
         .switchMap((action) => {
             window.signalement.debug("sig epics draft");
@@ -247,13 +273,13 @@ export const cancelDraftEpic = (action$) =>
                 .catch(e => Rx.Observable.of(loadActionError("signalement.generic.error", e)));
         });
 
-export const initDrawingSupportEpic = action$ =>
+export const initDrawingSupportSignalementEpic = action$ =>
     action$.ofType(actions.SIGNALEMENT_INIT_SUPPORT_DRAWING)
         .switchMap(() => {
             return Rx.Observable.of(changeMapInfoState(false));
         });
 
-export const startDrawingEpic = action$ =>
+export const startDrawingSignalementEpic = action$ =>
     action$.ofType(actions.SIGNALEMENT_START_DRAWING)
         .switchMap((action) => {
             const existingLocalisation = action.localisation && action.localisation.length > 0;
@@ -296,7 +322,7 @@ export const startDrawingEpic = action$ =>
             ]);
         });
 
-export const geometryChangeEpic = action$ =>
+export const geometryChangeSignalementEpic = action$ =>
     action$.ofType(GEOMETRY_CHANGED)
         .filter(action => action.owner === 'signalement')
         .switchMap( (action) => {
@@ -330,14 +356,14 @@ export const geometryChangeEpic = action$ =>
             return Rx.Observable.of(updateLocalisation(localisation));
         });
 
-export const endDrawingEpic = action$ =>
+export const endDrawingSignalementEpic = action$ =>
     action$.ofType(END_DRAWING)
         .filter(action => action.owner === 'signalement')
         .switchMap(() => {
             return Rx.Observable.of(setDrawing(false));
         });
 
-export const clearDrawnEpic = action$ =>
+export const clearDrawnSignalementEpic = action$ =>
     action$.ofType(actions.SIGNALEMENT_CLEAR_DRAWN)
         .switchMap(() => {
             return Rx.Observable.from([
@@ -347,7 +373,7 @@ export const clearDrawnEpic = action$ =>
             ]);
         });
 
-export const stopDrawingEpic = (action$, store) =>
+export const stopDrawingSignalementEpic = (action$, store) =>
     action$.ofType(actions.SIGNALEMENT_STOP_DRAWING)
         .switchMap((action) => {
             const state = store.getState();
@@ -387,7 +413,7 @@ export const stopDrawingEpic = (action$, store) =>
  * @param action$
  * @returns {*}
  */
-export const stopDrawingSupportEpic = action$ =>
+export const stopDrawingSupportSignalementEpic = action$ =>
     action$.ofType(actions.SIGNALEMENT_STOP_SUPPORT_DRAWING)
         .switchMap(() => {
             return Rx.Observable.from([

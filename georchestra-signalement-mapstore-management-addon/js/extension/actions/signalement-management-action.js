@@ -1,3 +1,5 @@
+import {UPDATE_MAP_LAYOUT} from "@mapstore/actions/maplayout";
+
 export const actions = {
 	INIT_SIGNALEMENT: 'SIGNALEMENT:MANAGEMENT:INIT',
 	INIT_SIGNALEMENT_DONE: 'SIGNALEMENT:MANAGEMENT:INIT_DONE',		
@@ -189,4 +191,12 @@ export function loadInitError(message, e) {
 
 export function loadTaskActionError(message, e) {
     return loadError(actions.ACTION_TASK_ERROR, message, e);
+}
+
+export function signalementManagementUpdateMapLayout( layout) {
+	return {
+		layout,
+		type: UPDATE_MAP_LAYOUT,
+		source: "signalementManagementExtension"
+	};
 }

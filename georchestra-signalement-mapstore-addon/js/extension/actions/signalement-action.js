@@ -1,3 +1,5 @@
+import {UPDATE_MAP_LAYOUT} from "@mapstore/actions/maplayout";
+
 export const actions = {
 	INIT_SIGNALEMENT: 'SIGNALEMENT:INIT',
 	INIT_SIGNALEMENT_DONE: 'SIGNALEMENT:INIT_DONE',
@@ -307,4 +309,12 @@ export function setTaskCreationFail() {
 	return {
 		type: actions.SIGNALEMENT_TASK_NOT_CREATED
 	}
+}
+
+export function signalementUpdateMapLayout(layout) {
+	return {
+		type: UPDATE_MAP_LAYOUT,
+		layout,
+		source: "signalement"
+	};
 }
