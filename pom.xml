@@ -6,7 +6,7 @@
 
 	<groupId>org.georchestra</groupId>
 	<artifactId>georchestra-signalement-backend</artifactId>
-	<version>1.11.0</version>
+	<version>1.12.0</version>
 	<packaging>pom</packaging>
 
 	<name>georchestra-signalement-backend</name>
