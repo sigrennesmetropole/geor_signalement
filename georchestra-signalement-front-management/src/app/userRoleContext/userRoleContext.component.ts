@@ -232,7 +232,7 @@ export class UserRoleContextComponent implements AfterViewInit {
     this.userTimeout = setTimeout(()=>{
       this.userLogin = target.value;
       const params = {
-        login: target.value,
+        loginUser: target.value,
         offset: 0,
         limit: this.NUMBER_ELEMENTS_IN_FILTER,
       };

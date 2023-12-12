@@ -10,6 +10,7 @@ import {
 import {SignalementViewer} from "@js/extension/components/SignalementViewer";
 import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
 import {SIGNALEMENT_TASK_VIEWER_WIDTH} from "@js/extension/constants/signalement-management-constants";
+import Draggable from "react-draggable";
 
 export class SignalementManagementPanelComponent extends React.Component {
 	 static propTypes = {
@@ -146,7 +147,9 @@ export class SignalementManagementPanelComponent extends React.Component {
             return [<ContainerDimensions key="context-panel">
                         { ({ width }) =>
                             <span>
-                                <span className="ms-signalement-management-panel ">
+                                <Draggable
+                                    className="ms-signalement-management-panel "
+                                    handle=".ms-header-title">
                                     <div className={this.props.panelClassName}>
                                         {this.renderHeader()}
                                         <div className="signalement-panel-body">
@@ -157,7 +160,7 @@ export class SignalementManagementPanelComponent extends React.Component {
                                             }
                                         </div>
                                     </div>
-                                </span>
+                                </Draggable>
                             </span>
                         }
                     </ContainerDimensions>,

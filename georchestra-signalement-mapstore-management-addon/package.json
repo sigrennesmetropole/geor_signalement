@@ -1,6 +1,10 @@
 {
     "name": "SignalementManagementExtension",
     "version": "1.0.0",
+    "volta": {
+        "node": "16.20.1",
+        "npm": "8.19.4"
+    },
     "description": "Signalement Management MapStore extensions",
     "main": "index.js",
     "eslintConfig": {
@@ -119,7 +123,8 @@
         "webpack-dev-server": "3.11.0"
     },
     "dependencies": {
-        "mapstore2": "file:MapStore2"
+        "mapstore2": "file:MapStore2",
+        "react-draggable": "^3.3.1"
     },
     "scripts": {
         "postinstall": "node MapStore2/utility/build/postInstall.js",

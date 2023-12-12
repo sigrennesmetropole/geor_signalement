@@ -130,7 +130,8 @@ export class SignalementPanelComponent extends React.Component {
         super(props);
         this.state = {
             errorAttachment: "",
-            errorFields: {}
+            errorFields: {},
+            themaSelected: false,
         }
 
         // disable custom logging function if debug_signalement is set to false in local config
@@ -142,7 +143,7 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     componentWillMount() {
-        this.setState({initialized: false, loaded: false, task: null, currentLayer: null, errorAttachment: ""});
+        this.setState({initialized: false, loaded: false, task: null, currentLayer: null, errorAttachment: "", themaSelected: false});
         this.props.loadAttachmentConfiguration();
         this.props.loadThemas();
         this.props.loadLayers();
@@ -210,6 +211,9 @@ export class SignalementPanelComponent extends React.Component {
     handleContextChange = (e) => {
         const contextDescriptions = this.props.contextThemas.filter(thema => thema.name === e.target.value);
         if( contextDescriptions != null && contextDescriptions.length > 0) {
+            this.state.themaSelected = true;
+            this.setState(this.state);
+
             this.state.task.asset.contextDescription = contextDescriptions[0];
             this.state.task.asset.geographicType = contextDescriptions[0].geographicType;
             this.props.clearDrawn();
@@ -232,6 +236,9 @@ export class SignalementPanelComponent extends React.Component {
                     window.signalement.debug("sig create draft");
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
                     this.props.createDraft(initContext);
+
+                    this.state.themaSelected = false;
+                    this.setState(this.state);
                 }
             }
         }
@@ -412,9 +419,13 @@ export class SignalementPanelComponent extends React.Component {
                         <legend><Message msgId="signalement.reporting.thema"/></legend>
                         <FormGroup controlId="signalement.thema">
                             <FormControl componentClass="select"
-                                         value={this.state.task.asset.contextDescription.name}
                                          onChange={this.handleContextChange}
                             >
+                                {
+                                    this.props.contextThemas.length > 1 && !this.state.themaSelected
+                                        ? (<option><Message msgId="signalement.reporting.thema.placeholder"/></option>)
+                                        : null
+                                }
                                 {
                                     (this.props.contextThemas || []).map((thema) => {
                                         return <option key={thema.name} value={thema.name}>{thema.label}</option>
@@ -512,23 +523,27 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition de la saisie de la géométrie
      */
     renderLocalisation() {
-        return (
-            <div>
-                <fieldset>
-                    <legend><Message msgId="signalement.localization"/></legend>
-                    <FormGroup controlId="localisation">
-                        <Row>
-                            <Col xs={9} className="localization-tips">
-                                <Message msgId="signalement.localization.tips"/>
-                            </Col>
-                            <Col xs={3}>
-                                { this.renderGeometryDrawButton() }
-                            </Col>
-                        </Row>
-                    </FormGroup>
-                </fieldset>
-            </div>
-        )
+        if (this.state.themaSelected) {
+            return (
+                <div>
+                    <fieldset>
+                        <legend><Message msgId="signalement.localization"/></legend>
+                        <FormGroup controlId="localisation">
+                            <Row>
+                                <Col xs={9} className="localization-tips">
+                                    <Message msgId="signalement.localization.tips"/>
+                                </Col>
+                                <Col xs={3}>
+                                    {this.renderGeometryDrawButton()}
+                                </Col>
+                            </Row>
+                        </FormGroup>
+                    </fieldset>
+                </div>
+            )
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -570,26 +585,30 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     renderFormButton() {
-        return (
-            <fieldset>
-                <div className="block-inline-spinner">
-                     <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
-                </div>
-                <div className="block-valid-form">
-                    <Button bsStyle="warning"
-                            bsSize="sm"
-                            onClick={() => this.cancel()}>
-                        <Message msgId="signalement.cancel"/>
-                    </Button>
-                    <Button className="validation-button"
-                            bsStyle="primary"
-                            bsSize="sm"
-                            onClick={() => this.create()}>
-                        <Message msgId="signalement.validate"/>
-                    </Button>
-                </div>
-            </fieldset>
-        )
+        if (this.state.themaSelected) {
+            return (
+                <fieldset>
+                    <div className="block-inline-spinner">
+                        <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
+                    </div>
+                    <div className="block-valid-form">
+                        <Button bsStyle="warning"
+                                bsSize="sm"
+                                onClick={() => this.cancel()}>
+                            <Message msgId="signalement.cancel"/>
+                        </Button>
+                        <Button className="validation-button"
+                                bsStyle="primary"
+                                bsSize="sm"
+                                onClick={() => this.create()}>
+                            <Message msgId="signalement.validate"/>
+                        </Button>
+                    </div>
+                </fieldset>
+            )
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -968,7 +987,7 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
-        if( this.state.task != null && this.state.task.asset.uuid && !this.props.creating) {
+        if( this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.contextDescription && !this.props.creating) {
             window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
             this.props.createTask(this.state.task);
         }

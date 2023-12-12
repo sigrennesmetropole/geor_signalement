@@ -18,6 +18,7 @@
 			"description.count":"nombre de caracteres restants:",
 			"instructions": "Afin d'effectuer un signalement sur une thématique, merci de renseigner le formulaire ci-dessous ainsi que de localiser sur la carte l'objet du signalement.",
 			"reporting.thema": "Signalement sur la thématique",
+			"reporting.thema.placeholder": "Sélectionnez une thématique",
 			"reporting.layer": "Signalement sur la couche",
 			"attachment.add": "Ajouter",
 			"attachment.files": "Pièce(s) jointe(s)",
