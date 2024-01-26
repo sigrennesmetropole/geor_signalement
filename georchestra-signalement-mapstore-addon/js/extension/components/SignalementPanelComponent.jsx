@@ -523,27 +523,23 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition de la saisie de la géométrie
      */
     renderLocalisation() {
-        if (this.state.themaSelected) {
-            return (
-                <div>
-                    <fieldset>
-                        <legend><Message msgId="signalement.localization"/></legend>
-                        <FormGroup controlId="localisation">
-                            <Row>
-                                <Col xs={9} className="localization-tips">
-                                    <Message msgId="signalement.localization.tips"/>
-                                </Col>
-                                <Col xs={3}>
-                                    {this.renderGeometryDrawButton()}
-                                </Col>
-                            </Row>
-                        </FormGroup>
-                    </fieldset>
-                </div>
-            )
-        } else {
-            return null;
-        }
+        return (
+            <div>
+                <fieldset>
+                    <legend><Message msgId="signalement.localization"/></legend>
+                    <FormGroup controlId="localisation">
+                        <Row>
+                            <Col xs={9} className="localization-tips">
+                                <Message msgId="signalement.localization.tips"/>
+                            </Col>
+                            <Col xs={3}>
+                                {this.renderGeometryDrawButton()}
+                            </Col>
+                        </Row>
+                    </FormGroup>
+                </fieldset>
+            </div>
+        )
     }
 
     /**
@@ -551,7 +547,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderGeometryDrawButton = ()=> {
         return (
-            <Button className="geometry-button" bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
+            <Button className="geometry-button" disabled={!this.state.themaSelected && !this.state.currentLayer} bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
                 <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
                 <Message msgId="signalement.localization.geolocate"/>
             </Button>
@@ -585,30 +581,27 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     renderFormButton() {
-        if (this.state.themaSelected) {
-            return (
-                <fieldset>
-                    <div className="block-inline-spinner">
-                        <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
-                    </div>
-                    <div className="block-valid-form">
-                        <Button bsStyle="warning"
-                                bsSize="sm"
-                                onClick={() => this.cancel()}>
-                            <Message msgId="signalement.cancel"/>
-                        </Button>
-                        <Button className="validation-button"
-                                bsStyle="primary"
-                                bsSize="sm"
-                                onClick={() => this.create()}>
-                            <Message msgId="signalement.validate"/>
-                        </Button>
-                    </div>
-                </fieldset>
-            )
-        } else {
-            return null;
-        }
+        return (
+            <fieldset>
+                <div className="block-inline-spinner">
+                    <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
+                </div>
+                <div className="block-valid-form">
+                    <Button bsStyle="warning"
+                            bsSize="sm"
+                            onClick={() => this.cancel()}>
+                        <Message msgId="signalement.cancel"/>
+                    </Button>
+                    <Button className="validation-button"
+                            bsStyle="primary"
+                            bsSize="sm"
+                            disabled={!this.state.themaSelected && !this.state.currentLayer}
+                            onClick={() => this.create()}>
+                        <Message msgId="signalement.validate"/>
+                    </Button>
+                </div>
+            </fieldset>
+        )
     }
 
     /**

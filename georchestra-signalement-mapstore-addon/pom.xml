@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>georchestra-signalement-backend</artifactId>
 		<groupId>org.georchestra</groupId>
-		<version>1.12.2</version>
+		<version>1.12.3</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -113,7 +113,7 @@
 			</properties>
 		</profile>
 
-		<!-- Profil de production (utilisé sur la plateforme de DEV, QUALIF et 
+		<!-- Profil de production (utilisé sur la plateforme de DEV, QUALIF et
 			PROD) -->
 		<profile>
 			<id>prod</id>
