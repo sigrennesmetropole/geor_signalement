@@ -18,7 +18,7 @@
 			"description.count":"nombre de caracteres restants:",
 			"instructions": "Afin d'effectuer un signalement sur une thématique, merci de renseigner le formulaire ci-dessous ainsi que de localiser sur la carte l'objet du signalement.",
 			"reporting.thema": "Signalement sur la thématique",
-			"reporting.thema.placeholder": "Sélectionnez une thématique",
+			"reporting.thema.placeholder": "Sélectionner une thématique",
 			"reporting.layer": "Signalement sur la couche",
 			"attachment.add": "Ajouter",
 			"attachment.files": "Pièce(s) jointe(s)",
@@ -34,6 +34,7 @@
 			"localization.tips": "Cliquer sur le bouton pour géolocaliser le signalement sur la carte",
 			"localization.drawn": "Signalement géolocalisé",
 			"localization.geolocate": "Géolocaliser",
+			"localization.geolocate.hover": "Merci de sélectionner une thématique",
 			"task.create": "La tâche de signalement a été créée",
 			"task.error": "La tâche de signalement n'a pas été créée",
 			"task": {
