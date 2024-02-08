@@ -19,6 +19,7 @@ import {status} from '../actions/signalement-action';
 import {GeometryType, SIGNALEMENT_PANEL_WIDTH} from '../constants/signalement-constants';
 import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
+import * as ReactIntl from 'react-intl';
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -422,8 +423,12 @@ export class SignalementPanelComponent extends React.Component {
                                          onChange={this.handleContextChange}
                             >
                                 {
-                                    this.props.contextThemas.length > 1 && !this.state.themaSelected
-                                        ? (<option><Message msgId="signalement.reporting.thema.placeholder"/></option>)
+                                    !this.state.themaSelected
+                                        ? (
+                                        <ReactIntl.FormattedMessage id="signalement.reporting.thema.placeholder">
+                                            {(message) => <option>{message}</option>}
+                                        </ReactIntl.FormattedMessage>
+                                        )
                                         : null
                                 }
                                 {
@@ -438,7 +443,6 @@ export class SignalementPanelComponent extends React.Component {
             );
         }
     }
-
     /**
      * La rendition du détail du signalement
      */
@@ -453,7 +457,9 @@ export class SignalementPanelComponent extends React.Component {
                                      onChange={this.handleDescriptionChange}
                                      maxLength={1000}
                         />
-                        <HelpBlock><Message msgId="signalement.description.count"/> {1000 - this.state.task.asset.description.length}</HelpBlock>
+                        <HelpBlock>
+                            <Message msgId="signalement.description.count"/> {1000 - this.state.task.asset.description.length}
+                        </HelpBlock>
                     </FormGroup>
                 </fieldset>
             </div>
@@ -547,10 +553,22 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderGeometryDrawButton = ()=> {
         return (
-            <Button className="geometry-button" disabled={!this.state.themaSelected && !this.state.currentLayer} bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
-                <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
-                <Message msgId="signalement.localization.geolocate"/>
-            </Button>
+            <ReactIntl.FormattedMessage id="signalement.localization.geolocate.hover">
+                {(message) =>
+                    <Button
+                        onMouseOver={this.showTooltip}
+                        className="geometry-button"
+                        disabled={!this.state.themaSelected && !this.state.currentLayer}
+                        bsStyle={this.props.drawing ? 'primary' : 'default'}
+                        bsSize="small"
+                        onClick={this.onDraw}
+                        title= {this.state.themaSelected?null:message}
+                    >
+                        <Message msgId="signalement.localization.geolocate" children={(param) => param}/>
+                        <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
+                    </Button>
+                }
+            </ReactIntl.FormattedMessage>
         );
     }
 
