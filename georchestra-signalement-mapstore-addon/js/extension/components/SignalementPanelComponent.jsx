@@ -242,6 +242,9 @@ export class SignalementPanelComponent extends React.Component {
                     this.setState(this.state);
                 }
             }
+            if (this.props.contextThemas.length <=1) {
+                this.state.themaSelected = true;
+            }
         }
         if( this.props.active ){
             // le panel est ouvert
@@ -423,7 +426,7 @@ export class SignalementPanelComponent extends React.Component {
                                          onChange={this.handleContextChange}
                             >
                                 {
-                                    !this.state.themaSelected
+                                    (!this.state.themaSelected && this.props.contextThemas.length > 1)
                                         ? (
                                         <ReactIntl.FormattedMessage id="signalement.reporting.thema.placeholder">
                                             {(message) => <option>{message}</option>}
@@ -556,13 +559,12 @@ export class SignalementPanelComponent extends React.Component {
             <ReactIntl.FormattedMessage id="signalement.localization.geolocate.hover">
                 {(message) =>
                     <Button
-                        onMouseOver={this.showTooltip}
-                        className="geometry-button"
+                        className={!this.state.themaSelected? "geometry-button boutonHover": "geometry-button"}
+                        data-message={message}
                         disabled={!this.state.themaSelected && !this.state.currentLayer}
                         bsStyle={this.props.drawing ? 'primary' : 'default'}
                         bsSize="small"
                         onClick={this.onDraw}
-                        title= {this.state.themaSelected?null:message}
                     >
                         <Message msgId="signalement.localization.geolocate" children={(param) => param}/>
                         <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
@@ -610,13 +612,19 @@ export class SignalementPanelComponent extends React.Component {
                             onClick={() => this.cancel()}>
                         <Message msgId="signalement.cancel"/>
                     </Button>
-                    <Button className="validation-button"
-                            bsStyle="primary"
-                            bsSize="sm"
-                            disabled={!this.state.themaSelected && !this.state.currentLayer}
-                            onClick={() => this.create()}>
-                        <Message msgId="signalement.validate"/>
-                    </Button>
+
+                    <ReactIntl.FormattedMessage id="signalement.localization.geolocate.hover">
+                        {(message) =>
+                            <Button bsStyle="primary"
+                                    bsSize="sm"
+                                    className={!this.state.themaSelected? "validation-button boutonHover": "validation-button"}
+                                    data-message={message}
+                                    disabled={!this.state.themaSelected && !this.state.currentLayer}
+                                    onClick={() => this.create()}>
+                                <Message msgId="signalement.validate"/>
+                            </Button>
+                        }
+                    </ReactIntl.FormattedMessage>
                 </div>
             </fieldset>
         )
