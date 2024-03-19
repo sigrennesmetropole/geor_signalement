@@ -233,7 +233,7 @@ export const createDraftSignalementEpic = (action$) =>
 
             return Rx.Observable.defer(() => axios.post(url, task, params))
                 .switchMap((response) => Rx.Observable.of(draftCreated(response.data)))
-                .catch(e => Rx.Observable.of(loadActionError("signalement.draf.error", e)));
+                .catch(e => Rx.Observable.of(loadActionError("signalement.draft.error", e)));
         });
 
 export const createTaskSignalementEpic = (action$) =>
