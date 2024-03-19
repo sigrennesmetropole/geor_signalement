@@ -14,7 +14,7 @@
 			"login": "Vous êtes",
 			"organization": "Collectivité",
 			"email": "Votre adresse mail",
-			"description": "Objet",			
+			"description": "Objet",
 			"description.count":"nombre de caracteres restants:",
 			"instructions": "Afin d'effectuer un signalement sur une thématique, merci de renseigner le formulaire ci-dessous ainsi que de localiser sur la carte l'objet du signalement.",
 			"reporting.thema": "Signalement sur la thématique",
