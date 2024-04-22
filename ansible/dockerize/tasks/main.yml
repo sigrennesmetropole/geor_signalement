@@ -92,6 +92,18 @@
   copy:
     src: "httpd.conf"
     dest: "{{ front_image_directory }}"
+
+- name: Copy certificate
+  template:
+    src: "{{ signalement_server_keystore_cert }}"
+    dest: "{{ signalement_config_directory }}/signalement/{{ signalement_server_keystore_cert }}"
+    mode: 0770
+
+- name: Copy entrypoint shell script
+  template:
+    src: "entrypoint.sh"
+    dest: "{{ signalement_image_directory }}/entrypoint.sh"
+    mode: 0770
           
 - name: Build front image
   shell:
