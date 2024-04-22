@@ -5,7 +5,7 @@
     <parent>
         <artifactId>georchestra-signalement-backend</artifactId>
         <groupId>org.georchestra</groupId>
-        <version>1.12.1</version>
+        <version>1.12.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -80,7 +80,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Plugin to copy the content of /angular/dist/ directory to output 
+			<!-- Plugin to copy the content of /angular/dist/ directory to output
 				directory (ie/ /target/transactionManager-1.0/) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -148,7 +148,7 @@
 			</properties>
 		</profile>
 
-		<!-- Profil de production (utilisé sur la plateforme de DEV, QUALIF et 
+		<!-- Profil de production (utilisé sur la plateforme de DEV, QUALIF et
 			PROD) -->
 		<profile>
 			<id>prod</id>
@@ -158,7 +158,7 @@
 				<spring.profiles.active>prod</spring.profiles.active>
 			</properties>
 		</profile>
-		
+
 		<profile>
 			<id>docker-front-management</id>
 			<properties>
@@ -199,7 +199,7 @@
 							<!-- chemin relatif depuis le target du présent projet -->
 							<dockerDirectory>${project.basedir}/../docker/signalement-front-management</dockerDirectory>
 
-							<!-- copy the service's jar file from target into the root directory 
+							<!-- copy the service's jar file from target into the root directory
 								of the image -->
 							<resources>
 								<resource>
@@ -207,10 +207,10 @@
 									<directory>${project.build.directory}</directory>
 									<include>georchestra-signalement-front-management-angular-dist.zip</include>
 								</resource>
-								<!-- <resource> <targetPath>/etc/georchestra</targetPath> <directory>${project.build.directory}/datadir</directory> 
+								<!-- <resource> <targetPath>/etc/georchestra</targetPath> <directory>${project.build.directory}/datadir</directory>
 									<include>${project.artifactId}/**</include> </resource> -->
 							</resources>
-							<!-- This will require to set up the docker-hub credentials correctly 
+							<!-- This will require to set up the docker-hub credentials correctly
 								into your ~/.m2/settings.xml, see: https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries -->
 							<serverId>docker-hub</serverId>
 							<registryUrl>https://index.docker.io/v1/</registryUrl>

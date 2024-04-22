@@ -19,6 +19,7 @@ import {status} from '../actions/signalement-action';
 import {GeometryType, SIGNALEMENT_PANEL_WIDTH} from '../constants/signalement-constants';
 import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
+import * as ReactIntl from 'react-intl';
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -241,6 +242,9 @@ export class SignalementPanelComponent extends React.Component {
                     this.setState(this.state);
                 }
             }
+            if (this.props.contextThemas.length <=1) {
+                this.state.themaSelected = true;
+            }
         }
         if( this.props.active ){
             // le panel est ouvert
@@ -422,8 +426,12 @@ export class SignalementPanelComponent extends React.Component {
                                          onChange={this.handleContextChange}
                             >
                                 {
-                                    this.props.contextThemas.length > 1 && !this.state.themaSelected
-                                        ? (<option><Message msgId="signalement.reporting.thema.placeholder"/></option>)
+                                    (!this.state.themaSelected && this.props.contextThemas.length > 1)
+                                        ? (
+                                        <ReactIntl.FormattedMessage id="signalement.reporting.thema.placeholder">
+                                            {(message) => <option>{message}</option>}
+                                        </ReactIntl.FormattedMessage>
+                                        )
                                         : null
                                 }
                                 {
@@ -438,7 +446,6 @@ export class SignalementPanelComponent extends React.Component {
             );
         }
     }
-
     /**
      * La rendition du détail du signalement
      */
@@ -453,7 +460,9 @@ export class SignalementPanelComponent extends React.Component {
                                      onChange={this.handleDescriptionChange}
                                      maxLength={1000}
                         />
-                        <HelpBlock><Message msgId="signalement.description.count"/> {1000 - this.state.task.asset.description.length}</HelpBlock>
+                        <HelpBlock>
+                            <Message msgId="signalement.description.count"/> {1000 - this.state.task.asset.description.length}
+                        </HelpBlock>
                     </FormGroup>
                 </fieldset>
             </div>
@@ -523,27 +532,23 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition de la saisie de la géométrie
      */
     renderLocalisation() {
-        if (this.state.themaSelected) {
-            return (
-                <div>
-                    <fieldset>
-                        <legend><Message msgId="signalement.localization"/></legend>
-                        <FormGroup controlId="localisation">
-                            <Row>
-                                <Col xs={9} className="localization-tips">
-                                    <Message msgId="signalement.localization.tips"/>
-                                </Col>
-                                <Col xs={3}>
-                                    {this.renderGeometryDrawButton()}
-                                </Col>
-                            </Row>
-                        </FormGroup>
-                    </fieldset>
-                </div>
-            )
-        } else {
-            return null;
-        }
+        return (
+            <div>
+                <fieldset>
+                    <legend><Message msgId="signalement.localization"/></legend>
+                    <FormGroup controlId="localisation">
+                        <Row>
+                            <Col xs={9} className="localization-tips">
+                                <Message msgId="signalement.localization.tips"/>
+                            </Col>
+                            <Col xs={3}>
+                                {this.renderGeometryDrawButton()}
+                            </Col>
+                        </Row>
+                    </FormGroup>
+                </fieldset>
+            </div>
+        )
     }
 
     /**
@@ -551,10 +556,21 @@ export class SignalementPanelComponent extends React.Component {
      */
     renderGeometryDrawButton = ()=> {
         return (
-            <Button className="geometry-button" bsStyle={this.props.drawing ? 'primary' : 'default'} bsSize="small" onClick={this.onDraw}>
-                <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
-                <Message msgId="signalement.localization.geolocate"/>
-            </Button>
+            <ReactIntl.FormattedMessage id="signalement.localization.geolocate.hover">
+                {(message) =>
+                    <Button
+                        className={!this.state.themaSelected? "geometry-button boutonHover": "geometry-button"}
+                        data-message={message}
+                        disabled={!this.state.themaSelected && !this.state.currentLayer}
+                        bsStyle={this.props.drawing ? 'primary' : 'default'}
+                        bsSize="small"
+                        onClick={this.onDraw}
+                    >
+                        <Message msgId="signalement.localization.geolocate" children={(param) => param}/>
+                        <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
+                    </Button>
+                }
+            </ReactIntl.FormattedMessage>
         );
     }
 
@@ -585,30 +601,33 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     renderFormButton() {
-        if (this.state.themaSelected) {
-            return (
-                <fieldset>
-                    <div className="block-inline-spinner">
-                        <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
-                    </div>
-                    <div className="block-valid-form">
-                        <Button bsStyle="warning"
-                                bsSize="sm"
-                                onClick={() => this.cancel()}>
-                            <Message msgId="signalement.cancel"/>
-                        </Button>
-                        <Button className="validation-button"
-                                bsStyle="primary"
-                                bsSize="sm"
-                                onClick={() => this.create()}>
-                            <Message msgId="signalement.validate"/>
-                        </Button>
-                    </div>
-                </fieldset>
-            )
-        } else {
-            return null;
-        }
+        return (
+            <fieldset>
+                <div className="block-inline-spinner">
+                    <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
+                </div>
+                <div className="block-valid-form">
+                    <Button bsStyle="warning"
+                            bsSize="sm"
+                            onClick={() => this.cancel()}>
+                        <Message msgId="signalement.cancel"/>
+                    </Button>
+
+                    <ReactIntl.FormattedMessage id="signalement.localization.geolocate.hover">
+                        {(message) =>
+                            <Button bsStyle="primary"
+                                    bsSize="sm"
+                                    className={!this.state.themaSelected? "validation-button boutonHover": "validation-button"}
+                                    data-message={message}
+                                    disabled={!this.state.themaSelected && !this.state.currentLayer}
+                                    onClick={() => this.create()}>
+                                <Message msgId="signalement.validate"/>
+                            </Button>
+                        }
+                    </ReactIntl.FormattedMessage>
+                </div>
+            </fieldset>
+        )
     }
 
     /**

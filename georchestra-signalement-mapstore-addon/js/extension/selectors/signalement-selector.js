@@ -8,7 +8,7 @@ export const getSignalementState = createSelector(
     (selector) => selector
 );
 
-export const isOpen = (state) => get(state, "signalement.open");
+export const isOpen = (state) => get(state, "controls.signalement.enabled");
 
 export const signalementAttachmentConfigurationSelector = (state) => get(state, "signalement.attachmentConfiguration");
 
@@ -17,5 +17,3 @@ export const signalementLayersSelector = (state) => get(state, "signalement.cont
 export const signalementThemasSelector = (state) => get(state, "signalement.contextThemas");
 
 export const signalementMeSelector = (state) => get(state, "signalement.user");
-
-export const signalementSidebarControlSelector = (state) => get(state, "controls.signalement.enabled")
