@@ -19,6 +19,15 @@ signalement_server_port: 8080
 signalement_server_expose_port: 8082
 #signalement_backend_url: http://signalement:{{signalement_server_port}}/signalement/
 
+# filename du certificat (à déposer dans ansible/dockerize/files/)
+signalement_server_keystore_cert: ''
+# nom de l'alias du certificat à insérer dans le keystore
+signalement_server_keystore_alias: ''
+# chemin absolu du keystore
+signalement_server_keystore_store: ''
+# mot de passe du keystore
+signalement_server_keystore_password: ''
+
 signalement_admin_password: 4dM1nApp!
 
 signalement_smtp_host: 10.50.1.113

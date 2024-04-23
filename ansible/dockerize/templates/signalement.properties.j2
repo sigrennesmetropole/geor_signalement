@@ -4,6 +4,8 @@ application.version=V0.0.1
 # TEMPORARY DIRECTORY
 temporary.directory=${java.io.tmpdir}/signalement
 
+swagger-server=http://localhost:8082/signalement,https://georchestra.open-dev.com/signalement
+
 # LOG
 logging.level.org.springframework=DEBUG
 logging.level.org.georchestra=DEBUG
@@ -11,6 +13,11 @@ logging.level.org.georchestra=DEBUG
 # SERVER 
 server.port={{signalement_server_port}}
 #spring.main.web-application-type=none
+
+server.trustcert.keystore.cert={{signalement_server_keystore_cert}}
+server.trustcert.keystore.alias={{signalement_server_keystore_alias}}
+server.trustcert.keystore.store={{signalement_server_keystore_store}}
+server.trustcert.keystore.password={{signalement_server_keystore_password}}
 
 # BDD
 spring.datasource.url=jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?ApplicationName=signalement
