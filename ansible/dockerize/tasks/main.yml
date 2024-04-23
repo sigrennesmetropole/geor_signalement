@@ -94,14 +94,14 @@
     dest: "{{ front_image_directory }}"
 
 - name: Copy certificate
-  template:
+  copy:
     src: "{{ signalement_server_keystore_cert }}"
     dest: "{{ signalement_config_directory }}/signalement/{{ signalement_server_keystore_cert }}"
     mode: 0770
   when: signalement_server_keystore_cert | length > 0
 
 - name: Copy entrypoint shell script
-  template:
+  copy:
     src: "entrypoint.sh"
     dest: "{{ signalement_image_directory }}/entrypoint.sh"
     mode: 0770
