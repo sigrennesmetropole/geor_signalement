@@ -98,7 +98,7 @@
     src: "{{ signalement_server_keystore_cert }}"
     dest: "{{ signalement_config_directory }}/signalement/{{ signalement_server_keystore_cert }}"
     mode: 0770
-  when: signalement_server_keystore_cert is defined
+  when: signalement_server_keystore_cert | length > 0
 
 - name: Copy entrypoint shell script
   template:
