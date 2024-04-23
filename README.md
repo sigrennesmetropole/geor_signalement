@@ -61,3 +61,7 @@ Lors de la mise à jour du repository git `https://github.com/sigrennesmetropole
 #### IV.3 - Conception des processus
 
 [Conception des processus](readme/README_CONFIGURATION_WORKFLOW.md)
+
+#### IV.4 - Configuration du certificat
+
+[Configuration certificat](readme/README_CONFIGURATION_CERTIFICATE.md)

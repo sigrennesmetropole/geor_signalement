@@ -100,7 +100,9 @@ signalementapi:sonar:master:
   tags: 
     - iaas
   cache: {}
-
+  before_script:
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$ansible_private_key" | base64 -d)
   script:
     - ls $CI_PROJECT_DIR/georchestra-signalement-api/target/
     - ls $CI_PROJECT_DIR/georchestra-signalement-mapstore*
@@ -111,9 +113,9 @@ signalementapi:sonar:master:
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip $CI_PROJECT_DIR/ansible/dockerize/files/SignalementManagementExtension.zip
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-front-management.zip
     - cd $CI_PROJECT_DIR/ansible  
-    - chmod og-rw key/id_rsa
+    #- chmod og-rw key/id_rsa
     - cp ${ANSIBLE_VAR_FILE} $HOME/signalement_var.yml
-    - ansible-playbook signalement-docker.yml -v -i "${SERVER}," -u root --private-key=key/id_rsa --ssh-common-args=-oStrictHostKeyChecking=no
+    - ansible-playbook signalement-docker.yml -v -i "${SERVER}," -u root --ssh-common-args=-oStrictHostKeyChecking=no
 
 signalementapi:deploy:
   extends: .signalementapi:deploy
