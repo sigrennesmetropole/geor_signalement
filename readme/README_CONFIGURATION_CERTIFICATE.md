@@ -4,7 +4,7 @@ Un script est lancé au déploiement de l'image docker de l'application qui ajou
 Afin d'ajouter le bon certificat au bon keystore, il est nécessaire de remplir les informations adéquates dans le fichier `properties` de l'application : 
 
 ```
-# filename du certificat (à déposer dans /etc/georchestra/signalement/)
+# filename du certificat (à déposer dans <...>/config/signalement/)
 server.trustcert.keystore.cert=
 # nom de l'alias du certificat à insérer dans le keystore
 server.trustcert.keystore.alias=
@@ -18,4 +18,4 @@ server.trustcert.keystore.password=
 Il est important de noter que la variable `server.trustcert.keystore.cert` ne doit contenir que le _nom du fichier_, pas son chemin.  
 Si les variables ne sont pas remplies, le certificat n'est pas ajouté au keystore et l'application démarre normalement.
 
-Le certificat dont le nom est renseigné doit être déposé dans `/etc/georchestra/signalement/`.
+Le certificat dont le nom est renseigné doit être déposé dans `<...>/config/signalement/` (le répertoire <...>/config/ qui est monté sur le répertoire /etc/georchestra dans le container)
