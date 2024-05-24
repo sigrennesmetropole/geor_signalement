@@ -12,6 +12,11 @@ ADD /var/lib/jetty/webapps/signalement.war /var/lib/jetty/webapps/signalement.wa
 # uses Jetty's classloader rather than ours)
 RUN rm -r /usr/local/jetty/lib/mail
 
+ENV PROPERTIES_PATH /etc/georchestra/signalement/signalement.properties
+
+ADD entrypoint.sh /opt/signalement/entrypoint.sh
+ENTRYPOINT [ "/bin/bash", "/opt/signalement/entrypoint.sh" ]
+
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
   ${ADD_JAVA_OPTS} \
   -Dgeorchestra.datadir=/etc/georchestra \
