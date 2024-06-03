@@ -1,4 +1,5 @@
 FROM jetty:9.4.31-jdk11
+USER root
 MAINTAINER tbrule@open-groupe.com
 ENV TZ=Europe/Paris
 
