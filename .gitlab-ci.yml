@@ -116,7 +116,7 @@ signalementapi:pre_docker:
   script:
     - ls -l $CI_PROJECT_DIR/georchestra-signalement-api/target/
     - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/signalement.jar
-    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/template/signalement-backend/georchestra-plui-evolution-api
+    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/template/signalement-backend/signalement.jar
   artifacts:
     paths:
       - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.war'
@@ -148,6 +148,8 @@ trivyscan:back:
   extends: 
     - .trivy-scan
   stage: docker
+  needs:
+    - signalementapi:docker2:build
   dependencies:
     - signalementapi:docker2:build
   variables:
@@ -160,8 +162,10 @@ trivyscan:front:
   extends: 
     - .trivy-scan
   stage: docker
+  needs:
+    - signalementapi:docker2:build
   dependencies:
-    - signalementapi:docker2:build  
+    - signalementapi:docker2:build
   variables:
     TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/rennes-metropole/signalement-front-management:open-develop
   only:
