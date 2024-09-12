@@ -117,8 +117,8 @@ signalementapi:pre_docker:
     - ls -l $CI_PROJECT_DIR/georchestra-signalement-api/target/
     - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/signalement.jar
     - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/template/signalement-backend/signalement.jar
-    - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/docker/rennes-metropole/signalement-front-management/georchestra-signalement-front-management.zip
-    - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/docker/template/signalement-front-management/georchestra-signalement-front-management.zip
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/docker/rennes-metropole/signalement-front-management/georchestra-signalement-front-management-angular-dist.zip
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/docker/template/signalement-front-management/georchestra-signalement-front-management-angular-dist.zip
   artifacts:
     paths:
       - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.war'
