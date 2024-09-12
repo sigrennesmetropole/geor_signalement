@@ -12,6 +12,12 @@ cache:
     - $CI_PROJECT_DIR/.m2/repository/**/*
     - $CI_PROJECT_DIR/**/target/**/*
 
+include:
+  - project: 'boost/template-ci/pipelines/common'
+    file: 'docker/docker-template.yml'
+  - project: 'bots/trivy-script'
+    file: '/trivy-template-job.yml'   
+
 default:
   image: maven:3.6.0-jdk-11
   before_script:
@@ -22,6 +28,8 @@ default:
 stages:
   - build
   - test
+  - pre_docker
+  - docker  
   - deploy
 
 # Build job with maven plugin execution policies define in parent pom
@@ -39,7 +47,8 @@ stages:
       - $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/SignalementExtension.zip
       - $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip
       - $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip
- 
+  interruptible: true
+
 signalementapi:build:
   extends: .signalementapi:build
   except:
@@ -72,7 +81,8 @@ signalementapi:build:master:
       -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
       -Dsonar.gitlab.project_id=$CI_PROJECT_ID
       ${BRANCH}
-
+  interruptible: true
+  
 signalementapi:sonar:
   extends: .signalementapi:sonar
   dependencies:
@@ -93,6 +103,67 @@ signalementapi:sonar:master:
   only:
     refs:
       - open/master
+      
+# Copie des artifacts dans les répertoires des images dockers
+signalementapi:pre_docker:
+  stage: pre_docker
+  only:
+    refs:
+      - master
+      - open/master
+      - open/develop
+      - /^release.*/
+  script:
+    - ls -l $CI_PROJECT_DIR/georchestra-signalement-api/target/
+    - cp $CI_PROJECT_DIR/$CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/signalement.jar
+    - cp $CI_PROJECT_DIR/georchestra-photos-obliques-facade/target/georchestra-photos-obliques-facade.jar $CI_PROJECT_DIR/docker/template/signalement-backend/georchestra-plui-evolution-api
+  artifacts:
+    paths:
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.war'
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.jar'
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/*.zip'
+      - '$CI_PROJECT_DIR/docker/**/**.war'
+      - '$CI_PROJECT_DIR/docker/**/**.zip'
+      - '$CI_PROJECT_DIR/docker/**/**.jar'
+
+signalementapi:docker2:build:
+  extends: ['.docker:build']
+  needs:
+    - signalementapi:pre_docker
+  dependencies:
+    - signalementapi:pre_docker
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /.*develop/ || $CI_COMMIT_BRANCH =~ /.*master/ || $CI_COMMIT_BRANCH =~ /^release.*/'
+  timeout: 1h
+  artifacts:
+    paths:
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.war'
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.jar'
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/*.zip'   
+      - '$CI_PROJECT_DIR/docker/**/**.war'
+      - '$CI_PROJECT_DIR/docker/**/**.zip'
+      - '$CI_PROJECT_DIR/docker/**/**.jar'       
+
+trivyscan:back: 
+  extends: 
+    - .trivy-scan
+  stage: docker
+  variables:
+    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/rennes-metropole/signalement-backend:open-develop
+  only:
+    refs:
+      - open/develop
+
+
+trivyscan:front: 
+  extends: 
+    - .trivy-scan
+  stage: docker
+  variables:
+    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/rennes-metropole/signalement-front-management:open-develop
+  only:
+    refs:
+      - open/develop
 
 .signalementapi:deploy:
   stage: deploy
@@ -116,7 +187,8 @@ signalementapi:sonar:master:
     #- chmod og-rw key/id_rsa
     - cp ${ANSIBLE_VAR_FILE} $HOME/signalement_var.yml
     - ansible-playbook signalement-docker.yml -v -i "${SERVER}," -u root --ssh-common-args=-oStrictHostKeyChecking=no
-
+  interruptible: true
+ 
 signalementapi:deploy:
   extends: .signalementapi:deploy
   dependencies:

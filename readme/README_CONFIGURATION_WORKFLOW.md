@@ -19,6 +19,8 @@ Pour lister les processus déclarés :
 curl -X GET "http://georchestra.open-dev.com:8082/signalement/administration/processDefinition/search" -H  "accept: application/json" -H  "authorization: Basic YWRtaW46NGRNMW5BcHAh"
 ```
 
+*Attention :* votre fichier BPMN2.0 doit avoir l'extension *.bpmn20.xml*
+
 ## Bien modéliser
 
 Pour bien modéliser un processus, il est recommandé à chaque étape, de mettre à jour les données du signalement correspondant et notamment :

@@ -3,3 +3,4 @@
 /.checkstyle
 /node_installation/
 /.settings/
+/**/.settings/
