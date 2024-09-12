@@ -115,8 +115,8 @@ signalementapi:pre_docker:
       - /^release.*/
   script:
     - ls -l $CI_PROJECT_DIR/georchestra-signalement-api/target/
-    - cp $CI_PROJECT_DIR/$CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/signalement.jar
-    - cp $CI_PROJECT_DIR/georchestra-photos-obliques-facade/target/georchestra-photos-obliques-facade.jar $CI_PROJECT_DIR/docker/template/signalement-backend/georchestra-plui-evolution-api
+    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/signalement.jar
+    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/template/signalement-backend/georchestra-plui-evolution-api
   artifacts:
     paths:
       - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.war'
