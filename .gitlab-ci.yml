@@ -16,7 +16,7 @@ cache:
 include:
   - project: 'boost/template-ci/pipelines/common'
     file: '/docker/docker-template.yml'
-    ref: 'SUPDLVR-4031'
+#    ref: 'SUPDLVR-4031'
   - project: 'bots/trivy-script'
     file: '/trivy-template-job.yml'   
 
