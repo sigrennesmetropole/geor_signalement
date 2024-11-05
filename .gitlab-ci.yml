@@ -116,6 +116,8 @@ signalementapi:pre_docker:
       - open/master
       - open/develop
       - /^release.*/
+      - /.*karbonification.*/
+
   script:
     - ls -l $CI_PROJECT_DIR/georchestra-signalement-api/target/
     - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/signalement.jar
@@ -138,7 +140,7 @@ signalementapi:docker2:build:
   dependencies:
     - signalementapi:pre_docker
   rules:
-    - if: '$CI_COMMIT_BRANCH =~ /.*develop/ || $CI_COMMIT_BRANCH =~ /.*master/ || $CI_COMMIT_BRANCH =~ /^release.*/'
+    - if: '$CI_COMMIT_BRANCH =~ /.*develop/ || $CI_COMMIT_BRANCH =~ /.*master/ || $CI_COMMIT_BRANCH =~ /^release.*/ || $CI_COMMIT_BRANCH =~ /.*karbonification.*/'
   timeout: 1h
   artifacts:
     paths:
@@ -162,6 +164,7 @@ trivyscan:back:
   only:
     refs:
       - open/develop
+      - karbonification
 
 trivyscan:front: 
   extends: 
@@ -222,3 +225,73 @@ signalementapi:deploy:master:
   variables:
     SERVER: "ren1vml0095"
     ANSIBLE_VAR_FILE: signalement_rct_var.yml
+
+
+## #####
+# Déploiement Karbon
+.signalementapi:deploy-karbon:prepare:
+  stage: pre_docker
+  script:
+    - echo "send automation to georchestra deploiement"
+  artifacts:
+    name: signalement-karbon-${TARGET_ENV}
+    paths:
+      - '$CI_PROJECT_DIR/automation/**'
+
+signalementapi:deploy-karbon:prepare:dev:
+  extends: .signalementapi:deploy-karbon:prepare
+  only:
+    refs:
+      - open/develop
+      - /.*karbonification.*/
+  variables:
+    TARGET_ENV: dev
+
+.signalementapi:deploy-karbon:
+  stage: deploy
+  trigger:
+    project: rennes-metropole/georchestra/georchestra-service-deployment
+    strategy: depend
+    branch: master
+  variables:
+    TRIGGERED_BY: signalement
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
+
+signalementapi:deploy-karbon:dev:
+  extends: .signalementapi:deploy-karbon
+  needs:
+    - job: signalementapi:deploy-karbon:prepare:dev
+      artifacts: true
+  only:
+    refs:
+      - open/develop
+      - /.*karbonification.*/
+  variables:
+    TARGET_ENV: dev
+    FORCE_POD: "true"
+    PARENT_COMMIT_BRANCH: $CI_COMMIT_BRANCH
+    PARENT_SERVICE_LOGIN: $SERVICE_LOGIN
+    PARENT_SERVICE_TOKEN: $SERVICE_TOKEN
+    PARENT_SERVICE_ACCESS_TOKEN: $SERVICE_ACCESS_TOKEN
+    PARENT_PROJECT_ID: $CI_PROJECT_ID
+    PARENT_STAGE_PREFIX: signalementapi:deploy-karbon:prepare
+
+signalementapi:deploy-karbon:qua:
+  extends: .signalementapi:deploy-karbon
+  needs:
+    - job: signalementapi:deploy-karbon:prepare:dev
+      artifacts: true
+  only:
+    refs:
+      - open/master
+      - /.*karbonification.*/
+  variables:
+    TARGET_ENV: dev
+    FORCE_POD: "true"
+    PARENT_COMMIT_BRANCH: $CI_COMMIT_BRANCH
+    PARENT_SERVICE_LOGIN: $SERVICE_LOGIN
+    PARENT_SERVICE_TOKEN: $SERVICE_TOKEN
+    PARENT_SERVICE_ACCESS_TOKEN: $SERVICE_ACCESS_TOKEN
+    PARENT_PROJECT_ID: $CI_PROJECT_ID
+    PARENT_STAGE_PREFIX: signalementapi:deploy-karbon:prepare
+  when: manual
