@@ -6,13 +6,19 @@ image:
         secretKeyRef:
           name: signalement-secret-qua
           key: database.signalement.password
+    - name: SIGNALEMENT_BDD_HOST
+      value: georchestra-bdd-qua-georchestra-service-bdd
+
     - name: SIGNALEMENT_LDAP_PASSWORD
       valueFrom:
         secretKeyRef:
           name: signalement-secret-qua
           key: ldap.signalement.password
-    - name: SIGNALEMENT_BDD_HOST
-      value: georchestra-bdd-qua-georchestra-service-bdd
+    - name: SIGNALEMENT_LDAP_HOST
+      value: ldap
+
+    - name: SIGNALEMENT_MAILHOG_HOST
+      value: mailhog
       
     - name: SWAGGER_SERVER
-      value: https://search-application-qua.shom-search.karbon.open.global/
+      value: https://signalement-back-qua.rennes-metropole-georchestra.karbon.open.global
