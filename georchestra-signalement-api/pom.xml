@@ -42,18 +42,22 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-cas</artifactId>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
+			<version>${spring.security.version}</version>
 		</dependency>
 
 		<!-- Server Web -->
@@ -177,12 +181,14 @@
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<!-- Swagger 2 doc dependency -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -216,6 +222,8 @@
 						<dateLibrary>java8</dateLibrary>
 						<serializableModel>true</serializableModel>
 						<unhandledException>true</unhandledException>
+						<useSpringBoot3>true</useSpringBoot3>
+						<useJakartaEe>true</useJakartaEe>
 					</configOptions>
 					<templateDirectory>../resources/swagger/generation</templateDirectory>
 				</configuration>

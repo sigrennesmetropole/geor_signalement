@@ -15,8 +15,8 @@
 		<angular.project.location>.</angular.project.location>
 		<angular.project.nodeinstallation>../node_installation</angular.project.nodeinstallation>
 
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
    <build>
