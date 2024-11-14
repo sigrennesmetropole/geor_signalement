@@ -10,13 +10,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.service.sm.UserService;
@@ -24,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * This filter is inspired from georchestra geowebcache project
@@ -31,7 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @author FNI18300
  *
  */
-public class PreAuthenticationFilter implements Filter {
+public class PreAuthenticationFilter extends OncePerRequestFilter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PreAuthenticationFilter.class);
 
@@ -45,41 +42,13 @@ public class PreAuthenticationFilter implements Filter {
 	public static final String SEC_LASTNAME = "sec-lastname";
 	public static final String SEC_FIRSTNAME = "sec-firstname";
 
-	private UserService userService;
+	private final UserService userService;
 
 	public PreAuthenticationFilter(UserService userService) {
 		super();
 		this.userService = userService;
 	}
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		if (request instanceof HttpServletRequest) {
-			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-			if (LOGGER.isInfoEnabled()) {
-				Enumeration<String> names = httpServletRequest.getHeaderNames();
-				while (names.hasMoreElements()) {
-					LOGGER.info("header:{}", names.nextElement());
-				}
-			}
-			final String username = httpServletRequest.getHeader(SEC_USERNAME);
-			if (username != null) {
-				SecurityContextHolder.getContext().setAuthentication(createAuthentication(httpServletRequest));
-
-				if (LOGGER.isInfoEnabled()) {
-					LOGGER.info("Populated SecurityContextHolder with pre-auth token: '{}'",
-							SecurityContextHolder.getContext().getAuthentication());
-				}
-			} else {
-				if (LOGGER.isInfoEnabled()) {
-					LOGGER.info("SecurityContextHolder not populated with pre-auth token");
-				}
-			}
-		}
-
-		chain.doFilter(request, response);
-	}
 
 	/**
 	 * Construction du token pre-authentification
@@ -148,4 +117,31 @@ public class PreAuthenticationFilter implements Filter {
 		return update;
 	}
 
+	@Override
+	protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
+		if (request instanceof HttpServletRequest) {
+			HttpServletRequest httpServletRequest = request;
+			if (LOGGER.isInfoEnabled()) {
+				Enumeration<String> names = httpServletRequest.getHeaderNames();
+				while (names.hasMoreElements()) {
+					LOGGER.info("header:{}", names.nextElement());
+				}
+			}
+			final String username = httpServletRequest.getHeader(SEC_USERNAME);
+			if (username != null) {
+				SecurityContextHolder.getContext().setAuthentication(createAuthentication(httpServletRequest));
+
+				if (LOGGER.isInfoEnabled()) {
+					LOGGER.info("Populated SecurityContextHolder with pre-auth token: '{}'",
+							SecurityContextHolder.getContext().getAuthentication());
+				}
+			} else {
+				if (LOGGER.isInfoEnabled()) {
+					LOGGER.info("SecurityContextHolder not populated with pre-auth token");
+				}
+			}
+		}
+
+		filterChain.doFilter(request, response);
+	}
 }
