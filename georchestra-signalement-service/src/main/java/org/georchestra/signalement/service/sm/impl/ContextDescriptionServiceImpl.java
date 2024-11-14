@@ -63,7 +63,7 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 															  SortCriteria sortCriteria) {
 
 		return contextDescriptionMapper
-				.entitiesToDtos(contextDescriptionCustomDao.searchContextDescriptions(searchCriteria, sortCriteria));
+				.entitiesToDto(contextDescriptionCustomDao.searchContextDescriptions(searchCriteria, sortCriteria));
 	}
 
 	@Override

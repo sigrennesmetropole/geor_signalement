@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 
-		return contextDescriptionMapper.entitiesToDtos(contexts);
+		return contextDescriptionMapper.entitiesToDto(contexts);
 	}
 
 	@Override

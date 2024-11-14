@@ -16,9 +16,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
 
         buildQuery(searchCriteria, builder, searchQuery, searchRoot);
         searchQuery.select(searchRoot);
-        searchQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
+        searchQuery.orderBy((Order) QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
 
         TypedQuery<UserRoleContextEntity> typedQuery = entityManager.createQuery(searchQuery);
         List<UserRoleContextEntity> results = typedQuery.setFirstResult((int) pageable.getOffset())

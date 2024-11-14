@@ -8,7 +8,6 @@ import org.georchestra.signalement.core.dao.acl.impl.ContextDescriptionCustomDao
 import org.georchestra.signalement.core.dao.styling.StylingDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
 import org.georchestra.signalement.core.dao.styling.StylingCustomDao;
 import org.georchestra.signalement.core.dto.*;
@@ -22,9 +21,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

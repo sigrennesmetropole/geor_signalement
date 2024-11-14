@@ -60,7 +60,7 @@ public class GeoJSonHelper {
 
     public FeatureCollection createFeatureCollection() {
         FeatureCollection result = new FeatureCollection();
-        result.setType(TypeEnum.FEATURECOLLECTION);
+        result.setType(TypeEnum.FEATURE_COLLECTION);
         return result;
     }
 
@@ -88,7 +88,7 @@ public class GeoJSonHelper {
             ((Polygon) geometry).getCoordinates().add(convertPoints(type, points));
         } else if (type == GeographicType.LINE) {
             geometry = new LineString();
-            geometry.setType(GeometryType.LINESTRING);
+            geometry.setType(GeometryType.LINE_STRING);
             ((LineString) geometry).setCoordinates(convertPoints(type, points));
         } else {
             geometry = new Point();

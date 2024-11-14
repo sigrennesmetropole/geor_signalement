@@ -95,7 +95,7 @@ public class StyleServiceImpl  implements StyleService {
     @Override
     public List<ProcessStyling> getProcessStyling(Long id) throws Exception {
         List<ProcessStylingEntity> entities = processStylingDao.findByStylingId(id);
-        return processMapper.entitiesToDtos(entities);
+        return processMapper.entitiesToDto(entities);
     }
 
     @Override

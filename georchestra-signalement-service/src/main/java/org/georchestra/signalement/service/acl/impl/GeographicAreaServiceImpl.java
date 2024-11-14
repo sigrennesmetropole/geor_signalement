@@ -11,7 +11,6 @@ import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
 import org.georchestra.signalement.service.acl.GeographicAreaService;
-import org.georchestra.signalement.service.common.ErrorMessageConstants;
 import org.georchestra.signalement.service.mapper.acl.GeographicAreaMapper;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
         // On cherche d'abord l'id de la geographic Area
         List<GeographicAreaEntity> geographicAreaEntities = geographicAreaCustumDao.searchGeographicAreaIntersections(geometry, geographicType, idContext, idRole);
         // On convertie les entités en dtos
-        return geographicAreaMapper.entitiesToDtos(geographicAreaEntities);
+        return geographicAreaMapper.entitiesToDto(geographicAreaEntities);
     }
 
     @Override

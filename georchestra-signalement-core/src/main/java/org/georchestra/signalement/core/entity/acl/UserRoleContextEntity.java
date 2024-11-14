@@ -5,7 +5,7 @@ package org.georchestra.signalement.core.entity.acl;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Représente l'association d'un utilisateur avec un rôle pour un contexte
