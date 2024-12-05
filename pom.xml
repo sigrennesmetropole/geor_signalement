@@ -51,7 +51,7 @@
 		<geotools.version>16.1</geotools.version>
 
 		<activiti.version>7.1.0.M5</activiti.version>
-		<log4j.version>2.17.0</log4j.version>
+		<log4j.version>2.17.1</log4j.version>
 
 		<openapi.version>1.7.0</openapi.version>
 		<swagger.version>2.2.8</swagger.version>
