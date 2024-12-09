@@ -242,13 +242,15 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>a-jar</id>
-						<phase>package</phase>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<executable>true</executable>
+							<finalName>${project.artifactId}</finalName>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<executable>true</executable>
-				</configuration>
 			</plugin>
 
 			<!-- War Spring Boot -->
@@ -289,9 +291,8 @@
 						<configuration>
 							<failOnMissingWebXml>false</failOnMissingWebXml>
 							<packagingExcludes>
-								WEB-INF/lib/mapstruct-1.2.0.Final.jar,
-								WEB-INF/lib/jcl-over-slf4j-1.7.29.jar,
-								WEB-INF/lib/spring-boot-devtools-2.1.10.RELEASE.jar,
+								%regex[WEB-INF/lib/mapstruct-.*\.jar],
+								%regex[WEB-INF/lib/spring-boot-devtools-.*\.jar],
 								%regex[WEB-INF/lib/spring.*-test-.*\.jar]
 							</packagingExcludes>
 							<warName>${finalName}</warName>
