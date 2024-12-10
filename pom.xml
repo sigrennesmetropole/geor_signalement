@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.4</version>
+		<version>3.3.5</version>
 		<relativePath />
 	</parent>
 
@@ -37,12 +37,12 @@
 		<commons.lang.version>3.17.0</commons.lang.version>
 		<commons.collections.version>4.4</commons.collections.version>
 		<maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
-
+		<springframework.boot.version>3.3.5</springframework.boot.version>
 
 		<spring.version>6.1.14</spring.version>
-		<spring-data.version>3.3.4</spring-data.version>
+		<spring-data.version>3.3.5</spring-data.version>
 
-		<mapstruct.version>1.6.2</mapstruct.version>
+		<mapstruct.version>1.6.3</mapstruct.version>
 		<lombok.version>1.18.26</lombok.version>
 		<minidev.version>2.5.1</minidev.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
@@ -55,7 +55,7 @@
 		<geotools.version>16.1</geotools.version>
 		<jakarta.version>3.1.0</jakarta.version>
 
-		<activiti.version>7.1.0.M5</activiti.version>
+		<activiti.version>7.1.0.M6</activiti.version>
 		<log4j.version>2.17.0</log4j.version>
 
 		<openapi.version>1.8.0</openapi.version>
@@ -114,12 +114,30 @@
 
 	<dependencyManagement>
 		<dependencies>
-
+			<!-- Spring Boot -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${springframework.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 			<!-- Modules -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>georchestra-signalement-api</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.activiti</groupId>
+				<artifactId>activiti-spring-boot-starter</artifactId>
+				<version>${activiti.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -366,12 +384,6 @@
 			</dependency>
 
 			<!-- Activiti -->
-			<!-- https://mvnrepository.com/artifact/org.activiti/activiti-spring-boot-starter -->
-			<dependency>
-				<groupId>org.activiti</groupId>
-				<artifactId>activiti-spring-boot-starter</artifactId>
-				<version>${activiti.version}</version>
-			</dependency>
 
 			<dependency>
 				<groupId>org.activiti.dependencies</groupId>

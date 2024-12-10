@@ -37,8 +37,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-spatial</artifactId>
+			<version>6.6.3.Final</version>
 		</dependency>
 
 		<dependency>
@@ -75,7 +76,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.22</version>
+			<version>1.18.36</version>
 		</dependency>
 
 		<dependency>
