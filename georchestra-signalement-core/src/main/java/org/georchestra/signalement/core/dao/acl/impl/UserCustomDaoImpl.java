@@ -9,9 +9,12 @@ import java.util.Map;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
 
-import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Path;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
@@ -63,7 +66,7 @@ public class UserCustomDaoImpl extends AbstractCustomDaoImpl implements UserCust
 		Root<UserEntity> searchRoot = searchQuery.from(UserEntity.class);
 
 		buildQuery(searchCriteria, builder, searchQuery, searchRoot);
-		searchQuery.orderBy((Order) QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
+		searchQuery.orderBy((QueryUtils.toOrders(pageable.getSort(), searchRoot, builder)));
 		searchQuery.select(searchRoot);
 		
 		TypedQuery<UserEntity> typedQuery = entityManager.createQuery(searchQuery);
