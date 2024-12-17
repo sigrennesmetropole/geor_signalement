@@ -21,7 +21,7 @@ include:
     file: '/trivy-template-job.yml'   
 
 default:
-  image: maven:3.6.0-jdk-11
+  image: maven:3.9.0-eclipse-temurin-17
   before_script:
     - apt update && apt install -y gettext-base build-essential
     - envsubst '${MVN_GROUP} ${MVN_RELEASE} ${MVN_SNAPSHOTS}' < pom.xml > pom.subst && mv -f pom.subst pom.xml

@@ -23,7 +23,4 @@ import java.util.List;
         ProcessStyling entityToDto(ProcessStylingEntity entity);
 
         void dtoToEntity(ProcessStyling dto, @MappingTarget ProcessStylingEntity entity);
-
-        @IterableMapping(qualifiedByName = "entityToDto")
-        List<ProcessStyling> entitiesToDtos(Collection<ProcessStylingEntity> entities);
 }

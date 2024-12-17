@@ -1,5 +1,9 @@
 package org.georchestra.signalement.core.dao.acl.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
@@ -16,12 +20,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Repository
 public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implements UserRoleContextCustomDao {
@@ -63,7 +69,7 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
 
         buildQuery(searchCriteria, builder, searchQuery, searchRoot);
         searchQuery.select(searchRoot);
-        searchQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
+        searchQuery.orderBy((Order) QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
 
         TypedQuery<UserRoleContextEntity> typedQuery = entityManager.createQuery(searchQuery);
         List<UserRoleContextEntity> results = typedQuery.setFirstResult((int) pageable.getOffset())

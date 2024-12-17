@@ -33,12 +33,6 @@
 			<artifactId>spring-boot-starter-jetty</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
@@ -126,10 +120,6 @@
 			<artifactId>activiti-spring</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.el</groupId>
-					<artifactId>el-api</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>jcl-over-slf4j</artifactId>
 				</exclusion>
@@ -216,6 +206,8 @@
 						<dateLibrary>java8</dateLibrary>
 						<serializableModel>true</serializableModel>
 						<unhandledException>true</unhandledException>
+						<useSpringBoot3>true</useSpringBoot3>
+						<useJakartaEe>true</useJakartaEe>
 					</configOptions>
 					<templateDirectory>../resources/swagger/generation</templateDirectory>
 				</configuration>
@@ -234,13 +226,15 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>a-jar</id>
-						<phase>package</phase>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<executable>true</executable>
+							<finalName>${project.artifactId}</finalName>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<executable>true</executable>
-				</configuration>
 			</plugin>
 
 			<!-- War Spring Boot -->
@@ -281,9 +275,8 @@
 						<configuration>
 							<failOnMissingWebXml>false</failOnMissingWebXml>
 							<packagingExcludes>
-								WEB-INF/lib/mapstruct-1.2.0.Final.jar,
-								WEB-INF/lib/jcl-over-slf4j-1.7.29.jar,
-								WEB-INF/lib/spring-boot-devtools-2.1.10.RELEASE.jar,
+								%regex[WEB-INF/lib/mapstruct-.*\.jar],
+								%regex[WEB-INF/lib/spring-boot-devtools-.*\.jar],
 								%regex[WEB-INF/lib/spring.*-test-.*\.jar]
 							</packagingExcludes>
 							<warName>${finalName}</warName>
@@ -333,12 +326,12 @@
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>1.2.2</version>
+						<version>${docker-maven-plugin.version</version>
 						<dependencies>
 							<dependency>
 								<groupId>com.google.guava</groupId>
 								<artifactId>guava</artifactId>
-								<version>28.2-jre</version>
+								<version>${guava.version}</version>
 							</dependency>
 						</dependencies>
 						<executions>

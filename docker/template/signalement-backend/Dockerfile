@@ -1,4 +1,4 @@
-FROM openjdk:11.0.16
+FROM openjdk:17.0.2-jdk-bullseye
 USER root
 MAINTAINER sigsupport@rennesmetropole.fr
 ENV TZ=Europe/Paris
@@ -11,7 +11,7 @@ RUN mkdir -p /etc/georchestra
 RUN chmod 777 -R /etc/georchestra
 
 RUN mkdir -p /opt/signalement
-ADD signalement.jar /opt/signalement/service.jar
+ADD georchestra-signalement-api.jar /opt/signalement/service.jar
 RUN chmod 777 -R /opt/signalement
 
 ENV PROPERTIES_PATH /etc/georchestra/signalement/signalement.properties

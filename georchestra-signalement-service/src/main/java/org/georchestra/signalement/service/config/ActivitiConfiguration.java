@@ -5,13 +5,16 @@ package org.georchestra.signalement.service.config;
 
 import java.util.ArrayList;
 
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.cfg.AbstractProcessEngineConfigurator;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.spring.SpringExpressionManager;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.service.listener.HookEventListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,9 +25,6 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 @Configuration
 public class ActivitiConfiguration extends AbstractProcessEngineConfigurator {
-
-	@Autowired
-	private PlatformTransactionManager transactionManager;
 
 	@Value("${spring.datasource.url}")
 	private String dataSourceURL;
@@ -45,13 +45,19 @@ public class ActivitiConfiguration extends AbstractProcessEngineConfigurator {
 	private String dataSourceSchemaUpdate;
 
 	@Bean
-	public SpringProcessEngineConfiguration springProcessEngineConfiguration() {
+	public SpringProcessEngineConfiguration springProcessEngineConfiguration(PlatformTransactionManager transactionManager, ApplicationContext applicationContext) {
 		SpringProcessEngineConfiguration configuration = new SpringProcessEngineConfiguration();
 		configuration.setTransactionManager(transactionManager);
 		configuration.setEventListeners(new ArrayList<>());
 		configuration.getEventListeners().add(new HookEventListener());
 		configuration.addConfigurator(this);
+		configuration.setApplicationContext(applicationContext);
+		configuration.setExpressionManager(new SpringExpressionManager(applicationContext, configuration.getBeans()));
 		return configuration;
+	}
+	@Bean
+	public ProcessEngine processEngine(ProcessEngineConfiguration processEngineConfiguration) {
+		return processEngineConfiguration.buildProcessEngine();
 	}
 
 	@Override
