@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -95,7 +94,7 @@ public class StyleServiceImpl  implements StyleService {
     @Override
     public List<ProcessStyling> getProcessStyling(Long id) throws Exception {
         List<ProcessStylingEntity> entities = processStylingDao.findByStylingId(id);
-        return processMapper.entitiesToDto(entities);
+        return processMapper.entitiesToDtos(entities);
     }
 
     @Override
