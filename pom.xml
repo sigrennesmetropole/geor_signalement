@@ -66,15 +66,18 @@
 		<openapi.plugin.version>7.6.0</openapi.plugin.version>
 		<springfox.version>3.0.0</springfox.version>
 		<google.code.findbugs.version>3.0.2</google.code.findbugs.version>
+		<spring.security.version>6.3.4</spring.security.version>
+		<jackson.version>2.15.2</jackson.version>
 
 		<maven-replacer-plugin.version>1.4.1</maven-replacer-plugin.version>
 		<compiler.plugin.version>3.12.1</compiler.plugin.version>
 		<assemby.plugin.version>3.6.0</assemby.plugin.version>
 		<ant.plugin.version>3.1.0</ant.plugin.version>
-		<spring.security.version>6.3.4</spring.security.version>
-
-		<jackson.version>2.15.2</jackson.version>
-
+		<frontend-maven-plugin.version>1.12.0</frontend-maven-plugin.version>
+		<docker-maven-plugin.version>1.2.2</docker-maven-plugin.version>
+		
+		<guava.version>28.2-jre</guava.version>
+			
 		<!-- java version -->
 		<java.source.version>17</java.source.version>
 		<java.target.version>17</java.target.version>
@@ -88,7 +91,6 @@
 		<sonar.projectName>${project.artifactId}</sonar.projectName>
 		<sonar.exclusions>**/config/*.java,**/exception/**/*.java,**/test/*.java</sonar.exclusions>
 		<sonar.global.test.exclusions>**/*Test.java</sonar.global.test.exclusions>
-
 
 	</properties>
 

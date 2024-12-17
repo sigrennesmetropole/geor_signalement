@@ -167,14 +167,12 @@
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
-			<version>3.0.0</version>
 		</dependency>
 
 		<!-- Swagger 2 doc dependency -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
-			<version>3.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -328,12 +326,12 @@
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>1.2.2</version>
+						<version>${docker-maven-plugin.version</version>
 						<dependencies>
 							<dependency>
 								<groupId>com.google.guava</groupId>
 								<artifactId>guava</artifactId>
-								<version>28.2-jre</version>
+								<version>${guava.version}</version>
 							</dependency>
 						</dependencies>
 						<executions>
