@@ -36,11 +36,7 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.hibernate.orm</groupId>
-			<artifactId>hibernate-spatial</artifactId>
-			<version>6.6.3.Final</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -62,7 +58,14 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-spatial</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.openapitools</groupId>
 			<artifactId>jackson-databind-nullable</artifactId>
@@ -74,22 +77,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.36</version>
-		</dependency>
-
-		<dependency>
 			<groupId>net.minidev</groupId>
 			<artifactId>json-smart</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
-		<dependency>
-			<groupId>org.locationtech.jts</groupId>
-			<artifactId>jts-core</artifactId>
-			<version>1.20.0</version>
-		</dependency>
 
 		<!-- Swagger UI dependency -->
 		<dependency>
@@ -110,20 +101,17 @@
 
 
 		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
-			<version>3.0.2</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
-			<version>${javax.annotation-api.version}</version>
 		</dependency>
 
 		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
-			<version>${jakarta.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -144,10 +132,11 @@
 					<generateApis>false</generateApis>
 					<generateModels>true</generateModels>
 					<configOptions>
-						<dateLibrary>java17</dateLibrary>
+						<dateLibrary>java8</dateLibrary>
 						<useSpringBoot3>true</useSpringBoot3>
 						<useJakartaEe>true</useJakartaEe>
 						<useSwaggerUI>true</useSwaggerUI>
+						<enumPropertyNaming>legacy</enumPropertyNaming>
 					</configOptions>
 				</configuration>
 				<executions>
