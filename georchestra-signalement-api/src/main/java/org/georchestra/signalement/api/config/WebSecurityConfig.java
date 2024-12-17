@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -49,7 +48,7 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.cors(Customizer.withDefaults())
+		http.cors(cors -> corsConfigurationSource())
 				.authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest.requestMatchers(SB_PERMIT_ALL_URL)
 						.permitAll().anyRequest().fullyAuthenticated())
 				.sessionManagement(sessionManagement -> sessionManagement
