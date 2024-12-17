@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 
-		return contextDescriptionMapper.entitiesToDto(contexts);
+		return contextDescriptionMapper.entitiesToDtos(contexts);
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
 	public Page<User> searchUsers(UserSearchCriteria searchCriteria, Pageable pageable) {
 		LOGGER.info("Recherche des utilisateurs : {}", searchCriteria);
 
-		return userMapper.entitiesToDto(userCustomDao.searchUsers(searchCriteria, pageable), pageable);
+		return userMapper.entitiesToDtos(userCustomDao.searchUsers(searchCriteria, pageable), pageable);
 	}
 
 	@Override

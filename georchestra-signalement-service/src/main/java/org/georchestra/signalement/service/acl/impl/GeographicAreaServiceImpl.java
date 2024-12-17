@@ -39,7 +39,7 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
         // On cherche d'abord l'id de la geographic Area
         List<GeographicAreaEntity> geographicAreaEntities = geographicAreaCustumDao.searchGeographicAreaIntersections(geometry, geographicType, idContext, idRole);
         // On convertie les entités en dtos
-        return geographicAreaMapper.entitiesToDto(geographicAreaEntities);
+        return geographicAreaMapper.entitiesToDtos(geographicAreaEntities);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
         Page<GeographicAreaEntity> geographicAreas;
         geographicAreas = geographicAreaCustomDao
                 .searchGeographicAreas(searchCriteria,pageable, sort);
-        return geographicAreaMapper.entitiesToDto(geographicAreas,pageable);
+        return geographicAreaMapper.entitiesToDtos(geographicAreas,pageable);
     }
 
     @Override

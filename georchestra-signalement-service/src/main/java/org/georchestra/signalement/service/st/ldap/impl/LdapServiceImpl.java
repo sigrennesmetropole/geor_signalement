@@ -149,7 +149,7 @@ public class LdapServiceImpl implements LdapService {
 			}
 		}
 		
-		return contextDescriptionMapper.entitiesToDto(contexts);
+		return contextDescriptionMapper.entitiesToDtos(contexts);
 	}
 
 }
