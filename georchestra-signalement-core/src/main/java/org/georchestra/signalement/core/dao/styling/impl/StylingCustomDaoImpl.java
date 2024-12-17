@@ -3,15 +3,20 @@
  */
 package org.georchestra.signalement.core.dao.styling.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
 import org.georchestra.signalement.core.dao.acl.impl.ContextDescriptionCustomDaoImpl;
+import org.georchestra.signalement.core.dao.styling.StylingCustomDao;
 import org.georchestra.signalement.core.dao.styling.StylingDao;
+import org.georchestra.signalement.core.dto.SortCriteria;
+import org.georchestra.signalement.core.dto.StylingSearchCriteria;
+import org.georchestra.signalement.core.entity.styling.StylingEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
-import org.georchestra.signalement.core.dao.styling.StylingCustomDao;
-import org.georchestra.signalement.core.dto.*;
-import org.georchestra.signalement.core.entity.styling.StylingEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,10 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 
 /**
