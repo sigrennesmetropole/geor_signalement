@@ -218,6 +218,8 @@ export class SignalementPanelComponent extends React.Component {
             this.state.task.asset.contextDescription = contextDescriptions[0];
             this.state.task.asset.geographicType = contextDescriptions[0].geographicType;
             this.props.clearDrawn();
+            this.props.createDraft(contextDescriptions[0]);
+
         }
         this.setState(this.state);
     }
