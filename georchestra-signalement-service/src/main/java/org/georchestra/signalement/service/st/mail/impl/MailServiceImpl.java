@@ -7,9 +7,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -81,7 +81,7 @@ public class MailServiceImpl implements MailService {
 	}
 
 	private void handleAttachment(MimeMessageHelper helper, DocumentContent attachment)
-			throws MessagingException, FileNotFoundException {
+            throws FileNotFoundException, jakarta.mail.MessagingException {
 		if (attachment.isFile()) {
 			FileSystemResource fileResource = new FileSystemResource(attachment.getFile());
 			helper.addAttachment(attachment.getFileName(), fileResource);
@@ -92,9 +92,9 @@ public class MailServiceImpl implements MailService {
 	}
 
 	private void handleBody(MimeMessageHelper helper, MailDescription mailDescription)
-			throws IOException, MessagingException {
-		String text = null;
-		InputStream bodyStream = null;
+			throws IOException {
+		String text;
+		InputStream bodyStream;
 		try {
 			bodyStream = mailDescription.getBody().getFileStream();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -106,7 +106,9 @@ public class MailServiceImpl implements MailService {
 			} else {
 				helper.setText(text);
 			}
-		} finally {
+		} catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } finally {
 			mailDescription.getBody().closeStream();
 		}
 	}

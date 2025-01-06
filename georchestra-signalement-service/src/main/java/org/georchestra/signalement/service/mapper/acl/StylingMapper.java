@@ -23,6 +23,4 @@ public interface StylingMapper extends AbstractMapper<StylingEntity, StyleContai
 
     void dtoToEntity(StyleContainer dto, @MappingTarget StylingEntity entity);
 
-    @IterableMapping(qualifiedByName = "entityToDto")
-    List<StyleContainer> entitiesToDtos(Collection<StylingEntity> entities);
 }

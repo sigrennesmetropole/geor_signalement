@@ -1,4 +1,4 @@
-FROM jetty:9.4.31-jdk11
+FROM openjdk:17.0.2-jdk-bullseye
 USER root
 MAINTAINER fni18300@open-groupe.com
 ENV TZ=Europe/Paris
@@ -13,7 +13,7 @@ RUN rm -r /usr/local/jetty/lib/mail
 
 RUN mkdir -p /opt/signalement/data/models
 
-ADD signalement.war /var/lib/jetty/webapps/signalement.war
+ADD signalement.jar /var/lib/jetty/webapps/signalement.jar
 #ADD jetty-logging.properties /usr/local/jetty/resources/jetty-logging.properties
 
 ENV PROPERTIES_PATH /etc/georchestra/signalement/signalement.properties

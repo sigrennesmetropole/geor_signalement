@@ -58,10 +58,10 @@
     dest: "{{ signalement_image_directory }}/Dockerfile"
     mode: 0770
     
-- name: Copy signalement war
+- name: Copy signalement jar
   copy:
-    src: "{{ signalement_war_name }}"
-    dest: "{{ signalement_image_directory }}/signalement.war"
+    src: "{{ signalement_jar_name }}"
+    dest: "{{ signalement_image_directory }}/signalement.jar"
     mode: 0770 
    
 - name: Copy signalement api properties file

@@ -1,13 +1,9 @@
 package org.georchestra.signalement.service.mapper.acl;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.georchestra.signalement.core.dto.ContextDescription;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.service.mapper.AbstractMapper;
 import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -27,6 +23,4 @@ public interface ContextDescriptionMapper extends AbstractMapper<ContextDescript
 	@Override
 	ContextDescription entityToDto(ContextDescriptionEntity entity);
 
-	@IterableMapping(qualifiedByName = "entityToDto")
-	List<ContextDescription> entitiesToDtos(Collection<ContextDescriptionEntity> entities);
 }

@@ -21,6 +21,4 @@ public interface UserRoleContextMapper extends AbstractMapper<UserRoleContextEnt
 
     void dtoToEntity(User user, @MappingTarget UserRoleContextEntity entity);
 
-    @IterableMapping(qualifiedByName = "entityToDto")
-    List<User> entitiesToDtos(Collection<UserRoleContextEntity> entities);
 }

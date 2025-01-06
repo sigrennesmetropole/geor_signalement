@@ -35,10 +35,10 @@ public interface AbstractMapper<E, D> {
 	 * @param entities
 	 * @return la liste de dtos convertis
 	 */
-	List<D> entitiesToDto(Collection<E> entities);
+	List<D> entitiesToDtos(Collection<E> entities);
     
-    default Page<D> entitiesToDto(Page<E> entities, Pageable pageable) {
-		return new PageImpl<>(entitiesToDto(entities.getContent()), pageable, entities.getTotalElements());
+    default Page<D> entitiesToDtos(Page<E> entities, Pageable pageable) {
+		return new PageImpl<>(entitiesToDtos(entities.getContent()), pageable, entities.getTotalElements());
 	}
 
 }
