@@ -18,6 +18,8 @@ kubectl patch deployment signalement-back-${TARGET_ENV}-rm-signalement-back --pa
 
 kubectl apply -f config/${TARGET_ENV}/back.ingress.${TARGET_ENV}.yaml
 
+helm upgrade --install -f front-management.yaml -f config/${TARGET_ENV}/front-management.${TARGET_ENV}.yaml signalement-front-management-${TARGET_ENV} boost-stable/boost-deploy
+
 # on attend que tout soit démarré
 sleep 15
 
