@@ -187,7 +187,7 @@ trivyscan:front:
   cache: {}
   before_script:
     - cat /etc/os-release
-    - apt update && apt install -y openssh-client	
+    - apt update && apt install -y openssh-client ansible
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$ansible_private_key" | base64 -d)
   script:
