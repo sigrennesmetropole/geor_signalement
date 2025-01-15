@@ -1,6 +1,6 @@
 nameOverride: "rm-signalement-back"
 image:
-  repository: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/rennes-metropole/signalement-backend
+  repository: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-backend
   internalPort: 8080
   exposedPort: 8080
 
