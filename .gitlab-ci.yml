@@ -186,6 +186,8 @@ trivyscan:front:
     - iaas
   cache: {}
   before_script:
+    - cat /etc/os-release
+    - apt update && apt install -y openssh-client	
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$ansible_private_key" | base64 -d)
   script:
