@@ -6,6 +6,7 @@ image:
         secretKeyRef:
           name: signalement-secret-dev
           key: database.signalement.password
+
     - name: SIGNALEMENT_BDD_HOST
       value: georchestra-bdd-dev-georchestra-service-bdd
 
@@ -14,15 +15,16 @@ image:
         secretKeyRef:
           name: signalement-secret-dev
           key: ldap.signalement.password
+
     - name: SIGNALEMENT_LDAP_HOST
       value: georchestra-ldap-svc
     - name: SIGNALEMENT_LDAP_PORT
-      value: 389
+      value: '389'
 
     - name: SIGNALEMENT_MAILHOG_HOST
       value: georchestra-smtp-svc
     - name: SIGNALEMENT_MAILHOG_PORT
-      value: 25
+      value: '25'
       
     - name: SWAGGER_SERVER
-      value: https://signalement-back-dev.rennes-metropole-georchestra.karbon.open.global
+      value: 'https://signalement-back-dev.rennes-metropole-georchestra.karbon.open.global'
