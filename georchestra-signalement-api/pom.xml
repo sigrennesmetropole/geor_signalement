@@ -359,7 +359,7 @@
 								<resource>
 									<targetPath>/</targetPath>
 									<directory>${project.build.directory}</directory>
-									<include>${finalName}.war</include>
+									<include>${project.artifactId}.jar</include>
 								</resource>
 							</resources>
 							<!-- This will require to set up the docker-hub credentials correctly

@@ -120,8 +120,8 @@ signalementapi:pre_docker:
 
   script:
     - ls -l $CI_PROJECT_DIR/georchestra-signalement-api/target/
-    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/signalement.jar
-    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/template/signalement-backend/signalement.jar
+    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/georchestra-signalement-api.jar
+    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/template/signalement-backend/georchestra-signalement-api.jar
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/docker/rennes-metropole/signalement-front-management/georchestra-signalement-front-management-angular-dist.zip
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/docker/template/signalement-front-management/georchestra-signalement-front-management-angular-dist.zip
   artifacts:
@@ -160,7 +160,7 @@ trivyscan:back:
   dependencies:
     - signalementapi:docker2:build
   variables:
-    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/rennes-metropole/signalement-backend:open-develop
+    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-backend:open-develop
   only:
     refs:
       - open/develop
@@ -175,14 +175,13 @@ trivyscan:front:
   dependencies:
     - signalementapi:docker2:build
   variables:
-    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/rennes-metropole/signalement-front-management:open-develop
+    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-front-management:open-develop
   only:
     refs:
       - open/develop
 
 .signalementapi:deploy:
   stage: deploy
-  image: glregistry.boost.open.global/boost/docker/mvn-node-jdk11-ansible:latest
   tags: 
     - iaas
   cache: {}
