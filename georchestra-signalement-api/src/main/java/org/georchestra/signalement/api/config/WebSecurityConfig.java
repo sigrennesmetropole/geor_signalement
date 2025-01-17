@@ -3,20 +3,20 @@ package org.georchestra.signalement.api.config;
 import java.util.Arrays;
 import java.util.List;
 
-
-import jakarta.servlet.Filter;
 import org.georchestra.signalement.api.security.PreAuthenticationFilter;
 import org.georchestra.signalement.api.security.PreAuthenticationProvider;
 import org.georchestra.signalement.service.sm.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -24,42 +24,50 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@EnableWebSecurity
+import jakarta.servlet.Filter;
+
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
 	private static final String[] SB_PERMIT_ALL_URL = {
 			BasicSecurityConstants.SWAGGER_RESSOURCE_URL, BasicSecurityConstants.SWAGGER_RESSOURCE_UI,
-			BasicSecurityConstants.WEBJARS_URL, BasicSecurityConstants.SIGNALEMENT_URL,
+			BasicSecurityConstants.WEBJARS_URL,
 			BasicSecurityConstants.API_DOCS_URL, BasicSecurityConstants.CONFIGURATION_SECURITY_URL,
 			BasicSecurityConstants.CONFIGURATION_UI_URL, BasicSecurityConstants.ADMINISTRATION_URL,
-			BasicSecurityConstants.ASSETS_JSON_URL, BasicSecurityConstants.ASSETS_JPEG_URL,
-			BasicSecurityConstants.ASSETS_SVG_URL, BasicSecurityConstants.ICONES_URL,
-			BasicSecurityConstants.ADMINISTRATION_URL, BasicSecurityConstants.CSS_URL,
-			BasicSecurityConstants.SLASH_URL, BasicSecurityConstants.JS_URL,
-			BasicSecurityConstants.CRSF_URL
-
+			BasicSecurityConstants.ASSETS_URL, BasicSecurityConstants.ICONES_URL,
+			BasicSecurityConstants.CSS_URL, BasicSecurityConstants.SLASH_URL,
+			BasicSecurityConstants.JS_URL, BasicSecurityConstants.CRSF_URL,
+			BasicSecurityConstants.ADMINISTRATION_INITIALIZE_URL,
+			BasicSecurityConstants.ADMINISTRATION_CONFIGURATION_URL,
+			BasicSecurityConstants.ADMINISTRATION_PROCESSDEFINITION_SEARCH_URL,
+			BasicSecurityConstants.ADMINISTRATION_EXTENSION_URL,
+			BasicSecurityConstants.ADMINISTRATION_PROXY_URL
 	};
 
+	@Value("${security.authentication.disabled:false}")
+	private boolean disableAuthentification = false;
 
 	@Autowired
 	private UserService userService;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.cors(cors -> corsConfigurationSource())
-				.authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest.requestMatchers(SB_PERMIT_ALL_URL)
-						.permitAll().anyRequest().fullyAuthenticated())
-				.sessionManagement(sessionManagement -> sessionManagement
-						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterAfter(createPreAuthenticationFilter(),BasicAuthenticationFilter.class)
-				.csrf(AbstractHttpConfigurer::disable);
+		if (!disableAuthentification) {
+			http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
+			.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+					.requestMatchers(SB_PERMIT_ALL_URL).permitAll().anyRequest().fullyAuthenticated())
+			.exceptionHandling(Customizer.withDefaults())
+			.sessionManagement(sessionManagement -> sessionManagement
+					.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.addFilterAfter(createPreAuthenticationFilter(), BasicAuthenticationFilter.class);
+		} else {
+			http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
+					.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.anyRequest().permitAll());
+		}
 		return http.build();
-
 	}
-
-
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
@@ -85,9 +93,14 @@ public class WebSecurityConfig {
 	private AuthenticationProvider createPreAuthenticationProvider() {
 		return new PreAuthenticationProvider();
 	}
-
+	
+	@Bean
+	protected GrantedAuthorityDefaults grantedAuthorityDefaults() {
+		// Remove the ROLE_ prefix
+		return new GrantedAuthorityDefaults("");
+	}
 
 	private Filter createPreAuthenticationFilter() {
-		return new PreAuthenticationFilter(userService);
+		return new PreAuthenticationFilter(SB_PERMIT_ALL_URL, userService);
 	}
 }

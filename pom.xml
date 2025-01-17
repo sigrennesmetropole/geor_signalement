@@ -54,7 +54,9 @@
 		<jtidy.version>r938</jtidy.version>
 		<geotools.version>16.1</geotools.version>
 		<jakarta.version>3.1.0</jakarta.version>
-
+		<openapi-web.version>2.6.0</openapi-web.version>
+		<springfox.version>3.0.0</springfox.version>
+		
 		<activiti.version>7.1.0.M6</activiti.version>
 		<log4j.version>2.17.0</log4j.version>
 		<hibernate.spatial.version>6.6.3.Final</hibernate.spatial.version>
@@ -64,7 +66,6 @@
 		<swagger.version>2.2.25</swagger.version>
 		<jackson.databind.nullable.version>0.2.6</jackson.databind.nullable.version>
 		<openapi.plugin.version>7.6.0</openapi.plugin.version>
-		<springfox.version>3.0.0</springfox.version>
 		<google.code.findbugs.version>3.0.2</google.code.findbugs.version>
 		<spring.security.version>6.3.4</spring.security.version>
 		<jackson.version>2.15.2</jackson.version>
@@ -340,6 +341,23 @@
 
 			<dependency>
 				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>${openapi-web.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-boot-starter</artifactId>
+				<version>${springfox.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${springfox.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-ui</artifactId>
 				<version>${openapi.version}</version>
 			</dependency>
@@ -348,12 +366,6 @@
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-data-rest</artifactId>
 				<version>${openapi.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-swagger-ui</artifactId>
-				<version>${springfox.version}</version>
 			</dependency>
 
 			<dependency>

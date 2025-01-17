@@ -1,6 +1,10 @@
 package org.georchestra.signalement.api.controller;
 
-import io.swagger.annotations.Api;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.georchestra.signalement.api.AdministrationApi;
 import org.georchestra.signalement.core.common.DocumentContent;
@@ -20,12 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-06-12T10:28:09.523+02:00")
+import io.swagger.annotations.Api;
 
 /**
  * Controlleur pour la configuration.

@@ -5,12 +5,13 @@ package org.georchestra.signalement.api.security;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -42,11 +44,20 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 	public static final String SEC_LASTNAME = "sec-lastname";
 	public static final String SEC_FIRSTNAME = "sec-firstname";
 
+	// Controle des patterns des URL
+	private AntPathMatcher pathMatcher;
+
+
+	// Liste des URL à exclure
+	private Collection<String> excludeUrlPatterns;
+	
 	private final UserService userService;
 
-	public PreAuthenticationFilter(UserService userService) {
+	public PreAuthenticationFilter(final String[] excludeUrlPatterns, UserService userService) {
 		super();
 		this.userService = userService;
+		this.excludeUrlPatterns = Arrays.asList(excludeUrlPatterns);
+		this.pathMatcher = new AntPathMatcher();
 	}
 
 
@@ -143,5 +154,12 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		filterChain.doFilter(request, response);
+	}
+	
+	@Override
+	protected boolean shouldNotFilter(final HttpServletRequest request) throws ServletException {
+		// Contrôle si l'URL n'est pas dans le liste d'exclusion. Si c'est le cas, elle
+		// ne passera pas dans ce filtre
+		return excludeUrlPatterns.stream().anyMatch(p -> pathMatcher.match(p, request.getServletPath()));
 	}
 }
