@@ -24,7 +24,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -69,7 +68,7 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
 
         buildQuery(searchCriteria, builder, searchQuery, searchRoot);
         searchQuery.select(searchRoot);
-        searchQuery.orderBy((Order) QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
+        searchQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), searchRoot, builder));
 
         TypedQuery<UserRoleContextEntity> typedQuery = entityManager.createQuery(searchQuery);
         List<UserRoleContextEntity> results = typedQuery.setFirstResult((int) pageable.getOffset())

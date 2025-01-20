@@ -1,12 +1,10 @@
 package org.georchestra.signalement.api.controller;
 
-import io.swagger.annotations.Api;
 import org.georchestra.signalement.api.UsersApi;
 import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.dto.UserPageResult;
 import org.georchestra.signalement.core.dto.UserSearchCriteria;
 import org.georchestra.signalement.core.util.UtilPageable;
-import org.georchestra.signalement.service.mapper.acl.UserMapper;
 import org.georchestra.signalement.service.sm.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
 
 /**
  * Controlleur pour les users.

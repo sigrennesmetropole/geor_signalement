@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -92,12 +91,6 @@ public class WebSecurityConfig {
 
 	private AuthenticationProvider createPreAuthenticationProvider() {
 		return new PreAuthenticationProvider();
-	}
-	
-	@Bean
-	protected GrantedAuthorityDefaults grantedAuthorityDefaults() {
-		// Remove the ROLE_ prefix
-		return new GrantedAuthorityDefaults("");
 	}
 
 	private Filter createPreAuthenticationFilter() {

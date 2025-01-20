@@ -118,7 +118,7 @@ public class StyleServiceImpl  implements StyleService {
         }
 
         //Save
-        processStylingEntity.setStyling(styleDao.getById(processStyling.getStylingId()));
+        processStylingEntity.setStyling(styleDao.findById(processStyling.getStylingId()).get());
         processStylingDao.save(processStylingEntity);
         return processStyling;
     }

@@ -46,9 +46,6 @@ public class BpmnHelper {
 
 	@Autowired
 	private AuthentificationHelper authentificationHelper;
-
-	@Autowired
-	private AssignmentHelper assignmentHelper;
 	
 	/**
 	 * Retourne la tâche activiti par son id
