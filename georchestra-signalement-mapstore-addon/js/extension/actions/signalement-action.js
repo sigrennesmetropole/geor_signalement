@@ -147,11 +147,12 @@ export function gotMe(me) {
 	}
 }
 
-export function createDraft(context) {
+export function createDraft(context, uuid) {
 	return {
 		type: actions.SIGNALEMENT_DRAFT_CREATE,
 		status: status.LOAD_TASK,
-		context: context
+		context: context,
+		uuid: uuid
 	}
 }
 

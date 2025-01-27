@@ -178,7 +178,7 @@ export class SignalementPanelComponent extends React.Component {
             this.props.status === status.REQUEST_UNLOAD_TASK){
             // on a une tâche et on demande son annulation => on lancer l'annulation
             window.signalement.debug("sig draft cancel");
-            this.props.cancelDraft(this.state.task.asset.uuid);
+            this.props.cancelDraft(this.props.task?.asset?.uuid);
         }
 
         if( (this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) && this.state.loaded === true){
@@ -218,7 +218,7 @@ export class SignalementPanelComponent extends React.Component {
             this.state.task.asset.contextDescription = contextDescriptions[0];
             this.state.task.asset.geographicType = contextDescriptions[0].geographicType;
             this.props.clearDrawn();
-            this.props.createDraft(contextDescriptions[0]);
+            this.props.createDraft(contextDescriptions[0], this.props.task?.asset?.uuid);
 
         }
         this.setState(this.state);
@@ -238,7 +238,7 @@ export class SignalementPanelComponent extends React.Component {
                     // on lance la création d'une tâche draft avec le context par défaut
                     window.signalement.debug("sig create draft");
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
-                    this.props.createDraft(initContext);
+                    this.props.createDraft(initContext, undefined);
 
                     this.state.themaSelected = false;
                     this.setState(this.state);
