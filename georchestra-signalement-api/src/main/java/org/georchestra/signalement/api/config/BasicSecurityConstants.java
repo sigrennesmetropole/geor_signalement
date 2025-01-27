@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 public final class BasicSecurityConstants {
     public static final String SWAGGER_RESSOURCE_URL =  "/signalement/swagger-resources/**";
     public static final String SWAGGER_RESSOURCE_UI =  "/signalement/swagger-ui.html";
+    public static final String SWAGGER_RESSOURCE_INDEX =  "/signalement/swagger-ui/**";
 
     public static final String WEBJARS_URL = "/webjars/**";
 
     public static final String SIGNALEMENT_URL = "/signalement/**";
 
-    public static final String API_DOCS_URL = "/v3/api-docs/**";
+    public static final String API_DOCS_URL = "/signalement/v3/api-docs/**";
 
     public static final String CONFIGURATION_SECURITY_URL = "/configuration/security";
     public static final String CONFIGURATION_UI_URL = "/configuration/ui";

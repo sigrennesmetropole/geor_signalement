@@ -30,20 +30,17 @@ import jakarta.servlet.Filter;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-	private static final String[] SB_PERMIT_ALL_URL = {
-			BasicSecurityConstants.SWAGGER_RESSOURCE_URL, BasicSecurityConstants.SWAGGER_RESSOURCE_UI,
-			BasicSecurityConstants.WEBJARS_URL,
-			BasicSecurityConstants.API_DOCS_URL, BasicSecurityConstants.CONFIGURATION_SECURITY_URL,
-			BasicSecurityConstants.CONFIGURATION_UI_URL, BasicSecurityConstants.ADMINISTRATION_URL,
-			BasicSecurityConstants.ASSETS_URL, BasicSecurityConstants.ICONES_URL,
-			BasicSecurityConstants.CSS_URL, BasicSecurityConstants.SLASH_URL,
+	private static final String[] SB_PERMIT_ALL_URL = { BasicSecurityConstants.SWAGGER_RESSOURCE_URL,
+			BasicSecurityConstants.SWAGGER_RESSOURCE_UI, BasicSecurityConstants.SWAGGER_RESSOURCE_INDEX,
+			BasicSecurityConstants.WEBJARS_URL, BasicSecurityConstants.API_DOCS_URL,
+			BasicSecurityConstants.CONFIGURATION_SECURITY_URL, BasicSecurityConstants.CONFIGURATION_UI_URL,
+			BasicSecurityConstants.ADMINISTRATION_URL, BasicSecurityConstants.ASSETS_URL,
+			BasicSecurityConstants.ICONES_URL, BasicSecurityConstants.CSS_URL, BasicSecurityConstants.SLASH_URL,
 			BasicSecurityConstants.JS_URL, BasicSecurityConstants.CRSF_URL,
 			BasicSecurityConstants.ADMINISTRATION_INITIALIZE_URL,
 			BasicSecurityConstants.ADMINISTRATION_CONFIGURATION_URL,
 			BasicSecurityConstants.ADMINISTRATION_PROCESSDEFINITION_SEARCH_URL,
-			BasicSecurityConstants.ADMINISTRATION_EXTENSION_URL,
-			BasicSecurityConstants.ADMINISTRATION_PROXY_URL
-	};
+			BasicSecurityConstants.ADMINISTRATION_EXTENSION_URL, BasicSecurityConstants.ADMINISTRATION_PROXY_URL };
 
 	@Value("${security.authentication.disabled:false}")
 	private boolean disableAuthentification = false;
@@ -55,12 +52,12 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		if (!disableAuthentification) {
 			http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
-			.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-					.requestMatchers(SB_PERMIT_ALL_URL).permitAll().anyRequest().fullyAuthenticated())
-			.exceptionHandling(Customizer.withDefaults())
-			.sessionManagement(sessionManagement -> sessionManagement
-					.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilterAfter(createPreAuthenticationFilter(), BasicAuthenticationFilter.class);
+					.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+							.requestMatchers(SB_PERMIT_ALL_URL).permitAll().anyRequest().fullyAuthenticated())
+					.exceptionHandling(Customizer.withDefaults())
+					.sessionManagement(sessionManagement -> sessionManagement
+							.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+					.addFilterAfter(createPreAuthenticationFilter(), BasicAuthenticationFilter.class);
 		} else {
 			http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
 					.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.anyRequest().permitAll());

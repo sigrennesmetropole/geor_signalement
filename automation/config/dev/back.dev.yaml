@@ -27,4 +27,4 @@ image:
       value: '25'
       
     - name: SWAGGER_SERVER
-      value: 'https://signalement-back-dev.rennes-metropole-georchestra.karbon.open.global'
+      value: 'https://signalement-back-dev.rennes-metropole-georchestra.karbon.open.global,https://front.rennes-metropole-georchestra.karbon.open.global/signalement/'
