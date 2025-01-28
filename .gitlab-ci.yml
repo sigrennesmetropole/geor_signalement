@@ -3,7 +3,8 @@ variables:
   MAVEN_CLI_OPTS: "-s .m2/settings.xml -Dmaven.repo.local=.m2/repository --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   GIT_SUBMODULE_STRATEGY: recursive
   NODE_OPTIONS: "--max-old-space-size=8192"
-  
+  DOCKER_DISABLE: "true"
+  DOCKER_EXCLUDE_DIRS: "georchestra-signalement-mapstore-addon/MapStore2,georchestra-signalement-mapstore-addon/mapstore2-georchestra,georchestra-signalement-mapstore-management-addon/MapStore2,georchestra-signalement-mapstore-management-addon/mapstore2-georchestra,node_modules,vendor"
 
 # Cache policy - Share target folders between jobs - Note that key is related to a commit and is purged automatically after pipeline execution
 cache:
@@ -12,8 +13,15 @@ cache:
     - $CI_PROJECT_DIR/.m2/repository/**/*
     - $CI_PROJECT_DIR/**/target/**/*
 
+include:
+  - project: 'boost/template-ci/pipelines/common'
+    file: '/docker/docker-template.yml'
+#    ref: 'SUPDLVR-4031'
+  - project: 'bots/trivy-script'
+    file: '/trivy-template-job.yml'   
+
 default:
-  image: maven:3.6.0-jdk-11
+  image: maven:3.9.0-eclipse-temurin-17
   before_script:
     - apt update && apt install -y gettext-base build-essential
     - envsubst '${MVN_GROUP} ${MVN_RELEASE} ${MVN_SNAPSHOTS}' < pom.xml > pom.subst && mv -f pom.subst pom.xml
@@ -22,6 +30,8 @@ default:
 stages:
   - build
   - test
+  - pre_docker
+  - docker  
   - deploy
 
 # Build job with maven plugin execution policies define in parent pom
@@ -39,7 +49,8 @@ stages:
       - $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/SignalementExtension.zip
       - $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip
       - $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip
- 
+  interruptible: true
+
 signalementapi:build:
   extends: .signalementapi:build
   except:
@@ -60,6 +71,7 @@ signalementapi:build:master:
 # Sonar code quality analysis - note a full test coverage report through a jacoco.exec merged file in base project folder
 .signalementapi:sonar:
   stage: test
+  image: maven:3.9.9-eclipse-temurin-17
   tags: 
     - iaas  
   allow_failure: true
@@ -72,7 +84,8 @@ signalementapi:build:master:
       -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
       -Dsonar.gitlab.project_id=$CI_PROJECT_ID
       ${BRANCH}
-
+  interruptible: true
+  
 signalementapi:sonar:
   extends: .signalementapi:sonar
   dependencies:
@@ -93,14 +106,88 @@ signalementapi:sonar:master:
   only:
     refs:
       - open/master
+      
+# Copie des artifacts dans les répertoires des images dockers
+signalementapi:pre_docker:
+  stage: pre_docker
+  only:
+    refs:
+      - master
+      - open/master
+      - open/develop
+      - /^release.*/
+      - /.*karbonification.*/
+
+  script:
+    - ls -l $CI_PROJECT_DIR/georchestra-signalement-api/target/
+    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/georchestra-signalement-api.jar
+    - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar $CI_PROJECT_DIR/docker/template/signalement-backend/georchestra-signalement-api.jar
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/docker/rennes-metropole/signalement-front-management/georchestra-signalement-front-management-angular-dist.zip
+    - cp -f $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip $CI_PROJECT_DIR/docker/template/signalement-front-management/georchestra-signalement-front-management-angular-dist.zip
+  artifacts:
+    paths:
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.war'
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.jar'
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/*.zip'
+      - '$CI_PROJECT_DIR/docker/**/**.war'
+      - '$CI_PROJECT_DIR/docker/**/**.zip'
+      - '$CI_PROJECT_DIR/docker/**/**.jar'
+
+signalementapi:docker2:build:
+  extends: ['.docker:build']
+  needs:
+    - signalementapi:pre_docker
+  dependencies:
+    - signalementapi:pre_docker
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /.*develop/ || $CI_COMMIT_BRANCH =~ /.*master/ || $CI_COMMIT_BRANCH =~ /^release.*/ || $CI_COMMIT_BRANCH =~ /.*karbonification.*/'
+  timeout: 1h
+  artifacts:
+    paths:
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.war'
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/**.jar'
+      - '$CI_PROJECT_DIR/georchestra-signalement-api/target/*.zip'   
+      - '$CI_PROJECT_DIR/docker/**/**.war'
+      - '$CI_PROJECT_DIR/docker/**/**.zip'
+      - '$CI_PROJECT_DIR/docker/**/**.jar'       
+
+trivyscan:back: 
+  extends: 
+    - .trivy-scan
+  stage: docker
+  needs:
+    - signalementapi:docker2:build
+  dependencies:
+    - signalementapi:docker2:build
+  variables:
+    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-backend:open-develop
+  only:
+    refs:
+      - open/develop
+      - karbonification
+
+trivyscan:front: 
+  extends: 
+    - .trivy-scan
+  stage: docker
+  needs:
+    - signalementapi:docker2:build
+  dependencies:
+    - signalementapi:docker2:build
+  variables:
+    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-front-management:open-develop
+  only:
+    refs:
+      - open/develop
 
 .signalementapi:deploy:
   stage: deploy
-  image: glregistry.boost.open.global/boost/docker/mvn-node-jdk11-ansible:latest
   tags: 
     - iaas
   cache: {}
   before_script:
+    - cat /etc/os-release
+    - apt update && apt install -y openssh-client ansible
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$ansible_private_key" | base64 -d)
   script:
@@ -116,7 +203,8 @@ signalementapi:sonar:master:
     #- chmod og-rw key/id_rsa
     - cp ${ANSIBLE_VAR_FILE} $HOME/signalement_var.yml
     - ansible-playbook signalement-docker.yml -v -i "${SERVER}," -u root --ssh-common-args=-oStrictHostKeyChecking=no
-
+  interruptible: true
+ 
 signalementapi:deploy:
   extends: .signalementapi:deploy
   dependencies:
@@ -138,3 +226,73 @@ signalementapi:deploy:master:
   variables:
     SERVER: "ren1vml0095"
     ANSIBLE_VAR_FILE: signalement_rct_var.yml
+
+
+## #####
+# Déploiement Karbon
+.signalementapi:deploy-karbon:prepare:
+  stage: pre_docker
+  script:
+    - echo "send automation to georchestra deploiement"
+  artifacts:
+    name: signalement-karbon-${TARGET_ENV}
+    paths:
+      - '$CI_PROJECT_DIR/automation/**'
+
+signalementapi:deploy-karbon:prepare:dev:
+  extends: .signalementapi:deploy-karbon:prepare
+  only:
+    refs:
+      - open/develop
+      - /.*karbonification.*/
+  variables:
+    TARGET_ENV: dev
+
+.signalementapi:deploy-karbon:
+  stage: deploy
+  trigger:
+    project: rennes-metropole/georchestra/georchestra-service-deployment
+    strategy: depend
+    branch: master
+  variables:
+    TRIGGERED_BY: signalement
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
+
+signalementapi:deploy-karbon:dev:
+  extends: .signalementapi:deploy-karbon
+  needs:
+    - job: signalementapi:deploy-karbon:prepare:dev
+      artifacts: true
+  only:
+    refs:
+      - open/develop
+      - /.*karbonification.*/
+  variables:
+    TARGET_ENV: dev
+    FORCE_POD: "true"
+    PARENT_COMMIT_BRANCH: $CI_COMMIT_BRANCH
+    PARENT_SERVICE_LOGIN: $SERVICE_LOGIN
+    PARENT_SERVICE_TOKEN: $SERVICE_TOKEN
+    PARENT_SERVICE_ACCESS_TOKEN: $SERVICE_ACCESS_TOKEN
+    PARENT_PROJECT_ID: $CI_PROJECT_ID
+    PARENT_STAGE_PREFIX: signalementapi:deploy-karbon:prepare
+
+signalementapi:deploy-karbon:qua:
+  extends: .signalementapi:deploy-karbon
+  needs:
+    - job: signalementapi:deploy-karbon:prepare:dev
+      artifacts: true
+  only:
+    refs:
+      - open/master
+      - /.*karbonification.*/
+  variables:
+    TARGET_ENV: dev
+    FORCE_POD: "true"
+    PARENT_COMMIT_BRANCH: $CI_COMMIT_BRANCH
+    PARENT_SERVICE_LOGIN: $SERVICE_LOGIN
+    PARENT_SERVICE_TOKEN: $SERVICE_TOKEN
+    PARENT_SERVICE_ACCESS_TOKEN: $SERVICE_ACCESS_TOKEN
+    PARENT_PROJECT_ID: $CI_PROJECT_ID
+    PARENT_STAGE_PREFIX: signalementapi:deploy-karbon:prepare
+  when: manual

@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -119,7 +118,7 @@ public class StyleServiceImpl  implements StyleService {
         }
 
         //Save
-        processStylingEntity.setStyling(styleDao.getById(processStyling.getStylingId()));
+        processStylingEntity.setStyling(styleDao.findById(processStyling.getStylingId()).get());
         processStylingDao.save(processStylingEntity);
         return processStyling;
     }

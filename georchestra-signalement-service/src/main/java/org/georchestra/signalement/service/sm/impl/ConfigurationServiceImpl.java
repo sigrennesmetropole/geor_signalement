@@ -1,18 +1,16 @@
 package org.georchestra.signalement.service.sm.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.georchestra.signalement.core.dto.StyleMapConfiguration;
+import org.georchestra.signalement.core.dto.ConfigurationData;
 import org.georchestra.signalement.core.dto.FlowMapConfiguration;
+import org.georchestra.signalement.core.dto.StyleMapConfiguration;
 import org.georchestra.signalement.core.dto.ViewMapConfiguration;
 import org.georchestra.signalement.service.bean.Configuration;
-import org.georchestra.signalement.core.dto.ConfigurationData;
 import org.georchestra.signalement.service.mapper.ConfigurationMapper;
 import org.georchestra.signalement.service.sm.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.Flow;
 
 @Service
 public class ConfigurationServiceImpl implements ConfigurationService {

@@ -11,7 +11,6 @@ import org.georchestra.signalement.core.dto.GeographicType;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
 import org.georchestra.signalement.service.acl.GeographicAreaService;
-import org.georchestra.signalement.service.common.ErrorMessageConstants;
 import org.georchestra.signalement.service.mapper.acl.GeographicAreaMapper;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +55,7 @@ public class GeographicAreaServiceImpl implements GeographicAreaService {
         Page<GeographicAreaEntity> geographicAreas;
         geographicAreas = geographicAreaCustomDao
                 .searchGeographicAreas(searchCriteria,pageable, sort);
-        return geographicAreaMapper.entitiesToDto(geographicAreas,pageable);
+        return geographicAreaMapper.entitiesToDtos(geographicAreas,pageable);
     }
 
     @Override

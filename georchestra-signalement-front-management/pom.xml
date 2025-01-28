@@ -15,8 +15,8 @@
 		<angular.project.location>.</angular.project.location>
 		<angular.project.nodeinstallation>../node_installation</angular.project.nodeinstallation>
 
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
    <build>
@@ -25,7 +25,7 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.12.0</version>
+				<version>${frontend-maven-plugin.version}</version>
 				<configuration>
 					<workingDirectory>${angular.project.location}</workingDirectory>
 					<installDirectory>${angular.project.nodeinstallation}</installDirectory>
@@ -172,12 +172,12 @@
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>1.2.2</version>
+						<version>${docker-maven-plugin.version}</version>
 						<dependencies>
 							<dependency>
 								<groupId>com.google.guava</groupId>
 								<artifactId>guava</artifactId>
-								<version>28.2-jre</version>
+								<version>${guava.version}</version>
 							</dependency>
 						</dependencies>
 						<executions>
@@ -197,18 +197,16 @@
 								<imageTag>latest</imageTag>
 							</imageTags>
 							<!-- chemin relatif depuis le target du présent projet -->
-							<dockerDirectory>${project.basedir}/../docker/signalement-front-management</dockerDirectory>
+							<dockerDirectory>${project.basedir}/../docker/rennes-metropole/signalement-front-management</dockerDirectory>
 
 							<!-- copy the service's jar file from target into the root directory
 								of the image -->
 							<resources>
 								<resource>
-									<targetPath>/usr/local/apache2/htdocs/</targetPath>
+									<targetPath>/</targetPath>
 									<directory>${project.build.directory}</directory>
 									<include>georchestra-signalement-front-management-angular-dist.zip</include>
 								</resource>
-								<!-- <resource> <targetPath>/etc/georchestra</targetPath> <directory>${project.build.directory}/datadir</directory>
-									<include>${project.artifactId}/**</include> </resource> -->
 							</resources>
 							<!-- This will require to set up the docker-hub credentials correctly
 								into your ~/.m2/settings.xml, see: https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries -->

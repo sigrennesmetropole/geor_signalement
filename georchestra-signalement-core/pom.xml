@@ -36,10 +36,7 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-spatial</artifactId>
-		</dependency>
+
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -61,7 +58,14 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-spatial</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.openapitools</groupId>
 			<artifactId>jackson-databind-nullable</artifactId>
@@ -73,14 +77,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>net.minidev</groupId>
 			<artifactId>json-smart</artifactId>
 		</dependency>
+
 
 		<!-- Swagger UI dependency -->
 		<dependency>
@@ -99,18 +99,20 @@
 			</exclusions>
 		</dependency>
 
+
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
-			<version>3.0.2</version>
 		</dependency>
-
-
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -130,8 +132,11 @@
 					<generateApis>false</generateApis>
 					<generateModels>true</generateModels>
 					<configOptions>
-						<dateLibrary>legacy</dateLibrary>
+						<dateLibrary>java8</dateLibrary>
+						<useSpringBoot3>true</useSpringBoot3>
+						<useJakartaEe>true</useJakartaEe>
 						<useSwaggerUI>true</useSwaggerUI>
+						<enumPropertyNaming>legacy</enumPropertyNaming>
 					</configOptions>
 				</configuration>
 				<executions>

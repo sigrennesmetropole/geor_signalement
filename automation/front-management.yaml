@@ -1,0 +1,19 @@
+nameOverride: "rm-signalement-front-management"
+image:
+  repository: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-front-management
+  exposedPort: 443
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 64Mi
+
+livenessProbe:
+  enabled: false
+readinessProbe:
+  enabled: false
+
+ingress:
+  enabled: true
+  hosts:
+    host: "{{ .Release.Name }}.rennes-metropole-georchestra.karbon.open.global"
