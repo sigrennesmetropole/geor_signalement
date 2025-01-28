@@ -223,17 +223,30 @@ export const loadMeSignalementEpic = (action$) =>
 export const createDraftSignalementEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_DRAFT_CREATE)
         .switchMap((action) => {
-            window.signalement.debug("sig epics draft");
-            const url = backendURLPrefix + "/task/draft";
-            const task = { contextDescription: action.context, description: ""};
-            const params = {
-                timeout: 30000,
-                headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
-            };
+            window.signalement.debug("sig epics create or cancel draft");
 
-            return Rx.Observable.defer(() => axios.post(url, task, params))
+            // Si un UUID est fourni, on annule d'abord l'ancienne tâche
+            const cancelTask$ = action?.uuid
+                ? Rx.Observable.defer(() => axios.delete(`${backendURLPrefix}/task/cancel/${action.uuid}`))
+                    .switchMap(() => Rx.Observable.of(draftCanceled()))
+                    .catch(e => Rx.Observable.of(loadActionError("signalement.generic.error", e)))
+                : Rx.Observable.of(null); // Pas d'annulation si l'UUID est undefined
+
+            // Une fois annulé (ou si aucune annulation n'est nécessaire), on crée la nouvelle tâche
+            const createTask$ = Rx.Observable.defer(() => {
+                const url = backendURLPrefix + "/task/draft";
+                const task = { contextDescription: action.context, description: "" };
+                const params = {
+                    timeout: 30000,
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+                };
+                return axios.post(url, task, params);
+            })
                 .switchMap((response) => Rx.Observable.of(draftCreated(response.data)))
                 .catch(e => Rx.Observable.of(loadActionError("signalement.draft.error", e)));
+
+            // Combiner les deux étapes : annuler puis créer
+            return cancelTask$.concatMap(() => createTask$);
         });
 
 export const createTaskSignalementEpic = (action$) =>
