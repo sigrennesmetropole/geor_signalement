@@ -7,7 +7,6 @@ import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.entity.acl.UserEntity;
 import org.georchestra.signalement.service.mapper.AbstractMapper;
 import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
@@ -24,6 +23,4 @@ public interface UserMapper extends AbstractMapper<UserEntity, User> {
 	
 	void dtoToEntity(User user, @MappingTarget UserEntity entity);
 
-	@IterableMapping(qualifiedByName = "entityToDto")
-	List<User> entitiesToDtos(Collection<UserEntity> entities);
 }

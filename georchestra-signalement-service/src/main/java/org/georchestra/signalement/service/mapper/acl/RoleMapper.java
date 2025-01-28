@@ -21,7 +21,4 @@ public interface RoleMapper extends AbstractMapper<RoleEntity, Role> {
     Role entityToDto(RoleEntity entity);
 
     void dtoToEntity(Role dto, @MappingTarget RoleEntity entity);
-
-    @IterableMapping(qualifiedByName = "entityToDto")
-    List<User> entitiesToDtos(Collection<UserEntity> entities);
 }
