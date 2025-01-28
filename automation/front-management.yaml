@@ -1,7 +1,7 @@
 nameOverride: "rm-signalement-front-management"
 image:
   repository: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-front-management
-  exposedPort: 443
+  exposedPort: 80
 
 resources:
   limits:
