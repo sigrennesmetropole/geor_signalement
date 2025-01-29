@@ -34,12 +34,10 @@ public class WebSecurityConfig {
 			BasicSecurityConstants.SWAGGER_RESSOURCE_UI, BasicSecurityConstants.SWAGGER_RESSOURCE_INDEX,
 			BasicSecurityConstants.WEBJARS_URL, BasicSecurityConstants.API_DOCS_URL,
 			BasicSecurityConstants.CONFIGURATION_SECURITY_URL, BasicSecurityConstants.CONFIGURATION_UI_URL,
-			BasicSecurityConstants.ADMINISTRATION_URL, BasicSecurityConstants.ASSETS_URL,
-			BasicSecurityConstants.ICONES_URL, BasicSecurityConstants.CSS_URL, BasicSecurityConstants.SLASH_URL,
-			BasicSecurityConstants.JS_URL, BasicSecurityConstants.CRSF_URL,
+			BasicSecurityConstants.ASSETS_URL, BasicSecurityConstants.ICONES_URL, BasicSecurityConstants.CSS_URL,
+			BasicSecurityConstants.SLASH_URL, BasicSecurityConstants.JS_URL, BasicSecurityConstants.CRSF_URL,
 			BasicSecurityConstants.ADMINISTRATION_INITIALIZE_URL,
 			BasicSecurityConstants.ADMINISTRATION_CONFIGURATION_URL,
-			BasicSecurityConstants.ADMINISTRATION_PROCESSDEFINITION_SEARCH_URL,
 			BasicSecurityConstants.ADMINISTRATION_EXTENSION_URL, BasicSecurityConstants.ADMINISTRATION_PROXY_URL };
 
 	@Value("${security.authentication.disabled:false}")
