@@ -1010,7 +1010,13 @@ export class SignalementPanelComponent extends React.Component {
     create() {
         if( this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.contextDescription && !this.props.creating) {
             window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
-            this.props.createTask(this.state.task);
+            if(this.state.currentLayer !== null) {
+                const layerTaskData = {...this.state.task, asset: {...this.state.task.asset, uuid: this.props.task?.asset?.uuid,  geographicType: this.state.currentLayer.geographicType, contextDescription: this.state.currentLayer}}
+                this.props.createTask(layerTaskData);
+            } else {
+                const themaTaskData = {...this.state.task, asset: {...this.state.task.asset, uuid: this.props.task?.asset?.uuid}}
+                this.props.createTask(themaTaskData);
+            }
         }
     }
 }
