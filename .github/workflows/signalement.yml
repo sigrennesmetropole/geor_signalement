@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checking out"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: 'recursive'      
 
@@ -21,7 +21,7 @@ jobs:
         java-version: '11.x'
 
     - name: "Maven repository caching"
-      uses: actions/cache@v1
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository
         key: signalement-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
