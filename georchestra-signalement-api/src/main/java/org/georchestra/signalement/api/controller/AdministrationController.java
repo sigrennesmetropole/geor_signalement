@@ -19,27 +19,28 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Controlleur pour la configuration.
  */
 @RestController
 @Api(tags = "administration")
+@RequiredArgsConstructor
 public class AdministrationController implements AdministrationApi {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdministrationController.class);
 
-	@Autowired
-	private ConfigurationService configurationService;
+	private final ConfigurationService configurationService;
 
-	@Autowired
-	private InitializationService initializationService;
+	private final InitializationService initializationService;
 
 	@Override
 	public ResponseEntity<ConfigurationData> getConfiguration() throws Exception {
@@ -85,7 +86,7 @@ public class AdministrationController implements AdministrationApi {
 	 *
 	 * @return une "js"
 	 */
-	@RequestMapping(value = "/extension/index.js", produces = { "application/javascript" }, method = RequestMethod.GET)
+	@GetMapping(value = "/extension/index.js", produces = { "application/javascript" })
 	public ResponseEntity<String> indexJs() {
 		return ResponseEntity.ok("console.log(\"Sigm indexjs\");");
 	}
@@ -98,7 +99,7 @@ public class AdministrationController implements AdministrationApi {
 	 * @return
 	 * @throws URISyntaxException
 	 */
-	@RequestMapping(value = "/proxy", method = RequestMethod.GET)
+	@GetMapping(value = "/proxy")
 	public ResponseEntity<Void> proxy(String url)
 			throws URISyntaxException {
 		URI frontURI = new URI(url);
