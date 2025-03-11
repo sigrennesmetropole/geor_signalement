@@ -4,7 +4,7 @@
 name: Create the signalements addons
 on:
   push:
-    branches:
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -22,7 +22,7 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: "true"
       - name: Use Node.js 16.20.1
@@ -33,7 +33,7 @@ jobs:
         # CACHING
         ##########
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
@@ -65,7 +65,7 @@ jobs:
           # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3
           with:
             submodules: "true"
         - name: Use Node.js 16.20.1
@@ -76,7 +76,7 @@ jobs:
           # CACHING
           ##########
         - name: Cache dependencies
-          uses: actions/cache@v2
+          uses: actions/cache@v3
           with:
             path: ~/.npm
             key: npm-${{ hashFiles('package-lock.json') }}
@@ -89,7 +89,7 @@ jobs:
         - run: ls dist/
         - run: ls 
         - name: "Upload Artifact"
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: Artifacts
             path: ./georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip

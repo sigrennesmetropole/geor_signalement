@@ -3,18 +3,21 @@
  */
 package org.georchestra.signalement.service.helper.authentification;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author FNI18300
  *
  */
+@Slf4j
 @Component(value = "authentificationHelper")
 public class AuthentificationHelper {
 
@@ -48,8 +51,7 @@ public class AuthentificationHelper {
 		List<String> result = null;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
-			result = authentication.getAuthorities().stream().map(authority -> authority.getAuthority())
-					.collect(Collectors.toList());
+			result = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 		}
 		return result;
 	}
@@ -65,6 +67,8 @@ public class AuthentificationHelper {
 		if (authentication != null) {
 			result = authentication.getAuthorities().stream()
 					.filter(authority -> authority.getAuthority().equalsIgnoreCase(roleName)).count() > 0;
+			log.info("hasRole {} ? {}", roleName,
+					authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
 		}
 		return result;
 	}

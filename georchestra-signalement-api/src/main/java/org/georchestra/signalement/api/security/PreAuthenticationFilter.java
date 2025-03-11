@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import jakarta.servlet.ServletException;
@@ -46,27 +44,6 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 	public static final String SEC_LASTNAME = "sec-lastname";
 	public static final String SEC_FIRSTNAME = "sec-firstname";
 
-	public static final String PRE_USERNAME = "preauth-username";
-	public static final String PRE_FIRSTNAME = "preauth-firstname";
-	public static final String PRE_LASTNAME ="preauth-lastname";
-	public static final String PRE_ORG ="preauth-org";
-	public static final String PRE_ORGNAME ="preauth-orgname";
-	public static final String PRE_EMAIL ="preauth-email";
-	public static final String PRE_ROLES ="preauth-roles";
-	
-	public static final Map<String,String> HEADERS = new HashMap<>();
-	
-	static {
-		HEADERS.put(SEC_USERNAME, PRE_USERNAME);
-		HEADERS.put(SEC_ROLES, PRE_ROLES);
-		HEADERS.put(SEC_ORG, PRE_ORG);
-		HEADERS.put(SEC_ORGNAME, PRE_ORGNAME);
-		HEADERS.put(SEC_EMAIL, PRE_EMAIL);
-		HEADERS.put(SEC_LASTNAME, PRE_LASTNAME);
-		HEADERS.put(SEC_FIRSTNAME, PRE_FIRSTNAME);		
-	}
-	
-
 	// Controle des patterns des URL
 	private AntPathMatcher pathMatcher;
 
@@ -82,14 +59,6 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 		this.pathMatcher = new AntPathMatcher();
 	}
 
-	protected String getHeaderValue(HttpServletRequest httpServletRequest, String headerName) {
-		String value = httpServletRequest.getHeader(headerName);
-		if( value == null) {
-			value = httpServletRequest.getHeader(HEADERS.get(headerName));
-		}
-		return value;
-	}
-	
 	/**
 	 * Construction du token pre-authentification
 	 * 
@@ -97,8 +66,8 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 	 * @return
 	 */
 	private Authentication createAuthentication(HttpServletRequest httpServletRequest) {
-		final String username = getHeaderValue(httpServletRequest,SEC_USERNAME);
-		final String rolesString = getHeaderValue(httpServletRequest,SEC_ROLES);
+		final String username = httpServletRequest.getHeader(SEC_USERNAME);
+		final String rolesString = httpServletRequest.getHeader(SEC_ROLES);
 		Set<String> rolesSet = new LinkedHashSet<>();
 		List<String> roles = null;
 		if (rolesString != null) {
@@ -130,28 +99,23 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 
 	private boolean assignUserData(User user, HttpServletRequest httpServletRequest, List<String> roles) {
 		boolean update = false;
-		String email = getHeaderValue(httpServletRequest,SEC_EMAIL);
+		String email = httpServletRequest.getHeader(SEC_EMAIL);
 		if (StringUtils.isNotEmpty(email) && !email.equals(user.getEmail())) {
 			user.setEmail(email);
 			update = true;
 		}
-		String firstName = getHeaderValue(httpServletRequest,SEC_FIRSTNAME);
+		String firstName = httpServletRequest.getHeader(SEC_FIRSTNAME);
 		if (StringUtils.isNotEmpty(firstName) && !firstName.equals(user.getFirstName())) {
 			user.setFirstName(firstName);
 			update = true;
 		}
-		String lastName = getHeaderValue(httpServletRequest,SEC_LASTNAME);
+		String lastName = httpServletRequest.getHeader(SEC_LASTNAME);
 		if (StringUtils.isNotEmpty(lastName) && !lastName.equals(user.getLastName())) {
 			user.setLastName(lastName);
 			update = true;
 		}
-		String organization = getHeaderValue(httpServletRequest,SEC_ORGNAME);
+		String organization = httpServletRequest.getHeader(SEC_ORGNAME);
 		if (StringUtils.isNotEmpty(organization) && !organization.equals(user.getOrganization())) {
-			LOGGER.debug("organization name : {}", organization);
-			user.setOrganization(organization);
-			update = true;
-		} else if ( (organization = getHeaderValue(httpServletRequest,SEC_ORG)) != null && !organization.equals(user.getOrganization())) {
-			LOGGER.debug("organization : {}", organization);
 			user.setOrganization(organization);
 			update = true;
 		}
@@ -163,17 +127,12 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	@Override
-	protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
+	protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, HttpServletResponse response,
+			jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest httpServletRequest = request;
-			if (LOGGER.isInfoEnabled()) {
-				Enumeration<String> names = httpServletRequest.getHeaderNames();
-				while (names.hasMoreElements()) {
-					String name = names.nextElement();
-					LOGGER.info("header:{}={}", name, httpServletRequest.getHeader(name));
-				}
-			}
-			final String username = getHeaderValue(httpServletRequest,SEC_USERNAME);
+			logHeaders(httpServletRequest);
+			final String username = httpServletRequest.getHeader(SEC_USERNAME);
 			if (username != null) {
 				SecurityContextHolder.getContext().setAuthentication(createAuthentication(httpServletRequest));
 
@@ -189,6 +148,20 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		filterChain.doFilter(request, response);
+	}
+
+	private void logHeaders(HttpServletRequest httpServletRequest) {
+		if (LOGGER.isInfoEnabled()) {
+			Enumeration<String> names = httpServletRequest.getHeaderNames();
+			while (names.hasMoreElements()) {
+				String name = names.nextElement();
+				if (name.startsWith("sec-") || name.startsWith("pre")) {
+					LOGGER.info("header:{}={}", name, httpServletRequest.getHeader(name));
+				} else {
+					LOGGER.info("header:{}", name);
+				}
+			}
+		}
 	}
 
 	@Override
