@@ -362,7 +362,7 @@
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>${docker-maven-plugin.version</version>
+						<version>${docker-maven-plugin.version}</version>
 						<dependencies>
 							<dependency>
 								<groupId>com.google.guava</groupId>

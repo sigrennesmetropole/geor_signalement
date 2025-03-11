@@ -44,11 +44,10 @@ jobs:
       - run: ls dist/
       - run: ls 
       - name: "Upload Artifact"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: ./georchestra-signalement-mapstore-addon/dist/SignalementExtension.zip
-          retention-days: 365
 
 
 
@@ -91,6 +90,5 @@ jobs:
         - name: "Upload Artifact"
           uses: actions/upload-artifact@v4
           with:
-            name: Artifacts
+            name: ArtifactsManagement
             path: ./georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip
-            retention-days: 365
