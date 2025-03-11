@@ -48,7 +48,6 @@ jobs:
         with:
           name: Artifacts
           path: ./georchestra-signalement-mapstore-addon/dist/SignalementExtension.zip
-          retention-days: 365
 
 
 
@@ -93,4 +92,3 @@ jobs:
           with:
             name: Artifacts
             path: ./georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip
-            retention-days: 365
