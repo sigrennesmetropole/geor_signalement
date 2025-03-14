@@ -205,6 +205,7 @@ trivyscan:front:
     - cp ${ANSIBLE_VAR_FILE} $HOME/signalement_var.yml
     - ansible-playbook signalement-docker.yml -v -i "${SERVER}," -u root --ssh-common-args=-oStrictHostKeyChecking=no
   interruptible: true
+  when: manual
  
 signalementapi:deploy:
   extends: .signalementapi:deploy
