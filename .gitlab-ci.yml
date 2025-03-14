@@ -282,7 +282,7 @@ signalementapi:deploy-karbon:dev:
 signalementapi:deploy-karbon:qua:
   extends: .signalementapi:deploy-karbon
   needs:
-    - job: signalementapi:deploy-karbon:prepare:dev
+    - job: signalementapi:deploy-karbon:prepare:qua
       artifacts: true
   only:
     refs:
