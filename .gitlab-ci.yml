@@ -250,6 +250,15 @@ signalementapi:deploy-karbon:prepare:dev:
   variables:
     TARGET_ENV: dev
 
+signalementapi:deploy-karbon:prepare:qua:
+  extends: .signalementapi:deploy-karbon:prepare
+  only:
+    refs:
+      - open/develop
+      - /.*karbonification.*/
+  variables:
+    TARGET_ENV: qua	
+
 .signalementapi:deploy-karbon:
   stage: deploy
   trigger:
@@ -282,7 +291,7 @@ signalementapi:deploy-karbon:dev:
 signalementapi:deploy-karbon:qua:
   extends: .signalementapi:deploy-karbon
   needs:
-    - job: signalementapi:deploy-karbon:prepare:dev
+    - job: signalementapi:deploy-karbon:prepare:qua
       artifacts: true
   only:
     refs:
