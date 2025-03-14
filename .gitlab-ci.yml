@@ -254,7 +254,7 @@ signalementapi:deploy-karbon:prepare:qua:
   extends: .signalementapi:deploy-karbon:prepare
   only:
     refs:
-      - open/develop
+      - open/master
       - /.*karbonification.*/
   variables:
     TARGET_ENV: qua	
