@@ -5,7 +5,16 @@ variables:
   NODE_OPTIONS: "--max-old-space-size=8192"
   DOCKER_DISABLE: "true"
   DOCKER_EXCLUDE_DIRS: "georchestra-signalement-mapstore-addon/MapStore2,georchestra-signalement-mapstore-addon/mapstore2-georchestra,georchestra-signalement-mapstore-management-addon/MapStore2,georchestra-signalement-mapstore-management-addon/mapstore2-georchestra,node_modules,vendor"
-
+  GITHUB_COMMIT_MESSAGE:
+      description: "Message du commit poussé vers le GitHub (cf job push-to-github). Par défaut : $CI_COMMIT_REF_NAME (nom de la branche ou du tag)."
+      value: $CI_COMMIT_REF_NAME
+  GITHUB_RM_ACCOUNT:
+      description: "Nom d'utilisateur GitHub pour l'authentification."
+      value: ""
+  GITHUB_TOKEN:
+      description: "Token d'accès GitHub pour l'authentification."
+      value: ""
+  
 # Cache policy - Share target folders between jobs - Note that key is related to a commit and is purged automatically after pipeline execution
 cache:
   key: ${CI_COMMIT_REF_SLUG}
