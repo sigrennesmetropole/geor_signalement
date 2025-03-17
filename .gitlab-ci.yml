@@ -121,7 +121,7 @@ signalementapi:pre_docker:
 
   script:
     - ls -l $CI_PROJECT_DIR/georchestra-signalement-api/target/
-    - export POM_VERSION=`cat pom.xml | grep "<version>.*</version>" | head -n 1 | awk -F'[><]' '{print $3}'
+    - export POM_VERSION=`cat pom.xml | grep "<version>.*</version>" | head -n 1 | awk -F'[><]' '{print $3}'`
     - echo "POM_VERSION=${POM_VERSION}"	
     - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-${POM_VERSION}.jar $CI_PROJECT_DIR/docker/rennes-metropole/signalement-backend/georchestra-signalement-api.jar
     - cp $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-${POM_VERSION}.jar $CI_PROJECT_DIR/docker/template/signalement-backend/georchestra-signalement-api.jar
@@ -196,7 +196,7 @@ trivyscan:front:
   script:
     - ls $CI_PROJECT_DIR/georchestra-signalement-api/target/
     - ls $CI_PROJECT_DIR/georchestra-signalement-mapstore*
-    - export POM_VERSION=`cat pom.xml | grep "<version>.*</version>" | head -n 1 | awk -F'[><]' '{print $3}'
+    - export POM_VERSION=`cat pom.xml | grep "<version>.*</version>" | head -n 1 | awk -F'[><]' '{print $3}'`
     - echo "POM_VERSION=${POM_VERSION}"
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-${POM_VERSION}.war $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.war
     - cp -f $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-${POM_VERSION}.jar $CI_PROJECT_DIR/ansible/dockerize/files/georchestra-signalement-api.jar 
