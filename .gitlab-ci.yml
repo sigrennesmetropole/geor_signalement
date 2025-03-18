@@ -11,7 +11,10 @@ variables:
   GITHUB_RM_ACCOUNT:
       description: "Nom d'utilisateur GitHub pour l'authentification."
       value: ""
-  GITHUB_TOKEN:
+  GITHUB_RM_LOGIN:
+      description: "Adresse mail GitHub pour l'authentification."
+      value: ""
+  GIT_TOKEN:
       description: "Token d'accès GitHub pour l'authentification."
       value: ""
   
