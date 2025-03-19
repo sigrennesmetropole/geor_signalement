@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 echo "Checking variables..."
 
 if [ -z "$SOURCE_REPOSITORY" ]; then
@@ -39,7 +39,7 @@ DESTINATION_REPOSITORY=/tmp/geor_signalement/
 [ -z "$PRODUCTION_REMOTE_BRANCH" ] && PRODUCTION_REMOTE_BRANCH="master"
 TEMP_DIRECTORY=/tmp
 
-echo "Cloning from $GIT_REMOTE to destination repository : $DESTINATION_REPOSITORY..."
+echo "Cloning from https://github.com/sigrennesmetropole/geor_signalement.git to destination repository : $DESTINATION_REPOSITORY..."
 git clone "$GIT_REMOTE" "$DESTINATION_REPOSITORY"
 
 echo "Checkout of remote branch $PRODUCTION_REMOTE_BRANCH"
@@ -66,7 +66,9 @@ mv "$TEMP_DIRECTORY/.git.back" "$DESTINATION_REPOSITORY/.git"
 
 # Commit and push
 cd "$DESTINATION_REPOSITORY" || exit 1
-echo "Committing and pushing to $GIT_REMOTE..."
+echo "Committing and pushing to https://github.com/sigrennesmetropole/geor_signalement.git..."
+echo "`pwd`"
+ls -a
 git config user.name "$GITHUB_RM_ACCOUNT"
 git config user.email "$GITHUB_RM_LOGIN"
 git add --all

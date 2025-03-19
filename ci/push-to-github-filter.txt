@@ -9,6 +9,11 @@
 - /ci/**
 # On ne commit pas nos fichiers de properties
 - /**/signalement.properties
-
+# On retire
+- /.git/**
+- /georchestra-signalement-mapstore-addon/MapStore2/**
+- /georchestra-signalement-mapstore-addon/mapstore2-georchestra/**
+- /georchestra-signalement-mapstore-management-addon/MapStore2/**
+- /georchestra-signalement-mapstore-management-addon/mapstore2-georchestra/**
 # On prend tout le reste
 + /**
