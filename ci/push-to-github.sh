@@ -50,7 +50,7 @@ cd -
 echo "Syncing source $SOURCE_REPOSITORY to target $DESTINATION_REPOSITORY/..."
 
 # Backup .git (git back Jojo !) directory from destination (deleted by "--delete-excluded")
-mv "$DESTINATION_REPOSITOR/.git" "$TEMP_DIRECTORY/.git.back"
+mv "$DESTINATION_REPOSITORY/.git" "$TEMP_DIRECTORY/.git.back"
 
 ls -a "$DESTINATION_REPOSITOR/.git"
 ls -a "$TEMP_DIRECTORY/.git.back"
