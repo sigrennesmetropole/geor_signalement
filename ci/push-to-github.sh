@@ -1,5 +1,11 @@
 #!/bin/bash
+
+GITHUB_RM_URL="github.com/sigrennesmetropole/geor_signalement.git"
+
+if [ ! -z "$DEBUG" ]; then
 set -x
+fi
+
 echo "Checking variables..."
 
 if [ -z "$SOURCE_REPOSITORY" ]; then
@@ -35,11 +41,11 @@ if [ -z "$GIT_TOKEN" ]; then
 fi
 
 DESTINATION_REPOSITORY=/tmp/geor_signalement
-[ -z "$GIT_REMOTE" ] && GIT_REMOTE="https://$GITHUB_RM_ACCOUNT:$GIT_TOKEN@github.com/sigrennesmetropole/geor_signalement.git"
+[ -z "$GIT_REMOTE" ] && GIT_REMOTE="https://$GITHUB_RM_ACCOUNT:$GIT_TOKEN@$GITHUB_RM_URL"
 [ -z "$PRODUCTION_REMOTE_BRANCH" ] && PRODUCTION_REMOTE_BRANCH="master"
 TEMP_DIRECTORY=/tmp
 
-echo "Cloning from https://github.com/sigrennesmetropole/geor_signalement.git to destination repository : $DESTINATION_REPOSITORY/..."
+echo "Cloning from https://$GITHUB_RM_URL to destination repository : $DESTINATION_REPOSITORY/..."
 git clone "$GIT_REMOTE" "$DESTINATION_REPOSITORY/"
 
 echo "Checkout of remote branch $PRODUCTION_REMOTE_BRANCH"
@@ -52,8 +58,10 @@ echo "Syncing source $SOURCE_REPOSITORY to target $DESTINATION_REPOSITORY/..."
 # Backup .git (git back Jojo !) directory from destination (deleted by "--delete-excluded")
 mv "$DESTINATION_REPOSITORY/.git" "$TEMP_DIRECTORY/.git.back"
 
-ls -a "$DESTINATION_REPOSITOR/.git"
+if [ ! -z "$DEBUG" ]; then
+ls -a "$DESTINATION_REPOSITORY/.git"
 ls -a "$TEMP_DIRECTORY/.git.back"
+fi
 
 rsync \
   --archive \
@@ -65,16 +73,15 @@ rsync \
   "$SOURCE_REPOSITORY" "$DESTINATION_REPOSITORY/"
 
 # Restore .git directory to destination
-mv "$TEMP_DIRECTORY/.git.back" "$DESTINATION_REPOSITORY/.git"
+cp -r "$TEMP_DIRECTORY/.git.back" "$DESTINATION_REPOSITORY/.git"
 
-ls -al "${DESTINATION_REPOSITORY}/.git"
+if [ ! -z "$DEBUG" ]; then
+ls -al "$DESTINATION_REPOSITORY/.git"
+fi
 
 # Commit and push
 cd "$DESTINATION_REPOSITORY"
-echo "Committing and pushing to https://github.com/sigrennesmetropole/geor_signalement.git..."
-
-echo "`pwd`"
-ls -a
+echo "Committing and pushing to https://$GITHUB_RM_URL..."
 
 git config user.name "$GITHUB_RM_ACCOUNT"
 git config user.email "$GITHUB_RM_LOGIN"
