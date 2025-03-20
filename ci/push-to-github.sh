@@ -73,7 +73,7 @@ rsync \
   "$SOURCE_REPOSITORY" "$DESTINATION_REPOSITORY/"
 
 # Restore .git directory to destination
-cp -r "$TEMP_DIRECTORY/.git.back" "$DESTINATION_REPOSITORY/.git"
+cp -r "$TEMP_DIRECTORY/.git.back/*" "$DESTINATION_REPOSITORY/.git"
 
 if [ ! -z "$DEBUG" ]; then
 ls -al "$DESTINATION_REPOSITORY/.git"
