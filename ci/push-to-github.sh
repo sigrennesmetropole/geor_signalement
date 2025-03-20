@@ -39,33 +39,33 @@ DESTINATION_REPOSITORY=/tmp/geor_signalement
 [ -z "$PRODUCTION_REMOTE_BRANCH" ] && PRODUCTION_REMOTE_BRANCH="master"
 TEMP_DIRECTORY=/tmp
 
-echo "Cloning from https://github.com/sigrennesmetropole/geor_signalement.git to destination repository : $DESTINATION_REPOSITORY..."
-git clone "$GIT_REMOTE" "$DESTINATION_REPOSITORY"
+echo "Cloning from https://github.com/sigrennesmetropole/geor_signalement.git to destination repository : $DESTINATION_REPOSITORY/..."
+git clone "$GIT_REMOTE" "$DESTINATION_REPOSITORY/"
 
 echo "Checkout of remote branch $PRODUCTION_REMOTE_BRANCH"
-cd "$DESTINATION_REPOSITORY"
+cd "$DESTINATION_REPOSITORY/"
 git checkout "$PRODUCTION_REMOTE_BRANCH"
 cd -
 
-echo "Syncing source $SOURCE_REPOSITORY to target $DESTINATION_REPOSITORY..."
+echo "Syncing source $SOURCE_REPOSITORY to target $DESTINATION_REPOSITORY/..."
 
 # Backup .git (git back Jojo !) directory from destination (deleted by "--delete-excluded")
-mv "${DESTINATION_REPOSITOR}/.git" "${TEMP_DIRECTORY}/.git.back"
+mv "$DESTINATION_REPOSITOR/.git" "$TEMP_DIRECTORY/.git.back"
 
-ls -a "${DESTINATION_REPOSITOR}/.git"
-ls -a "${TEMP_DIRECTORY}/.git.back"
+ls -a "$DESTINATION_REPOSITOR/.git"
+ls -a "$TEMP_DIRECTORY/.git.back"
 
 rsync \
   --archive \
-  --exclude-from="${SOURCE_REPOSITORY}/.gitignore" \
+  --exclude-from="$SOURCE_REPOSITORY/.gitignore" \
   --filter="merge push-to-github-filter.txt" \
   --delete-excluded \
   --delete-during \
   --verbose \
-  "$SOURCE_REPOSITORY" "$DESTINATION_REPOSITORY"
+  "$SOURCE_REPOSITORY" "$DESTINATION_REPOSITORY/"
 
 # Restore .git directory to destination
-mv "${TEMP_DIRECTORY}/.git.back" "${DESTINATION_REPOSITORY}/.git"
+mv "$TEMP_DIRECTORY/.git.back" "$DESTINATION_REPOSITORY/.git"
 
 ls -al "${DESTINATION_REPOSITORY}/.git"
 
