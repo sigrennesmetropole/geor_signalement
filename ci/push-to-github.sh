@@ -6,6 +6,10 @@ if [ ! -z "$DEBUG" ]; then
 set -x
 fi
 
+if [ ! -z "$GIT_FORCE" ]; then
+FORCE="--force"
+fi
+
 echo "Checking variables..."
 
 if [ -z "$SOURCE_REPOSITORY" ]; then
@@ -56,11 +60,12 @@ cd -
 echo "Syncing source $SOURCE_REPOSITORY to target $DESTINATION_REPOSITORY/..."
 
 # Backup .git (git back Jojo !) directory from destination (deleted by "--delete-excluded")
-mv "$DESTINATION_REPOSITORY/.git" "$TEMP_DIRECTORY/.git.back"
+cp -r $DESTINATION_REPOSITORY/.git /builds/rennes-metropole/signalement/.git.back
+mv $DESTINATION_REPOSITORY/.git $TEMP_DIRECTORY/.git.back
 
 if [ ! -z "$DEBUG" ]; then
-ls -a "$DESTINATION_REPOSITORY/.git"
-ls -a "$TEMP_DIRECTORY/.git.back"
+ls -a $DESTINATION_REPOSITORY/.git
+ls -a $TEMP_DIRECTORY/.git.back
 fi
 
 rsync \
@@ -73,10 +78,15 @@ rsync \
   "$SOURCE_REPOSITORY" "$DESTINATION_REPOSITORY/"
 
 # Restore .git directory to destination
-cp -r "$TEMP_DIRECTORY/.git.back/*" "$DESTINATION_REPOSITORY/.git"
+if [ ! -z "$DEBUG" ]; then
+ls -al $TEMP_DIRECTORY/.git.back
+ls -al /builds/rennes-metropole/signalement/.git.back
+fi
+
+mv $TEMP_DIRECTORY/.git.back/* $DESTINATION_REPOSITORY/.git
 
 if [ ! -z "$DEBUG" ]; then
-ls -al "$DESTINATION_REPOSITORY/.git"
+ls -al $DESTINATION_REPOSITORY/.git
 fi
 
 # Commit and push
@@ -87,6 +97,6 @@ git config user.name "$GITHUB_RM_ACCOUNT"
 git config user.email "$GITHUB_RM_LOGIN"
 git add --all
 git commit --message "$COMMIT_MESSAGE"
-git push "$GIT_REMOTE"
+git push "$FORCE" "$GIT_REMOTE"
 
 echo "Done."
