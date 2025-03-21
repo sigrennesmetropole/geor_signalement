@@ -97,6 +97,6 @@ git config user.name "$GITHUB_RM_ACCOUNT"
 git config user.email "$GITHUB_RM_LOGIN"
 git add --all
 git commit --message "$COMMIT_MESSAGE"
-git push "$FORCE" "$GIT_REMOTE"
+git push $FORCE "$GIT_REMOTE"
 
 echo "Done."
