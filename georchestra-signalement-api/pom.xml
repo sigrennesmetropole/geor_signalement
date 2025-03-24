@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>georchestra-signalement-backend</artifactId>
 		<groupId>org.georchestra</groupId>
-		<version>1.12.7</version>
+		<version>1.12.8</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -14,7 +14,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<finalName>signalement</finalName>
+		<warFinalName>signalement</warFinalName>
 		<mapstore-georchestra>target/github-mapstore2-georchestra</mapstore-georchestra>
 		<angular.project.nodeinstallation>node_installation</angular.project.nodeinstallation>
 	</properties>
@@ -247,7 +247,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-<!--					<finalName>${project.artifactId}</finalName>-->
+					<finalName>${project.artifactId}</finalName>
                     <excludes>
                         <exclude>**/log4j2.xml</exclude>
                          <exclude>**/default.properties</exclude>
@@ -315,7 +315,7 @@
 								%regex[WEB-INF/lib/spring-boot-devtools-.*\.jar],
 								%regex[WEB-INF/lib/spring.*-test-.*\.jar]
 							</packagingExcludes>
-							<warName>${finalName}</warName>
+							<warName>${warFinalName}</warName>
 						</configuration>
 					</execution>
 				</executions>
@@ -395,7 +395,7 @@
 								<resource>
 									<targetPath>/</targetPath>
 									<directory>${project.build.directory}</directory>
-									<include>${project.artifactId}.jar</include>
+									<include>${project.artifactId}-${project.version}.jar</include>
 								</resource>
 							</resources>
 							<!-- This will require to set up the docker-hub credentials correctly
