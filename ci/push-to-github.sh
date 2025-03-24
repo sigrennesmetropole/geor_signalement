@@ -1,5 +1,15 @@
 #!/bin/bash
 
+GITHUB_RM_URL="github.com/sigrennesmetropole/geor_signalement.git"
+
+if [ ! -z "$DEBUG" ]; then
+set -x
+fi
+
+if [ ! -z "$GIT_FORCE" ]; then
+FORCE="--force"
+fi
+
 echo "Checking variables..."
 
 if [ -z "$SOURCE_REPOSITORY" ]; then
@@ -34,23 +44,29 @@ if [ -z "$GIT_TOKEN" ]; then
   exit 1
 fi
 
-DESTINATION_REPOSITORY=/tmp/geor_signalement/
-[ -z "$GIT_REMOTE" ] && GIT_REMOTE="https://$GITHUB_RM_ACCOUNT:$GIT_TOKEN@github.com/sigrennesmetropole/geor_signalement.git"
+DESTINATION_REPOSITORY=/tmp/geor_signalement
+[ -z "$GIT_REMOTE" ] && GIT_REMOTE="https://$GITHUB_RM_ACCOUNT:$GIT_TOKEN@$GITHUB_RM_URL"
 [ -z "$PRODUCTION_REMOTE_BRANCH" ] && PRODUCTION_REMOTE_BRANCH="master"
 TEMP_DIRECTORY=/tmp
 
-echo "Cloning from $GIT_REMOTE to destination repository : $DESTINATION_REPOSITORY..."
-git clone "$GIT_REMOTE" "$DESTINATION_REPOSITORY"
+echo "Cloning from https://$GITHUB_RM_URL to destination repository : $DESTINATION_REPOSITORY/..."
+git clone "$GIT_REMOTE" "$DESTINATION_REPOSITORY/"
 
 echo "Checkout of remote branch $PRODUCTION_REMOTE_BRANCH"
-cd "$DESTINATION_REPOSITORY"
+cd "$DESTINATION_REPOSITORY/"
 git checkout "$PRODUCTION_REMOTE_BRANCH"
 cd -
 
-echo "Syncing source $SOURCE_REPOSITORY to target $DESTINATION_REPOSITORY..."
+echo "Syncing source $SOURCE_REPOSITORY to target $DESTINATION_REPOSITORY/..."
 
 # Backup .git (git back Jojo !) directory from destination (deleted by "--delete-excluded")
-mv "$DESTINATION_REPOSITORY/.git" "$TEMP_DIRECTORY/.git.back"
+cp -r $DESTINATION_REPOSITORY/.git /builds/rennes-metropole/signalement/.git.back
+mv $DESTINATION_REPOSITORY/.git $TEMP_DIRECTORY/.git.back
+
+if [ ! -z "$DEBUG" ]; then
+ls -a $DESTINATION_REPOSITORY/.git
+ls -a $TEMP_DIRECTORY/.git.back
+fi
 
 rsync \
   --archive \
@@ -59,18 +75,28 @@ rsync \
   --delete-excluded \
   --delete-during \
   --verbose \
-  "$SOURCE_REPOSITORY" "$DESTINATION_REPOSITORY"
+  "$SOURCE_REPOSITORY" "$DESTINATION_REPOSITORY/"
 
 # Restore .git directory to destination
-mv "$TEMP_DIRECTORY/.git.back" "$DESTINATION_REPOSITORY/.git"
+if [ ! -z "$DEBUG" ]; then
+ls -al $TEMP_DIRECTORY/.git.back
+ls -al /builds/rennes-metropole/signalement/.git.back
+fi
+
+mv $TEMP_DIRECTORY/.git.back/* $DESTINATION_REPOSITORY/.git
+
+if [ ! -z "$DEBUG" ]; then
+ls -al $DESTINATION_REPOSITORY/.git
+fi
 
 # Commit and push
-cd "$DESTINATION_REPOSITORY" || exit 1
-echo "Committing and pushing to $GIT_REMOTE..."
+cd "$DESTINATION_REPOSITORY"
+echo "Committing and pushing to https://$GITHUB_RM_URL..."
+
 git config user.name "$GITHUB_RM_ACCOUNT"
 git config user.email "$GITHUB_RM_LOGIN"
 git add --all
 git commit --message "$COMMIT_MESSAGE"
-git push "$GIT_REMOTE"
+git push $FORCE "$GIT_REMOTE"
 
 echo "Done."
