@@ -74,11 +74,22 @@
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-spring-boot-starter</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openjdk.nashorn</groupId>
+			<artifactId>nashorn-core</artifactId>
+		</dependency>
 		<!-- Swagger UI dependency -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
-			<version>${springfox.version}</version>
 		</dependency>
 		<!-- Swagger 2 doc dependency -->
 		<dependency>

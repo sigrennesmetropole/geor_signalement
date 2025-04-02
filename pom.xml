@@ -58,6 +58,10 @@
 		<springfox.version>3.0.0</springfox.version>
 		
 		<activiti.version>7.1.0.M6</activiti.version>
+		
+		<graalvm.version>23.0.3</graalvm.version>
+		<nashorn.version>15.6</nashorn.version>
+		
 		<log4j.version>2.17.0</log4j.version>
 		<hibernate.spatial.version>6.6.3.Final</hibernate.spatial.version>
 
@@ -147,6 +151,31 @@
 				<groupId>org.activiti</groupId>
 				<artifactId>activiti-spring-boot-starter</artifactId>
 				<version>${activiti.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.el</groupId>
+						<artifactId>el-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sun.mail</groupId>
+						<artifactId>javax.mail</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.graalvm.js</groupId>
+				<artifactId>js</artifactId>
+				<version>${graalvm.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.graalvm.js</groupId>
+				<artifactId>js-scriptengine</artifactId>
+				<version>${graalvm.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openjdk.nashorn</groupId>
+				<artifactId>nashorn-core</artifactId>
+				<version>${nashorn.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
