@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import lombok.RequiredArgsConstructor;
 import net.minidev.json.parser.ParseException;
 
 /**
@@ -24,10 +25,10 @@ import net.minidev.json.parser.ParseException;
  *
  */
 @Component
+@RequiredArgsConstructor
 public class FormDefinitionHelper {
 
-	@Autowired
-	private ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
 	/**
 	 * Parse une définition de formulaire
