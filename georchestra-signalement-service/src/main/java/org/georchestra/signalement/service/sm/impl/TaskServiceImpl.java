@@ -3,13 +3,22 @@
  */
 package org.georchestra.signalement.service.sm.impl;
 
-import jakarta.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.TaskQuery;
@@ -42,29 +51,24 @@ import org.georchestra.signalement.service.helper.geojson.GeoJSonHelper;
 import org.georchestra.signalement.service.helper.reporting.AttachmentHelper;
 import org.georchestra.signalement.service.helper.reporting.ReportingHelper;
 import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
+import org.georchestra.signalement.service.helper.workflow.WorkflowContext;
 import org.georchestra.signalement.service.mapper.reporting.ReportingMapper;
 import org.georchestra.signalement.service.sm.TaskService;
 import org.georchestra.signalement.service.st.repository.DocumentRepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author FNI18300
  *
  */
 @Component
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
@@ -88,38 +92,31 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	private static final Map<String, String> EXECUTION_ENTITIES = new HashMap<>();
 
-	@Autowired
-	private ProcessEngine processEngine;
+	private final ProcessEngine processEngine;
 
-	@Autowired
-	private ReportingDao reportingDao;
+	private final ProcessEngineConfiguration processEngineConfiguration;
 
-	@Autowired
-	private DocumentRepositoryService documentRepositoryService;
+	private final ReportingDao reportingDao;
 
-	@Autowired
-	private ContextDescriptionDao contextDescriptionDao;
+	private final DocumentRepositoryService documentRepositoryService;
 
-	@Autowired
-	private ReportingHelper reportingHelper;
+	private final ContextDescriptionDao contextDescriptionDao;
 
-	@Autowired
-	private AuthentificationHelper authentificationHelper;
+	private final ReportingHelper reportingHelper;
 
-	@Autowired
-	private FormHelper formHelper;
+	private final AuthentificationHelper authentificationHelper;
 
-	@Autowired
-	private BpmnHelper bpmnHelper;
+	private final FormHelper formHelper;
 
-	@Autowired
-	private AttachmentHelper attachmentHelper;
+	private final BpmnHelper bpmnHelper;
 
-	@Autowired
-	private ReportingMapper reportingMapper;
+	private final AttachmentHelper attachmentHelper;
 
-	@Autowired
-	private GeoJSonHelper geoJSonHelper;
+	private final ReportingMapper reportingMapper;
+
+	private final GeoJSonHelper geoJSonHelper;
+
+	private final WorkflowContext workflowContext;
 
 	@Override
 	public Form lookupDrafForm(String contextDescriptionName) throws FormDefinitionException {
@@ -202,7 +199,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 				org.activiti.engine.TaskService taskService = processEngine.getTaskService();
 				taskService.claim(taskId, authentificationHelper.getUsername());
-				
+
 				// rechargement de la tâche après claim
 				originalTask = bpmnHelper.queryTaskById(taskId);
 				result = reportingHelper.createTaskFromWorkflow(originalTask,
@@ -590,6 +587,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	@PostConstruct
 	public void initialize() {
 		processEngine.getRuntimeService().addEventListener(this);
+		registerWorkflowContextAsBean();
 	}
 
 	@Override
@@ -633,8 +631,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	protected void cacheEntiy(ActivitiEvent event) {
 		ActivitiEntityEvent ea = (ActivitiEntityEvent) event;
-		if (ea.getEntity() instanceof ExecutionEntity) {
-			ExecutionEntity executionEntity = (ExecutionEntity) ea.getEntity();
+		if (ea.getEntity() instanceof ExecutionEntity executionEntity) {
 			if (executionEntity.getBusinessKey() != null) {
 				// stocke ici lors de la création de l'entité d'exécution d'un nouveau workflow,
 				// la business key si elle est pas nulle
@@ -648,8 +645,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	protected void assign(ActivitiEvent event) {
 		ActivitiEntityEvent ea = (ActivitiEntityEvent) event;
-		if (ea.getEntity() instanceof org.activiti.engine.task.Task) {
-			org.activiti.engine.task.Task originalTask = (org.activiti.engine.task.Task) ea.getEntity();
+		if (ea.getEntity() instanceof org.activiti.engine.task.Task originalTask) {
 
 			String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(originalTask);
 			if (processInstanceBusinessKey == null) {
@@ -666,6 +662,14 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			} else {
 				LOGGER.warn("Failed to update assignee for {} to {}", originalTask.getId(), originalTask.getAssignee());
 			}
+		}
+	}
+	
+	protected void registerWorkflowContextAsBean() {
+		if (processEngineConfiguration instanceof ProcessEngineConfigurationImpl processEngineConfigurationImpl) {
+			processEngineConfigurationImpl.getBeans().put("workflowContext", workflowContext);
+		} else {
+			LOGGER.warn("Failed to register workflowContext");
 		}
 	}
 
