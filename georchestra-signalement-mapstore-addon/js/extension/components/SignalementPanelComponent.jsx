@@ -324,10 +324,10 @@ export class SignalementPanelComponent extends React.Component {
                 {this.renderInstructions()}
                 {this.renderContext()}
                 {this.renderDetail()}
+                {this.renderCustomForm()}
                 {this.renderAttachments()}
                 {this.renderLocalisation()}
                 {this.renderFormButton()}
-                {this.renderCustomForm()}
             </Form>
         );
     }

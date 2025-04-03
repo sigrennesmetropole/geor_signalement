@@ -4,11 +4,17 @@
 package org.georchestra.signalement.service.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.cfg.AbstractProcessEngineConfigurator;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.scripting.BeansResolverFactory;
+import org.activiti.engine.impl.scripting.ResolverFactory;
+import org.activiti.engine.impl.scripting.ScriptingEngines;
+import org.activiti.engine.impl.scripting.VariableScopeResolverFactory;
 import org.activiti.spring.SpringExpressionManager;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +49,9 @@ public class ActivitiConfiguration extends AbstractProcessEngineConfigurator {
 
 	@Value("${spring.datasource.schema-update:true}")
 	private String dataSourceSchemaUpdate;
+	
+	@Value("${search.bpmn.polyglot.options:polyglot.js.allowIO,polyglot.js.allowHostClassLookup,polyglot.js.allowHostClassLoading,polyglot.js.allowAllAccess}")
+	private List<String> polyglotOptions;
 
 	@Bean
 	public SpringProcessEngineConfiguration springProcessEngineConfiguration(PlatformTransactionManager transactionManager, ApplicationContext applicationContext) {
@@ -68,10 +77,33 @@ public class ActivitiConfiguration extends AbstractProcessEngineConfigurator {
 		processEngineConfiguration.setJdbcDriver(dataSourceDriver);
 		processEngineConfiguration.setJdbcPingEnabled(false);
 		processEngineConfiguration.setJdbcPingQuery("select 1;");
+		processEngineConfiguration.setDatabaseSchemaUpdate(dataSourceSchemaUpdate);
 		if (StringUtils.isNotEmpty(dataSourceSchemaName)) {
 			processEngineConfiguration.setDatabaseSchema(dataSourceSchemaName);
 		}
-		processEngineConfiguration.setDatabaseSchemaUpdate(dataSourceSchemaUpdate);
+		populatePolyglot(processEngineConfiguration);
+		processEngineConfiguration.setScriptingEngines(createScriptengines(processEngineConfiguration));
+	}
+
+	protected ScriptingEngines createScriptengines(ProcessEngineConfigurationImpl processEngineConfiguration) {
+		List<ResolverFactory> resolverFactories = new ArrayList<>();
+		resolverFactories.add(new VariableScopeResolverFactory());
+		resolverFactories.add(new BeansResolverFactory());
+		return new ScriptingEngines(new NScriptBindingsFactory(processEngineConfiguration, resolverFactories));
+	}
+
+	/**
+	 * 
+	 * @param processEngineConfiguration
+	 * @see com.oracle.truffle.js.scriptengine.GraalJSScriptEngine.MagicBindingsOptionSetter
+	 */
+	protected void populatePolyglot(ProcessEngineConfigurationImpl processEngineConfiguration) {
+		if (processEngineConfiguration.getBeans() == null) {
+			processEngineConfiguration.setBeans(new HashMap<>());
+		}
+		for (String polyglotOption : polyglotOptions) {
+			processEngineConfiguration.getBeans().put(polyglotOption, true);
+		}
 	}
 
 }

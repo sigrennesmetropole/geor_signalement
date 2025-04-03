@@ -48,6 +48,23 @@ Lors de la mise à jour du repository git `https://github.com/sigrennesmetropole
 
 [Configuration backend](readme/README_CONFIGURATION_BACKEND.md)
 
+### III.4 - Migration 7.1.0-M6
+
+La montée de version jdk17 spring-boot 3 s'accompagne d'une montée de version activité de la version activity de
+7.0.0.0 ou 7.1.0.0 à 7.1.0-M6
+
+Activiti embarque ses propres fichiers d'upgrade et cette montée de version doit être transparente mais il arrive que la migration soit incomplète.
+
+Il faut alors jouer le script suivant :
+
+```
+alter table signalement.ACT_RE_PROCDEF add column if not exists APP_VERSION_ integer;
+alter table signalement.ACT_RU_TASK add column if not exists APP_VERSION_ integer;
+alter table signalement.ACT_RU_EXECUTION add column if not exists APP_VERSION_ integer;
+
+alter table signalement.ACT_RU_TASK add column if not exists BUSINESS_KEY_ varchar(255);
+```
+
 ## IV - Configuration
 
 ### IV.1 - Configuration des droits
