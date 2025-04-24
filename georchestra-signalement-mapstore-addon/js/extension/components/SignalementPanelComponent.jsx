@@ -167,14 +167,14 @@ export class SignalementPanelComponent extends React.Component {
             this.setState(this.state);
         }
 
-        if (this.state.task !== null && this.state.task.asset !== null) {
+        if (this.state.task !== null && this.state.task?.asset !== null) {
             this.state.task.asset.attachments = this.props.attachments
             if (this.props.task && this.props.task.asset) {
                 this.state.task.asset.localisation = this.props.task.asset.localisation;
             }
         }
 
-        if( this.state.task !== null && this.state.task.asset !== null && this.state.task.asset.uuid &&
+        if( this.state.task !== null && this.state.task?.asset !== null && this.state.task?.asset.uuid &&
             this.props.status === status.REQUEST_UNLOAD_TASK){
             // on a une tâche et on demande son annulation => on lancer l'annulation
             window.signalement.debug("sig draft cancel");
@@ -232,7 +232,6 @@ export class SignalementPanelComponent extends React.Component {
                 // si on est initialisé avec au moins un context
                 if( !this.props.task &&
                     (this.props.status === status.NO_TASK
-                        || this.props.status === status.TASK_UNLOADED
                         || this.props.status === status.TASK_CREATED)) {
                     // il n'y a pas de tâche dans les props et on a rien fait ou a vient de créer un tâche avec succès
                     // on lance la création d'une tâche draft avec le context par défaut
@@ -241,6 +240,14 @@ export class SignalementPanelComponent extends React.Component {
                     this.props.createDraft(initContext, undefined);
 
                     this.state.themaSelected = false;
+                    this.setState(this.state);
+                }
+                if(this.props.status === status.TASK_UNLOADED  && !this.props.currentLayer) {
+                    this.props.createDraft(this.props.contextThemas[0], undefined);
+                }
+                if((this.props.status === status.TASK_INITIALIZED || this.props.status === status.TASK_UNLOADED)  && this.props.currentLayer && !this.state.currentLayer) {
+                    this.props.createDraft(this.props.currentLayer, undefined);
+                    this.state.currentLayer = this.props.currentLayer
                     this.setState(this.state);
                 }
             }
@@ -268,7 +275,7 @@ export class SignalementPanelComponent extends React.Component {
                         <div>
                             {this.renderHeader()}
                             {
-                                !this.state.initialized || !this.state.loaded ?
+                                !this.state.initialized && !this.state.loaded ?
                                     this.renderLoading() :
                                     this.renderForm()
                             }
@@ -458,12 +465,12 @@ export class SignalementPanelComponent extends React.Component {
                     <legend><Message msgId="signalement.description"/></legend>
                     <FormGroup controlId="signalement.description">
                         <FormControl componentClass="textarea"
-                                     defaultValue={this.state.task.asset.description}
+                                     defaultValue={this.state.task?.asset?.description}
                                      onChange={this.handleDescriptionChange}
                                      maxLength={1000}
                         />
                         <HelpBlock>
-                            <Message msgId="signalement.description.count"/> {1000 - this.state.task.asset.description.length}
+                            <Message msgId="signalement.description.count"/> {1000 - this.state.task?.asset?.description?.length}
                         </HelpBlock>
                     </FormGroup>
                 </fieldset>
@@ -569,7 +576,7 @@ export class SignalementPanelComponent extends React.Component {
                         onClick={this.onDraw}
                     >
                         <Message msgId="signalement.localization.geolocate" children={(param) => param}/>
-                        <Glyphicon glyph={this.state.task.asset.geographicType.toLowerCase()}/>
+                        <Glyphicon glyph={this.state.task?.asset?.geographicType?.toLowerCase()}/>
                     </Button>
                 }
             </ReactIntl.FormattedMessage>
@@ -1011,7 +1018,7 @@ export class SignalementPanelComponent extends React.Component {
         if( this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.contextDescription && !this.props.creating) {
             window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
             if(this.state.currentLayer !== null) {
-                const layerTaskData = {...this.state.task, asset: {...this.state.task.asset, uuid: this.props.task?.asset?.uuid,  geographicType: this.state.currentLayer.geographicType, contextDescription: this.state.currentLayer}}
+                const layerTaskData = {...this.state.task,  asset: {...this.state.task.asset, uuid: this.props.task?.asset?.uuid,  geographicType: this.state.currentLayer.geographicType, contextDescription: this.state.currentLayer}}
                 this.props.createTask(layerTaskData);
             } else {
                 const themaTaskData = {...this.state.task, asset: {...this.state.task.asset, uuid: this.props.task?.asset?.uuid}}
