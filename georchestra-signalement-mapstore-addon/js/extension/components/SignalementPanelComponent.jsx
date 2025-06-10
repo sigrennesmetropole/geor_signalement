@@ -160,8 +160,6 @@ export class SignalementPanelComponent extends React.Component {
             this.props.attachmentConfiguration !== null && this.props.user !== null;
         // on récupère la current layer si elle existe
         this.state.currentLayer = this.props.currentLayer;
-        window.signalement.debug("sig didUpdate props...", this.props);
-        window.signalement.debug("sig didUpdate state...", this.state);
 
         if( this.props.task !== null && this.state.task === null  && this.props.status === status.TASK_INITIALIZED ){
             // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"
@@ -215,9 +213,7 @@ export class SignalementPanelComponent extends React.Component {
         //     Quand on passe d'un signalmenent par thématique à un signalement par couche
         if((this.props.status === status.TASK_INITIALIZED)  && this.props.currentLayer && this.state.currentLayer && !isLastDraftLayer) {
             const initContext = this.props.contextThemas[0];
-            // this.props.createDraft(initContext, this.props.task?.asset?.uuid);
             this.props.createDraft(this.props.currentLayer, this.props.task?.asset?.uuid);
-            // this.state.themaSelected = true;
             this.isContextVisible = true;
             this.setState(this.state);
         }
@@ -235,12 +231,11 @@ export class SignalementPanelComponent extends React.Component {
             if (this.state.selectedContextValue !== newPropValue) {
                 // Mettre à jour uniquement si l'utilisateur n'a pas interagi récemment
                 this.setState((prevState) => {
-                    // Contrôle avancé : Si une interaction utilisateur a clairement modifié la valeur,
+                    // Si une interaction utilisateur a clairement modifié la valeur,
                     // nous ne mettons pas à jour celle-ci depuis les props.
                     if (!prevState.themaSelected) {
                         return {
                             selectedContextValue: "",
-                            // selectedContextValue: newPropValue,
                         };
                     }
                     // Sinon, on garde l'état tel qu'il est
@@ -269,23 +264,9 @@ export class SignalementPanelComponent extends React.Component {
      */
     handleContextChange = (e) => {
         const newValue = e.target.value;
-        // this.setState({...this.state, selectedContextValue: newValue });
 
         const contextDescriptions = this.props.contextThemas.filter(thema => thema.name === newValue);
         if( contextDescriptions != null && contextDescriptions.length > 0) {
-
-            // this.setState({themaSelected: true });
-
-            // this.state.task = this.props.task;
-            // this.state.loaded = true;
-            // this.setState(this.state);
-
-            // this.state.task.asset.contextDescription = contextDescriptions[0];
-            // this.state.task.asset.geographicType = contextDescriptions[0].geographicType;
-            // this.state.task = {asset : { contextDescription: contextDescriptions[0],
-            //         geographicType: contextDescriptions[0].geographicType}};
-            window.signalement.debug("sig context change state before ", this.state);
-            window.signalement.debug("sig context change props before ", this.props);
             const newTask = {
                 asset: {
                     contextDescription: contextDescriptions[0],
@@ -302,11 +283,8 @@ export class SignalementPanelComponent extends React.Component {
 
             this.props.clearDrawn();
             this.props.createDraft(contextDescriptions[0], this.props.task?.asset?.uuid);
-            window.signalement.debug("sig context change state after ", this.state);
-            window.signalement.debug("sig context change props after ", this.props);
 
         }
-        // this.setState(this.state);
     }
 
     render() {
@@ -320,9 +298,6 @@ export class SignalementPanelComponent extends React.Component {
                         || this.props.status === status.TASK_CREATED)) {
                     // il n'y a pas de tâche dans les props et on a rien fait ou a vient de créer un tâche avec succès
                     // on lance la création d'une tâche draft avec le context par défaut
-                    window.signalement.debug("sig create draft 0");
-                    window.signalement.debug("sig create draft 0 props ", this.props);
-                    window.signalement.debug("sig create draft 0 state ", this.state);
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
                     this.props.createDraft(initContext, undefined);
 
@@ -330,11 +305,9 @@ export class SignalementPanelComponent extends React.Component {
                     this.setState(this.state);
                 }
                 if(this.props.status === status.TASK_UNLOADED  && !this.props.currentLayer) {
-                    window.signalement.debug("sig create draft 1");
                     this.props.createDraft(this.props.contextThemas[0], undefined);
                 }
                 if((this.props.status === status.TASK_INITIALIZED || this.props.status === status.TASK_UNLOADED)  && this.props.currentLayer && !this.state.currentLayer) {
-                    window.signalement.debug("sig create draft 2");
                     this.props.createDraft(this.props.currentLayer, undefined);
                     this.state.currentLayer = this.props.currentLayer
                     this.setState(this.state);
@@ -527,7 +500,6 @@ export class SignalementPanelComponent extends React.Component {
                             <FormControl componentClass="select"
                                          value={this.state.selectedContextValue}
                                          onChange={this.handleContextChange}
-                                // defaultValue={this.props.task?.asset?.contextDescription?.label ?? this.props.contextThemas?.[0]?.name} // Valeur par défaut
                             >
                                 {
                                     (!this.state.themaSelected && this.props.contextThemas.length > 1)
@@ -722,9 +694,7 @@ export class SignalementPanelComponent extends React.Component {
                             <Button bsStyle="primary"
                                     bsSize="sm"
                                     className={((!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER"))? "validation-button boutonHover": "validation-button"}
-                                    // className={(!this.state.themaSelected)? "validation-button boutonHover": "validation-button"}
                                     data-message={message}
-                                    // disabled={!this.state.themaSelected && !this.state.currentLayer}
                                     disabled={(!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")}
                                     onClick={() => this.create()}>
                                 <Message msgId="signalement.validate"/>
@@ -980,7 +950,6 @@ export class SignalementPanelComponent extends React.Component {
         const idField= e.target.id.split(".")[3];
 
         let field = this.props.task.form.sections[idSection].fields[idField];
-        // let field = this.state.task.form.sections[idSection].fields[idField];
 
         // valider le changement après modification du champs
         // pour s'assurer qu'il est en format correct avec le validateur de chaque champs
@@ -1121,7 +1090,6 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
-        // if( this.state.task != null && this.state.task.asset.uuid && this.state.task.asset.contextDescription && !this.props.creating)
         if((this.state.isContextVisible || (!this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")) && !this.props.creating)
         {
             window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
