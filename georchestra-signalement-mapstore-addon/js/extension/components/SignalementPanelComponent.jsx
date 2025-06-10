@@ -134,7 +134,6 @@ export class SignalementPanelComponent extends React.Component {
             errorFields: {},
             themaSelected: false,
             selectedContextValue: "",
-            // selectedContextValue: props.task?.asset?.contextDescription?.label ?? props.contextThemas?.[0]?.label,
             isContextVisible: false
         }
 
