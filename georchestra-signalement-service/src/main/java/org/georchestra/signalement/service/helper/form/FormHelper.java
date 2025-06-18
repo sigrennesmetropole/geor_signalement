@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,18 +31,22 @@ import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.form.ProcessFormDefinitionEntity;
 import org.georchestra.signalement.service.exception.FormConvertException;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
+import org.georchestra.signalement.service.exception.FormValidationException;
+import org.georchestra.signalement.service.helper.form.validator.FieldValidator;
 import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
 import org.georchestra.signalement.service.mapper.form.FormMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author FNI18300
  *
  */
 @Component
+@RequiredArgsConstructor
 public class FormHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FormHelper.class);
@@ -50,17 +55,16 @@ public class FormHelper {
 
 	private static final String DRAFT_USER_TASK_ID = "draft";
 
-	@Autowired
-	private FormMapper formMapper;
+	
+	private final FormMapper formMapper;
 
-	@Autowired
-	private BpmnHelper bpmnHelper;
+	private final BpmnHelper bpmnHelper;
 
-	@Autowired
-	private ProcessFormDefinitionCustomDao processFormDefinitionCustomDao;
+	private final ProcessFormDefinitionCustomDao processFormDefinitionCustomDao;
 
-	@Autowired
-	private ContextDescriptionDao contextDescriptionDao;
+	private final ContextDescriptionDao contextDescriptionDao;
+	
+	private final List<FieldValidator> validators;
 
 	/**
 	 * Retourne le formulaire le plus adapté à la tâche
@@ -292,10 +296,9 @@ public class FormHelper {
 	private ProcessFormDefinitionSearchCriteria createSearchCriteria(org.activiti.engine.task.Task input) {
 		ProcessInstance processInstance = bpmnHelper.lookupProcessInstance(input);
 		UserTask userTask = bpmnHelper.lookupUserTask(input);
-		ProcessFormDefinitionSearchCriteria searchCriteria = new ProcessFormDefinitionSearchCriteria(
+		return new ProcessFormDefinitionSearchCriteria(
 				processInstance.getProcessDefinitionKey(), processInstance.getProcessDefinitionVersion(), true,
 				userTask.getId(), true);
-		return searchCriteria;
 	}
 
 	private ProcessFormDefinitionSearchCriteria createSearchCriteria(String contextDescriptionName) {
@@ -319,6 +322,46 @@ public class FormHelper {
 		sortCriterion.setProperty(property);
 		sortCriterion.asc(true);
 		return sortCriterion;
+	}
+	
+	public void validateForm(Form form) throws FormValidationException {
+		if (form != null && CollectionUtils.isNotEmpty(form.getSections())) {
+			Iterator<Section> it = form.getSections().iterator();
+			while (it.hasNext()) {
+				Section section = it.next();
+				if (Boolean.TRUE.equals(section.getReadOnly())) {
+					// on ne conserve pas les sections en lecture seule pour empecher l'injection
+					it.remove();
+				} else {
+					validateSection(section);
+				}
+			}
+		}
+	}
+
+	public void validateSection(Section section) throws FormValidationException {
+		if (CollectionUtils.isNotEmpty(section.getFields())) {
+			Iterator<Field> it = section.getFields().iterator();
+			while (it.hasNext()) {
+				Field field = it.next();
+				if (Boolean.TRUE.equals(field.getDefinition().getReadOnly())) {
+					// on ne conserve pas les champs en lecture seule pour empecher l'injection
+					it.remove();
+				} else {
+					validateField(field);
+				}
+			}
+		}
+	}
+
+	private void validateField(Field field) throws FormValidationException {
+		if (CollectionUtils.isNotEmpty(field.getDefinition().getValidators())) {
+			for (FieldValidator fieldValidator : validators) {
+				if (fieldValidator.accept(field) && !fieldValidator.check(field)) {
+					throw new FormValidationException("Invalid field:" + field.getDefinition());
+				}
+			}
+		}
 	}
 
 }

@@ -7,6 +7,7 @@ import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 import org.georchestra.signalement.service.exception.FormConvertException;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
+import org.georchestra.signalement.service.exception.FormValidationException;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,7 @@ public class ApiExceptionHandler {
 	 * @return Code erreur json
 	 */
 	@ExceptionHandler({ InvalidDataException.class, FormDefinitionException.class, IllegalArgumentException.class,
-			DocumentRepositoryException.class, DataException.class, FormConvertException.class })
+			DocumentRepositoryException.class, DataException.class, FormConvertException.class, FormValidationException.class })
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public @ResponseBody ApiError handleBadRequestException(final Exception e) {
 		final ApiError error = new ApiError();
