@@ -127,8 +127,6 @@ export class SignalementPanelComponent extends React.Component {
         toggleControl: () => {}
     };
 
-    createdTaskUuid = "";
-
     constructor(props) {
         super(props);
         this.state = {
@@ -248,27 +246,7 @@ export class SignalementPanelComponent extends React.Component {
                     return null;
                 });
             }
-
-
         }
-
-    //     Après le lancement de la création du signalement, on s'assure de mettre à jour le state convenablement
-    //     if((this.props.status === status.CREATE_TASK && this.props.creating === false) || this.props.status === status.TASK_CREATED) {
-    //         this.props.cancelDraft(this.createdTaskUuid);
-            // this.state.task = null;
-            // this.state.loaded = false;
-            // this.state.errorAttachment = "";
-            // this.props.stopDrawingSupport();
-            // this.state.errorFields = {};
-            //
-            //
-            // this.state.selectedContextValue = "";
-            // // this.state.task.asset.description = "";
-            // this.state.isContextVisible = false;
-            // this.state.themaSelected = false;
-            // this.setState(this.state);
-        // }
-
     }
 
     /**
@@ -323,7 +301,6 @@ export class SignalementPanelComponent extends React.Component {
                     // on lance la création d'une tâche draft avec le context par défaut
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
                     this.props.createDraft(initContext, undefined);
-
                     this.state.themaSelected = false;
                     this.setState(this.state);
                 }
@@ -340,8 +317,6 @@ export class SignalementPanelComponent extends React.Component {
             if (this.props.contextThemas.length <=1) {
                 this.state.themaSelected = true;
             }
-
-
 
         }
         if( this.props.active ){
@@ -717,10 +692,8 @@ export class SignalementPanelComponent extends React.Component {
                             <Button bsStyle="primary"
                                     bsSize="sm"
                                     className={!this.checkTaskValid() ? "validation-button boutonHover": "validation-button"}
-                                    // className={(!!this.state.task.asset.localisation && !!this.state.task.asset.description) && ((!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")) ? "validation-button boutonHover": "validation-button"}
                                     data-message={message}
                                     disabled={!this.checkTaskValid()}
-                                    // disabled={(!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")}
                                     onClick={() => this.create()}>
                                 <Message msgId="signalement.validate"/>
                             </Button>
@@ -1036,9 +1009,7 @@ export class SignalementPanelComponent extends React.Component {
         }
         return errorFields;
 
-
     }
-
 
     /**
      * Validation de la pièce de jointe (type, taille...) avant l'uploader
@@ -1082,9 +1053,7 @@ export class SignalementPanelComponent extends React.Component {
             // uploader le fichier
             this.props.addAttachment(attachment);
         }
-
     }
-
 
     /**
      * Action pour supprimer une pièce jointe
@@ -1117,7 +1086,6 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
-        this.createdTaskUuid = this.props.task?.asset?.uuid;
         if((this.state.isContextVisible || (!this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")) && !this.props.creating)
         {
             window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
@@ -1136,27 +1104,17 @@ export class SignalementPanelComponent extends React.Component {
             this.props.toggleControl();
             window.signalement.debug("Create and close panel END state: ", this.state);
             window.signalement.debug("Create and close panel END props: ", this.props);
-            // // this.props.cancelDraft(this.props.task?.asset?.uuid);
-            // this.state.selectedContextValue = "";
-            // this.state.task.asset.description = e.target.value;
-            // this.state.isContextVisible = false;
-            // this.state.themaSelected = false;
-            // this.setState(this.state);
             this.state.task = null;
             this.state.loaded = false;
             this.state.errorAttachment = "";
-            // this.props.stopDrawingSupport();
             this.state.errorFields = {};
 
-
             this.state.selectedContextValue = "";
-            // this.state.task.asset.description = "";
             this.state.isContextVisible = false;
             this.state.themaSelected = false;
             this.setState(this.state);
         }
     }
-
 
 /**
  * Fonction de vérification des champs du custom form pour déterminer si les champs required sont bien remplis
@@ -1173,8 +1131,6 @@ checkRequiredFields() {
         );
     }
 
-
-
 /**
  * Fonction de vérification de la validité du signalement avant soumission
 */
@@ -1190,6 +1146,4 @@ checkTaskValid() {
                 && this.props.task.asset.contextDescription.contextType ==="LAYER"))) &&
         this.checkRequiredFields()
     }
-
-
 }
