@@ -219,6 +219,9 @@ export class SignalementPanelComponent extends React.Component {
             this.props.createDraft(this.props.currentLayer, this.props.task?.asset?.uuid);
             this.isContextVisible = true;
             this.state.task.asset.description = "";
+            this.state.task.asset.geographicType = this.props.currentLayer.geographicType;
+            this.state.task.asset.localisation = null;
+            this.state.task.asset.attachments = null;
             this.setState(this.state);
         }
 
@@ -762,7 +765,6 @@ export class SignalementPanelComponent extends React.Component {
                             </ControlLabel>
                             <div className="col-sm-5">
                                 <FormControl type="number"
-                                             min={0}
                                              readOnly={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
@@ -792,7 +794,6 @@ export class SignalementPanelComponent extends React.Component {
                             <div className="col-sm-5">
                                 <FormControl type="number"
                                              step={0.1}
-                                             max={0.0}
                                              readOnly={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
@@ -944,35 +945,32 @@ export class SignalementPanelComponent extends React.Component {
      *
      * @param {*} e l'événement
      */
-    handleFieldChange = (e)=>{
+    handleFieldChange = (e) => {
+        const idParts = e.target.id.split(".");
+        const idSection = idParts[1];
+        const idField = idParts[3];
 
-        const idSection= e.target.id.split(".")[1];
-        const idField= e.target.id.split(".")[3];
+        const field = this.props.task.form.sections[idSection].fields[idField];
+        const value = field.definition.type === "BOOLEAN" ? e.target.checked : e.target.value;
 
-        let field = this.props.task.form.sections[idSection].fields[idField];
+        // Clone des erreurs existantes
+        const errorFields = { ...this.state.errorFields };
 
-        // valider le changement après modification du champs
-        // pour s'assurer qu'il est en format correct avec le validateur de chaque champs
-        let errorFields = {};
-        if(field.definition.validators[0]){
-            errorFields = this.getErrorFields(e.target.value , field.definition.validators[0], e.target.id);
-        }
-
-        // verifier si la liste des erreurs est vide sinon on affecte le changement des valeurs
-        if (errorFields && Object.keys(errorFields).length === 0 && errorFields.constructor === Object) {
-
-            if(field.definition.type === "BOOLEAN"){
-                field.values = [e.target.checked] ;
-            }else{
-                field.values = [e.target.value] ;
+        if (field.definition.validators[0]) {
+            const currentErrors = this.getErrorFields(value, field.definition.validators[0], e.target.id);
+            if (Object.keys(currentErrors).length === 0) {
+                delete errorFields[e.target.id];
+            } else {
+                errorFields[e.target.id] = currentErrors[e.target.id];
             }
-
         }
 
-        this.state.errorFields = errorFields;
-        this.setState(this.state);
+        // Mise à jour du champ
+        field.values = [value];
 
+        this.setState({ errorFields });
     }
+
 
     /**
      * Récupération des erreurs en fonction de la valeur et le validateur
@@ -986,29 +984,23 @@ export class SignalementPanelComponent extends React.Component {
         let errorFields= {};
 
         switch (validator.type) {
-
             case 'POSITIVE':
                 if(value < 0){
                     errorFields[id] = 'signalement.field.error.positive';
-                    this.setState({errorFields});
                 }
                 break;
             case 'NEGATIVE':
                 if(value > 0) {
                     errorFields[id] = 'signalement.field.error.negative';
-                    this.setState({errorFields});
                 }
                 break;
             case 'MAXLENGTH':
                 if(value.length > parseInt(validator.attribute, 10)) {
                     errorFields[id] = `maximum de caractères : ${validator.attribute}`;
-                    this.setState({errorFields});
                 }
                 break;
-
         }
         return errorFields;
-
     }
 
     /**
@@ -1135,7 +1127,7 @@ checkRequiredFields() {
  * Fonction de vérification de la validité du signalement avant soumission
 */
 checkTaskValid() {
-    if (!this.state.task?.asset?.description || !this.state.task?.asset?.localisation) {
+    if (!this.state.task?.asset?.description || !this.state.task?.asset?.localisation || Object.keys(this.state.errorFields).length !== 0) {
         return false;
     }
 
