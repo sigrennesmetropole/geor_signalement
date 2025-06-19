@@ -127,6 +127,8 @@ export class SignalementPanelComponent extends React.Component {
         toggleControl: () => {}
     };
 
+    createdTaskUuid = "";
+
     constructor(props) {
         super(props);
         this.state = {
@@ -155,6 +157,8 @@ export class SignalementPanelComponent extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         window.signalement.debug("sig didUpdate...");
+        window.signalement.debug("sig didUpdate props...", this.props);
+        window.signalement.debug("sig didUpdate state...", this.state);
         // Tout est-il initialisé ?
         this.state.initialized = this.props.contextLayers !== null && this.props.contextThemas !== null &&
             this.props.attachmentConfiguration !== null && this.props.user !== null;
@@ -208,6 +212,7 @@ export class SignalementPanelComponent extends React.Component {
             this.state.isContextVisible = this.props.contextThemas.length === 1;
             this.state.selectedContextValue = "";
             this.state.themaSelected = false;
+            this.state.task = null;
             this.setState(this.state);
         }
         //     Quand on passe d'un signalmenent par thématique à un signalement par couche
@@ -215,6 +220,7 @@ export class SignalementPanelComponent extends React.Component {
             const initContext = this.props.contextThemas[0];
             this.props.createDraft(this.props.currentLayer, this.props.task?.asset?.uuid);
             this.isContextVisible = true;
+            this.state.task.asset.description = "";
             this.setState(this.state);
         }
 
@@ -245,6 +251,23 @@ export class SignalementPanelComponent extends React.Component {
 
 
         }
+
+    //     Après le lancement de la création du signalement, on s'assure de mettre à jour le state convenablement
+    //     if((this.props.status === status.CREATE_TASK && this.props.creating === false) || this.props.status === status.TASK_CREATED) {
+    //         this.props.cancelDraft(this.createdTaskUuid);
+            // this.state.task = null;
+            // this.state.loaded = false;
+            // this.state.errorAttachment = "";
+            // this.props.stopDrawingSupport();
+            // this.state.errorFields = {};
+            //
+            //
+            // this.state.selectedContextValue = "";
+            // // this.state.task.asset.description = "";
+            // this.state.isContextVisible = false;
+            // this.state.themaSelected = false;
+            // this.setState(this.state);
+        // }
 
     }
 
@@ -495,7 +518,7 @@ export class SignalementPanelComponent extends React.Component {
             return (
                 <div id={this.props.id}>
                     <fieldset>
-                        <legend><Message msgId="signalement.reporting.thema"/></legend>
+                        <legend><Message msgId="signalement.reporting.thema"/> *</legend>
                         <FormGroup controlId="signalement.thema">
                             <FormControl componentClass="select"
                                          value={this.state.selectedContextValue}
@@ -529,7 +552,7 @@ export class SignalementPanelComponent extends React.Component {
         return (
             <div>
                 <fieldset>
-                    <legend><Message msgId="signalement.description"/></legend>
+                    <legend><Message msgId="signalement.description"/> *</legend>
                     <FormGroup controlId="signalement.description">
                         <FormControl componentClass="textarea"
                                      defaultValue={this.state.task?.asset?.description}
@@ -611,7 +634,7 @@ export class SignalementPanelComponent extends React.Component {
         return (
             <div>
                 <fieldset>
-                    <legend><Message msgId="signalement.localization"/></legend>
+                    <legend><Message msgId="signalement.localization"/> *</legend>
                     <FormGroup controlId="localisation">
                         <Row>
                             <Col xs={9} className="localization-tips">
@@ -689,13 +712,15 @@ export class SignalementPanelComponent extends React.Component {
                         <Message msgId="signalement.cancel"/>
                     </Button>
 
-                    <ReactIntl.FormattedMessage id="signalement.localization.geolocate.hover">
+                    <ReactIntl.FormattedMessage id="signalement.task.form.invalid">
                         {(message) =>
                             <Button bsStyle="primary"
                                     bsSize="sm"
-                                    className={((!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER"))? "validation-button boutonHover": "validation-button"}
+                                    className={!this.checkTaskValid() ? "validation-button boutonHover": "validation-button"}
+                                    // className={(!!this.state.task.asset.localisation && !!this.state.task.asset.description) && ((!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")) ? "validation-button boutonHover": "validation-button"}
                                     data-message={message}
-                                    disabled={(!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")}
+                                    disabled={!this.checkTaskValid()}
+                                    // disabled={(!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")}
                                     onClick={() => this.create()}>
                                 <Message msgId="signalement.validate"/>
                             </Button>
@@ -764,6 +789,7 @@ export class SignalementPanelComponent extends React.Component {
                             </ControlLabel>
                             <div className="col-sm-5">
                                 <FormControl type="number"
+                                             min={0}
                                              readOnly={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
@@ -793,6 +819,7 @@ export class SignalementPanelComponent extends React.Component {
                             <div className="col-sm-5">
                                 <FormControl type="number"
                                              step={0.1}
+                                             max={0.0}
                                              readOnly={field.definition.readOnly  || sectionReadOnly}
                                              required={field.definition.required}
                                              name={field.definition.name}
@@ -1090,6 +1117,7 @@ export class SignalementPanelComponent extends React.Component {
      * L'action de création
      */
     create() {
+        this.createdTaskUuid = this.props.task?.asset?.uuid;
         if((this.state.isContextVisible || (!this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")) && !this.props.creating)
         {
             window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
@@ -1106,11 +1134,62 @@ export class SignalementPanelComponent extends React.Component {
                 this.props.createTask(themaTaskData);
             }
             this.props.toggleControl();
-            this.props.cancelDraft(this.props.task?.asset?.uuid);
+            window.signalement.debug("Create and close panel END state: ", this.state);
+            window.signalement.debug("Create and close panel END props: ", this.props);
+            // // this.props.cancelDraft(this.props.task?.asset?.uuid);
+            // this.state.selectedContextValue = "";
+            // this.state.task.asset.description = e.target.value;
+            // this.state.isContextVisible = false;
+            // this.state.themaSelected = false;
+            // this.setState(this.state);
+            this.state.task = null;
+            this.state.loaded = false;
+            this.state.errorAttachment = "";
+            // this.props.stopDrawingSupport();
+            this.state.errorFields = {};
+
+
             this.state.selectedContextValue = "";
+            // this.state.task.asset.description = "";
             this.state.isContextVisible = false;
             this.state.themaSelected = false;
             this.setState(this.state);
         }
     }
+
+
+/**
+ * Fonction de vérification des champs du custom form pour déterminer si les champs required sont bien remplis
+*/
+checkRequiredFields() {
+    return this.props.task?.form?.sections?.every(section =>
+        section.fields.every(field => {
+            // Si un champ est "required", il doit avoir des valeurs non vides
+            if (field.definition.required) {
+                return field.values.length > 0;
+            }
+            return true; // Si ce n'est pas "required", on considère le champ comme valide
+            })
+        );
+    }
+
+
+
+/**
+ * Fonction de vérification de la validité du signalement avant soumission
+*/
+checkTaskValid() {
+    if (!this.state.task?.asset?.description || !this.state.task?.asset?.localisation) {
+        return false;
+    }
+
+    return !(!!this.state.task?.asset?.localisation &&
+        !!this.state.task?.asset?.description &&
+        ((!this.state.isContextVisible && this.state.selectedContextValue !== "") ||
+            (this.state.isContextVisible && this.state.selectedContextValue === ""
+                && this.props.task.asset.contextDescription.contextType ==="LAYER"))) &&
+        this.checkRequiredFields()
+    }
+
+
 }
