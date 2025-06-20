@@ -155,6 +155,8 @@ export class SignalementPanelComponent extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         window.signalement.debug("sig didUpdate...");
+        window.signalement.debug("sig didUpdate props...", this.props);
+        window.signalement.debug("sig didUpdate state...", this.state);
         // Tout est-il initialisé ?
         this.state.initialized = this.props.contextLayers !== null && this.props.contextThemas !== null &&
             this.props.attachmentConfiguration !== null && this.props.user !== null;
@@ -208,6 +210,7 @@ export class SignalementPanelComponent extends React.Component {
             this.state.isContextVisible = this.props.contextThemas.length === 1;
             this.state.selectedContextValue = "";
             this.state.themaSelected = false;
+            this.state.task = null;
             this.setState(this.state);
         }
         //     Quand on passe d'un signalmenent par thématique à un signalement par couche
@@ -215,6 +218,10 @@ export class SignalementPanelComponent extends React.Component {
             const initContext = this.props.contextThemas[0];
             this.props.createDraft(this.props.currentLayer, this.props.task?.asset?.uuid);
             this.isContextVisible = true;
+            this.state.task.asset.description = "";
+            this.state.task.asset.geographicType = this.props.currentLayer.geographicType;
+            this.state.task.asset.localisation = null;
+            this.state.task.asset.attachments = null;
             this.setState(this.state);
         }
 
@@ -242,10 +249,7 @@ export class SignalementPanelComponent extends React.Component {
                     return null;
                 });
             }
-
-
         }
-
     }
 
     /**
@@ -300,7 +304,6 @@ export class SignalementPanelComponent extends React.Component {
                     // on lance la création d'une tâche draft avec le context par défaut
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
                     this.props.createDraft(initContext, undefined);
-
                     this.state.themaSelected = false;
                     this.setState(this.state);
                 }
@@ -317,8 +320,6 @@ export class SignalementPanelComponent extends React.Component {
             if (this.props.contextThemas.length <=1) {
                 this.state.themaSelected = true;
             }
-
-
 
         }
         if( this.props.active ){
@@ -495,7 +496,7 @@ export class SignalementPanelComponent extends React.Component {
             return (
                 <div id={this.props.id}>
                     <fieldset>
-                        <legend><Message msgId="signalement.reporting.thema"/></legend>
+                        <legend><Message msgId="signalement.reporting.thema"/> *</legend>
                         <FormGroup controlId="signalement.thema">
                             <FormControl componentClass="select"
                                          value={this.state.selectedContextValue}
@@ -529,7 +530,7 @@ export class SignalementPanelComponent extends React.Component {
         return (
             <div>
                 <fieldset>
-                    <legend><Message msgId="signalement.description"/></legend>
+                    <legend><Message msgId="signalement.description"/> *</legend>
                     <FormGroup controlId="signalement.description">
                         <FormControl componentClass="textarea"
                                      defaultValue={this.state.task?.asset?.description}
@@ -611,7 +612,7 @@ export class SignalementPanelComponent extends React.Component {
         return (
             <div>
                 <fieldset>
-                    <legend><Message msgId="signalement.localization"/></legend>
+                    <legend><Message msgId="signalement.localization"/> *</legend>
                     <FormGroup controlId="localisation">
                         <Row>
                             <Col xs={9} className="localization-tips">
@@ -689,13 +690,13 @@ export class SignalementPanelComponent extends React.Component {
                         <Message msgId="signalement.cancel"/>
                     </Button>
 
-                    <ReactIntl.FormattedMessage id="signalement.localization.geolocate.hover">
+                    <ReactIntl.FormattedMessage id="signalement.task.form.invalid">
                         {(message) =>
                             <Button bsStyle="primary"
                                     bsSize="sm"
-                                    className={((!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER"))? "validation-button boutonHover": "validation-button"}
+                                    className={!this.checkTaskValid() ? "validation-button boutonHover": "validation-button"}
                                     data-message={message}
-                                    disabled={(!this.state.isContextVisible && this.state.selectedContextValue !== "") || (this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")}
+                                    disabled={!this.checkTaskValid()}
                                     onClick={() => this.create()}>
                                 <Message msgId="signalement.validate"/>
                             </Button>
@@ -944,35 +945,32 @@ export class SignalementPanelComponent extends React.Component {
      *
      * @param {*} e l'événement
      */
-    handleFieldChange = (e)=>{
+    handleFieldChange = (e) => {
+        const idParts = e.target.id.split(".");
+        const idSection = idParts[1];
+        const idField = idParts[3];
 
-        const idSection= e.target.id.split(".")[1];
-        const idField= e.target.id.split(".")[3];
+        const field = this.props.task.form.sections[idSection].fields[idField];
+        const value = field.definition.type === "BOOLEAN" ? e.target.checked : e.target.value;
 
-        let field = this.props.task.form.sections[idSection].fields[idField];
+        // Clone des erreurs existantes
+        const errorFields = { ...this.state.errorFields };
 
-        // valider le changement après modification du champs
-        // pour s'assurer qu'il est en format correct avec le validateur de chaque champs
-        let errorFields = {};
-        if(field.definition.validators[0]){
-            errorFields = this.getErrorFields(e.target.value , field.definition.validators[0], e.target.id);
-        }
-
-        // verifier si la liste des erreurs est vide sinon on affecte le changement des valeurs
-        if (errorFields && Object.keys(errorFields).length === 0 && errorFields.constructor === Object) {
-
-            if(field.definition.type === "BOOLEAN"){
-                field.values = [e.target.checked] ;
-            }else{
-                field.values = [e.target.value] ;
+        if (field.definition.validators[0]) {
+            const currentErrors = this.getErrorFields(value, field.definition.validators[0], e.target.id);
+            if (Object.keys(currentErrors).length === 0) {
+                delete errorFields[e.target.id];
+            } else {
+                errorFields[e.target.id] = currentErrors[e.target.id];
             }
-
         }
 
-        this.state.errorFields = errorFields;
-        this.setState(this.state);
+        // Mise à jour du champ
+        field.values = [value];
 
+        this.setState({ errorFields });
     }
+
 
     /**
      * Récupération des erreurs en fonction de la valeur et le validateur
@@ -986,32 +984,24 @@ export class SignalementPanelComponent extends React.Component {
         let errorFields= {};
 
         switch (validator.type) {
-
             case 'POSITIVE':
                 if(value < 0){
                     errorFields[id] = 'signalement.field.error.positive';
-                    this.setState({errorFields});
                 }
                 break;
             case 'NEGATIVE':
                 if(value > 0) {
                     errorFields[id] = 'signalement.field.error.negative';
-                    this.setState({errorFields});
                 }
                 break;
             case 'MAXLENGTH':
                 if(value.length > parseInt(validator.attribute, 10)) {
                     errorFields[id] = `maximum de caractères : ${validator.attribute}`;
-                    this.setState({errorFields});
                 }
                 break;
-
         }
         return errorFields;
-
-
     }
-
 
     /**
      * Validation de la pièce de jointe (type, taille...) avant l'uploader
@@ -1055,9 +1045,7 @@ export class SignalementPanelComponent extends React.Component {
             // uploader le fichier
             this.props.addAttachment(attachment);
         }
-
     }
-
 
     /**
      * Action pour supprimer une pièce jointe
@@ -1106,11 +1094,48 @@ export class SignalementPanelComponent extends React.Component {
                 this.props.createTask(themaTaskData);
             }
             this.props.toggleControl();
-            this.props.cancelDraft(this.props.task?.asset?.uuid);
+            window.signalement.debug("Create and close panel END state: ", this.state);
+            window.signalement.debug("Create and close panel END props: ", this.props);
+            this.state.task = null;
+            this.state.loaded = false;
+            this.state.errorAttachment = "";
+            this.state.errorFields = {};
+
             this.state.selectedContextValue = "";
             this.state.isContextVisible = false;
             this.state.themaSelected = false;
             this.setState(this.state);
         }
+    }
+
+/**
+ * Fonction de vérification des champs du custom form pour déterminer si les champs required sont bien remplis
+*/
+checkRequiredFields() {
+    return this.props.task?.form?.sections?.every(section =>
+        section.fields.every(field => {
+            // Si un champ est "required", il doit avoir des valeurs non vides
+            if (field.definition.required) {
+                return field.values.length > 0;
+            }
+            return true; // Si ce n'est pas "required", on considère le champ comme valide
+            })
+        );
+    }
+
+/**
+ * Fonction de vérification de la validité du signalement avant soumission
+*/
+checkTaskValid() {
+    if (!this.state.task?.asset?.description || !this.state.task?.asset?.localisation || Object.keys(this.state.errorFields).length !== 0) {
+        return false;
+    }
+
+    return !(!!this.state.task?.asset?.localisation &&
+        !!this.state.task?.asset?.description &&
+        ((!this.state.isContextVisible && this.state.selectedContextValue !== "") ||
+            (this.state.isContextVisible && this.state.selectedContextValue === ""
+                && this.props.task.asset.contextDescription.contextType ==="LAYER"))) &&
+        this.checkRequiredFields()
     }
 }
