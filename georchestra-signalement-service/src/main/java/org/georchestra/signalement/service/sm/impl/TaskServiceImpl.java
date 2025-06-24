@@ -45,6 +45,7 @@ import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 import org.georchestra.signalement.service.exception.FormConvertException;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
+import org.georchestra.signalement.service.exception.FormValidationException;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
 import org.georchestra.signalement.service.helper.form.FormHelper;
 import org.georchestra.signalement.service.helper.geojson.GeoJSonHelper;
@@ -158,7 +159,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	@Override
 	@Transactional(readOnly = false)
 	public Task startTask(Task task)
-			throws DocumentRepositoryException, DataException, FormDefinitionException, FormConvertException {
+			throws DocumentRepositoryException, DataException, FormDefinitionException, FormConvertException, FormValidationException {
 		// contrôle des données d'entrée
 		if (task == null || task.getAsset() == null) {
 			throw new IllegalArgumentException("Task with asset is mandatory");
@@ -250,7 +251,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	@Override
 	@Transactional(readOnly = false)
-	public Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException {
+	public Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException, FormValidationException {
 		if (task == null || task.getAsset() == null) {
 			throw new IllegalArgumentException("Task with asset is mandatory");
 		}
@@ -460,7 +461,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	}
 
 	private AbstractReportingEntity updateDraftReporting(Task task, AbstractReportingEntity reportingEntity)
-			throws DataException, FormDefinitionException, FormConvertException {
+			throws DataException, FormDefinitionException, FormConvertException, FormValidationException {
 		ReportingDescription reporting = task.getAsset();
 		AbstractReportingEntity targetReportingEntity = reportingEntity;
 		// contrôle de changement de context
@@ -496,10 +497,11 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	}
 
 	private void updateDraftReportingDatas(Task task, AbstractReportingEntity reportingEntity)
-			throws DataException, FormDefinitionException, FormConvertException {
+			throws DataException, FormDefinitionException, FormConvertException, FormValidationException {
 		Map<String, Object> datas = reportingHelper.hydrateData(reportingEntity.getDatas());
 		Form orignalForm = formHelper.lookupDraftForm(task.getAsset().getContextDescription());
 		formHelper.copyFormData(task.getForm(), orignalForm);
+		formHelper.validateForm(task.getForm());
 		formHelper.fillMap(orignalForm, datas);
 		reportingEntity.setDatas(reportingHelper.deshydrateData(datas));
 	}

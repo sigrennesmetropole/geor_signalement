@@ -19,6 +19,7 @@ import org.georchestra.signalement.service.exception.DataException;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 import org.georchestra.signalement.service.exception.FormConvertException;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
+import org.georchestra.signalement.service.exception.FormValidationException;
 
 /**
  * @author FNI18300
@@ -108,8 +109,9 @@ public interface TaskService {
 	 * @throws DataException
 	 * @throws FormDefinitionException
 	 * @throws FormConvertException
+	 * @throws FormValidationException
 	 */
-	Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException;
+	Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException, FormValidationException;
 
 	/**
 	 * Créé une nouvelle tâche à partir du signalement draft
@@ -120,9 +122,10 @@ public interface TaskService {
 	 * @throws DataException
 	 * @throws FormDefinitionException
 	 * @throws FormConvertException
+	 * @throws FormValidationException
 	 */
 	Task startTask(Task task)
-			throws DocumentRepositoryException, DataException, FormDefinitionException, FormConvertException;
+			throws DocumentRepositoryException, DataException, FormDefinitionException, FormConvertException, FormValidationException;
 
 	/**
 	 * Ajoute un document sur un signalement

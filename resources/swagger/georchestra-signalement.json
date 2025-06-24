@@ -2423,7 +2423,8 @@
 				"REQUIRED",
 				"MAXLENGTH",
 				"POSITIVE",
-				"NEGATIVE"
+				"NEGATIVE",
+				"REGEXP"
 			]
 		},
 		"Validator": {

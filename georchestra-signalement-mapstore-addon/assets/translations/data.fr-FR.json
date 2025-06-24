@@ -36,6 +36,7 @@
 			"localization.geolocate": "Géolocaliser",
 			"localization.geolocate.hover": "Merci de sélectionner une thématique",
 			"task.create": "La tâche de signalement a été créée",
+			"task.form.invalid": "Veuillez remplir tous les champs requis.",
 			"task.error": "La tâche de signalement n'a pas été créée",
 			"task": {
 				"success": {

@@ -326,7 +326,7 @@ public class ReportingHelper {
 	public Coordinate[] getCoordinate(List<PointG> localisation, boolean isClosed) {
 		int size = localisation.size();
 		Coordinate[] coordinates;
-		if (isClosed == false) {
+		if (!isClosed) {
 			coordinates = new Coordinate[size];
 			for (int i = 0; i < size; i++) {
 				addCoordinate(localisation, coordinates, i);
