@@ -1,7 +1,0 @@
-{
-	"id": "signalement-TARGET_ENV",
-	"uri": "http://signalement-back-TARGET_ENV-rm-signalement-back:8080/signalement/",
-	"predicates": [ 
-		"Path=/signalement-TARGET_ENV/**"
-	]
-}
