@@ -168,9 +168,10 @@ export class SignalementPanelComponent extends React.Component {
             window.signalement.debug("sig draft created");
             window.signalement.debug("sig draft created props ", this.props);
             window.signalement.debug("sig draft created state ", this.state);
-            this.state.task = this.props.task;
-            this.state.loaded = true;
-            this.setState(this.state);
+            this.setState({
+                task: this.props.task,
+                loaded: true
+            });
         }
 
         if (this.state.task !== null && this.state.task?.asset !== null) {
@@ -190,13 +191,14 @@ export class SignalementPanelComponent extends React.Component {
         if( (this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) && this.state.loaded === true){
             // on a demandé l'annulation et on l'a obtenue => on ferme le panel
             window.signalement.debug("sig draft canceled or task created");
-            this.state.task = null;
-            this.state.loaded = false;
-            this.state.errorAttachment = "";
-            this.setState(this.state);
+            this.setState({
+                task: null,
+                loaded: false,
+                errorAttachment: "",
+                errorFields: {}
+            })
             this.props.stopDrawingSupport();
             this.props.toggleControl();
-            this.state.errorFields = {};
         }
         window.signalement.debug(this.state);
 
@@ -207,22 +209,32 @@ export class SignalementPanelComponent extends React.Component {
             const initContext = this.props.contextThemas[0];
             this.props.createDraft(initContext, this.props.task?.asset?.uuid);
 
-            this.state.isContextVisible = this.props.contextThemas.length === 1;
-            this.state.selectedContextValue = "";
-            this.state.themaSelected = false;
-            this.state.task = null;
-            this.setState(this.state);
+            this.setState({
+                isContextVisible: this.props.contextThemas.length === 1,
+                selectedContextValue: "",
+                themaSelected: false,
+                task: null,
+                errorFields: {}
+            });
         }
         //     Quand on passe d'un signalmenent par thématique à un signalement par couche
         if((this.props.status === status.TASK_INITIALIZED)  && this.props.currentLayer && this.state.currentLayer && !isLastDraftLayer) {
             const initContext = this.props.contextThemas[0];
             this.props.createDraft(this.props.currentLayer, this.props.task?.asset?.uuid);
             this.isContextVisible = true;
-            this.state.task.asset.description = "";
-            this.state.task.asset.geographicType = this.props.currentLayer.geographicType;
-            this.state.task.asset.localisation = null;
-            this.state.task.asset.attachments = null;
-            this.setState(this.state);
+            this.setState(prevState => ({
+                task: {
+                    ...prevState.task,
+                    asset: {
+                        ...prevState.task.asset,
+                        description: "",
+                        geographicType: this.props.currentLayer.geographicType,
+                        localisation: null,
+                        attachments: null
+                    },
+                },
+                    errorFields: {}
+            }));
         }
 
         // Vérification si la valeur du contexte a changé pour mise à jour du contexte
@@ -258,8 +270,16 @@ export class SignalementPanelComponent extends React.Component {
      * @param {*} e l'événement
      */
     handleDescriptionChange = (e) => {
-        this.state.task.asset.description = e.target.value;
-        this.setState(this.state);
+        const newDescription = e.target.value;
+        this.setState(prevState => ({
+            task: {
+                ...prevState.task,
+                asset: {
+                    ...prevState.task.asset,
+                    description: newDescription
+                }
+            }
+        }));
     }
 
     /**
@@ -275,6 +295,7 @@ export class SignalementPanelComponent extends React.Component {
                 asset: {
                     contextDescription: contextDescriptions[0],
                     geographicType: contextDescriptions[0].geographicType,
+                    description: "",
                 },
             };
 
@@ -283,6 +304,7 @@ export class SignalementPanelComponent extends React.Component {
                 isContextVisible: true,
                 themaSelected: true,
                 task: newTask,
+                errorFields: {},
             });
 
             this.props.clearDrawn();
@@ -304,16 +326,18 @@ export class SignalementPanelComponent extends React.Component {
                     // on lance la création d'une tâche draft avec le context par défaut
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
                     this.props.createDraft(initContext, undefined);
-                    this.state.themaSelected = false;
-                    this.setState(this.state);
+                    this.setState({
+                        themaSelected: false
+                    });
                 }
                 if(this.props.status === status.TASK_UNLOADED  && !this.props.currentLayer) {
                     this.props.createDraft(this.props.contextThemas[0], undefined);
                 }
                 if((this.props.status === status.TASK_INITIALIZED || this.props.status === status.TASK_UNLOADED)  && this.props.currentLayer && !this.state.currentLayer) {
                     this.props.createDraft(this.props.currentLayer, undefined);
-                    this.state.currentLayer = this.props.currentLayer
-                    this.setState(this.state);
+                    this.setState({
+                        currentLayer: this.props.currentLayer
+                    });
                 }
 
             }
@@ -533,7 +557,7 @@ export class SignalementPanelComponent extends React.Component {
                     <legend><Message msgId="signalement.description"/> *</legend>
                     <FormGroup controlId="signalement.description">
                         <FormControl componentClass="textarea"
-                                     defaultValue={this.state.task?.asset?.description}
+                                     value={this.state.task?.asset?.description}
                                      onChange={this.handleDescriptionChange}
                                      maxLength={1000}
                         />
@@ -1036,7 +1060,7 @@ export class SignalementPanelComponent extends React.Component {
      */
     fileAddedHandler(e) {
         //les differents test avant d'uploader le fichier (type, taille)
-        var attachment = {file: e.target.files[0], uuid: this.state.task.asset.uuid}
+        let attachment = {file: e.target.files[0], uuid: this.state.task.asset.uuid}
 
         const isValid = this.validateAttachment(attachment);
 
@@ -1062,9 +1086,10 @@ export class SignalementPanelComponent extends React.Component {
      * L'action d'abandon
      */
     cancel() {
-        this.state.task = this.props.task;
-        this.state.loaded = true;
-        this.setState(this.state);
+        this.setState({
+            task: this.props.task,
+            loaded: true
+        });
             window.signalement.debug("Cancel and close state: ", this.state);
             window.signalement.debug("Cancel and close props: ", this.props);
         if(this.state.task != null && this.state.task.asset.uuid) {
@@ -1096,15 +1121,16 @@ export class SignalementPanelComponent extends React.Component {
             this.props.toggleControl();
             window.signalement.debug("Create and close panel END state: ", this.state);
             window.signalement.debug("Create and close panel END props: ", this.props);
-            this.state.task = null;
-            this.state.loaded = false;
-            this.state.errorAttachment = "";
-            this.state.errorFields = {};
 
-            this.state.selectedContextValue = "";
-            this.state.isContextVisible = false;
-            this.state.themaSelected = false;
-            this.setState(this.state);
+            this.setState({
+                task: null,
+                loaded: false,
+                errorAttachment: "",
+                errorFields: {},
+                selectedContextValue: "",
+                isContextVisible: false,
+                themaSelected: false
+            });
         }
     }
 
@@ -1136,6 +1162,6 @@ checkTaskValid() {
         ((!this.state.isContextVisible && this.state.selectedContextValue !== "") ||
             (this.state.isContextVisible && this.state.selectedContextValue === ""
                 && this.props.task.asset.contextDescription.contextType ==="LAYER"))) &&
-        this.checkRequiredFields()
+                this.checkRequiredFields()
     }
 }
