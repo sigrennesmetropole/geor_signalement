@@ -109,7 +109,7 @@
 		</repository>
 		<snapshotRepository>
 			<id>open.nexus</id>
-			<url>${MVN_SNAPSHOTS}</url>
+			<url>https://nexus.boost.open.global/repository/rennes-metropole-signalement-mvn-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
