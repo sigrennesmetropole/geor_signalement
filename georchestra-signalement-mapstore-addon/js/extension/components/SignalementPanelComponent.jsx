@@ -1146,7 +1146,7 @@ checkRequiredFields() {
             }
             return true; // Si ce n'est pas "required", on considère le champ comme valide
             })
-        );
+        ) ?? true; // Retourne true si form est null (pas de champs à valider);
     }
 
 /**
