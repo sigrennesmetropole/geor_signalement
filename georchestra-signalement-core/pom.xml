@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>georchestra-signalement-backend</artifactId>
 		<groupId>org.georchestra</groupId>
-		<version>1.13.1</version>
+		<version>1.14.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -132,7 +132,7 @@
 					<generateApis>false</generateApis>
 					<generateModels>true</generateModels>
 					<configOptions>
-						<dateLibrary>java8</dateLibrary>
+						<dateLibrary>java8-localdatetime</dateLibrary>
 						<useSpringBoot3>true</useSpringBoot3>
 						<useJakartaEe>true</useJakartaEe>
 						<useSwaggerUI>true</useSwaggerUI>

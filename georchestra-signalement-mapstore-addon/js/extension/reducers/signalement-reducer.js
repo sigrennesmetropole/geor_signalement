@@ -49,7 +49,7 @@ export default (state = initialState, action) => {
             return assign({}, state, {user: action.user});
         }
         case actions.SIGNALEMENT_DRAFT_CREATE: {
-            return assign({}, state, {task: null, status: status.LOAD_TASK, loadingDraft: true});
+            return assign({}, state, {task: null, status: status.LOAD_TASK, loadingDraft: true, attachments: []});
         }
         case actions.SIGNALEMENT_DRAFT_CREATED: {
             return assign({}, state, {task: action.task, status: status.TASK_INITIALIZED, loadingDraft: false});
@@ -67,13 +67,13 @@ export default (state = initialState, action) => {
             return assign({}, state, {status: status.UNLOAD_TASK});
         }
         case actions.SIGNALEMENT_DRAFT_CANCELED: {
-            return assign({}, state, {task: null, status: status.TASK_UNLOADED, open: false});
+            return assign({}, state, {task: null, status: status.TASK_UNLOADED, open: false, attachments: []});
         }
         case actions.SIGNALEMENT_TASK_CREATE: {
             return assign({}, state, {task: action.task, status: status.CREATE_TASK, creating: true });
         }
         case actions.SIGNALEMENT_TASK_CREATED: {
-            return assign({}, state, {task: null, status: status.TASK_CREATED, open: false, creating: false});
+            return assign({}, state, {task: null, status: status.TASK_CREATED, open: false, creating: false, attachments: []});
         }
         case actions.SIGNALEMENT_TASK_NOT_CREATED: {
             return assign({}, state, {creating: false});
@@ -92,6 +92,9 @@ export default (state = initialState, action) => {
         }
         case actions.SIGNALEMENT_SET_DRAWING: {
             return assign({}, state, {drawing: action.drawing});
+        }
+        case actions.RESET_ATTACHMENTS: {
+            return assign({}, state, {attachments: []});
         }
         default: {
             return state;

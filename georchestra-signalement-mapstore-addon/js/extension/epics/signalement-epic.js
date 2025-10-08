@@ -25,7 +25,8 @@ import {
     openPanel,
     closePanel,
     stopDrawingSupport,
-    signalementUpdateMapLayout
+    signalementUpdateMapLayout,
+    resetAttachments
 } from '../actions/signalement-action';
 import {
     FeatureProjection,
@@ -222,13 +223,13 @@ export const loadMeSignalementEpic = (action$) =>
 
 export const createDraftSignalementEpic = (action$) =>
     action$.ofType(actions.SIGNALEMENT_DRAFT_CREATE)
-        .switchMap((action) => {
+        .exhaustMap((action) => {
             window.signalement.debug("sig epics create or cancel draft");
 
             // Si un UUID est fourni, on annule d'abord l'ancienne tâche
             const cancelTask$ = action?.uuid
                 ? Rx.Observable.defer(() => axios.delete(`${backendURLPrefix}/task/cancel/${action.uuid}`))
-                    .switchMap(() => Rx.Observable.of(draftCanceled()))
+                    .switchMap(() => Rx.Observable.of([draftCanceled(), resetAttachments()]))
                     .catch(e => Rx.Observable.of(loadActionError("signalement.generic.error", e)))
                 : Rx.Observable.of(null); // Pas d'annulation si l'UUID est undefined
 

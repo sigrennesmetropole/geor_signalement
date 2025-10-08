@@ -70,6 +70,7 @@ export class SignalementPanelComponent extends React.Component {
         cancelClosing: PropTypes.func,
         confirmClosing: PropTypes.func,
         toggleControl: PropTypes.func,
+        resetAttachments: PropTypes.func,
     };
 
     static defaultProps = {
@@ -124,7 +125,8 @@ export class SignalementPanelComponent extends React.Component {
         requestClosing: ()=>{},
         cancelClosing: ()=>{},
         confirmClosing: ()=>{},
-        toggleControl: () => {}
+        toggleControl: () => {},
+        resetAttachments: ()=>{},
     };
 
     constructor(props) {
@@ -134,7 +136,9 @@ export class SignalementPanelComponent extends React.Component {
             errorFields: {},
             themaSelected: false,
             selectedContextValue: "",
-            isContextVisible: false
+            isContextVisible: false,
+            pendingAttachments: [], // Stockage local des fichiers en attente d'upload
+            isCreatingDraft: false
         }
 
         // disable custom logging function if debug_signalement is set to false in local config
@@ -157,13 +161,21 @@ export class SignalementPanelComponent extends React.Component {
         window.signalement.debug("sig didUpdate...");
         window.signalement.debug("sig didUpdate props...", this.props);
         window.signalement.debug("sig didUpdate state...", this.state);
+
+        // Réinitialiser le champ file quand les attachments sont réinitialisés
+        if (prevProps.attachments.length > 0 && this.props.attachments.length === 0) {
+            this.resetFileInput();
+            this.setState({ pendingAttachments: [] });
+        }
+
+
         // Tout est-il initialisé ?
         this.state.initialized = this.props.contextLayers !== null && this.props.contextThemas !== null &&
             this.props.attachmentConfiguration !== null && this.props.user !== null;
         // on récupère la current layer si elle existe
         this.state.currentLayer = this.props.currentLayer;
 
-        if( this.props.task !== null && this.state.task === null  && this.props.status === status.TASK_INITIALIZED ){
+        if (this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED) {
             // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"
             window.signalement.debug("sig draft created");
             window.signalement.debug("sig draft created props ", this.props);
@@ -195,7 +207,8 @@ export class SignalementPanelComponent extends React.Component {
                 task: null,
                 loaded: false,
                 errorAttachment: "",
-                errorFields: {}
+                errorFields: {},
+                pendingAttachments: []
             })
             this.props.stopDrawingSupport();
             this.props.toggleControl();
@@ -205,8 +218,15 @@ export class SignalementPanelComponent extends React.Component {
 
         //     Quand on passe d'un signalmenent par couche à un signalement par thématique
         const isLastDraftLayer = this.props.contextLayers?.length > 0 && this.props?.contextLayers?.find(layer => layer.name === this.props?.task?.asset?.contextDescription?.name);
-        if((this.props.status === status.TASK_INITIALIZED)  && !this.props.currentLayer && !this.state.currentLayer && isLastDraftLayer) {
+        if ((this.props.status === status.TASK_INITIALIZED)
+            && !this.props.currentLayer
+            && !this.state.currentLayer
+            && isLastDraftLayer
+            && !this.state.isCreatingDraft
+            && prevProps.status !== status.LOAD_TASK) {
             const initContext = this.props.contextThemas[0];
+
+            this.setState({ isCreatingDraft: true }); // Marquer qu'on crée un draft
             this.props.createDraft(initContext, this.props.task?.asset?.uuid);
 
             this.setState({
@@ -214,9 +234,18 @@ export class SignalementPanelComponent extends React.Component {
                 selectedContextValue: "",
                 themaSelected: false,
                 task: null,
-                errorFields: {}
+                errorFields: {},
+                pendingAttachments: []
             });
         }
+
+        //  Réinitialiser le flag quand le draft est créé
+        if (prevProps.status !== status.TASK_INITIALIZED && this.props.status === status.TASK_INITIALIZED) {
+            this.setState({ isCreatingDraft: false });
+        }
+
+
+
         //     Quand on passe d'un signalmenent par thématique à un signalement par couche
         if((this.props.status === status.TASK_INITIALIZED)  && this.props.currentLayer && this.state.currentLayer && !isLastDraftLayer) {
             const initContext = this.props.contextThemas[0];
@@ -233,7 +262,8 @@ export class SignalementPanelComponent extends React.Component {
                         attachments: null
                     },
                 },
-                    errorFields: {}
+                    errorFields: {},
+                pendingAttachments: []
             }));
         }
 
@@ -262,7 +292,43 @@ export class SignalementPanelComponent extends React.Component {
                 });
             }
         }
+
+        // Lorsque le draft est vraiment annulé côté serveur
+        if (prevProps.status !== status.TASK_UNLOADED && this.props.status === status.TASK_UNLOADED) {
+            // on ferme le panel et on reset le form
+            this.resetForm();
+            this.props.stopDrawingSupport();
+            this.props.toggleControl();
+        }
+
     }
+
+    /**
+     * Réinitialise tous les champs du formulaire à leur état initial.
+     */
+    resetForm = () => {
+        this.setState({
+            task: {
+                asset: {
+                    contextDescription: null,
+                    contextDescriptionLabel: "",
+                    description: "",
+                    geographicType: null,
+                    localisation: null,
+                    attachments: []
+                }
+            },
+            errorFields: {},
+            pendingAttachments: [],
+            selectedContextValue: "",
+            isContextVisible: false,
+            themaSelected: false
+        });
+        this.props.clearDrawn();
+        this.props.resetAttachments();
+        this.resetFileInput();
+    }
+
 
     /**
      * Changement de la description
@@ -305,10 +371,19 @@ export class SignalementPanelComponent extends React.Component {
                 themaSelected: true,
                 task: newTask,
                 errorFields: {},
+                pendingAttachments: [], // Réinitialiser les fichiers locaux
+                isCreatingDraft: true //   Marquer qu'on crée un draft
+
             });
 
             this.props.clearDrawn();
-            this.props.createDraft(contextDescriptions[0], this.props.task?.asset?.uuid);
+            // Réinitialiser les attachments quand on change de contexte
+            this.props.resetAttachments();
+            //  Ne créer le draft que si on n'est pas déjà en train d'en créer un
+            if (this.props.status !== status.LOAD_TASK) {
+                this.props.createDraft(contextDescriptions[0], this.props.task?.asset?.uuid);
+            }
+
 
         }
     }
@@ -322,7 +397,7 @@ export class SignalementPanelComponent extends React.Component {
                 if( !this.props.task &&
                     (this.props.status === status.NO_TASK
                         || this.props.status === status.TASK_CREATED)) {
-                    // il n'y a pas de tâche dans les props et on a rien fait ou a vient de créer un tâche avec succès
+                    // il n'y a pas de tâche dans les props et on a rien fait ou on vient de créer un tâche avec succès
                     // on lance la création d'une tâche draft avec le context par défaut
                     const initContext = this.props.currentLayer ? this.props.currentLayer : this.props.contextThemas[0];
                     this.props.createDraft(initContext, undefined);
@@ -575,12 +650,25 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition de la gestion des picèces jointes
      */
     renderAttachments() {
+        const hasActiveTask = !!this.props.task?.asset?.uuid;
+        // Vérifier si un contexte est sélectionné (thématique ou layer)
+        const hasContextSelected = !!(
+            (this.state.selectedContextValue && this.state.selectedContextValue !== "") || // Thématique sélectionnée
+            this.state.currentLayer // Layer sélectionné
+        );
+
+        // Le bouton est activé seulement si on a une tâche active ET un contexte sélectionné
+        const isUploadEnabled = hasActiveTask && hasContextSelected;
+
+
+
         return (
             <div>
                 <fieldset>
                     <legend><Message msgId="signalement.attachment.files"/></legend>
                     <FormGroup controlId="formControlsFile">
                         <FormControl type="file" name="file"
+                                     disabled={!isUploadEnabled}
                                      onChange={(e) => this.fileAddedHandler(e)} />
                         <HelpBlock><Message msgId="signalement.fileUpload.info"/></HelpBlock>
                     </FormGroup>
@@ -612,10 +700,18 @@ export class SignalementPanelComponent extends React.Component {
     /**
      * La rendition du panel des pièces jointes
      */
-    renderTable(attachments) {
+    renderTable() {
 
-        if (attachments) {
-            return attachments.map((attachment, index) => {
+        // Combiner les attachments uploadés et les fichiers locaux en attente
+        const uploadedAttachments = (this.props.attachments || []).map(att => ({
+            ...att,
+            isLocal: false
+        }));
+
+        const allAttachments = [...uploadedAttachments, ...this.state.pendingAttachments];
+
+        if (allAttachments.length > 0) {
+            return allAttachments.map((attachment, index) => {
                 return (
                     <tr key={index}>
                         <td>{attachment.name}</td>
@@ -627,6 +723,7 @@ export class SignalementPanelComponent extends React.Component {
                 )
             })
         }
+        return null;
     }
 
     /**
@@ -1042,9 +1139,12 @@ export class SignalementPanelComponent extends React.Component {
             errorAttachment = `la taille du fichier est supérieur à : ${this.props.attachmentConfiguration.maxSize}`
         }
 
-        if (this.props.attachments.length + 1 > this.props.attachmentConfiguration.maxCount) {
-            errorAttachment = `Vous ne pouvez pas ajouter plus de " : ${this.props.attachmentConfiguration.maxCount} fichiers`
+// Compter les fichiers locaux + ceux déjà uploadés
+        const totalAttachments = this.state.pendingAttachments.length + this.props.attachments.length;
+        if (totalAttachments + 1 > this.props.attachmentConfiguration.maxCount) {
+            errorAttachment = `Vous ne pouvez pas ajouter plus de ${this.props.attachmentConfiguration.maxCount} fichiers`
         }
+
 
         if (errorAttachment) {
             this.setState({errorAttachment});
@@ -1054,21 +1154,74 @@ export class SignalementPanelComponent extends React.Component {
     }
 
     /**
+     * Réinitialise le champ d'upload de fichier
+     */
+    resetFileInput = () => {
+        const fileInput = document.getElementById('formControlsFile');
+        if (fileInput) {
+            fileInput.value = '';
+        }
+    }
+
+
+    /**
      * Action pour ajouter une pièce jointe
      *
      * @param {*} e l'événement
      */
     fileAddedHandler(e) {
-        //les differents test avant d'uploader le fichier (type, taille)
-        let attachment = {file: e.target.files[0], uuid: this.state.task.asset.uuid}
+        // Récupérer l'UUID depuis les props plutôt que depuis le state local
+        const taskUuid = this.props.task?.asset?.uuid;
+
+
+        if (!taskUuid) {
+            window.signalement.debug("Impossible d'ajouter une pièce jointe : UUID de la tâche non disponible");
+            // this.setState({errorAttachment: "signalement.attachment.no.task"});
+            // Réinitialiser le champ file en cas d'erreur
+            this.resetFileInput();
+            return;
+        }
+
+        // Vérifier si un contexte est sélectionné
+        const hasContextSelected = !!(
+            (this.state.selectedContextValue && this.state.selectedContextValue !== "") || // Thématique sélectionnée
+            this.state.currentLayer // Layer sélectionné
+        );
+
+        if (!hasContextSelected) {
+            window.signalement.debug("Impossible d'ajouter une pièce jointe : aucun contexte sélectionné");
+            this.setState({errorAttachment: "signalement.attachment.no.context"});
+            // Réinitialiser le champ file en cas d'erreur
+            this.resetFileInput();
+            return;
+        }
+
+        // Créer un objet attachment avec le fichier pour stockage local
+        let attachment = {
+            file: e.target.files[0],
+            uuid: taskUuid,
+            id: Date.now() + '_' + Math.random().toString(36).substr(2, 9), // ID temporaire
+            name: e.target.files[0].name,
+            size: e.target.files[0].size,
+            type: e.target.files[0].type,
+            isLocal: true // Flag pour indiquer que c'est un fichier local non uploadé
+        }
+
 
         const isValid = this.validateAttachment(attachment);
 
         if (isValid) {
-            this.setState({errorAttachment: ""});
-            // uploader le fichier
-            this.props.addAttachment(attachment);
+            this.setState(prevState => ({
+                errorAttachment: "",
+                pendingAttachments: [...prevState.pendingAttachments, attachment]
+            }));
+            // Réinitialiser le champ file après upload réussi
+            this.resetFileInput();
+        } else {
+            // Réinitialiser le champ file en cas d'erreur de validation
+            this.resetFileInput();
         }
+
     }
 
     /**
@@ -1078,7 +1231,23 @@ export class SignalementPanelComponent extends React.Component {
      * @param index du fichier dans la liste
      */
     fileDeleteHandler(id, index) {
-        const attachment = {id: id, uuid: this.state.task.asset.uuid, index: index};
+// Si c'est un fichier local (pas encore uploadé)
+        const localAttachment = this.state.pendingAttachments.find(att => att.id === id);
+        if (localAttachment) {
+            this.setState(prevState => ({
+                pendingAttachments: prevState.pendingAttachments.filter(att => att.id !== id)
+            }));
+            return;
+        }
+
+        // Si c'est un fichier déjà uploadé (cas existant)
+        const taskUuid = this.props.task?.asset?.uuid;
+        if (!taskUuid) {
+            window.signalement.debug("Impossible de supprimer une pièce jointe : UUID de la tâche non disponible");
+            return;
+        }
+
+        const attachment = {id: id, uuid: taskUuid, index: index};
         this.props.removeAttachment(attachment);
     }
 
@@ -1095,43 +1264,99 @@ export class SignalementPanelComponent extends React.Component {
         if(this.state.task != null && this.state.task.asset.uuid) {
             this.props.requestClosing();
         } else {
+            this.resetForm();
             this.props.toggleControl();
         }
     }
 
+
     /**
-     * L'action de création
+     * Upload de tous les fichiers en attente
      */
-    create() {
+    uploadPendingAttachments = async (taskUuid) => {
+        const uploadPromises = this.state.pendingAttachments.map(attachment => {
+            const formData = new FormData();
+            formData.append('file', attachment.file);
+
+            const url = "/signalement/reporting/" + taskUuid + "/upload";
+
+            return fetch(url, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error(`Upload failed: ${response.statusText}`);
+                }
+                return response.json();
+            });
+        });
+
+        try {
+            const uploadedAttachments = await Promise.all(uploadPromises);
+            window.signalement.debug("Tous les fichiers ont été uploadés avec succès", uploadedAttachments);
+            return uploadedAttachments;
+        } catch (error) {
+            window.signalement.debug("Erreur lors de l'upload des fichiers", error);
+            throw error;
+        }
+    }
+
+
+
+    /**
+     * L'action de création avec upload des fichiers
+     */
+    async create() {
         if((this.state.isContextVisible || (!this.state.isContextVisible && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")) && !this.props.creating)
         {
-            window.signalement.debug("Create and close:"+this.state.task.asset.uuid);
-            if(this.state.currentLayer !== null) {
-                const layerTaskData = {...this.state.task,  asset: {...this.state.task.asset, uuid: this.props.task?.asset?.uuid,
-                        geographicType: this.state.currentLayer.geographicType, contextDescription: this.state.currentLayer}, form: this.props.task?.form}
-                this.props.createTask(layerTaskData);
-            } else {
-                const themaTaskData = {...this.state.task, asset: {...this.state.task.asset, uuid: this.props.task?.asset?.uuid},
-                    form: this.props.task?.form, assignee: "", functionalId: this.props.task?.functionalId,
-                    creationDate: this.props.task.creationDate, updatedDate: this.props.task.updatedDate,
-                    initiator: this.props.task?.initiator, status: this.props.task.status
+            const taskUuid = this.props.task?.asset?.uuid;
+            window.signalement.debug("Create and close:", taskUuid);
+
+            try {
+                // 1. D'abord uploader tous les fichiers en attente si il y en a
+                if (this.state.pendingAttachments.length > 0) {
+                    window.signalement.debug("Upload des fichiers en cours...");
+                    await this.uploadPendingAttachments(taskUuid);
                 }
-                this.props.createTask(themaTaskData);
+
+                // 2. Ensuite créer la tâche
+                if(this.state.currentLayer !== null) {
+                    const layerTaskData = {...this.state.task,  asset: {...this.state.task.asset, uuid: taskUuid,
+                            geographicType: this.state.currentLayer.geographicType, contextDescription: this.state.currentLayer}, form: this.props.task?.form}
+                    this.props.createTask(layerTaskData);
+                } else {
+                    const themaTaskData = {...this.state.task, asset: {...this.state.task.asset, uuid: taskUuid},
+                        form: this.props.task?.form, assignee: "", functionalId: this.props.task?.functionalId,
+                        creationDate: this.props.task.creationDate, updatedDate: this.props.task.updatedDate,
+                        initiator: this.props.task?.initiator, status: this.props.task.status
+                    }
+                    this.props.createTask(themaTaskData);
+                }
+
+                this.props.toggleControl();
+
+                this.setState({
+                    task: null,
+                    loaded: false,
+                    errorAttachment: "",
+                    errorFields: {},
+                    selectedContextValue: "",
+                    isContextVisible: false,
+                    themaSelected: false,
+                    pendingAttachments: [] // Vider les fichiers en attente
+                });
+
+            } catch (error) {
+                window.signalement.debug("Erreur lors de la création de la tâche", error);
+                this.setState({
+                    errorAttachment: "signalement.task.create.error"
+                });
             }
-            this.props.toggleControl();
+
             window.signalement.debug("Create and close panel END state: ", this.state);
             window.signalement.debug("Create and close panel END props: ", this.props);
-
-            this.setState({
-                task: null,
-                loaded: false,
-                errorAttachment: "",
-                errorFields: {},
-                selectedContextValue: "",
-                isContextVisible: false,
-                themaSelected: false
-            });
         }
+
     }
 
 /**

@@ -2639,11 +2639,11 @@
 				},
 				"creationDate": {
 					"type": "string",
-					"format": "date"
+					"format": "date-time"
 				},
 				"updatedDate": {
 					"type": "string",
-					"format": "date"
+					"format": "date-time"
 				},
 				"description": {
 					"type": "string"
@@ -2743,11 +2743,11 @@
 				},
 				"creationDate": {
 					"type": "string",
-					"format": "date"
+					"format": "date-time"
 				},
 				"updatedDate": {
 					"type": "string",
-					"format": "date"
+					"format": "date-time"
 				},
 				"assignee": {
 					"type": "string"
