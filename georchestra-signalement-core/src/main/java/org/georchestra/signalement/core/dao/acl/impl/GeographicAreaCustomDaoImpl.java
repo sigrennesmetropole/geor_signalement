@@ -15,7 +15,6 @@ import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,19 +28,21 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.RequiredArgsConstructor;
 
 @Repository
+@RequiredArgsConstructor
 public class GeographicAreaCustomDaoImpl extends AbstractCustomDaoImpl implements GeographicAreaCustomDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContextDescriptionCustomDaoImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeographicAreaCustomDaoImpl.class);
 
     private static final String NOM = "nom";
-    @Autowired
-    private EntityManager entityManager;
+
+    private final EntityManager entityManager;
 
     @Override
     protected Map<String, Path<?>> addJoinSortCriteria(CriteriaBuilder builder, CriteriaQuery<?> criteriaQuery, Root<?> root, SortCriteria sortCriteria) {
-        return null;
+        return Map.of();
     }
 
     @Override

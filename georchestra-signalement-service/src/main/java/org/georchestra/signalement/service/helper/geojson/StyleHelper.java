@@ -10,10 +10,13 @@ import org.georchestra.signalement.service.mapper.acl.StylingMapperImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 public class StyleHelper {
 
 	private static final String DASH_ARRAY = "dashArray";
@@ -38,6 +41,9 @@ public class StyleHelper {
 	public static JSONObject getDefinitionStyleObj(String definitionStyle) {
 		if (definitionStyle != null) {
 			JSONObject definitionStyleObj = new JSONObject(definitionStyle);
+			if( log.isDebugEnabled()) {
+				log.debug("Definition style object : {}", definitionStyleObj.toString());
+			}
 			return definitionStyleObj;
 		}
 		return null;
@@ -118,27 +124,31 @@ public class StyleHelper {
 		if (definitionStyleObj != null) {
 
 			JSONObject terminalPoint = definitionStyleObj.getJSONObject("LINE").getJSONObject("terminalPoint");
-			if (terminalPoint != null) {
-				if (terminalPoint.has(FILTERING)) {
-					style.setFiltering(terminalPoint.getBoolean(FILTERING));
-				}
-				if (terminalPoint.has(ICON_COLOR)) {
-					style.setIconColor(terminalPoint.getString(ICON_COLOR));
-				}
-				if (terminalPoint.has(ICON_GLYPH)) {
-					style.setIconGlyph(terminalPoint.getString(ICON_GLYPH));
-				}
-				if (terminalPoint.has(ICON_SHAPE)) {
-					style.setIconShape(terminalPoint.getString(ICON_SHAPE));
-				}
-				if (terminalPoint.has(ICON_ANCHOR)) {
-					style.setIconAnchor(jsonArrayToDoubleList(terminalPoint.getJSONArray(ICON_ANCHOR)));
-				}
-
-			}
+			assignStyleAttributes(terminalPoint, style);
 		}
 
 		return style;
+	}
+
+	private static void assignStyleAttributes(JSONObject terminalPoint, Style style) {
+		if (terminalPoint != null) {
+			if (terminalPoint.has(FILTERING)) {
+				style.setFiltering(terminalPoint.getBoolean(FILTERING));
+			}
+			if (terminalPoint.has(ICON_COLOR)) {
+				style.setIconColor(terminalPoint.getString(ICON_COLOR));
+			}
+			if (terminalPoint.has(ICON_GLYPH)) {
+				style.setIconGlyph(terminalPoint.getString(ICON_GLYPH));
+			}
+			if (terminalPoint.has(ICON_SHAPE)) {
+				style.setIconShape(terminalPoint.getString(ICON_SHAPE));
+			}
+			if (terminalPoint.has(ICON_ANCHOR)) {
+				style.setIconAnchor(jsonArrayToDoubleList(terminalPoint.getJSONArray(ICON_ANCHOR)));
+			}
+
+		}
 	}
 
 	/**

@@ -15,6 +15,7 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.SortCriterion;
 
@@ -41,7 +42,7 @@ public abstract class AbstractCustomDaoImpl {
 			for (SortCriterion sortCriterion : sortCriteria.getElements()) {
 				String property = translateSortProperty(sortCriterion.getProperty());
 				Path<?> path = null;
-				if (paths != null) {
+				if (MapUtils.isNotEmpty(paths)) {
 					path = paths.get(sortCriterion.getProperty());
 				} else {
 					path = root;

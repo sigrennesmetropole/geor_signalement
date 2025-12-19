@@ -4,18 +4,18 @@ import org.georchestra.signalement.core.dto.StyleContainer;
 import org.georchestra.signalement.core.entity.styling.StylingEntity;
 import org.georchestra.signalement.service.helper.geojson.GeoJSonHelper;
 import org.georchestra.signalement.service.mapper.AbstractMapper;
-import org.mapstruct.*;
-
-import java.util.Collection;
-import java.util.List;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StylingMapper extends AbstractMapper<StylingEntity, StyleContainer> {
 
     GeoJSonHelper helper = new GeoJSonHelper();
+    
     @Override
     @InheritInverseConfiguration
-    //@Mapping()
     StylingEntity dtoToEntity(StyleContainer dto);
 
     @Override

@@ -6,15 +6,6 @@ package org.georchestra.signalement.core.dao.styling.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,33 +15,38 @@ import org.georchestra.signalement.core.dao.styling.ProcessStylingDao;
 import org.georchestra.signalement.core.dto.ProcessStylingSearchCriteria;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.SortCriterion;
-import org.georchestra.signalement.core.dto.ProcessStyling;
 import org.georchestra.signalement.core.entity.styling.ProcessStylingEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author FNI18300
  *
  */
 @Repository
+@RequiredArgsConstructor
 public class ProcessStylingCustomDaoImpl extends AbstractCustomDaoImpl implements ProcessStylingCustomDao {
 
 	private static final String USER_TASK_ID = "userTaskId";
 	private static final String REVISION = "revision";
 	private static final String PROCESS_DEFINITION_ID = "processDefinitionId";
 
-	@Autowired
-	private EntityManager entityManager;
 
-	@Autowired
-	private ProcessStylingDao processStylingDao;
+	private final EntityManager entityManager;
+
+	private final ProcessStylingDao processStylingDao;
 
 	@Override
 	public List<ProcessStylingEntity> searchProcessStylings(ProcessStylingSearchCriteria searchCriteria,
 			SortCriteria sortCriteria) {
-		List<ProcessStylingEntity> result = null;
-
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<ProcessStylingEntity> searchQuery = builder.createQuery(ProcessStylingEntity.class);
@@ -60,9 +56,7 @@ public class ProcessStylingCustomDaoImpl extends AbstractCustomDaoImpl implement
 		applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
 
 		TypedQuery<ProcessStylingEntity> typedQuery = entityManager.createQuery(searchQuery);
-		result = typedQuery.getResultList().stream().distinct().collect(Collectors.toList());
-
-		return result;
+		return typedQuery.getResultList().stream().distinct().toList();
 	}
 
 	private void buildQuery(ProcessStylingSearchCriteria searchCriteria, CriteriaBuilder builder,
@@ -112,7 +106,7 @@ public class ProcessStylingCustomDaoImpl extends AbstractCustomDaoImpl implement
 	@Override
 	protected Map<String, Path<?>> addJoinSortCriteria(CriteriaBuilder builder, CriteriaQuery<?> criteriaQuery,
 			Root<?> root, SortCriteria sortCriteria) {
-		return null;
+		return Map.of();
 	}
 
 	@Override
@@ -132,7 +126,7 @@ public class ProcessStylingCustomDaoImpl extends AbstractCustomDaoImpl implement
 		applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
 
 		TypedQuery<ProcessStylingEntity> typedQuery = entityManager.createQuery(searchQuery);
-		processStylings = typedQuery.getResultList().stream().distinct().collect(Collectors.toList());
+		processStylings = typedQuery.getResultList().stream().distinct().toList();
 
 		if (CollectionUtils.isNotEmpty(processStylings)) {
 			return processStylings.get(0);

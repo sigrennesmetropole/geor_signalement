@@ -11,7 +11,6 @@ import org.georchestra.signalement.core.dao.acl.UserRoleContextCustomDao;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.UserRoleContextSearchCriteria;
 import org.georchestra.signalement.core.entity.acl.UserRoleContextEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +26,10 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.RequiredArgsConstructor;
 
 @Repository
+@RequiredArgsConstructor
 public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implements UserRoleContextCustomDao {
     private static final String FIELD_LOGIN = "login";
 	private static final String FIELD_NAME = "name";
@@ -38,12 +39,11 @@ public class UserRoleContextCustomDaoImpl extends AbstractCustomDaoImpl implemen
 	private static final String FIELD_ROLE = "role";
 	private static final String FIELD_USER = "user";
 	
-	@Autowired
-    EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
     protected Map<String, Path<?>> addJoinSortCriteria(CriteriaBuilder builder, CriteriaQuery<?> criteriaQuery, Root<?> root, SortCriteria sortCriteria) {
-        return null;
+        return Map.of();
     }
 
     @Override

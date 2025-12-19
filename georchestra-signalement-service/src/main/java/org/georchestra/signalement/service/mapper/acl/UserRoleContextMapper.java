@@ -4,10 +4,10 @@ import org.georchestra.signalement.core.dto.User;
 import org.georchestra.signalement.core.dto.UserRoleContext;
 import org.georchestra.signalement.core.entity.acl.UserRoleContextEntity;
 import org.georchestra.signalement.service.mapper.AbstractMapper;
-import org.mapstruct.*;
-
-import java.util.Collection;
-import java.util.List;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserRoleContextMapper extends AbstractMapper<UserRoleContextEntity, UserRoleContext> {

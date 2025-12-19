@@ -3,6 +3,10 @@
  */
 package org.georchestra.signalement.core.dao.acl.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
@@ -13,22 +17,24 @@ import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author FNI18300
  */
 @Repository
+@RequiredArgsConstructor
 public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl implements ContextDescriptionCustomDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContextDescriptionCustomDaoImpl.class);
@@ -38,17 +44,14 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 	private static final String FIELD_LABEL = "label";
 	private static final String FIELD_PROCESS_DEFINITIONKEY = "processDefinitionKey";
 
+	private final EntityManager entityManager;
 
-	@Autowired
-	private EntityManager entityManager;
-
-	@Autowired
-	private ContextDescriptionDao contextDescriptionDao;
+	private final ContextDescriptionDao contextDescriptionDao;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ContextDescriptionEntity> searchContextDescriptions(ContextDescriptionSearchCriteria searchCriteria,
-																	SortCriteria sortCriteria) {
+			SortCriteria sortCriteria) {
 		List<ContextDescriptionEntity> result;
 
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -66,6 +69,7 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 		}
 		return result;
 	}
+
 	@Override
 	public ContextDescriptionEntity updateContextDescription(ContextDescriptionEntity updatedContext) {
 		ContextDescriptionEntity toUpdate = contextDescriptionDao.findByName(updatedContext.getName());
@@ -76,7 +80,7 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 	}
 
 	private void buildQuery(ContextDescriptionSearchCriteria searchCriteria, CriteriaBuilder builder,
-							CriteriaQuery<ContextDescriptionEntity> criteriaQuery, Root<ContextDescriptionEntity> root) {
+			CriteriaQuery<ContextDescriptionEntity> criteriaQuery, Root<ContextDescriptionEntity> root) {
 		if (searchCriteria != null) {
 			List<Predicate> predicates = new ArrayList<>();
 			if (searchCriteria.getContextType() != null) {
@@ -89,20 +93,10 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 				predicates.add(builder.equal(root.get(FIELD_GEOGRAPHIC), searchCriteria.getGeographicType()));
 			}
 			if (StringUtils.isNotEmpty(searchCriteria.getDescription())) {
-				if (isWildCarded(searchCriteria.getDescription())) {
-					predicates.add(
-							builder.like(builder.lower(root.get(FIELD_LABEL)), wildcard(searchCriteria.getDescription())));
-				} else {
-					predicates.add(builder.equal(root.get(FIELD_LABEL), searchCriteria.getDescription()));
-				}
+				buildQueryDescription(searchCriteria, builder, root, predicates);
 			}
 			if (StringUtils.isNotEmpty(searchCriteria.getProcessDefinitionKey())) {
-				if (isWildCarded(searchCriteria.getProcessDefinitionKey())) {
-					predicates.add(
-							builder.like(builder.lower(root.get(FIELD_PROCESS_DEFINITIONKEY)), wildcard(searchCriteria.getProcessDefinitionKey())));
-				} else {
-					predicates.add(builder.equal(root.get(FIELD_PROCESS_DEFINITIONKEY), searchCriteria.getProcessDefinitionKey()));
-				}
+				buildQueryProcessDefinition(searchCriteria, builder, root, predicates);
 			}
 			if (CollectionUtils.isNotEmpty(predicates)) {
 				criteriaQuery.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
@@ -110,10 +104,31 @@ public class ContextDescriptionCustomDaoImpl extends AbstractCustomDaoImpl imple
 		}
 	}
 
+	private void buildQueryProcessDefinition(ContextDescriptionSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<ContextDescriptionEntity> root, List<Predicate> predicates) {
+		if (isWildCarded(searchCriteria.getProcessDefinitionKey())) {
+			predicates.add(builder.like(builder.lower(root.get(FIELD_PROCESS_DEFINITIONKEY)),
+					wildcard(searchCriteria.getProcessDefinitionKey())));
+		} else {
+			predicates.add(builder.equal(root.get(FIELD_PROCESS_DEFINITIONKEY),
+					searchCriteria.getProcessDefinitionKey()));
+		}
+	}
+
+	private void buildQueryDescription(ContextDescriptionSearchCriteria searchCriteria, CriteriaBuilder builder,
+			Root<ContextDescriptionEntity> root, List<Predicate> predicates) {
+		if (isWildCarded(searchCriteria.getDescription())) {
+			predicates.add(builder.like(builder.lower(root.get(FIELD_LABEL)),
+					wildcard(searchCriteria.getDescription())));
+		} else {
+			predicates.add(builder.equal(root.get(FIELD_LABEL), searchCriteria.getDescription()));
+		}
+	}
+
 	@Override
 	protected Map<String, Path<?>> addJoinSortCriteria(CriteriaBuilder builder, CriteriaQuery<?> criteriaQuery,
-													   Root<?> root, SortCriteria sortCriteria) {
-		return null;
+			Root<?> root, SortCriteria sortCriteria) {
+		return Map.of();
 	}
 
 }

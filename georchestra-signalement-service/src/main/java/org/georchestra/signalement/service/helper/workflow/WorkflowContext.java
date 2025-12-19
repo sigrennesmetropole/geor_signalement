@@ -31,15 +31,17 @@ import org.georchestra.signalement.service.st.mail.MailDescription;
 import org.georchestra.signalement.service.st.mail.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author FNI18300
  *
  */
 @Component
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class WorkflowContext {
 
@@ -49,20 +51,14 @@ public class WorkflowContext {
 
 	public static final String COMPUTE_HUMAN_PERFORMER = "computeHumanPerformer";
 
-	@Autowired
-	private ReportingDao reportingDao;
+	private final ReportingDao reportingDao;
 
-	@Autowired
-	private MailService mailService;
+	private final MailService mailService;
 
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
+	private final GenerationConnector generationConnector;
 
-	@Autowired
-	private GenerationConnector generationConnector;
-
-	@Autowired
-	private AssignmentHelper assignmentHelper;
+	private final AssignmentHelper assignmentHelper;
 
 	/**
 	 * Méthode utilitaire de log
@@ -191,7 +187,9 @@ public class WorkflowContext {
 		if (reportingEntity != null) {
 			assignees = assignmentHelper.computeAssignees(reportingEntity, roleName);
 			try {
-				LOGGER.info("Assignees: {}", StringUtils.join(assignees, ", "));
+				if (LOGGER.isInfoEnabled()) {
+					LOGGER.info("Assignees: {}", StringUtils.join(assignees, ", "));
+				}
 				// Ici il faut calcule le contenue de recipients
 				// On envoie un mail à tous les potentialOwners si demandé
 				if (eMailData != null) {

@@ -32,6 +32,9 @@ include:
     file: 'securite/oss-index/oss-index-template.yml'
   - project: 'bots/trivy-script'
     file: '/trivy-template-job.yml'   
+  - component: '$CI_SERVER_FQDN/boost/ci-component/security/software-supply-chain-npm@1.4.0'
+    inputs:
+      ssc_lock_file: "$SSC_LOCK_FILE"
 
 default:
   image: maven:3.9.0-eclipse-temurin-17
@@ -58,12 +61,19 @@ stages:
     - iaas
   artifacts:
     paths:
+      - '**/target'      
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.jar
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*.war
       - $CI_PROJECT_DIR/georchestra-signalement-api/target/georchestra-signalement-api-*-addon.zip
       - $CI_PROJECT_DIR/georchestra-signalement-mapstore-addon/dist/SignalementExtension.zip
       - $CI_PROJECT_DIR/georchestra-signalement-mapstore-management-addon/dist/SignalementManagementExtension.zip
       - $CI_PROJECT_DIR/georchestra-signalement-front-management/target/georchestra-signalement-front-management-angular-dist.zip
+      - '**/target/jacoco.exec'
+      - '**/target/site/jacoco/**'
+    reports:
+      junit:
+        - '**/target/surefire-reports/TEST-*.xml'
+        - '**/target/surefire-reports/*.txt'      
   interruptible: true
 
 signalementapi:build:
@@ -105,6 +115,8 @@ signalementapi:sonar:
   extends: .signalementapi:sonar
   dependencies:
     - signalementapi:build
+  needs:
+    - signalementapi:build
   except:
     refs:
       - master
@@ -118,6 +130,8 @@ signalementapi:sonar:master:
   extends: .signalementapi:sonar
   dependencies:
     - signalementapi:build:master
+  needs:
+    - signalementapi:build:master    
   only:
     refs:
       - open/master
@@ -167,6 +181,34 @@ signalementapi:docker2:build:
       - '$CI_PROJECT_DIR/docker/**/**.war'
       - '$CI_PROJECT_DIR/docker/**/**.zip'
       - '$CI_PROJECT_DIR/docker/**/**.jar'       
+
+boost:ssc:npm:
+  rules:
+    - when: never
+
+boost:ssc:npm:front:
+  extends: boost:ssc:npm
+  stage: sast
+  variables:
+    SSC_LOCK_FILE: "georchestra-signalement-front-management/package-lock.json"
+  rules:
+    - when: always
+
+boost:ssc:npm:plugin1:
+  extends: boost:ssc:npm
+  stage: sast
+  variables:
+    SSC_LOCK_FILE: "georchestra-signalement-mapstore-addon/package-lock.json"
+  rules:
+    - when: always
+
+boost:ssc:npm:plugin2:
+  extends: boost:ssc:npm
+  stage: sast
+  variables:
+    SSC_LOCK_FILE: "georchestra-signalement-mapstore-management-addon/package-lock.json"
+  rules:
+    - when: always
 
 trivyscan:back: 
   extends: 

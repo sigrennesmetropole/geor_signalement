@@ -6,17 +6,6 @@ package org.georchestra.signalement.core.dao.acl.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
@@ -27,16 +16,27 @@ import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.core.entity.acl.UserEntity;
 import org.georchestra.signalement.core.entity.acl.UserRoleContextEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author FNI18300
  *
  */
 @Repository
+@RequiredArgsConstructor
 public class RoleCustomDaoImpl extends AbstractCustomDaoImpl implements RoleCustomDao {
 
 	private static final String CONTEXT_DESCRIPTION_PATH = "contextDescription";
@@ -44,14 +44,12 @@ public class RoleCustomDaoImpl extends AbstractCustomDaoImpl implements RoleCust
 	private static final String NAME_PATH = "name";
 	private static final String ROLE_PATH = "role";
 	private static final String ID_PATH = "id";
-	@Autowired
-	private EntityManager entityManager;
+	
+	private final EntityManager entityManager;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<RoleEntity> searchRoles(RoleSearchCriteria searchCriteria, SortCriteria sortCriteria) {
-		List<RoleEntity> result = null;
-
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<RoleEntity> searchQuery = builder.createQuery(RoleEntity.class);
@@ -61,9 +59,7 @@ public class RoleCustomDaoImpl extends AbstractCustomDaoImpl implements RoleCust
 		applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
 
 		TypedQuery<RoleEntity> typedQuery = entityManager.createQuery(searchQuery);
-		result = typedQuery.getResultList().stream().distinct().collect(Collectors.toList());
-
-		return result;
+		return typedQuery.getResultList().stream().distinct().toList();
 	}
 
 	private void buildQuery(RoleSearchCriteria searchCriteria, CriteriaBuilder builder,
@@ -110,7 +106,7 @@ public class RoleCustomDaoImpl extends AbstractCustomDaoImpl implements RoleCust
 	@Override
 	protected Map<String, Path<?>> addJoinSortCriteria(CriteriaBuilder builder, CriteriaQuery<?> criteriaQuery,
 			Root<?> root, SortCriteria sortCriteria) {
-		return null;
+		return Map.of();
 	}
 
 }

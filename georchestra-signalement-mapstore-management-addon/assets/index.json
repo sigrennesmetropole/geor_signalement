@@ -1,7 +1,9 @@
 {
   "plugins": [
     {
-      "name": "SignalementManagementExtension"
+      "name": "SignalementManagementExtension",
+	  "version": "@@VERSION@@",
+	  "description": "Signalement Extension Management Mapstore"
     }
   ]
 }

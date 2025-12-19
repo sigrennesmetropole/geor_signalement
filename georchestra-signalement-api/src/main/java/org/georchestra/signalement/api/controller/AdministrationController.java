@@ -14,14 +14,11 @@ import org.georchestra.signalement.service.sm.ConfigurationService;
 import org.georchestra.signalement.service.sm.InitializationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,7 +41,7 @@ public class AdministrationController implements AdministrationApi {
 
 	@Override
 	public ResponseEntity<ConfigurationData> getConfiguration() throws Exception {
-		return new ResponseEntity<ConfigurationData>(configurationService.getApplicationConfiguration(), HttpStatus.OK);
+		return  ResponseEntity.ok(configurationService.getApplicationConfiguration());
 	}
 
 	@Override

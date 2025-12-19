@@ -8,14 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
@@ -23,30 +15,38 @@ import org.georchestra.signalement.core.dao.form.ProcessFormDefinitionCustomDao;
 import org.georchestra.signalement.core.dto.ProcessFormDefinitionSearchCriteria;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.entity.form.ProcessFormDefinitionEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author FNI18300
  *
  */
 @Repository
-public class ProcessFormDefinitionCustomDaoImpl extends AbstractCustomDaoImpl implements ProcessFormDefinitionCustomDao {
+@RequiredArgsConstructor
+public class ProcessFormDefinitionCustomDaoImpl extends AbstractCustomDaoImpl
+		implements ProcessFormDefinitionCustomDao {
 
 	private static final String PROCESS_DEFINITION_ID_PROPERTY = "processDefinitionId";
 	private static final String USER_TASK_ID_PROPERTY = "userTaskId";
 	private static final String REVISION_PROPERTY = "revision";
-	@Autowired
-	private EntityManager entityManager;
+
+	private final EntityManager entityManager;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ProcessFormDefinitionEntity> searchProcessFormDefintions(
 			ProcessFormDefinitionSearchCriteria searchCriteria, SortCriteria sortCriteria) {
-		List<ProcessFormDefinitionEntity> result = null;
-
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<ProcessFormDefinitionEntity> searchQuery = builder.createQuery(ProcessFormDefinitionEntity.class);
@@ -56,9 +56,7 @@ public class ProcessFormDefinitionCustomDaoImpl extends AbstractCustomDaoImpl im
 		applySortCriteria(builder, searchQuery, searchRoot, sortCriteria);
 
 		TypedQuery<ProcessFormDefinitionEntity> typedQuery = entityManager.createQuery(searchQuery);
-		result = typedQuery.getResultList().stream().distinct().collect(Collectors.toList());
-
-		return result;
+		return typedQuery.getResultList().stream().distinct().toList();
 	}
 
 	private void buildQuery(ProcessFormDefinitionSearchCriteria searchCriteria, CriteriaBuilder builder,
@@ -66,7 +64,8 @@ public class ProcessFormDefinitionCustomDaoImpl extends AbstractCustomDaoImpl im
 		if (searchCriteria != null) {
 			List<Predicate> predicates = new ArrayList<>();
 			if (StringUtils.isNotEmpty(searchCriteria.getProcessDefinitionId())) {
-				predicates.add(builder.equal(root.get(PROCESS_DEFINITION_ID_PROPERTY), searchCriteria.getProcessDefinitionId()));
+				predicates.add(builder.equal(root.get(PROCESS_DEFINITION_ID_PROPERTY),
+						searchCriteria.getProcessDefinitionId()));
 			}
 			if (searchCriteria.getRevision() != null || searchCriteria.isAcceptFlexRevision()) {
 				buildPredicateRevision(searchCriteria, builder, root, predicates);
@@ -105,7 +104,7 @@ public class ProcessFormDefinitionCustomDaoImpl extends AbstractCustomDaoImpl im
 	@Override
 	protected Map<String, Path<?>> addJoinSortCriteria(CriteriaBuilder builder, CriteriaQuery<?> criteriaQuery,
 			Root<?> root, SortCriteria sortCriteria) {
-		return null;
+		return Map.of();
 	}
 
 }

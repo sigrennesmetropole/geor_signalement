@@ -3,6 +3,7 @@
     {
       "name": "SignalementExtension",
       "description": "Signalement Extension Mapstore",
+      "version": "@@VERSION@@",
       "dependencies": [
         "Toolbar"
       ]

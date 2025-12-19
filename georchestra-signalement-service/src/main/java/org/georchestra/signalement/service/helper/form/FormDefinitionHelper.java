@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import org.georchestra.signalement.core.dto.FormDefinition;
 import org.georchestra.signalement.service.exception.FormDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

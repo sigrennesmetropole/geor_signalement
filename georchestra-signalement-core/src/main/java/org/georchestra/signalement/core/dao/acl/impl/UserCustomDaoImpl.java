@@ -7,14 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Path;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.georchestra.signalement.core.dao.AbstractCustomDaoImpl;
@@ -22,7 +14,6 @@ import org.georchestra.signalement.core.dao.acl.UserCustomDao;
 import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.UserSearchCriteria;
 import org.georchestra.signalement.core.entity.acl.UserEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,18 +22,27 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author FNI18300
  */
 @Repository
+@RequiredArgsConstructor
 public class UserCustomDaoImpl extends AbstractCustomDaoImpl implements UserCustomDao {
 
 	private static final String FIELD_LOGIN = "login";
 
 	private static final String FIELD_EMAIL = "email";
 
-	@Autowired
-	private EntityManager entityManager;
+	private final EntityManager entityManager;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
@@ -105,7 +105,7 @@ public class UserCustomDaoImpl extends AbstractCustomDaoImpl implements UserCust
 	@Override
 	protected Map<String, Path<?>> addJoinSortCriteria(CriteriaBuilder builder, CriteriaQuery<?> criteriaQuery,
 			Root<?> root, SortCriteria sortCriteria) {
-		return null;
+		return Map.of();
 	}
 
 }

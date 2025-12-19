@@ -248,7 +248,6 @@ export class SignalementPanelComponent extends React.Component {
 
         //     Quand on passe d'un signalmenent par thématique à un signalement par couche
         if((this.props.status === status.TASK_INITIALIZED)  && this.props.currentLayer && this.state.currentLayer && !isLastDraftLayer) {
-            const initContext = this.props.contextThemas[0];
             this.props.createDraft(this.props.currentLayer, this.props.task?.asset?.uuid);
             this.isContextVisible = true;
             this.setState(prevState => ({
@@ -265,6 +264,22 @@ export class SignalementPanelComponent extends React.Component {
                     errorFields: {},
                 pendingAttachments: []
             }));
+        }
+
+        // Quand il n'y a qu'une seule thématique, la sélectionner automatiquement
+        if (
+            !this.props.currentLayer &&
+            this.props.contextThemas?.length === 1 &&
+            !this.state.themaSelected &&
+            this.props.status === status.TASK_INITIALIZED &&
+            this.props.task
+        ) {
+            const singleThema = this.props.contextThemas[0];
+            this.setState({
+                themaSelected: true,
+                selectedContextValue: singleThema.name,
+                isContextVisible: true
+            });
         }
 
         // Vérification si la valeur du contexte a changé pour mise à jour du contexte
@@ -390,6 +405,7 @@ export class SignalementPanelComponent extends React.Component {
 
     render() {
         window.signalement.debug("sig render");
+
         if( this.props.active ){
             // si le panel est ouvert
             if( this.state.initialized && (this.props.contextThemas.length > 0 || this.props.currentLayer) ){
@@ -415,9 +431,6 @@ export class SignalementPanelComponent extends React.Component {
                     });
                 }
 
-            }
-            if (this.props.contextThemas.length <=1) {
-                this.state.themaSelected = true;
             }
 
         }
