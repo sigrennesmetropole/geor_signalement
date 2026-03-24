@@ -126,6 +126,10 @@ public class GenerationConnectorImpl implements GenerationConnector {
 		}
 
 		String nomFichierModele = dataModel.getModelFileName();
+		if( LOGGER.isInfoEnabled()) {
+			LOGGER.info("Generate document with model:{}", nomFichierModele);
+			LOGGER.info("Data model:{}", dataModel.getDataModel());
+		}
 		Template template = initModeleFreeMarker(nomFichierModele);
 		try {
 			template.process(dataModel.getDataModel(), new FileWriter(generateFile));

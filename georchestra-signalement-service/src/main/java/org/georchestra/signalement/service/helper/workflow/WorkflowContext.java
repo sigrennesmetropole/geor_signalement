@@ -295,7 +295,7 @@ public class WorkflowContext {
 			emailDataModel = new EmailDataModel(userService, assignmentHelper, executionEntity, reportingEntity,
 					roleName, eMailData.getFileBody());
 		}
-
+		LOGGER.info("generateEMailBody:{}", emailDataModel.getModelFileName());
 		return generationConnector.generateDocument(emailDataModel);
 	}
 }

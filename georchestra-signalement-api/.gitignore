@@ -1,3 +1,5 @@
 /target/
 /node_installation/
 /.classpath
+/.apt_generated/
+/.apt_generated_tests/

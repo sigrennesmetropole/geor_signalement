@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>georchestra-signalement-backend</artifactId>
 		<groupId>org.georchestra</groupId>
-		<version>1.14.1</version>
+		<version>1.15.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -66,7 +66,10 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
 		<!-- Swagger UI dependency -->
 		<dependency>
 			<groupId>io.springfox</groupId>
@@ -118,9 +121,18 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>jcl-over-slf4j</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-orm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jdbc</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.activiti/activiti-spring-conformance-util -->
+		<!--
+		https://mvnrepository.com/artifact/org.activiti/activiti-spring-conformance-util -->
 		<dependency>
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-spring-conformance-util</artifactId>
@@ -132,16 +144,11 @@
 			</exclusions>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.activiti/activiti-spring-boot-starter -->
+		<!--
+		https://mvnrepository.com/artifact/org.activiti/activiti-spring-boot-starter -->
 		<dependency>
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-spring-boot-starter</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -149,34 +156,35 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
-		 <dependency>
+		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-models</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-models</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+		</dependency>
 
 	</dependencies>
 
 	<build>
+		<!--finalName>${project.artifactId}</finalName-->
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -190,7 +198,8 @@
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<configuration>
-					<!-- Les interfaces sont généres dans la target, c'est normal -->
+					<!-- Les interfaces sont généres dans la target, c'est
+					normal -->
 					<apiPackage>org.georchestra.signalement.api</apiPackage>
 					<modelPackage>org.georchestra.signalement.core.dto</modelPackage>
 					<inputSpec>resources/swagger/georchestra-signalement.json</inputSpec>
@@ -222,34 +231,33 @@
 			</plugin>
 
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <delimiters>
-                        <delimiter>@</delimiter>
-                    </delimiters>
-                    <useDefaultDelimiters>false</useDefaultDelimiters>
-                    <resources>
-                        <resource>
-                            <directory>src/main/resources</directory>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<delimiters>
+						<delimiter>@</delimiter>
+					</delimiters>
+					<useDefaultDelimiters>false</useDefaultDelimiters>
+					<resources>
+						<resource>
+							<directory>src/main/resources</directory>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-					<finalName>${project.artifactId}</finalName>
-                    <excludes>
-                        <exclude>**/log4j2.xml</exclude>
-                         <exclude>**/default.properties</exclude>
-                        <exclude>**/signalement.properties</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/log4j2.xml</exclude>
+						<exclude>**/default.properties</exclude>
+						<exclude>**/signalement.properties</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 
 			<!-- JAR executable Spring Boot -->
 			<plugin>
@@ -262,7 +270,6 @@
 						</goals>
 						<configuration>
 							<executable>true</executable>
-							<finalName>${project.artifactId}</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -317,23 +324,25 @@
 			</plugin>
 
 			<plugin>
-		    	<groupId>org.apache.maven.plugins</groupId>
-		    	<artifactId>maven-antrun-plugin</artifactId>
-		    	<executions>
-            		<execution>
-            			<id>copy-jar-without-version</id>
-                    	<phase>package</phase>
-                    	<goals>
-                    		<goal>run</goal>
-                    	</goals>
-                    	<configuration>
-                        	<target>
-                        		<copy file="${basedir}/target/${project.artifactId}-${project.version}.jar"
-                        		tofile="${basedir}/target/${project.artifactId}.jar"  overwrite="true" />
-					   		</target>
-	                    </configuration>
-            		</execution>
-        		</executions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-jar-without-version</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<copy
+									file="${basedir}/target/${project.artifactId}-${project.version}.jar"
+									tofile="${basedir}/target/${project.artifactId}.jar"
+									overwrite="true" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
@@ -369,7 +378,8 @@
 			<properties>
 				<packageDatadirScmVersion>master</packageDatadirScmVersion>
 				<dockerImageName>sigrennesmetropole/geor_signalement</dockerImageName>
-				<dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
+				<dockerDatadirScmUrl>
+					scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
 				<dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
 			</properties>
 			<build>
@@ -401,10 +411,13 @@
 								<imageTag>${project.version}</imageTag>
 								<imageTag>latest</imageTag>
 							</imageTags>
-							<!-- chemin relatif depuis le target du présent projet -->
-							<dockerDirectory>${project.basedir}/../docker/rennes-metropole/signalement-backend</dockerDirectory>
+							<!-- chemin relatif depuis le target du présent
+							projet -->
+							<dockerDirectory>
+								${project.basedir}/../docker/rennes-metropole/signalement-backend</dockerDirectory>
 
-							<!-- copy the service's jar file from target into the root directory
+							<!-- copy the service's jar file from target into
+							the root directory
 								of the image -->
 							<resources>
 								<resource>
@@ -413,8 +426,10 @@
 									<include>${project.artifactId}.jar</include>
 								</resource>
 							</resources>
-							<!-- This will require to set up the docker-hub credentials correctly
-								into your ~/.m2/settings.xml, see: https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries -->
+							<!-- This will require to set up the docker-hub
+							credentials correctly
+								into your ~/.m2/settings.xml, see:
+							https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries -->
 							<serverId>docker-hub</serverId>
 							<registryUrl>https://index.docker.io/v1/</registryUrl>
 						</configuration>
@@ -434,10 +449,13 @@
 								<id>deploy-mapfishapp-addon</id>
 								<phase>package</phase>
 								<configuration>
-									<target name="copy mapfishapp-addon to georchestra">
-										<copy todir="${georchestra.mapfishapp-addon.deployDir}">
+									<target
+										name="copy mapfishapp-addon to georchestra">
+										<copy
+											todir="${georchestra.mapfishapp-addon.deployDir}">
 											<fileset dir="../mapfishapp-addon/">
-												<exclude name="**/addon-assembly.xml" />
+												<exclude
+													name="**/addon-assembly.xml" />
 											</fileset>
 										</copy>
 									</target>
@@ -463,10 +481,13 @@
 								<id>deploy-mapfishapp-addon</id>
 								<phase>package</phase>
 								<configuration>
-									<target name="copy mapfishapp-addon to georchestra">
-										<copy todir="${georchestra.mapfishapp-addon.deployDir}">
+									<target
+										name="copy mapfishapp-addon to georchestra">
+										<copy
+											todir="${georchestra.mapfishapp-addon.deployDir}">
 											<fileset dir="../mapfishapp-addon/">
-												<exclude name="**/addon-assembly.xml" />
+												<exclude
+													name="**/addon-assembly.xml" />
 											</fileset>
 										</copy>
 									</target>

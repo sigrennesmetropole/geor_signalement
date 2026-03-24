@@ -2,6 +2,7 @@
   "plugins": [
     {
       "name": "SignalementExtension",
+	  "title": "Signalement Extension",
       "description": "Signalement Extension Mapstore",
       "version": "@@VERSION@@",
       "dependencies": [

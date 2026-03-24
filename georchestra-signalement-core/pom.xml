@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>georchestra-signalement-backend</artifactId>
 		<groupId>org.georchestra</groupId>
-		<version>1.14.1</version>
+		<version>1.15.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -104,7 +104,10 @@
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
@@ -125,7 +128,7 @@
 					<inputSpec>resources/swagger/georchestra-signalement.json</inputSpec>
 					<library>spring-boot</library>
 					<generatorName>spring</generatorName>
-					<generateModelTests>true</generateModelTests>
+					<generateModelTests>false</generateModelTests>
 					<generateModelDocumentation>true</generateModelDocumentation>
 					<generateSupportingFiles>false</generateSupportingFiles>
 					<generateApiDocumentation>false</generateApiDocumentation>
@@ -137,6 +140,7 @@
 						<useJakartaEe>true</useJakartaEe>
 						<useSwaggerUI>true</useSwaggerUI>
 						<enumPropertyNaming>legacy</enumPropertyNaming>
+						<serializableModel>true</serializableModel>
 					</configOptions>
 				</configuration>
 				<executions>

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.signalement.service.sm.impl;
 
@@ -428,6 +428,30 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		return attachmentHelper.getAttachmentConfiguration();
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public int deleteDraftTasksOlderThan(int expirationHours) {
+		Date expirationDate = new Date(System.currentTimeMillis() - (long) expirationHours * 3600 * 1000);
+		List<AbstractReportingEntity> expiredDrafts = reportingDao.findByStatusAndCreationDateBefore(Status.DRAFT,
+				expirationDate);
+		int count = 0;
+		if (CollectionUtils.isNotEmpty(expiredDrafts)) {
+			for (AbstractReportingEntity reportingEntity : expiredDrafts) {
+				try {
+					reportingDao.delete(reportingEntity);
+					documentRepositoryService.deleteDocuments(reportingEntity.getUuid().toString());
+					count++;
+					LOGGER.info("Deleted expired draft reporting uuid={} creationDate={}", reportingEntity.getUuid(),
+							reportingEntity.getCreationDate());
+				} catch (Exception e) {
+					LOGGER.warn("Failed to delete expired draft reporting uuid=" + reportingEntity.getUuid(), e);
+				}
+			}
+		}
+		LOGGER.info("Deleted {} expired draft reporting(s) older than {} hours", count, expirationHours);
+		return count;
+	}
+
 	private Task convertTask(org.activiti.engine.task.Task task) {
 		LOGGER.info("Task:{}", task);
 		String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(task);
@@ -666,7 +690,7 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 			}
 		}
 	}
-	
+
 	protected void registerWorkflowContextAsBean() {
 		if (processEngineConfiguration instanceof ProcessEngineConfigurationImpl processEngineConfigurationImpl) {
 			processEngineConfigurationImpl.getBeans().put("workflowContext", workflowContext);

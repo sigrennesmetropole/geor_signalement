@@ -15,11 +15,13 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.cache.TemplateLoader;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author FNI18300
  *
  */
+@Slf4j
 public class CompositeTemplateLoader implements TemplateLoader {
 
 	private static final String STRING_TEMPLATE_SOURCE = "StringTemplateSource";
@@ -38,9 +40,11 @@ public class CompositeTemplateLoader implements TemplateLoader {
 	 */
 	public CompositeTemplateLoader(File fileTemplateDirectory, ClassLoader classLoader, String basePackagePath)
 			throws IOException {
-		if( !fileTemplateDirectory.exists()) {
+		if (!fileTemplateDirectory.exists()) {
 			fileTemplateDirectory.mkdirs();
 		}
+		log.info("initialise CompositeTemplateLoader avec le répertoire de template de fichier {} et le package {}",
+				fileTemplateDirectory.getAbsolutePath(), basePackagePath);
 		templateLoaders.add(new FileTemplateLoader(fileTemplateDirectory));
 		templateLoaders.add(new ClassTemplateLoader(classLoader, basePackagePath));
 		templateLoaders.add(new StringTemplateLoader());
@@ -49,12 +53,15 @@ public class CompositeTemplateLoader implements TemplateLoader {
 	@Override
 	public Object findTemplateSource(String name) throws IOException {
 		Object result = null;
+		log.info("Recherche du template {} dans les loaders", name);
 		if (name.startsWith(GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX)) {
 			result = templateLoaders.get(STRING_TEMPLATE_LOADER_INDEX).findTemplateSource(name);
 		} else {
 			for (TemplateLoader templateLoader : templateLoaders) {
+				log.info("Recherche du template {} dans le loader {}", name, templateLoader.getClass().getSimpleName());
 				result = templateLoader.findTemplateSource(name);
 				if (result != null) {
+					log.info("Template {} trouvé dans le loader {}", name, templateLoader.getClass().getSimpleName());
 					break;
 				}
 			}
@@ -97,7 +104,8 @@ public class CompositeTemplateLoader implements TemplateLoader {
 
 	public void putTemplate(String name, String templateContent) {
 		if (!name.startsWith(GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX)) {
-			throw new IllegalArgumentException("Tempalte name must start with:" + GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX);
+			throw new IllegalArgumentException(
+					"Template name must start with:" + GenerationConnectorConstants.STRING_TEMPLATE_LOADER_PREFIX);
 		}
 		((StringTemplateLoader) templateLoaders.get(STRING_TEMPLATE_LOADER_INDEX)).putTemplate(name, templateContent);
 	}

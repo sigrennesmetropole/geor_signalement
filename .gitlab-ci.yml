@@ -28,13 +28,24 @@ cache:
 include:
   - project: 'boost/template-ci/pipelines/common'
     file: '/docker/docker-template.yml'
-  - project: 'boost/template-ci/pipelines/common'
-    file: 'securite/oss-index/oss-index-template.yml'
-  - project: 'bots/trivy-script'
-    file: '/trivy-template-job.yml'   
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/oss-npm@2.0.0
+    inputs:
+      oss_package_json: "georchestra-signalement-front-management/package-lock.json"
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/oss-npm@2.0.0
+    inputs:
+      oss_package_json: "georchestra-signalement-mapstore-addon/package-lock.json"      
   - component: '$CI_SERVER_FQDN/boost/ci-component/security/software-supply-chain-npm@1.4.0'
     inputs:
       ssc_lock_file: "$SSC_LOCK_FILE"
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/dependency-track@2.0.0
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/cdxgen-sbom@2.0.1
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/syft-docker-sbom@2.0.0
+    inputs:
+      image_docker: 'glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-backend:open-develop'  
+  - component: $CI_SERVER_FQDN/boost/ci-component/security/syft-docker-sbom@2.0.0
+    inputs:
+      image_docker: 'glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-front-management:open-develop'
+
 
 default:
   image: maven:3.9.0-eclipse-temurin-17
@@ -51,6 +62,7 @@ stages:
   - deploy
   - delivering
   - sast
+  - post_sast
 
 # Build job with maven plugin execution policies define in parent pom
 .signalementapi:build:
@@ -209,35 +221,6 @@ boost:ssc:npm:plugin2:
     SSC_LOCK_FILE: "georchestra-signalement-mapstore-management-addon/package-lock.json"
   rules:
     - when: always
-
-trivyscan:back: 
-  extends: 
-    - .trivy-scan
-  stage: docker
-  needs:
-    - signalementapi:docker2:build
-  dependencies:
-    - signalementapi:docker2:build
-  variables:
-    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-backend:open-develop
-  only:
-    refs:
-      - open/develop
-      - karbonification
-
-trivyscan:front: 
-  extends: 
-    - .trivy-scan
-  stage: docker
-  needs:
-    - signalementapi:docker2:build
-  dependencies:
-    - signalementapi:docker2:build
-  variables:
-    TRIVY_DOCKER_SCAN: glregistry.boost.open.global/rennes-metropole/signalement/signalement-backend/signalement-front-management:open-develop
-  only:
-    refs:
-      - open/develop
 
 .signalementapi:deploy:
   stage: deploy

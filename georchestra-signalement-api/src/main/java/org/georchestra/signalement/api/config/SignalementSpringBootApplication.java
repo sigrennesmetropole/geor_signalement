@@ -8,11 +8,13 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Classe de configuration globale de l'application.
  */
 @SpringBootApplication
+@EnableScheduling
 @ComponentScan({ "org.georchestra.signalement.api", "org.georchestra.signalement.service",
 		"org.georchestra.signalement.core" })
 @EntityScan(basePackages = "org.georchestra.signalement.core.entity")

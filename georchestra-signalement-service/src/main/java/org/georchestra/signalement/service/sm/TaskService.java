@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.signalement.service.sm;
 
@@ -29,7 +29,7 @@ public interface TaskService {
 
 	/**
 	 * Demande d'affectation à la personne connectée
-	 * 
+	 *
 	 * @param taskId
 	 * @return
 	 */
@@ -37,7 +37,7 @@ public interface TaskService {
 
 	/**
 	 * Demande de création d'un draft signalement
-	 * 
+	 *
 	 * @param reportingDescription
 	 * @return
 	 */
@@ -45,7 +45,7 @@ public interface TaskService {
 
 	/**
 	 * Retourne le formulaire draft associé à un contexte
-	 * 
+	 *
 	 * @param contextDescriptionName
 	 * @return
 	 * @throws FormDefinitionException
@@ -54,14 +54,14 @@ public interface TaskService {
 
 	/**
 	 * Abandon d'un signalement à l'état draft
-	 * 
+	 *
 	 * @param reportingUuid
 	 */
 	void cancelDraft(UUID reportingUuid);
 
 	/**
 	 * Déclenchement d'une action sur une tâche
-	 * 
+	 *
 	 * @param taskId
 	 * @param actionName
 	 * @throws DataException
@@ -70,7 +70,7 @@ public interface TaskService {
 
 	/**
 	 * Recherche des tâches affectées à l'utilisateur courant
-	 * 
+	 *
 	 * @param taskSearchCriteria
 	 * @return
 	 */
@@ -78,14 +78,14 @@ public interface TaskService {
 
 	/**
 	 * Recherche des tâches affectées à l'utilisateur courant
-	 * 
+	 *
 	 * @param taskSearchCriteria
 	 * @return un flux GeoJSon
 	 */
 	FeatureCollection searchGeoJSonTasks(TaskSearchCriteria taskSearchCriteria);
 
 	/**
-	 * 
+	 *
 	 * @param contextName le nom d'un contexte connu du système. Si ce paramètre est
 	 *                    null, le flux sortant ne contient pas de propriété
 	 *                    geometry
@@ -95,7 +95,7 @@ public interface TaskService {
 
 	/**
 	 * Retourne une tâche par son id
-	 * 
+	 *
 	 * @param taskId
 	 * @return
 	 */
@@ -103,7 +103,7 @@ public interface TaskService {
 
 	/**
 	 * Mets à jour le signalement associé à la tâche
-	 * 
+	 *
 	 * @param task
 	 * @return
 	 * @throws DataException
@@ -115,7 +115,7 @@ public interface TaskService {
 
 	/**
 	 * Créé une nouvelle tâche à partir du signalement draft
-	 * 
+	 *
 	 * @param task
 	 * @return
 	 * @throws DocumentRepositoryException
@@ -129,7 +129,7 @@ public interface TaskService {
 
 	/**
 	 * Ajoute un document sur un signalement
-	 * 
+	 *
 	 * @param reportingUuid
 	 * @param content
 	 * @return
@@ -139,7 +139,7 @@ public interface TaskService {
 
 	/**
 	 * Retourne la description d'un attachment pour un signalement et un id
-	 * 
+	 *
 	 * @param reportingUuid
 	 * @param attachmentId
 	 * @return
@@ -149,7 +149,7 @@ public interface TaskService {
 
 	/**
 	 * Retourne le document pour un signalement et un id
-	 * 
+	 *
 	 * @param reportingUuid
 	 * @param attachmentId
 	 * @return
@@ -159,7 +159,7 @@ public interface TaskService {
 
 	/**
 	 * Supprime un document attaché à un signalement
-	 * 
+	 *
 	 * @param reportingUuid
 	 * @param attachmentId
 	 * @throws DocumentRepositoryException
@@ -168,7 +168,7 @@ public interface TaskService {
 
 	/**
 	 * Retourne la liste des attachements d'un signalement
-	 * 
+	 *
 	 * @param reportingUuid
 	 * @return
 	 */
@@ -176,9 +176,17 @@ public interface TaskService {
 
 	/**
 	 * Retourne la configuration associé à la gestion des documents
-	 * 
+	 *
 	 * @return
 	 */
 	AttachmentConfiguration getAttachmentConfiguration();
+
+	/**
+	 * Supprime les tâches en statut DRAFT dont la date de création est antérieure au nombre d'heures spécifié
+	 *
+	 * @param expirationHours le nombre d'heures après lequel un draft est considéré expiré
+	 * @return le nombre de tâches supprimées
+	 */
+	int deleteDraftTasksOlderThan(int expirationHours);
 
 }
