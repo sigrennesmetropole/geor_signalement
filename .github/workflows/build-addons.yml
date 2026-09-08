@@ -38,7 +38,7 @@ jobs:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
-      - run: npm install
+      - run: npm ci
       - run: npm run ext:build
       - run: ls 
       - run: ls dist/
@@ -80,9 +80,9 @@ jobs:
             path: ~/.npm
             key: npm-${{ hashFiles('package-lock.json') }}
             restore-keys: npm-
-        - run: npm install
+        - run: npm ci
           working-directory: ./georchestra-signalement-mapstore-management-addon/MapStore2
-        - run: npm install
+        - run: npm ci
         - run: npm run ext:build
         - run: ls 
         - run: ls dist/
