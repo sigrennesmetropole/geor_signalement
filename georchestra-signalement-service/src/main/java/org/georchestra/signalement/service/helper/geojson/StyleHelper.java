@@ -271,41 +271,44 @@ public class StyleHelper {
 		JSONArray dashArray = null;
 		JSONArray iconAnchor = null;
 		GeographicType type = styleContainer.getType();
+		Style style = styleContainer.getStyle();
 
 		// In case of type is a Polygon or a Line we need to remove the arrays before
 		// JsonObject conversion
-		if (type == GeographicType.POLYGON) {
-			dashArray = new JSONArray(styleContainer.getStyle().getDashArray());
-			styleContainer.getStyle().setDashArray(null);
+		if (type == GeographicType.POLYGON && style != null) {
+			dashArray = new JSONArray(style.getDashArray());
+			style.setDashArray(null);
 		}
 
-		if (type == GeographicType.LINE) {
-			iconAnchor = new JSONArray(styleContainer.getStyle().getIconAnchor());
-			styleContainer.getStyle().setIconAnchor(null);
+		if (type == GeographicType.LINE && style != null) {
+			iconAnchor = new JSONArray(style.getIconAnchor());
+			style.setIconAnchor(null);
 		}
 
-		JSONObject description = new JSONObject(styleContainer.getStyle());
+		JSONObject description = new JSONObject(style);
 		JSONObject arr = new JSONObject();
 
 		// Final description which follow the type
 		JSONObject descriptionType = new JSONObject();
-		switch (type) {
-		case POINT:
-			Style defaultPointStyle = createDefaultStylePoint();
-			assignPoint(descriptionType, description, defaultPointStyle);
-			break;
+		if (type != null) {
+			switch (type) {
+			case POINT:
+				Style defaultPointStyle = createDefaultStylePoint();
+				assignPoint(descriptionType, description, defaultPointStyle);
+				break;
 
-		case LINE:
-			Style defaultLineStyle = createDefaultLineStyle();
-			assignLine(descriptionType, description, iconAnchor, defaultLineStyle);
-			break;
+			case LINE:
+				Style defaultLineStyle = createDefaultLineStyle();
+				assignLine(descriptionType, description, iconAnchor, defaultLineStyle);
+				break;
 
-		case POLYGON:
-			Style defaultPolygonStyle = createDefaultPolygonStyle();
-			assignPolygon(descriptionType, description, dashArray, defaultPolygonStyle);
-			break;
+			case POLYGON:
+				Style defaultPolygonStyle = createDefaultPolygonStyle();
+				assignPolygon(descriptionType, description, dashArray, defaultPolygonStyle);
+				break;
+			}
+			arr.put(type.name(), descriptionType);
 		}
-		arr.put(type.name(), descriptionType);
 		res.setDefinition(arr.toString());
 		return res;
 	}

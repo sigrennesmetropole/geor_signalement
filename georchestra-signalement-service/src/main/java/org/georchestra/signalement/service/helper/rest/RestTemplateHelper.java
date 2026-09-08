@@ -3,8 +3,8 @@ package org.georchestra.signalement.service.helper.rest;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.georchestra.signalement.service.exception.RestException;
@@ -24,12 +24,12 @@ public class RestTemplateHelper {
         try {
             CloseableHttpClient httpClient = HttpClients.custom()
                     .setConnectionManager(PoolingHttpClientConnectionManagerBuilder.create()
-                            .setSSLSocketFactory(SSLConnectionSocketFactoryBuilder.create()
+                            .setTlsSocketStrategy(ClientTlsStrategyBuilder.create()
                                     .setSslContext(SSLContextBuilder.create()
                                             .loadTrustMaterial(TrustAllStrategy.INSTANCE)
                                             .build())
                                     .setHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-                                    .build())
+                                    .buildClassic())
                             .build())
                     .build();
             HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();

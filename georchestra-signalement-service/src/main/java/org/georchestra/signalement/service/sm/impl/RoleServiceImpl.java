@@ -10,30 +10,27 @@ import org.georchestra.signalement.service.common.ErrorMessageConstants;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.georchestra.signalement.service.mapper.acl.RoleMapper;
 import org.georchestra.signalement.service.sm.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
-    @Autowired
-    RoleDao roleDao;
+    private final RoleDao roleDao;
 
-    @Autowired
-    RoleMapper roleMapper;
+    private final RoleMapper roleMapper;
 
-    @Autowired
-    UtilPageable utilPageable;
+    private final UtilPageable utilPageable;
 
-    @Autowired
-    UserRoleContextCustomDao userRoleContextCustomDao;
+    private final UserRoleContextCustomDao userRoleContextCustomDao;
 
     @Override
     public Page<Role> searchRoles(Pageable pageable) {
-        return roleDao.findAll(pageable).map(roleEntity -> roleMapper.entityToDto(roleEntity));
+        return roleDao.findAll(pageable).map(roleMapper::entityToDto);
     }
 
     @Override

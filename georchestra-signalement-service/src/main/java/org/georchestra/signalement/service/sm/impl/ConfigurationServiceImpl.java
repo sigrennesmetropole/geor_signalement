@@ -8,11 +8,12 @@ import org.georchestra.signalement.core.dto.ViewMapConfiguration;
 import org.georchestra.signalement.service.bean.Configuration;
 import org.georchestra.signalement.service.mapper.ConfigurationMapper;
 import org.georchestra.signalement.service.sm.ConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Value("${application.version}")
@@ -66,8 +67,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Value("${color.stroke}")
     private String stroke;
 
-    @Autowired
-    ConfigurationMapper configMapper;
+    private final ConfigurationMapper configMapper;
 
     @Override
     public ConfigurationData getApplicationConfiguration() {

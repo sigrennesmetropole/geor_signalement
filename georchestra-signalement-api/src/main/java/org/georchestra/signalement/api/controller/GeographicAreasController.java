@@ -6,7 +6,7 @@ import org.georchestra.signalement.core.dto.GeographicArea;
 import org.georchestra.signalement.core.dto.GeographicAreaPageResult;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.acl.GeographicAreaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("@authentificationHelper.isAdmin()")
 @RestController
 @Api(tags = "geographicAreas")
+@RequiredArgsConstructor
 public class GeographicAreasController implements GeographicareasApi {
 
-    @Autowired
-    GeographicAreaService geographicAreaService;
+    private final GeographicAreaService geographicAreaService;
 
-    @Autowired
-    UtilPageable utilPageable;
+    private final UtilPageable utilPageable;
 
     @Override
     public ResponseEntity<GeographicArea> getGeographicArea(Long id) throws Exception {

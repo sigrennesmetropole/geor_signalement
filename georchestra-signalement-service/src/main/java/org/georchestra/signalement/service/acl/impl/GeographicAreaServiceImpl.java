@@ -13,25 +13,22 @@ import org.georchestra.signalement.core.entity.acl.GeographicAreaEntity;
 import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.georchestra.signalement.service.mapper.acl.GeographicAreaMapper;
 import org.locationtech.jts.geom.Geometry;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class GeographicAreaServiceImpl implements GeographicAreaService {
 
-    @Autowired
-    private GeographicAreaCustomDao geographicAreaCustumDao;
+    private final GeographicAreaCustomDao geographicAreaCustumDao;
 
-    @Autowired
-    private GeographicAreaMapper geographicAreaMapper;
+    private final GeographicAreaMapper geographicAreaMapper;
 
-    @Autowired
-    GeographicAreaDao geographicAreaDao;
+    private final GeographicAreaDao geographicAreaDao;
 
-    @Autowired
-    GeographicAreaCustomDao geographicAreaCustomDao;
+    private final GeographicAreaCustomDao geographicAreaCustomDao;
 
     @Override
     public List<GeographicArea> searchGeographicAreaIntersections(Geometry geometry, GeographicType geographicType, Long idContext, Long idRole) {

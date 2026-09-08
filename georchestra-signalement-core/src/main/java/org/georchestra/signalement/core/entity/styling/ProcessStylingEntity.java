@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 
 import org.georchestra.signalement.core.common.AbstractProcessLinkEntity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,6 +26,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "process_styling")
 public class ProcessStylingEntity extends AbstractProcessLinkEntity {
@@ -45,6 +47,7 @@ public class ProcessStylingEntity extends AbstractProcessLinkEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "styling_id")
+	@EqualsAndHashCode.Exclude
 	private StylingEntity styling;
 
 }

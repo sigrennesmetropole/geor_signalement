@@ -36,12 +36,13 @@ public abstract class AbstractNumericFieldValidator extends AbstractFieldValidat
 
 	protected boolean check(Field field, String value) {
 		boolean result = true;
-		if (field.getDefinition().getType() == FieldType.DOUBLE) {
+		var definition = field.getDefinition();
+		if (definition != null && definition.getType() == FieldType.DOUBLE) {
 			double d = Double.parseDouble(value);
 			if (innerCheck(d)) {
 				result = false;
 			}
-		} else if (field.getDefinition().getType() == FieldType.LONG) {
+		} else if (definition != null && definition.getType() == FieldType.LONG) {
 			long d = Long.parseLong(value);
 			if (innerCheck(d)) {
 				result = false;
@@ -56,8 +57,9 @@ public abstract class AbstractNumericFieldValidator extends AbstractFieldValidat
 
 	@Override
 	public boolean accept(Field field) {
-		return (field.getDefinition().getType() == FieldType.DOUBLE
-				|| field.getDefinition().getType() == FieldType.LONG) && innerAccept(field);
+		var definition = field.getDefinition();
+		return definition != null && (definition.getType() == FieldType.DOUBLE
+				|| definition.getType() == FieldType.LONG) && innerAccept(field);
 	}
 
 	protected abstract boolean innerAccept(Field field);

@@ -3,7 +3,6 @@ import {PropTypes} from 'prop-types';
 import {ControlLabel, Form, FormControl, FormGroup, Button, Col} from "react-bootstrap";
 import Message from '@mapstore/components/I18N/Message';
 import LoadingSpinner from '@mapstore/components/misc/LoadingSpinner';
-import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
 
 const SignalementFormField = (props) => {
     const {index, indexField, children} = props;
@@ -269,7 +268,7 @@ export class SignalementTaskViewer extends React.Component {
         return (
             <div className="block-inline-spinner">
                 <Col md={12} className="text-center">
-                    <InlineSpinner loading={this.props.actionInProgress} className="inline-spinner"/>
+                    {this.props.actionInProgress && <LoadingSpinner />}
                 </Col>
             </div>
         )

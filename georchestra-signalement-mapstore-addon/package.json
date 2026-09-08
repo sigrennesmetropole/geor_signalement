@@ -103,7 +103,7 @@
         "style-loader": "0.12.4",
         "url-loader": "0.5.7",
         "vusion-webfonts-generator": "0.4.1",
-        "webpack": "5.9.0",
+        "webpack": "5.94.0",
         "webpack-bundle-size-analyzer": "2.0.2",
         "webpack-cli": "4.10.0",
         "webpack-dev-server": "3.11.0"
@@ -120,6 +120,7 @@
         "ext:startapp": "webpack serve --progress --color --port 8081 --hot --inline --content-base . --config build/extension/module.app.webpack.config.js",
         "ext:start": "webpack serve --progress --color --port 8082 --hot --inline --config build/extension/webpack.config.js",
         "ext:build": "rimraf ./dist && mkdirp ./dist && webpack --progress  --color --config build/extension/prod-webpack.config.js",
+        "dev": "concurrently -n startapp,start -c green,blue --kill-others \"npm run ext:startapp\" \"npm run ext:start\"",
         "test": "karma start ./karma.conf.single-run.js",
         "continuoustest": "karma start ./karma.conf.continuous-test.js",
         "mvntest": "karma start ./karma.conf.single-run.js --reporters junit,dots,coverage",

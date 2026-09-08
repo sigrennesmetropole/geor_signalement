@@ -15,9 +15,9 @@ public interface StyleService {
 
     StyleContainer createStyle(StyleContainer role) throws InvalidDataException;
 
-    StyleContainer updateStyle(StyleContainer style) throws Exception;
+    StyleContainer updateStyle(StyleContainer style);
 
-    List<ProcessStyling> getProcessStyling(Long id) throws Exception;
+    List<ProcessStyling> getProcessStyling(Long id);
 
     ProcessStyling createStyleProcess(ProcessStyling processStyling);
 

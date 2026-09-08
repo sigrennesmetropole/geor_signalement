@@ -373,8 +373,8 @@
                       "legendOptions": {
                         "WMSLegendOptions": "forceLabels:on",
                         "scaleDependent": true,
-                        "legendWidth": 12,
-                        "legendHeight": 12
+                        "legendWidth": 20,
+                        "legendHeight": 20
                       }
                     }
                 }

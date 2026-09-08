@@ -10,25 +10,23 @@ import org.georchestra.signalement.core.entity.reporting.AbstractReportingEntity
 import org.georchestra.signalement.service.acl.GeographicAreaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class AssignmentHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AssignmentHelper.class);
 
-	@Autowired
-	private GeographicAreaService geographicAreaService;
+	private final GeographicAreaService geographicAreaService;
 
-	@Autowired
-	private RoleDao roleDao;
+	private final RoleDao roleDao;
 
-	@Autowired
-	private UserDao userDao;
+	private final UserDao userDao;
 
 	/**
 	 * Récuperer le login des users pour leur affecter la tache

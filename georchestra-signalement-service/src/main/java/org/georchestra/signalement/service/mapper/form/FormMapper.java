@@ -22,8 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public abstract class FormMapper {
 
-	@Autowired
 	private SectionMapper sectionMapper;
+
+	@Autowired
+	public void setSectionMapper(SectionMapper sectionMapper) {
+		this.sectionMapper = sectionMapper;
+	}
 
 	/**
 	 * 

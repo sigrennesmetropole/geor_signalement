@@ -6,7 +6,7 @@ import org.georchestra.signalement.core.dto.UserPageResult;
 import org.georchestra.signalement.core.dto.UserSearchCriteria;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.sm.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,12 @@ import io.swagger.annotations.Api;
 @PreAuthorize("@authentificationHelper.isAdmin()")
 @RestController
 @Api(tags = "user")
+@RequiredArgsConstructor
 public class UsersController implements UsersApi {
 	
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 
-	@Autowired
-	private UtilPageable utilPageable;
+	private final UtilPageable utilPageable;
 
 	@Override
 	public ResponseEntity<Void> deleteUser(String login) throws Exception {

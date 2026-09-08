@@ -68,9 +68,8 @@ public class CustomXMLWorkerHelper {
 		CssFile cssFile = null;
 		if (null != in) {
 			CssFileProcessor cssFileProcessor = new CssFileProcessor();
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-			try {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
 				char[] buffer = new char[8192];
 
 				int length;
@@ -83,12 +82,6 @@ public class CustomXMLWorkerHelper {
 				cssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
 			} catch (IOException var14) {
 				throw new RuntimeWorkerException(var14);
-			} finally {
-				try {
-					in.close();
-				} catch (IOException var13) {
-					LOGGER.warn("Failed to close stream.", var13);
-				}
 			}
 		}
 

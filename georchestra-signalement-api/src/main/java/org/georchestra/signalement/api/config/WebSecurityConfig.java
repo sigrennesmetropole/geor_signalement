@@ -6,7 +6,7 @@ import java.util.List;
 import org.georchestra.signalement.api.security.PreAuthenticationFilter;
 import org.georchestra.signalement.api.security.PreAuthenticationProvider;
 import org.georchestra.signalement.service.sm.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +28,7 @@ import jakarta.servlet.Filter;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
 	private static final String[] SB_PERMIT_ALL_URL = { BasicSecurityConstants.SWAGGER_RESSOURCE_URL,
@@ -43,8 +44,7 @@ public class WebSecurityConfig {
 	@Value("${security.authentication.disabled:false}")
 	private boolean disableAuthentification = false;
 
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

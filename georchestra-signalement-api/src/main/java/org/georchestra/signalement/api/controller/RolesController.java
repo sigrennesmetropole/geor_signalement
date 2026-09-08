@@ -6,7 +6,7 @@ import org.georchestra.signalement.core.dto.Role;
 import org.georchestra.signalement.core.dto.RolePageResult;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.sm.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("@authentificationHelper.isAdmin()")
 @RestController
 @Api(tags = "roles")
+@RequiredArgsConstructor
 public class RolesController implements RolesApi {
 
-    @Autowired
-    RoleService roleService;
+    private final RoleService roleService;
 
-    @Autowired
-    UtilPageable utilPageable;
+    private final UtilPageable utilPageable;
 
     @Override
     public ResponseEntity<Void> deleteRole(String name) throws Exception {

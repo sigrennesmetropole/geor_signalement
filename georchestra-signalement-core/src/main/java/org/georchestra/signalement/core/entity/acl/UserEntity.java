@@ -81,9 +81,7 @@ public class UserEntity implements LongId {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof UserEntity)) return false;
-
-		UserEntity that = (UserEntity) o;
+		if (!(o instanceof UserEntity that)) return false;
 
 		if (!getId().equals(that.getId())) return false;
 		if (getLogin() != null ? !getLogin().equals(that.getLogin()) : that.getLogin() != null) return false;

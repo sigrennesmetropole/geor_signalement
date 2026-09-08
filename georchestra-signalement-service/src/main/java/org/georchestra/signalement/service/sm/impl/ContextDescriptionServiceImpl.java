@@ -16,7 +16,7 @@ import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;
 import org.georchestra.signalement.service.mapper.workflow.ProcessDefinitionMapper;
 import org.georchestra.signalement.service.sm.ContextDescriptionService;
 import org.georchestra.signalement.service.sm.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,37 +25,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author FNI18300
  */
 @Service
+@RequiredArgsConstructor
 public class ContextDescriptionServiceImpl implements ContextDescriptionService {
 
-	@Autowired
-	private TaskService taskService;
+	private final TaskService taskService;
 
-	@Autowired
-	private ContextDescriptionCustomDao contextDescriptionCustomDao;
+	private final ContextDescriptionCustomDao contextDescriptionCustomDao;
 
-	@Autowired
-	private ContextDescriptionDao contextDescriptionDao;
+	private final ContextDescriptionDao contextDescriptionDao;
 
-	@Autowired
-	private ContextDescriptionMapper contextDescriptionMapper;
+	private final ContextDescriptionMapper contextDescriptionMapper;
 
-	@Autowired
-	private ProcessEngine processEngine;
+	private final ProcessEngine processEngine;
 
-	@Autowired
-	private UserRoleContextCustomDao userRoleContextCustomDao;
+	private final UserRoleContextCustomDao userRoleContextCustomDao;
 
-	@Autowired
-	private UtilPageable utilPageable;
+	private final UtilPageable utilPageable;
 
-	@Autowired
-	private ProcessDefinitionMapper processDefinitionMapper;
+	private final ProcessDefinitionMapper processDefinitionMapper;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -85,8 +77,8 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 		} else {
 			int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), contexts.size());
 			List<ContextDescription> results = contexts.subList((int) pageable.getOffset(), endIndex)
-					.stream().map(entity -> contextDescriptionMapper.entityToDto(entity))
-					.collect(Collectors.toList());
+					.stream().map(contextDescriptionMapper::entityToDto)
+					.toList();
 			return new PageImpl<>(results, pageable, contexts.size());
 		}
 	}
@@ -181,7 +173,7 @@ public class ContextDescriptionServiceImpl implements ContextDescriptionService 
 				.map(processDefinitionMapper::entityToDto)
 				.filter(process -> process.getKey().equals(context.getProcessDefinitionKey()))
 				.map(ProcessDefinition::getVersion)
-				.collect(Collectors.toList());
+				.toList();
 		Integer revision = context.getRevision();
 		return (revision != null && versions.contains(revision)) || (revision == null && !versions.isEmpty());
 	}

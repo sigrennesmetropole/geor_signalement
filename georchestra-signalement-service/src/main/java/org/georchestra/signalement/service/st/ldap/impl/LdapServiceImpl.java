@@ -25,7 +25,7 @@ import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;
 import org.georchestra.signalement.service.st.ldap.LdapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQueryBuilder;
@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class LdapServiceImpl implements LdapService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LdapServiceImpl.class);
@@ -62,20 +63,15 @@ public class LdapServiceImpl implements LdapService {
 	@Value("${ldap.user.searchBase}")
 	private String userSearchBase;
 
-	@Autowired
-	private AuthentificationHelper authentificationHelper;
+	private final AuthentificationHelper authentificationHelper;
 
-	@Autowired
-	private LdapTemplate ldapTemplate;
+	private final LdapTemplate ldapTemplate;
 
-	@Autowired
-	private UserDao userDao;
+	private final UserDao userDao;
 
-	@Autowired
-	private ContextDescriptionDao contextDescriptionDao;
-	
-	@Autowired
-	private ContextDescriptionMapper contextDescriptionMapper;
+	private final ContextDescriptionDao contextDescriptionDao;
+
+	private final ContextDescriptionMapper contextDescriptionMapper;
 
 	private String[] attributes;
 

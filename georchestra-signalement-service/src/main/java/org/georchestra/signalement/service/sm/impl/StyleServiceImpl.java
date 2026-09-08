@@ -71,9 +71,13 @@ public class StyleServiceImpl implements StyleService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public StyleContainer updateStyle(StyleContainer style) throws Exception {
+	public StyleContainer updateStyle(StyleContainer style) {
 
-		long id = style.getId();
+		Long styleId = style.getId();
+		if (styleId == null) {
+			return null;
+		}
+		long id = styleId;
 		StylingEntity oldEntity = styleDao.findById(id);
 		StyleContainer oldContainer;
 		if (oldEntity != null) {
@@ -88,7 +92,7 @@ public class StyleServiceImpl implements StyleService {
 	}
 
 	@Override
-	public List<ProcessStyling> getProcessStyling(Long id) throws Exception {
+	public List<ProcessStyling> getProcessStyling(Long id) {
 		List<ProcessStylingEntity> entities = processStylingDao.findByStylingId(id);
 		return processMapper.entitiesToDtos(entities);
 	}
@@ -114,6 +118,9 @@ public class StyleServiceImpl implements StyleService {
 		}
 
 		// Save
+		if (processStyling.getStylingId() == null) {
+			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
+		}
 		Optional<StylingEntity> styling = styleDao.findById(processStyling.getStylingId());
 		if (styling.isEmpty()) {
 			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);

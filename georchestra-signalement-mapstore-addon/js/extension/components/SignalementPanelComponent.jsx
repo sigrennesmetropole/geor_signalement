@@ -14,12 +14,27 @@ import {
     InputGroup
 } from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
-import ConfirmDialog from '@mapstore/components/misc/ConfirmDialog';
+import ConfirmDialog from '@mapstore/components/layout/ConfirmDialog';
 import {status} from '../actions/signalement-action';
 import {GeometryType, SIGNALEMENT_PANEL_WIDTH} from '../constants/signalement-constants';
-import InlineSpinner from "mapstore2/web/client/components/misc/spinners/InlineSpinner/InlineSpinner";
+import LoadingSpinner from '@mapstore/components/misc/LoadingSpinner';
 import ResponsivePanel from "@mapstore/components/misc/panels/ResponsivePanel";
 import * as ReactIntl from 'react-intl';
+
+/**
+ * Retourne le type MIME d'un fichier : utilise file.type si disponible,
+ * sinon tente une résolution par extension depuis le mapping fourni par le serveur.
+ *
+ * @param {File} file
+ * @param {Object} mimeTypesByExtension - mapping extension→MIME issu de attachmentConfiguration
+ */
+function resolveFileMimeType(file, mimeTypesByExtension = {}) {
+    if (file.type) {
+        return file.type;
+    }
+    const ext = file.name.split('.').pop().toLowerCase();
+    return mimeTypesByExtension[ext] || '';
+}
 
 export class SignalementPanelComponent extends React.Component {
     static propTypes = {
@@ -175,8 +190,10 @@ export class SignalementPanelComponent extends React.Component {
         // on récupère la current layer si elle existe
         this.state.currentLayer = this.props.currentLayer;
 
-        if (this.props.task !== null && this.state.task === null && this.props.status === status.TASK_INITIALIZED) {
-            // on a une tâche dans les props, pas dans le state et on est à "tâche initialisée"
+        // On accepte aussi le cas où state.task est un stub sans uuid (posé par resetForm) :
+        // sans cette garde, le stub bloquerait la synchro du vrai draft au 2ᵉ signalement.
+        if (this.props.task !== null && (this.state.task === null || !this.state.task?.asset?.uuid) && this.props.status === status.TASK_INITIALIZED) {
+            // on a une tâche dans les props, pas (encore) dans le state et on est à "tâche initialisée"
             window.signalement.debug("sig draft created");
             window.signalement.debug("sig draft created props ", this.props);
             window.signalement.debug("sig draft created state ", this.state);
@@ -184,6 +201,11 @@ export class SignalementPanelComponent extends React.Component {
                 task: this.props.task,
                 loaded: true
             });
+        } else {
+            window.signalement.debug("[DBG] SYNC ignoré —",
+                "props.task:", this.props.task?.asset?.uuid ?? "null",
+                "status:", this.props.status
+            );
         }
 
         if (this.state.task !== null && this.state.task?.asset !== null) {
@@ -201,7 +223,8 @@ export class SignalementPanelComponent extends React.Component {
         }
 
         if( (this.props.status === status.TASK_UNLOADED || this.props.status === status.TASK_CREATED) && this.state.loaded === true){
-            // on a demandé l'annulation et on l'a obtenue => on ferme le panel
+            // on a demandé l'annulation et on l'a obtenue (ou la tâche est créée) => on ferme le panel.
+            // Nettoyage complet ici ; un seul toggleControl (un 2ᵉ appel rouvrirait le panel).
             window.signalement.debug("sig draft canceled or task created");
             this.setState({
                 task: null,
@@ -209,7 +232,12 @@ export class SignalementPanelComponent extends React.Component {
                 errorAttachment: "",
                 errorFields: {},
                 pendingAttachments: []
-            })
+            });
+            // NE PAS appeler clearDrawn() ici : son epic dispatche updateLocalisation([]) qui
+            // crashe le reducer SIGNALEMENT_UPDATE_LOCALISATION quand task est déjà null
+            // (rendu par SIGNALEMENT_DRAFT_CREATE appelé depuis render() avant ce CDU).
+            this.props.resetAttachments();
+            this.resetFileInput();
             this.props.stopDrawingSupport();
             this.props.toggleControl();
         }
@@ -280,6 +308,9 @@ export class SignalementPanelComponent extends React.Component {
                 selectedContextValue: singleThema.name,
                 isContextVisible: true
             });
+        } else if (this.props.contextThemas?.length === 1 && this.props.status === status.TASK_INITIALIZED) {
+            window.signalement.debug("[DBG] AUTO-SELECT ignoré — themaSelected:", this.state.themaSelected,
+                "task:", this.props.task?.asset?.uuid ?? "null");
         }
 
         // Vérification si la valeur du contexte a changé pour mise à jour du contexte
@@ -308,14 +339,6 @@ export class SignalementPanelComponent extends React.Component {
             }
         }
 
-        // Lorsque le draft est vraiment annulé côté serveur
-        if (prevProps.status !== status.TASK_UNLOADED && this.props.status === status.TASK_UNLOADED) {
-            // on ferme le panel et on reset le form
-            this.resetForm();
-            this.props.stopDrawingSupport();
-            this.props.toggleControl();
-        }
-
     }
 
     /**
@@ -334,6 +357,7 @@ export class SignalementPanelComponent extends React.Component {
                 }
             },
             errorFields: {},
+            errorAttachment: "",
             pendingAttachments: [],
             selectedContextValue: "",
             isContextVisible: false,
@@ -477,15 +501,14 @@ export class SignalementPanelComponent extends React.Component {
             window.signalement.debug("sig closing");
             return (<ConfirmDialog
                 show
-                modal
-                onClose={this.props.cancelClosing}
+                onCancel={this.props.cancelClosing}
                 onConfirm={this.props.confirmClosing}
-                confirmButtonBSStyle="default"
-                closeGlyph="1-close"
-                confirmButtonContent={<Message msgId="signalement.msgBox.ok" />}
-                closeText={<Message msgId="signalement.msgBox.cancel" />}>
-                <Message msgId="signalement.msgBox.info"/>
-            </ConfirmDialog>);
+                titleId="signalement.msgBox.title"
+                descriptionId="signalement.msgBox.info"
+                confirmId="signalement.msgBox.ok"
+                cancelId="signalement.msgBox.cancel"
+                variant="default"
+            />);
         } else {
             return null;
         }
@@ -794,7 +817,7 @@ export class SignalementPanelComponent extends React.Component {
             this.props.stopDrawing(geometryType);
         }
         else {
-            this.props.startDrawing(geometryType, this.props.task.asset.localisation);
+            this.props.startDrawing(geometryType, this.props.task?.asset?.localisation);
         }
     }
 
@@ -802,7 +825,7 @@ export class SignalementPanelComponent extends React.Component {
      * Affichage du message sur le dessin de la geometrie du signalement
      */
     renderGeometryDrawMessage = ()=> {
-        if (this.state.task && this.props.task.asset && this.props.task.asset.localisation && this.props.task.asset.localisation.length > 0) {
+        if (this.state.task && this.props.task?.asset?.localisation?.length > 0) {
             return (
                 <Message msgId="signalement.localization.drawn"/>
             );
@@ -815,7 +838,7 @@ export class SignalementPanelComponent extends React.Component {
         return (
             <fieldset>
                 <div className="block-inline-spinner">
-                    <InlineSpinner loading={this.props.creating} className="inline-spinner"/>
+                    {this.props.creating && <LoadingSpinner />}
                 </div>
                 <div className="block-valid-form">
                     <Button bsStyle="warning"
@@ -845,11 +868,11 @@ export class SignalementPanelComponent extends React.Component {
      * La rendition du formulaire associé à la task
      */
     renderCustomForm() {
+        const cond1 = this.state.isContextVisible === true && this.state.selectedContextValue !== "";
+        const cond2 = this.state.isContextVisible === true  && this.state.selectedContextValue === "" && this.props.task?.asset?.contextDescription?.contextType === "LAYER";
+        const cond3 = this.state.isContextVisible === false && this.state.selectedContextValue === "" && this.props.task?.asset?.contextDescription?.contextType === "LAYER";
         if(this.props.task && this.props.task.form && this.props.task.form.sections &&
-            ((this.state.isContextVisible === true && this.state.selectedContextValue !== "") ||
-                (this.state.isContextVisible === true && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER") ||
-                (this.state.isContextVisible === false && this.state.selectedContextValue === "" && this.props.task.asset.contextDescription.contextType ==="LAYER")
-            )) {
+            (cond1 || cond2 || cond3)) {
             return (
                 <div>
                     <fieldset>
@@ -1144,7 +1167,9 @@ export class SignalementPanelComponent extends React.Component {
      */
     validateAttachment(attachment) {
         let errorAttachment = "";
-        if (attachment.file === undefined || !(attachment.file instanceof File) || this.props.attachmentConfiguration.mimeTypes.includes(attachment.file.type) === false) {
+        if (attachment.file === undefined || !(attachment.file instanceof File) ||
+                !this.props.attachmentConfiguration.mimeTypes.includes(
+                    resolveFileMimeType(attachment.file, this.props.attachmentConfiguration.mimeTypesByExtension))) {
             errorAttachment = 'signalement.attachment.typeFile';
         }
 
@@ -1272,9 +1297,9 @@ export class SignalementPanelComponent extends React.Component {
             task: this.props.task,
             loaded: true
         });
-            window.signalement.debug("Cancel and close state: ", this.state);
-            window.signalement.debug("Cancel and close props: ", this.props);
-        if(this.state.task != null && this.state.task.asset.uuid) {
+        window.signalement.debug("Cancel and close state: ", this.state);
+        window.signalement.debug("Cancel and close props: ", this.props);
+        if(this.props.task != null && this.props.task?.asset?.uuid) {
             this.props.requestClosing();
         } else {
             this.resetForm();
@@ -1289,7 +1314,11 @@ export class SignalementPanelComponent extends React.Component {
     uploadPendingAttachments = async (taskUuid) => {
         const uploadPromises = this.state.pendingAttachments.map(attachment => {
             const formData = new FormData();
-            formData.append('file', attachment.file);
+            const mimeType = resolveFileMimeType(attachment.file, this.props.attachmentConfiguration.mimeTypesByExtension);
+            const fileBlob = mimeType && mimeType !== attachment.file.type
+                ? new Blob([attachment.file], { type: mimeType })
+                : attachment.file;
+            formData.append('file', fileBlob, attachment.file.name);
 
             const url = "/signalement/reporting/" + taskUuid + "/upload";
 
@@ -1399,7 +1428,7 @@ checkTaskValid() {
         !!this.state.task?.asset?.description &&
         ((!this.state.isContextVisible && this.state.selectedContextValue !== "") ||
             (this.state.isContextVisible && this.state.selectedContextValue === ""
-                && this.props.task.asset.contextDescription.contextType ==="LAYER"))) &&
+                && this.props.task?.asset?.contextDescription?.contextType ==="LAYER"))) &&
                 this.checkRequiredFields()
     }
 }

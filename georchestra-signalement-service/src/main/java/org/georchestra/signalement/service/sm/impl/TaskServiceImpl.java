@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.activiti.bpmn.model.SequenceFlow;
@@ -128,16 +129,20 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	@Transactional(readOnly = false)
 	public Task createDraft(ReportingDescription reportingDescription) {
 		// contrôle des paramètres
-		if (reportingDescription == null || reportingDescription.getContextDescription() == null) {
+		if (reportingDescription == null) {
 			throw new IllegalArgumentException("Reporting with a context is mandatory");
 		}
 
+		var reportingContext = reportingDescription.getContextDescription();
+		if (reportingContext == null) {
+			throw new IllegalArgumentException("Reporting with a context is mandatory");
+		}
 		// récupération du context
 		ContextDescriptionEntity contextDescription = contextDescriptionDao
-				.findByName(reportingDescription.getContextDescription().getName());
+				.findByName(reportingContext.getName());
 		if (contextDescription == null) {
 			throw new IllegalArgumentException(
-					"Invalid context name:" + reportingDescription.getContextDescription().getName());
+					"Invalid context name:" + reportingContext.getName());
 		}
 		// création de l'entité
 		AbstractReportingEntity reportingEntity = reportingHelper.createReportingEntity(contextDescription,
@@ -161,11 +166,15 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	public Task startTask(Task task)
 			throws DocumentRepositoryException, DataException, FormDefinitionException, FormConvertException, FormValidationException {
 		// contrôle des données d'entrée
-		if (task == null || task.getAsset() == null) {
+		if (task == null) {
+			throw new IllegalArgumentException("Task with asset is mandatory");
+		}
+		var asset = task.getAsset();
+		if (asset == null) {
 			throw new IllegalArgumentException("Task with asset is mandatory");
 		}
 		// récupération du signalement draft
-		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(task.getAsset().getUuid());
+		AbstractReportingEntity reportingEntity = reportingDao.findByUuid(asset.getUuid());
 		if (reportingEntity == null || reportingEntity.getStatus() != Status.DRAFT) {
 			throw new IllegalArgumentException("Invalid task");
 		}
@@ -252,17 +261,21 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	@Override
 	@Transactional(readOnly = false)
 	public Task updateTask(Task task) throws DataException, FormDefinitionException, FormConvertException, FormValidationException {
-		if (task == null || task.getAsset() == null) {
+		if (task == null) {
 			throw new IllegalArgumentException("Task with asset is mandatory");
 		}
 
+		var asset = task.getAsset();
+		if (asset == null) {
+			throw new IllegalArgumentException("Task with asset is mandatory");
+		}
 		Task result = null;
 		if (task.getId() != null) {
 			result = updateRunningTask(task);
 		} else {
 			// récupération du signalement draft si on a pas trouvé de tâche associé
 			// dans ce cas pas de controle d'accès puisqu'il n'y a pas encore d'affectation.
-			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(task.getAsset().getUuid());
+			AbstractReportingEntity reportingEntity = reportingDao.findByUuid(asset.getUuid());
 			if (reportingEntity != null && reportingEntity.getStatus() == Status.DRAFT) {
 				result = reportingHelper.createTaskFromReporting(
 						reportingMapper.entityToDto(updateDraftReporting(task, reportingEntity)));
@@ -312,10 +325,14 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 		List<Task> tasks = searchTasks(taskSearchCriteria);
 		if (CollectionUtils.isNotEmpty(tasks)) {
 			for (Task task : tasks) {
+				var asset = task.getAsset();
+				if (asset == null) {
+					continue;
+				}
 				Feature feature = geoJSonHelper.createFeature();
-				geoJSonHelper.setGeometry(feature, task.getAsset().getGeographicType(),
-						task.getAsset().getLocalisation());
-				feature.setId(task.getAsset().getUuid());
+				geoJSonHelper.setGeometry(feature, asset.getGeographicType(),
+						asset.getLocalisation());
+				feature.setId(asset.getUuid());
 				geoJSonHelper.setProperties(feature, task);
 				geoJSonHelper.setStyle(feature, task);
 				geoJSonHelper.addFeature(result, feature);
@@ -487,15 +504,22 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	private AbstractReportingEntity updateDraftReporting(Task task, AbstractReportingEntity reportingEntity)
 			throws DataException, FormDefinitionException, FormConvertException, FormValidationException {
 		ReportingDescription reporting = task.getAsset();
+		if (reporting == null) {
+			throw new IllegalArgumentException("Task with asset and context is mandatory");
+		}
 		AbstractReportingEntity targetReportingEntity = reportingEntity;
+		var reportingContext = reporting.getContextDescription();
+		if (reportingContext == null) {
+			throw new IllegalArgumentException("Task with asset and context is mandatory");
+		}
 		// contrôle de changement de context
-		if (!reporting.getContextDescription().getName().equals(reportingEntity.getContextDescription().getName())) {
+		if (!Objects.equals(reportingContext.getName(), reportingEntity.getContextDescription().getName())) {
 			// s'il a changé, il faut transmuter le signalement
 			ContextDescriptionEntity contextDescription = contextDescriptionDao
-					.findByName(reporting.getContextDescription().getName());
+					.findByName(reportingContext.getName());
 			if (contextDescription == null) {
 				throw new IllegalArgumentException(
-						"Invalid context name:" + reporting.getContextDescription().getName());
+						"Invalid context name:" + reportingContext.getName());
 			}
 			targetReportingEntity = reportingHelper.transmuteReportingEntity(reportingEntity, contextDescription);
 		}
@@ -523,7 +547,11 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 	private void updateDraftReportingDatas(Task task, AbstractReportingEntity reportingEntity)
 			throws DataException, FormDefinitionException, FormConvertException, FormValidationException {
 		Map<String, Object> datas = reportingHelper.hydrateData(reportingEntity.getDatas());
-		Form orignalForm = formHelper.lookupDraftForm(task.getAsset().getContextDescription());
+		ReportingDescription asset = task.getAsset();
+		if (asset == null) {
+			throw new IllegalArgumentException("Task with asset is mandatory");
+		}
+		Form orignalForm = formHelper.lookupDraftForm(asset.getContextDescription());
 		formHelper.copyFormData(task.getForm(), orignalForm);
 		formHelper.validateForm(task.getForm());
 		formHelper.fillMap(orignalForm, datas);
@@ -541,6 +569,10 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 				String processInstanceBusinessKey = bpmnHelper.lookupProcessInstanceBusinessKey(originalTask);
 				UUID uuid = UUID.fromString(processInstanceBusinessKey);
 				AbstractReportingEntity reportingEntity = loadAndUpdateReporting(uuid);
+				if (reportingEntity == null) {
+					LOGGER.warn("Skip update on task {}, reporting not found", originalTask.getId());
+					throw new IllegalArgumentException("Task does no exists or not accessible by you");
+				}
 
 				// mise à jour de l'entité
 				reportingMapper.updateEntityFromDto(task.getAsset(), reportingEntity);
@@ -657,14 +689,13 @@ public class TaskServiceImpl implements TaskService, ActivitiEventListener {
 
 	protected void cacheEntiy(ActivitiEvent event) {
 		ActivitiEntityEvent ea = (ActivitiEntityEvent) event;
-		if (ea.getEntity() instanceof ExecutionEntity executionEntity) {
-			if (executionEntity.getBusinessKey() != null) {
-				// stocke ici lors de la création de l'entité d'exécution d'un nouveau workflow,
-				// la business key si elle est pas nulle
-				// dans le workflow simple, on passe ici 2 fois (pour chaque étape)
-				// mais la deuxième fois, il n'y a pas de businessKey
-				EXECUTION_ENTITIES.put(executionEntity.getProcessInstanceId(), executionEntity.getBusinessKey());
-			}
+		if (ea.getEntity() instanceof ExecutionEntity executionEntity
+				&& executionEntity.getBusinessKey() != null) {
+			// stocke ici lors de la création de l'entité d'exécution d'un nouveau workflow,
+			// la business key si elle est pas nulle
+			// dans le workflow simple, on passe ici 2 fois (pour chaque étape)
+			// mais la deuxième fois, il n'y a pas de businessKey
+			EXECUTION_ENTITIES.put(executionEntity.getProcessInstanceId(), executionEntity.getBusinessKey());
 		}
 
 	}

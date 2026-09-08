@@ -299,7 +299,6 @@ public class GenerationConnectorImpl implements GenerationConnector {
 		ensureTargetDirectoryFile();
 
 		File convertedFile = null;
-		FileOutputStream fop = null;
 		try {
 			convertedFile = File.createTempFile("tmp", ".cnv", new File(temporaryDirectory));
 			if (LOGGER.isDebugEnabled()) {
@@ -314,20 +313,12 @@ public class GenerationConnectorImpl implements GenerationConnector {
 			renderer.layout();
 
 			// Création du fichier PDF
-			fop = new FileOutputStream(convertedFile);
-			renderer.createPDF(fop);
-			fop.close();
+			try (FileOutputStream fop = new FileOutputStream(convertedFile)) {
+				renderer.createPDF(fop);
+			}
 
 		} catch (Exception e) {
 			throw new DocumentGenerationException("Failed to flysauve html", e);
-		} finally {
-			if (fop != null) {
-				try {
-					fop.close();
-				} catch (IOException e) {
-					LOGGER.warn("Failed to close file", e);
-				}
-			}
 		}
 		return new DocumentContent(
 				FilenameUtils.getBaseName(inputDocument.getFileName()) + "." + GenerationFormat.PDF.getExtension(),

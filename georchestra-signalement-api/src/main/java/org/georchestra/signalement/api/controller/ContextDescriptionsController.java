@@ -10,7 +10,7 @@ import org.georchestra.signalement.core.dto.SortCriterion;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.mapper.acl.ContextDescriptionMapper;
 import org.georchestra.signalement.service.sm.ContextDescriptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("@authentificationHelper.isAdmin()")
 @RestController
 @Api(tags = "contextDescriptions")
+@RequiredArgsConstructor
 public class ContextDescriptionsController implements ContextDescriptionsApi {
 
-    @Autowired
-    ContextDescriptionService contextDescriptionService;
+    private final ContextDescriptionService contextDescriptionService;
 
-    @Autowired
-    ContextDescriptionMapper contextMapper;
+    private final ContextDescriptionMapper contextMapper;
 
-    @Autowired
-    UtilPageable utilPageable;
+    private final UtilPageable utilPageable;
 
     @Override
     public ResponseEntity<Void> deleteContextDescription(String name) throws Exception {

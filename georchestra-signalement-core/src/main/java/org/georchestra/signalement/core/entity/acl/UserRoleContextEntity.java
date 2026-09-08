@@ -67,9 +67,7 @@ public class UserRoleContextEntity {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof UserRoleContextEntity)) return false;
-
-		UserRoleContextEntity that = (UserRoleContextEntity) o;
+		if (!(o instanceof UserRoleContextEntity that)) return false;
 
 		if (!getId().equals(that.getId())) return false;
 		if (getRole() != null ? !getRole().equals(that.getRole()) : that.getRole() != null) return false;

@@ -33,55 +33,45 @@ import org.georchestra.signalement.service.mapper.acl.UserRoleContextMapper;
 import org.georchestra.signalement.service.sm.UserRoleContextService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserRoleContextServiceImpl implements UserRoleContextService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserRoleContextServiceImpl.class);
 
-	@Autowired
-	private UserRoleContextDao userRoleContextDao;
+	private final UserRoleContextDao userRoleContextDao;
 
-	@Autowired
-	private UserRoleContextCustomDao userRoleContextCustomDao;
+	private final UserRoleContextCustomDao userRoleContextCustomDao;
 
-	@Autowired
-	private UserRoleContextMapper userRoleContextMapper;
+	private final UserRoleContextMapper userRoleContextMapper;
 
-	@Autowired
-	private UserDao userDao;
+	private final UserDao userDao;
 
-	@Autowired
-	private RoleDao roleDao;
+	private final RoleDao roleDao;
 
-	@Autowired
-	private ContextDescriptionDao contextDescriptionDao;
+	private final ContextDescriptionDao contextDescriptionDao;
 
-	@Autowired
-	private GeographicAreaDao geographicAreaDao;
+	private final GeographicAreaDao geographicAreaDao;
 
-	@Autowired
-	private ProcessEngine processEngine;
+	private final ProcessEngine processEngine;
 
-	@Autowired
-	private UtilPageable utilPageable;
+	private final UtilPageable utilPageable;
 
-	@Autowired
-	private BpmnHelper bpmnHelper;
+	private final BpmnHelper bpmnHelper;
 
-	@Autowired
-	private WorkflowContext workflowContext;
+	private final WorkflowContext workflowContext;
 
 	@Override
 	public Page<UserRoleContext> searchUserRoleContexts(UserRoleContextSearchCriteria searchCriteria,
 			Pageable pageable) {
 		return userRoleContextCustomDao.searchUserRoleContexts(searchCriteria, pageable)
-				.map(entity -> userRoleContextMapper.entityToDto(entity));
+				.map(userRoleContextMapper::entityToDto);
 	}
 
 	@Override
@@ -123,26 +113,28 @@ public class UserRoleContextServiceImpl implements UserRoleContextService {
 			throw new IllegalArgumentException(ErrorMessageConstants.NULL_OBJECT);
 		}
 
-		if (userRoleContext.getRole().getName() == null || userRoleContext.getContextDescription().getName() == null
-				|| userRoleContext.getGeographicArea().getId() == null
-				|| userRoleContext.getUser().getLogin() == null) {
+		var roleDto = userRoleContext.getRole();
+		var contextDescriptionDto = userRoleContext.getContextDescription();
+		var geographicAreaDto = userRoleContext.getGeographicArea();
+		var userDto = userRoleContext.getUser();
+		if (roleDto == null || roleDto.getName() == null || contextDescriptionDto == null
+				|| contextDescriptionDto.getName() == null || geographicAreaDto == null
+				|| geographicAreaDto.getId() == null || userDto == null || userDto.getLogin() == null) {
 			throw new IllegalArgumentException(ErrorMessageConstants.NULL_ATTRIBUTE);
 		}
 
-		GeographicAreaEntity geographicArea = geographicAreaDao
-				.findEntityById(userRoleContext.getGeographicArea().getId());
-		RoleEntity role = roleDao.findByName(userRoleContext.getRole().getName());
-		UserEntity user = userDao.findByLogin(userRoleContext.getUser().getLogin());
-		ContextDescriptionEntity contextDescription = contextDescriptionDao
-				.findByName(userRoleContext.getContextDescription().getName());
+		GeographicAreaEntity geographicArea = geographicAreaDao.findEntityById(geographicAreaDto.getId());
+		RoleEntity role = roleDao.findByName(roleDto.getName());
+		UserEntity user = userDao.findByLogin(userDto.getLogin());
+		ContextDescriptionEntity contextDescription = contextDescriptionDao.findByName(contextDescriptionDto.getName());
 		if (geographicArea == null || role == null || user == null || contextDescription == null) {
 			throw new IllegalArgumentException(ErrorMessageConstants.ILLEGAL_ATTRIBUTE);
 		}
 
 		UserRoleContextSearchCriteria searchCriteria = UserRoleContextSearchCriteria.builder()
-				.geographicAreaId(userRoleContext.getGeographicArea().getId())
-				.roleName(userRoleContext.getRole().getName()).userLogin(userRoleContext.getUser().getLogin())
-				.contextDescriptionName(userRoleContext.getContextDescription().getName()).build();
+				.geographicAreaId(geographicAreaDto.getId())
+				.roleName(roleDto.getName()).userLogin(userDto.getLogin())
+				.contextDescriptionName(contextDescriptionDto.getName()).build();
 
 		if (userRoleContextCustomDao.searchUserRoleContexts(searchCriteria, utilPageable.getPageable(0, 1, ""))
 				.getTotalElements() != 0) {

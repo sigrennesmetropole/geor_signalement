@@ -79,6 +79,9 @@ export default (state = initialState, action) => {
             return assign({}, state, {creating: false});
         }
         case actions.SIGNALEMENT_UPDATE_LOCALISATION: {
+            // Garde : si task est null (ex: DRAFT_CREATE vient de vider le store), ignorer l'action
+            // pour éviter le crash sur state.task.asset
+            if (!state.task) return state;
             return {
                 ...state,
                 task: {

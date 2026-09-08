@@ -2605,6 +2605,13 @@
 					"items": {
 						"type": "string"
 					}
+				},
+				"mimeTypesByExtension": {
+					"type": "object",
+					"description": "Mapping des extensions de fichier (sans point, en minuscules) vers leur type MIME autorisé. Calculé depuis la configuration serveur.",
+					"additionalProperties": {
+						"type": "string"
+					}
 				}
 			}
 		},

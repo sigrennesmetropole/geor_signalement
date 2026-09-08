@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -135,9 +136,12 @@ public class FormHelper {
 	private void copySectionData(Form source, Section section) {
 		if (CollectionUtils.isNotEmpty(section.getFields())) {
 			for (Field targetField : section.getFields()) {
-				Field sourceField = lookupField(source, targetField.getDefinition().getName());
-				if (sourceField != null) {
-					targetField.setValues(sourceField.getValues());
+				FieldDefinition definition = targetField.getDefinition();
+				if (definition != null) {
+					Field sourceField = lookupField(source, definition.getName());
+					if (sourceField != null) {
+						targetField.setValues(sourceField.getValues());
+					}
 				}
 			}
 		}
@@ -164,7 +168,8 @@ public class FormHelper {
 		Field result = null;
 		if (CollectionUtils.isNotEmpty(section.getFields())) {
 			for (Field field : section.getFields()) {
-				if (field.getDefinition().getName().equals(name)) {
+				FieldDefinition definition = field.getDefinition();
+				if (definition != null && Objects.equals(definition.getName(), name)) {
 					result = field;
 					break;
 				}
@@ -182,14 +187,25 @@ public class FormHelper {
 		Map<String, FieldDefinition> result = new HashMap<>();
 		if (form != null && CollectionUtils.isNotEmpty(form.getSections())) {
 			for (Section section : form.getSections()) {
-				if (CollectionUtils.isNotEmpty(section.getFields())) {
-					for (Field field : section.getFields()) {
-						result.put(field.getDefinition().getName(), field.getDefinition());
-					}
-				}
+				buildFieldDefinition(result, section);
 			}
 		}
 		return result;
+	}
+
+	private void buildFieldDefinition(Map<String, FieldDefinition> result, Section section) {
+		if (CollectionUtils.isNotEmpty(section.getFields())) {
+			for (Field field : section.getFields()) {
+				buildFieldDefinition(result, field);
+			}
+		}
+	}
+
+	private void buildFieldDefinition(Map<String, FieldDefinition> result, Field field) {
+		FieldDefinition definition = field.getDefinition();
+		if (definition != null) {
+			result.put(definition.getName(), definition);
+		}
 	}
 
 	/**
@@ -202,8 +218,11 @@ public class FormHelper {
 		for (Section section : form.getSections()) {
 			if (CollectionUtils.isNotEmpty(section.getFields())) {
 				for (Field field : section.getFields()) {
-					Object value = datas.get(field.getDefinition().getName());
-					fillField(field, value);
+					FieldDefinition definition = field.getDefinition();
+					if (definition != null) {
+						Object value = datas.get(definition.getName());
+						fillField(field, value);
+					}
 				}
 			}
 		}
@@ -211,7 +230,9 @@ public class FormHelper {
 
 	private void fillField(Field field, Object value) {
 		if (value != null) {
-			if (FieldType.LIST == field.getDefinition().getType() && BooleanUtils.isTrue(field.getDefinition().getMultiple())) {
+			FieldDefinition definition = field.getDefinition();
+			if (definition != null && FieldType.LIST == definition.getType()
+					&& BooleanUtils.isTrue(definition.getMultiple())) {
 				fillFieldList(field, value);
 			} else {
 				field.addValuesItem(value.toString());
@@ -220,8 +241,8 @@ public class FormHelper {
 	}
 
 	private void fillFieldList(Field field, Object value) {
-		if (value instanceof Collection) {
-			for (Object itemValue : ((Collection<?>) value)) {
+		if (value instanceof Collection<?> collection) {
+			for (Object itemValue : collection) {
 				field.addValuesItem(itemValue.toString());
 			}
 		} else {
@@ -264,8 +285,12 @@ public class FormHelper {
 
 	private Object convertValue(FieldDefinition fieldDefinition, String value) throws FormConvertException {
 		Object result = null;
+		FieldType type = fieldDefinition.getType();
+		if (type == null) {
+			return value;
+		}
 		try {
-			switch (fieldDefinition.getType()) {
+			switch (type) {
 			case BOOLEAN:
 				result = Boolean.valueOf(value);
 				break;
@@ -344,7 +369,8 @@ public class FormHelper {
 			Iterator<Field> it = section.getFields().iterator();
 			while (it.hasNext()) {
 				Field field = it.next();
-				if (Boolean.TRUE.equals(field.getDefinition().getReadOnly())) {
+				FieldDefinition definition = field.getDefinition();
+				if (definition != null && Boolean.TRUE.equals(definition.getReadOnly())) {
 					// on ne conserve pas les champs en lecture seule pour empecher l'injection
 					it.remove();
 				} else {
@@ -355,7 +381,8 @@ public class FormHelper {
 	}
 
 	private void validateField(Field field) throws FormValidationException {
-		if (CollectionUtils.isNotEmpty(field.getDefinition().getValidators())) {
+		FieldDefinition definition = field.getDefinition();
+		if (definition != null && CollectionUtils.isNotEmpty(definition.getValidators())) {
 			for (FieldValidator fieldValidator : validators) {
 				if (fieldValidator.accept(field) && !fieldValidator.check(field)) {
 					throw new FormValidationException("Invalid field:" + field.getDefinition());

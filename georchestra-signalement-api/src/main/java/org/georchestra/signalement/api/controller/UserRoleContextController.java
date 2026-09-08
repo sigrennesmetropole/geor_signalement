@@ -8,7 +8,7 @@ import org.georchestra.signalement.core.dto.UserRoleContextSearchCriteria;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.exception.InvalidDataException;
 import org.georchestra.signalement.service.sm.UserRoleContextService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("@authentificationHelper.isAdmin()")
 @RestController
 @Api(tags = "userRoleContext")
+@RequiredArgsConstructor
 public class UserRoleContextController implements UserRoleContextsApi {
 
-	@Autowired
-	UserRoleContextService userRoleContextService;
+	private final UserRoleContextService userRoleContextService;
 
-	@Autowired
-	UtilPageable utilPageable;
+	private final UtilPageable utilPageable;
 
 	@Override
 	public ResponseEntity<UserRoleContextPageResult> searchUserRoleContexts(String userLogin, String roleName,

@@ -38,6 +38,7 @@ import {
     updateDockPanelsList
 } from "@mapstore/actions/maplayout";
 import {TOGGLE_CONTROL} from "@mapstore/actions/controls";
+import {buildGeostylerStyle} from '../utils/legend-style-helper';
 
 let currentLayout;
 
@@ -295,14 +296,15 @@ export const displayMapViewDataEpic = (action$, store) =>
     action$.ofType(actions.DISPLAY_MAP_VIEW)
         .switchMap((action) => {
             const signalementsLayer = head(store.getState().layers.flat.filter(l => l.id === SIGNALEMENT_MANAGEMENT_LAYER_ID));
+            const geostylerStyle = buildGeostylerStyle(action.featureCollection);
             return Rx.Observable.from((signalementsLayer
-                    ? [updateNode(SIGNALEMENT_MANAGEMENT_LAYER_ID, 'layer', {features: createNewFeatures(action)})]
+                    ? [updateNode(SIGNALEMENT_MANAGEMENT_LAYER_ID, 'layer', {features: createNewFeatures(action), style: geostylerStyle})]
                     : [addLayer({
                         handleClickOnLayer: true,
                         hideLoading: true,
                         id: SIGNALEMENT_MANAGEMENT_LAYER_ID,
                         name: SIGNALEMENT_MANAGEMENT_LAYER_NAME,
-                        style: undefined,
+                        style: geostylerStyle,
                         type: "vector",
                         visibility: true,
                         features: createNewFeatures(action),
@@ -335,7 +337,7 @@ export const openTabularViewEpic = (action$, store) =>
                         name: SIGNALEMENT_MANAGEMENT_LAYER_NAME,
                         rowViewer: viewer,
                         hideLoading: true,
-                        style: action.style,
+                        style: action.style || buildGeostylerStyle(action.featureCollection),
                         handleClickOnLayer: true
                     })]
                 ).concat(

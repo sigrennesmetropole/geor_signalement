@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 
 import org.georchestra.signalement.core.common.AbstractNamedLongId;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,6 +24,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "styling")
 public class StylingEntity extends AbstractNamedLongId {

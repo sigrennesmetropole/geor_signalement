@@ -3,6 +3,7 @@
  */
 package org.georchestra.signalement.service.helper.reporting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +30,15 @@ public class AttachmentHelper {
 
 	private Map<String, Long> factorUnits;
 
+	/** Map extension → MIME issue de la configuration, exposée au front. */
+	@Value("#{${attachment.mime-types}}")
+	private Map<String, String> mimeTypesByExtension;
+
 	@Value("${attachment.max-count:5}")
 	private int attachmentMaxCount;
 
 	@Value("${spring.servlet.multipart.max-file-size}")
 	private String attachmentMaxFileSize;
-
-	@Value("#{'${attachment.mime-types}'.split(',')}")
-	private List<String> attachmentMimeTypes;
 
 	public int getAttachmentMaxCount() {
 		return attachmentMaxCount;
@@ -56,11 +58,11 @@ public class AttachmentHelper {
 	}
 
 	public List<String> getAttachmentMimeTypes() {
-		return attachmentMimeTypes;
+		return new ArrayList<>(mimeTypesByExtension.values());
 	}
 
 	public boolean acceptAttachmentMimeType(String mimeType) {
-		return attachmentMimeTypes.contains(mimeType);
+		return mimeTypesByExtension.containsValue(mimeType);
 	}
 
 	public AttachmentConfiguration getAttachmentConfiguration() {
@@ -68,6 +70,7 @@ public class AttachmentHelper {
 		result.setMaxCount(getAttachmentMaxCount());
 		result.setMimeTypes(getAttachmentMimeTypes());
 		result.setMaxSize(getAttachmentMaxFileSize());
+		result.setMimeTypesByExtension(mimeTypesByExtension);
 		return result;
 	}
 

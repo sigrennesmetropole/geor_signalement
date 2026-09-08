@@ -43,7 +43,8 @@ public class MaxlengthFieldValidator extends AbstractFieldValidator {
 
 	@Override
 	public boolean accept(Field field) {
-		return (field.getDefinition().getType() == FieldType.STRING)
+		var definition = field.getDefinition();
+		return definition != null && definition.getType() == FieldType.STRING
 				&& lookValidator(field, ValidatorType.MAXLENGTH) != null;
 	}
 

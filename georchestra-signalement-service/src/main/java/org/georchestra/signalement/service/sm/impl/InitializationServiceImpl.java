@@ -21,32 +21,30 @@ import org.georchestra.signalement.service.mapper.workflow.ProcessDefinitionMapp
 import org.georchestra.signalement.service.sm.InitializationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 
 import java.io.FileInputStream;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 /**
  * @author FNI18300
  *
  */
 @Component
+@RequiredArgsConstructor
 public class InitializationServiceImpl implements InitializationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InitializationServiceImpl.class);
 
-	@Autowired
-	private ProcessEngine processEngine;
+	private final ProcessEngine processEngine;
 
-	@Autowired
-	private ProcessDefinitionMapper processDefinitionMapper;
+	private final ProcessDefinitionMapper processDefinitionMapper;
 
-	@Autowired
-	private ContextDescriptionServiceImpl contextService;
+	private final ContextDescriptionServiceImpl contextService;
 
 	@Override
 	public void initialize() throws InitializationException {
@@ -94,7 +92,7 @@ public class InitializationServiceImpl implements InitializationService {
 	public List<org.georchestra.signalement.core.dto.ProcessDefinition> searchProcessDefinitions() {
 		RepositoryService repositoryService = processEngine.getRepositoryService();
 		List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefinitionQuery().list();
-		return processDefinitions.stream().map(processDefinitionMapper::entityToDto).collect(Collectors.toList());
+		return processDefinitions.stream().map(processDefinitionMapper::entityToDto).toList();
 	}
 
 	@Override
@@ -132,7 +130,7 @@ public class InitializationServiceImpl implements InitializationService {
 	private ProcessDefinition getMostRecentVersion(List<ProcessDefinition> processDefinitions) {
 		return processDefinitions.stream()
 				.sorted(Comparator.comparingInt(ProcessDefinition::getVersion).reversed())
-				.collect(Collectors.toList())
+				.toList()
 				.get(0);
 	}
 
@@ -151,7 +149,7 @@ public class InitializationServiceImpl implements InitializationService {
 	}
 
 	private boolean contextUsesProcess(ContextDescription context, ProcessDefinition process, boolean lastVersion) {
-		boolean key = context.getProcessDefinitionKey().equals(process.getKey());
+		boolean key = Objects.equals(context.getProcessDefinitionKey(), process.getKey());
 		boolean revision = (context.getRevision() != null && context.getRevision() == process.getVersion())
 				|| (context.getRevision() == null && lastVersion);
 		return key && revision;

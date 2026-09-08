@@ -92,11 +92,9 @@ public class MailServiceImpl implements MailService {
 	}
 
 	private void handleBody(MimeMessageHelper helper, MailDescription mailDescription)
-			throws IOException {
+			throws IOException, EMailException {
 		String text;
-		InputStream bodyStream;
-		try {
-			bodyStream = mailDescription.getBody().getFileStream();
+		try (InputStream bodyStream = mailDescription.getBody().getFileStream()) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			IOUtils.copy(bodyStream, baos);
 			text = baos.toString();
@@ -107,7 +105,7 @@ public class MailServiceImpl implements MailService {
 				helper.setText(text);
 			}
 		} catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new EMailException(e);
         } finally {
 			mailDescription.getBody().closeStream();
 		}

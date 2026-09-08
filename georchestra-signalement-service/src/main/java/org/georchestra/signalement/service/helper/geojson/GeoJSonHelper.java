@@ -32,7 +32,7 @@ import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.styling.ProcessStylingEntity;
 import org.georchestra.signalement.service.helper.workflow.BpmnHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -41,22 +41,19 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@RequiredArgsConstructor
 public class GeoJSonHelper {
 
     private static final String USER_TASK_ID = "UserTask_1";
 
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
-    @Autowired
-    private ProcessStylingCustomDao processStylingCustomDao;
+    private final ProcessStylingCustomDao processStylingCustomDao;
 
-    @Autowired
-    private BpmnHelper bpmnHelper;
+    private final BpmnHelper bpmnHelper;
 
-    @Autowired
-    private ContextDescriptionDao contextDescriptionDao;
+    private final ContextDescriptionDao contextDescriptionDao;
 
     public FeatureCollection createFeatureCollection() {
         FeatureCollection result = new FeatureCollection();
@@ -112,21 +109,34 @@ public class GeoJSonHelper {
         properties.put(GeoJSonConstants.UPDATED_DATE, task.getUpdatedDate());
         properties.put(GeoJSonConstants.STATUS, task.getStatus());
         properties.put(GeoJSonConstants.FUNCTIONAL_STATUS, task.getFunctionalStatus());
-        properties.put(GeoJSonConstants.DESCRIPTION, task.getAsset().getDescription());
-        properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_NAME, task.getAsset().getContextDescription().getName());
-        properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_LABEL, task.getAsset().getContextDescription().getLabel());
-        properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_TYPE,
-                task.getAsset().getContextDescription().getContextType());
-        properties.put(GeoJSonConstants.GEOGRAPHIC_TYPE, task.getAsset().getGeographicType());
-        properties.put(GeoJSonConstants.DATA, task.getAsset().getDatas());
+        var asset = task.getAsset();
+        if (asset != null) {
+            properties.put(GeoJSonConstants.DESCRIPTION, asset.getDescription());
+            var contextDescription = asset.getContextDescription();
+            if (contextDescription != null) {
+                properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_NAME, contextDescription.getName());
+                properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_LABEL, contextDescription.getLabel());
+                properties.put(GeoJSonConstants.CONTEXT_DESCRIPTION_TYPE, contextDescription.getContextType());
+            }
+            properties.put(GeoJSonConstants.GEOGRAPHIC_TYPE, asset.getGeographicType());
+            properties.put(GeoJSonConstants.DATA, asset.getDatas());
+        }
         feature.setProperties(properties);
     }
 
     public void setStyle(Feature feature, Task task) {
-        GeographicType type = task.getAsset().getGeographicType();
+        var asset = task.getAsset();
+        if (asset == null) {
+            return;
+        }
+        var contextDescription = asset.getContextDescription();
+        if (contextDescription == null) {
+            return;
+        }
+        GeographicType type = asset.getGeographicType();
         List<Style> styles = new ArrayList<>();
 
-        ContextDescriptionEntity contextDescriptionEntity = contextDescriptionDao.findByName(task.getAsset().getContextDescription().getName());
+        ContextDescriptionEntity contextDescriptionEntity = contextDescriptionDao.findByName(contextDescription.getName());
 
         String processInstanceId = bpmnHelper.lookupProcessInstanceBusinessKey(contextDescriptionEntity);
 

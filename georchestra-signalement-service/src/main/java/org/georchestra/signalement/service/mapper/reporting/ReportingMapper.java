@@ -15,7 +15,6 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +30,19 @@ public abstract class ReportingMapper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportingMapper.class);
 
-	@Autowired
 	private DocumentRepositoryService documentRepositoryService;
 
-	@Autowired
 	private ReportingHelper reportingHelper;
+
+	@Autowired
+	public void setDocumentRepositoryService(DocumentRepositoryService documentRepositoryService) {
+		this.documentRepositoryService = documentRepositoryService;
+	}
+
+	@Autowired
+	public void setReportingHelper(ReportingHelper reportingHelper) {
+		this.reportingHelper = reportingHelper;
+	}
 
 	/**
 	 * @param dto dto to transform to entity
@@ -62,13 +69,18 @@ public abstract class ReportingMapper {
 		reportingDescription.setLocalisation(reportingHelper.convertGeometryToCoordinate(abstractReportingEntity.getGeometry(), abstractReportingEntity.getGeographicType()));
 	}
 
-	@Mappings({ @Mapping(source = "description", target = "description"), @Mapping(ignore = true, target = "id"),
-			@Mapping(ignore = true, target = "uuid"), @Mapping(ignore = true, target = "status"),
-			@Mapping(ignore = true, target = "functionalStatus"),
-			@Mapping(ignore = true, target = "initiator"), @Mapping(ignore = true, target = "geographicType"),
-			@Mapping(ignore = true, target = "creationDate"), @Mapping(ignore = true, target = "updatedDate"),
-			@Mapping(ignore = true, target = "contextDescription"), @Mapping(ignore = true, target = "datas"),
-			@Mapping(ignore = true, target = "assignee")})
+	@Mapping(source = "description", target = "description")
+	@Mapping(ignore = true, target = "id")
+	@Mapping(ignore = true, target = "uuid")
+	@Mapping(ignore = true, target = "status")
+	@Mapping(ignore = true, target = "functionalStatus")
+	@Mapping(ignore = true, target = "initiator")
+	@Mapping(ignore = true, target = "geographicType")
+	@Mapping(ignore = true, target = "creationDate")
+	@Mapping(ignore = true, target = "updatedDate")
+	@Mapping(ignore = true, target = "contextDescription")
+	@Mapping(ignore = true, target = "datas")
+	@Mapping(ignore = true, target = "assignee")
 	public abstract void updateEntityFromDto(ReportingDescription reportingDescription,
 			@MappingTarget AbstractReportingEntity abstractReportingEntity);
 }

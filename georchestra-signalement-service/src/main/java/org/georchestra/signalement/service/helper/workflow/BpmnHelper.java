@@ -26,7 +26,7 @@ import org.georchestra.signalement.core.dto.RoleSearchCriteria;
 import org.georchestra.signalement.core.entity.acl.ContextDescriptionEntity;
 import org.georchestra.signalement.core.entity.acl.RoleEntity;
 import org.georchestra.signalement.service.helper.authentification.AuthentificationHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -34,18 +34,16 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@RequiredArgsConstructor
 public class BpmnHelper {
 
 	public static final String DEFAULT_ACTION = "default";
 
-	@Autowired
-	private ProcessEngine processEngine;
+	private final ProcessEngine processEngine;
 
-	@Autowired
-	private RoleCustomDao roleCustomDao;
+	private final RoleCustomDao roleCustomDao;
 
-	@Autowired
-	private AuthentificationHelper authentificationHelper;
+	private final AuthentificationHelper authentificationHelper;
 	
 	/**
 	 * Retourne la tâche activiti par son id
@@ -195,8 +193,8 @@ public class BpmnHelper {
 		org.activiti.bpmn.model.Process process = bpmnModel.getProcessById(processInstance.getProcessDefinitionKey());
 		if (process != null) {
 			FlowElement flowElement = process.getFlowElement(task.getTaskDefinitionKey());
-			if (flowElement instanceof UserTask) {
-				return (UserTask) flowElement;
+			if (flowElement instanceof UserTask userTask) {
+				return userTask;
 			}
 		}
 		return null;
@@ -270,8 +268,8 @@ public class BpmnHelper {
 
 	private SequenceFlow lookupSequenceFlowInUserTask(FlowElement flowElement, String actionName) {
 		SequenceFlow result = null;
-		if (flowElement instanceof UserTask) {
-			List<SequenceFlow> outgoings = ((UserTask) flowElement).getOutgoingFlows();
+		if (flowElement instanceof UserTask userTask) {
+			List<SequenceFlow> outgoings = userTask.getOutgoingFlows();
 			for (SequenceFlow outgoing : outgoings) {
 				FlowElement subFlowElement = outgoing.getTargetFlowElement();
 				result = lookupSequenceFlowInGateway(subFlowElement, actionName);
@@ -282,8 +280,8 @@ public class BpmnHelper {
 
 	private SequenceFlow lookupSequenceFlowInGateway(FlowElement subFlowElement, String actionName) {
 		SequenceFlow result = null;
-		if (subFlowElement instanceof ExclusiveGateway) {
-			List<SequenceFlow> subOutgoings = ((ExclusiveGateway) subFlowElement).getOutgoingFlows();
+		if (subFlowElement instanceof ExclusiveGateway exclusiveGateway) {
+			List<SequenceFlow> subOutgoings = exclusiveGateway.getOutgoingFlows();
 			for (SequenceFlow sequenceFlow : subOutgoings) {
 				if (sequenceFlow.getName().equalsIgnoreCase(actionName)) {
 					result = sequenceFlow;
@@ -303,8 +301,8 @@ public class BpmnHelper {
 	}
 
 	private void handleExclusiveGateway(List<Action> result, FlowElement subFlowElement) {
-		if (subFlowElement instanceof ExclusiveGateway) {
-			List<SequenceFlow> subOutgoings = ((ExclusiveGateway) subFlowElement).getOutgoingFlows();
+		if (subFlowElement instanceof ExclusiveGateway exclusiveGateway) {
+			List<SequenceFlow> subOutgoings = exclusiveGateway.getOutgoingFlows();
 			for (SequenceFlow sequenceFlow : subOutgoings) {
 				Action action = createAction(sequenceFlow);
 				result.add(action);

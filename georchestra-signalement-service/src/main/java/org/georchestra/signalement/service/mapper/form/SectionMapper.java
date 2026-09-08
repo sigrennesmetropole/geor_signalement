@@ -19,7 +19,6 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,14 +29,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public abstract class SectionMapper {
 
-	@Autowired
 	private FormDefinitionHelper formDefinitionHelper;
+
+	@Autowired
+	public void setFormDefinitionHelper(FormDefinitionHelper formDefinitionHelper) {
+		this.formDefinitionHelper = formDefinitionHelper;
+	}
 
 	/**
 	 * @param dto dto to transform to entity
 	 * @return entity
 	 */
-	@Mappings({ @Mapping(source = "label", target = "label"), @Mapping(source = "name", target = "name") })
+	@Mapping(source = "label", target = "label")
+	@Mapping(source = "name", target = "name")
 	public abstract Section entityToDto(SectionDefinitionEntity sectionDefinitionEntity) throws FormDefinitionException;
 
 	@AfterMapping

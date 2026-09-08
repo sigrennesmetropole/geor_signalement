@@ -19,7 +19,7 @@ import org.georchestra.signalement.core.entity.ged.AttachmentEntity;
 import org.georchestra.signalement.service.exception.DocumentRepositoryException;
 import org.georchestra.signalement.service.st.repository.DocumentRepositoryService;
 import org.hibernate.engine.jdbc.BlobProxy;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class DocumentRepositoryServiceImpl implements DocumentRepositoryService {
 
-	@Autowired
-	private AttachmentDao attachmentDao;
+	private final AttachmentDao attachmentDao;
 
 	@Override
 	@Transactional(readOnly = false)

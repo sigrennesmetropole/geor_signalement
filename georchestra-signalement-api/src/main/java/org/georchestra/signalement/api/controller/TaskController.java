@@ -16,7 +16,7 @@ import org.georchestra.signalement.core.dto.ReportingDescription;
 import org.georchestra.signalement.core.dto.Task;
 import org.georchestra.signalement.service.dto.TaskSearchCriteria;
 import org.georchestra.signalement.service.sm.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,10 +29,10 @@ import io.swagger.annotations.Api;
  */
 @RestController
 @Api(tags = "tasks")
+@RequiredArgsConstructor
 public class TaskController implements TaskApi {
 
-	@Autowired
-	private TaskService taskService;
+	private final TaskService taskService;
 
 	@Override
 	public ResponseEntity<Task> claimTask(String taskId) throws Exception {

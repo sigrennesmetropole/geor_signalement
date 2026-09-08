@@ -5,7 +5,7 @@
     <parent>
         <artifactId>georchestra-signalement-backend</artifactId>
         <groupId>org.georchestra</groupId>
-        <version>1.15.0</version>
+        <version>1.16.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,8 +15,8 @@
 		<angular.project.location>.</angular.project.location>
 		<angular.project.nodeinstallation>../node_installation</angular.project.nodeinstallation>
 
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>${java.source.version}</maven.compiler.source>
+        <maven.compiler.target>${java.target.version}</maven.compiler.target>
     </properties>
 
    <build>

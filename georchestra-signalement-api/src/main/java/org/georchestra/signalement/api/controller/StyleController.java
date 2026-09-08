@@ -7,7 +7,7 @@ import org.georchestra.signalement.core.dto.StyleContainer;
 import org.georchestra.signalement.core.dto.StylePageResult;
 import org.georchestra.signalement.core.util.UtilPageable;
 import org.georchestra.signalement.service.sm.StyleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,12 @@ import java.util.List;
 
 @RestController
 @Api(tags = "stylesContainer")
+@RequiredArgsConstructor
 public class StyleController  implements StylesApi {
 
-    @Autowired
-    StyleService styleService;
+    private final StyleService styleService;
 
-    @Autowired
-    UtilPageable utilPageable;
+    private final UtilPageable utilPageable;
 
     @Override
     public ResponseEntity<StyleContainer> createStyle(StyleContainer style) throws Exception {

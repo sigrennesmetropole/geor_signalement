@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 
 import org.georchestra.signalement.core.common.AbstractNamedLongId;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,6 +31,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "form_definition")
 public class FormDefinitionEntity extends AbstractNamedLongId  {
@@ -45,6 +47,7 @@ public class FormDefinitionEntity extends AbstractNamedLongId  {
 	@OneToMany
 	@JoinColumn(name = "form_definition_id")
 	@OrderBy("order_ ASC")
+	@EqualsAndHashCode.Exclude
 	private Set<FormSectionDefinitionEntity> formSectionDefinitions;
 
 }

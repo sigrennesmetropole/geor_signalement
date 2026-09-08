@@ -16,8 +16,9 @@ public abstract class AbstractFieldValidator implements FieldValidator {
 
 	protected Validator lookValidator(Field field, ValidatorType validatorType) {
 		Validator result = null;
-		if (CollectionUtils.isNotEmpty(field.getDefinition().getValidators())) {
-			result = field.getDefinition().getValidators().stream().filter(v -> v.getType() == validatorType)
+		var definition = field.getDefinition();
+		if (definition != null && CollectionUtils.isNotEmpty(definition.getValidators())) {
+			result = definition.getValidators().stream().filter(v -> v.getType() == validatorType)
 					.findFirst().orElse(null);
 		}
 		return result;

@@ -30,7 +30,7 @@ import org.georchestra.signalement.service.sm.UserService;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,33 +41,26 @@ import org.springframework.transaction.annotation.Transactional;
  * @author FNI18300
  */
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	@Autowired
-	private AuthentificationHelper authentificationHelper;
+	private final AuthentificationHelper authentificationHelper;
 
-	@Autowired
-	private UserDao userDao;
+	private final UserDao userDao;
 
-	@Autowired
-	private UserCustomDao userCustomDao;
+	private final UserCustomDao userCustomDao;
 
-	@Autowired
-	private ContextDescriptionDao contextDescriptionDao;
+	private final ContextDescriptionDao contextDescriptionDao;
 
-	@Autowired
-	private ContextDescriptionMapper contextDescriptionMapper;
+	private final ContextDescriptionMapper contextDescriptionMapper;
 
-	@Autowired
-	private UserMapper userMapper;
+	private final UserMapper userMapper;
 
-	@Autowired
-	private UtilPageable utilPageable;
+	private final UtilPageable utilPageable;
 
-	@Autowired
-	private UserRoleContextCustomDao userRoleContextCustomDao;
+	private final UserRoleContextCustomDao userRoleContextCustomDao;
 
 	@Override
 	@Transactional(readOnly = true)

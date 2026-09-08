@@ -25,10 +25,9 @@ public abstract class AbstractProcessLinkEntity implements ProcessLinkEntity {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof AbstractProcessLinkEntity)) {
+		if (!(obj instanceof AbstractProcessLinkEntity other)) {
 			return false;
 		}
-		AbstractProcessLinkEntity other = (AbstractProcessLinkEntity) obj;
 		if (getId() != null && getId().equals(other.getId())) {
 			return true;
 		}

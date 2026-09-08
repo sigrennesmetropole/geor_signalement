@@ -22,7 +22,7 @@ import org.georchestra.signalement.core.dto.SortCriteria;
 import org.georchestra.signalement.core.dto.SortCriterion;
 import org.georchestra.signalement.service.sm.ContextDescriptionService;
 import org.georchestra.signalement.service.sm.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -39,15 +39,14 @@ import io.swagger.annotations.Api;
  */
 @RestController
 @Api(tags = "reporting")
+@RequiredArgsConstructor
 public class ReportingController implements ReportingApi {
 
 	private static final String ATTACHMENT_FILENAME = "attachment; filename=";
 
-	@Autowired
-	private TaskService taskService;
+	private final TaskService taskService;
 
-	@Autowired
-	private ContextDescriptionService contextDescriptionService;
+	private final ContextDescriptionService contextDescriptionService;
 
 	@Override
 	public ResponseEntity<Attachment> uploadDocument(UUID uuid, MultipartFile file) throws Exception {

@@ -37,7 +37,7 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -52,20 +52,18 @@ import net.minidev.json.parser.ParseException;
  *
  */
 @Component
+@RequiredArgsConstructor
 public class ReportingHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportingHelper.class);
 
 	private static final int SRID = 4326;
 
-	@Autowired
-	private BpmnHelper bpmnHelper;
+	private final BpmnHelper bpmnHelper;
 
-	@Autowired
-	private FormHelper formHelper;
+	private final FormHelper formHelper;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
 	/**
 	 * Parse une définition de formulaire

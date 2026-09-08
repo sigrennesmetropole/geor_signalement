@@ -4,9 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import freemarker.ext.beans.HashAdapter;
 import freemarker.template.SimpleHash;
@@ -135,10 +135,10 @@ public final class DataModelUtils {
 		Object result = null;
 		if (map != null) {
 			try {
-				if (map instanceof HashAdapter) {
-					TemplateHashModel templateModel = (TemplateHashModel) ((HashAdapter) map).getTemplateModel();
-					if (templateModel instanceof SimpleHash) {
-						Map<?, ?> innerMap = ((SimpleHash) templateModel).toMap();
+				if (map instanceof HashAdapter hashAdapter) {
+					TemplateHashModel templateModel = (TemplateHashModel) hashAdapter.getTemplateModel();
+					if (templateModel instanceof SimpleHash simpleHashTemplateModel) {
+						Map<?, ?> innerMap = simpleHashTemplateModel.toMap();
 						result = innerMap.get(key);
 					}
 				}
@@ -232,23 +232,25 @@ public final class DataModelUtils {
 			int c = countLines(input, lineLength);
 			result = new StringBuilder();
 			String[] lines = input.split(NEW_LINE);
+			TruncateConfig config = new TruncateConfig(suspens, maxLines, lineLength, c);
 			for (int i = 0; i < lines.length; i++) {
-				countLines = handleTruncateLine(result, lines[i], suspens, maxLines, lineLength, c, countLines, i);
+				countLines = handleTruncateLine(result, lines[i], config, countLines, i);
 			}
 		}
 		return result != null ? result.toString() : null;
 	}
 
-	private static int handleTruncateLine(StringBuilder result, String line, String suspens, int maxLines,
-			int lineLength, int totalLine, int countLines, int index) {
-		int currentCountLines = (int) Math.ceil(((double) line.length()) / ((double) lineLength));
-		if (countLines + currentCountLines > maxLines - 1) {
-			int trailingLines = maxLines - countLines;
-			if (countLines + trailingLines == totalLine) {
+	private static int handleTruncateLine(StringBuilder result, String line, TruncateConfig config, int countLines,
+			int index) {
+		int currentCountLines = (int) Math.ceil(((double) line.length()) / ((double) config.lineLength()));
+		if (countLines + currentCountLines > config.maxLines() - 1) {
+			int trailingLines = config.maxLines() - countLines;
+			String suspens = config.suspens();
+			if (countLines + trailingLines == config.totalLine()) {
 				suspens = null;
 			}
-			int currentMaxLength = trailingLines * lineLength - (suspens != null ? suspens.length() : 0);
-			if (result.length() > 0) {
+			int currentMaxLength = trailingLines * config.lineLength() - (suspens != null ? suspens.length() : 0);
+			if (!result.isEmpty()) {
 				result.append(NEW_LINE);
 			}
 			result.append(line.substring(0, Math.min(currentMaxLength, line.length())));
@@ -264,6 +266,9 @@ public final class DataModelUtils {
 			result.append(line);
 		}
 		return countLines;
+	}
+
+	private record TruncateConfig(String suspens, int maxLines, int lineLength, int totalLine) {
 	}
 
 }
